@@ -7745,9 +7745,8 @@ function renderPtMilestones() {
     cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
   }
   var totalDays = (rangeEnd - rangeStart) / 86400000 + 1;
-  var PX_PER_DAY = 18; // fixed pixel width per day — makes gantt scrollable
 
-  // Today indicator position (still percentage-based, works fine with fixed widths)
+  // Today indicator position
   var todayDate = new Date(); todayDate.setHours(0,0,0,0);
   var todayPct = (todayDate >= rangeStart && todayDate <= rangeEnd)
     ? ((todayDate - rangeStart) / 86400000 / totalDays * 100).toFixed(2) : null;
@@ -7755,14 +7754,14 @@ function renderPtMilestones() {
     ? '<div class="gantt-today-line" style="left:' + todayPct + '%"></div>' : '';
 
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var nameColW = 160;
-  var barColW = totalDays * PX_PER_DAY;
+  var nameColW = '160px';
 
   var headerCells = months.map(function(m) {
     var mStart = new Date(m.getFullYear(), m.getMonth(), 1);
     var mEnd   = new Date(m.getFullYear(), m.getMonth() + 1, 0);
     var mDays  = (Math.min(mEnd, rangeEnd) - Math.max(mStart, rangeStart)) / 86400000 + 1;
-    return '<th style="width:' + (mDays * PX_PER_DAY) + 'px;font-size:11px;font-weight:700;color:var(--ink);padding:6px 8px;text-align:left;border-left:1px solid var(--border);background:#F8F7F4">' + MONTHS[m.getMonth()] + ' ' + m.getFullYear() + '</th>';
+    var pct = (mDays / totalDays * 100).toFixed(2);
+    return '<th style="width:' + pct + '%;font-size:11px;font-weight:700;color:var(--ink);padding:6px 8px;text-align:left;border-left:1px solid var(--border);background:#F8F7F4">' + MONTHS[m.getMonth()] + ' ' + m.getFullYear() + '</th>';
   }).join('');
 
   var msSticky = 'position:sticky;left:0;z-index:10;background:var(--white);border-right:1px solid var(--border)';
@@ -7803,11 +7802,11 @@ function renderPtMilestones() {
   }).join('');
 
   el.innerHTML =
-    '<div style="overflow-x:auto;overflow-y:visible;width:100%;max-width:100%;cursor:default" id="ms-gantt-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
-    '<table style="border-collapse:collapse;table-layout:fixed;width:' + (nameColW + barColW) + 'px">' +
-    '<colgroup><col style="width:' + nameColW + 'px"><col style="width:' + barColW + 'px"></colgroup>' +
+    '<div style="overflow-x:auto" id="ms-gantt-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '">' +
+    '<table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:500px">' +
+    '<colgroup><col style="width:' + nameColW + '"></colgroup>' +
     '<thead>' +
-    '<tr><th style="width:' + nameColW + 'px;padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--ink-light);background:#F8F7F4;' + msSticky + '">Milestone</th>' + headerCells + '</tr>' +
+    '<tr><th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--ink-light);background:#F8F7F4;' + msSticky + '">Milestone</th>' + headerCells + '</tr>' +
     _buildGanttRuler(rangeStart, totalDays, months, todayPct) +
     '</thead>' +
     '<tbody>' + rows + '</tbody>' +
@@ -8788,15 +8787,13 @@ function renderGlobalGantt() {
     ? ((todayDate - rangeStart) / 86400000 / totalDays * 100).toFixed(2) : null;
   var todayLine = todayPct !== null ? '<div class="gantt-today-line" style="left:' + todayPct + '%"></div>' : '';
 
-  var PX_PER_DAY = 18;
-  var nameColW = 170;
-  var barColW  = totalDays * PX_PER_DAY;
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var monthCells = months.map(function(m) {
     var mStart = new Date(m.getFullYear(), m.getMonth(), 1);
     var mEnd   = new Date(m.getFullYear(), m.getMonth() + 1, 0);
     var mDays  = (Math.min(mEnd, rangeEnd) - Math.max(mStart, rangeStart)) / 86400000 + 1;
-    return '<th style="width:' + (mDays * PX_PER_DAY) + 'px;font-size:11px;font-weight:700;color:var(--ink);padding:6px 8px;text-align:left;border-left:1px solid var(--border);background:#F8F7F4">' + MONTHS[m.getMonth()] + ' ' + m.getFullYear() + '</th>';
+    var pct    = (mDays / totalDays * 100).toFixed(2);
+    return '<th style="width:' + pct + '%;font-size:11px;font-weight:700;color:var(--ink);padding:6px 8px;text-align:left;border-left:1px solid var(--border);background:#F8F7F4">' + MONTHS[m.getMonth()] + ' ' + m.getFullYear() + '</th>';
   }).join('');
 
   var stickyCell = 'position:sticky;left:0;z-index:10;background:var(--white);border-right:1px solid var(--border)';
@@ -8831,11 +8828,11 @@ function renderGlobalGantt() {
   }).join('');
 
   el.innerHTML =
-    '<div style="overflow-x:auto;overflow-y:visible;width:100%;max-width:100%;cursor:default" id="gg-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
-    '<table style="border-collapse:collapse;table-layout:fixed;width:' + (nameColW + barColW) + 'px">' +
-    '<colgroup><col style="width:' + nameColW + 'px"><col style="width:' + barColW + 'px"></colgroup>' +
+    '<div style="overflow-x:auto" id="gg-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '">' +
+    '<table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:600px">' +
+    '<colgroup><col style="width:170px"></colgroup>' +
     '<thead>' +
-    '<tr><th style="width:' + nameColW + 'px;padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--ink-light);background:#F8F7F4;' + stickyCell + '">Project</th>' + monthCells + '</tr>' +
+    '<tr><th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--ink-light);background:#F8F7F4;' + stickyCell + '">Project</th>' + monthCells + '</tr>' +
     _buildGanttRuler(rangeStart, totalDays, months, todayPct) +
     '</thead>' +
     '<tbody>' + rows + '</tbody></table></div>';
@@ -9263,12 +9260,11 @@ function ganttBarDown(e, id, mode, type) {
     startDay = p.start_date ? Math.round((new Date(p.start_date + 'T00:00:00') - rangeStart) / 86400000) : 0;
     endDay   = p.end_date   ? Math.round((new Date(p.end_date   + 'T00:00:00') - rangeStart) / 86400000) : startDay;
   }
-  var pxPerDay = parseInt(scroll.dataset.pxPerDay) || 18;
   _ganttDrag = { type: type, id: id, mode: mode, nameColW: nameColW,
     origStartDay: startDay, origEndDay: endDay,
     startX: e.clientX, hasMoved: false,
     rangeStart: rangeStart, totalDays: totalDays,
-    curStartDay: startDay, curEndDay: endDay, scrollEl: scroll, pxPerDay: pxPerDay };
+    curStartDay: startDay, curEndDay: endDay, scrollEl: scroll };
   document.addEventListener('mousemove', _ganttDragMove);
   document.addEventListener('mouseup',   _ganttDragUp);
 }
@@ -9278,8 +9274,8 @@ function _ganttDragMove(e) {
   var d = _ganttDrag;
   var scroll = d.scrollEl;
   var dx = e.clientX - d.startX;
-  // With fixed px-per-day layout: 1 day = pxPerDay pixels — precise drag mapping
-  var daysDelta = Math.round(dx / d.pxPerDay);
+  var trackW = scroll ? Math.max(scroll.scrollWidth - d.nameColW, 200) : 600;
+  var daysDelta = Math.round(dx / trackW * d.totalDays);
   if (Math.abs(dx) > 3) d.hasMoved = true;
 
   var newStart = d.origStartDay, newEnd = d.origEndDay;
