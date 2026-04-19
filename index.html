@@ -10101,11 +10101,18 @@ async function savePtProject() {
   var res;
   if (_ptModalMode === 'edit-project' && _ptCurrentId) {
     res = await _supabase.from('projects').update(payload).eq('id', _ptCurrentId).eq('user_id', _currentUser.id).select();
-    if (!res.error && res.data && res.data[0]) {
-      var idx = _ptProjects.findIndex(function(p){ return p.id === _ptCurrentId; });
-      if (idx >= 0) _ptProjects[idx] = res.data[0];
-      res = { data: res.data[0], error: null };
+    if (res.error) { showToast('Error: ' + res.error.message); return; }
+    // Always apply the new values locally — don't depend on res.data being non-empty
+    var idx = _ptProjects.findIndex(function(p){ return p.id === _ptCurrentId; });
+    if (idx >= 0) {
+      _ptProjects[idx] = Object.assign({}, _ptProjects[idx], payload, res.data && res.data[0] ? res.data[0] : {});
     }
+    closePtModal();
+    renderPtList();
+    if (typeof renderGlobalGantt === 'function') renderGlobalGantt();
+    selectPtProject(_ptCurrentId);
+    showToast('\u2713 Project saved');
+    return;
   } else {
     payload.created_at = new Date().toISOString();
     res = await _supabase.from('projects').insert(payload).select().single();
