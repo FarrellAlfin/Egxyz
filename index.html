@@ -1607,11 +1607,12 @@ input[type=number]{-moz-appearance:textfield}
 .pt-kpi.accent .pt-kpi-spark b{background:rgba(255,255,255,.3)}
 .pt-kpi.accent .pt-kpi-spark b.a{background:var(--amber-mid)}
 /* ─── PT View Toolbar ─── */
-.pt-view-tools{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.pt-seg{display:inline-flex;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:2px}
-.pt-seg button{font-size:13px;padding:5px 12px;border-radius:5px;color:var(--ink-mid);font-weight:500;display:flex;align-items:center;gap:6px;transition:all .12s;cursor:pointer}
+.pt-view-tools{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px}
+.pt-seg{display:inline-flex;background:transparent;border:none;border-radius:var(--radius-sm);padding:2px;gap:2px}
+.pt-seg button{font-size:13px;padding:5px 12px;border-radius:5px;color:var(--ink-mid);font-weight:500;display:flex;align-items:center;gap:6px;transition:all .12s;cursor:pointer;border:none;background:none}
 .pt-seg button.active{background:var(--ink);color:#fff}
 .pt-seg button:hover:not(.active){background:var(--surface-container)}
+.pt-view-tools-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
 /* ─── PT Board (Kanban) ─── */
 .pt-board{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
 .pt-col{background:var(--cream-dark);border:1px solid var(--border);border-radius:10px;padding:10px;min-height:200px;display:flex;flex-direction:column;gap:8px}
@@ -3109,30 +3110,31 @@ var RateLimiter = (function() {
           <!-- View Toolbar -->
           <div class="pt-view-tools">
             <div class="pt-seg" id="pt-view-seg">
-              <button data-v="board" onclick="setPtView('board')" class="active">▦ Board</button>
+              <button data-v="timeline" onclick="setPtView('timeline')" class="active">⎯ Timeline</button>
               <button data-v="list" onclick="setPtView('list')">≡ List</button>
               <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
-              <button data-v="timeline" onclick="setPtView('timeline')">⎯ Timeline</button>
+              <button data-v="board" onclick="setPtView('board')">▦ Board</button>
             </div>
-            <select id="pt-gantt-sort" onchange="if(window._ptViewMode==='timeline')renderGlobalGantt()" style="font-size:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:var(--white);color:var(--ink);cursor:pointer">
+            <div class="pt-view-tools-sep"></div>
+            <select id="pt-gantt-sort" onchange="if(window._ptViewMode==='timeline')renderGlobalGantt()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
               <option value="created">Sort: Date added</option>
               <option value="name">Sort: Name</option>
               <option value="deadline">Sort: Deadline</option>
             </select>
             <button class="pt-add-btn" style="margin-left:auto" onclick="openPtModal('new-project')">+ New project</button>
           </div>
-          <!-- Board view (default) -->
-          <div id="pt-view-board"></div>
-          <!-- List view -->
-          <div id="pt-view-list" style="display:none"></div>
-          <!-- Gallery view -->
-          <div id="pt-view-gallery" style="display:none"></div>
-          <!-- Timeline view (existing gantt) -->
-          <div id="pt-view-timeline" style="display:none">
+          <!-- Timeline view (default) -->
+          <div id="pt-view-timeline">
             <div id="pt-global-gantt-wrap" class="pt-gantt-view">
               <div id="pt-global-gantt"></div>
             </div>
           </div>
+          <!-- List view -->
+          <div id="pt-view-list" style="display:none"></div>
+          <!-- Gallery view -->
+          <div id="pt-view-gallery" style="display:none"></div>
+          <!-- Board view -->
+          <div id="pt-view-board" style="display:none"></div>
           <!-- Legacy compat (hidden) -->
           <div id="pt-projects-list" style="display:none"></div>
         </div>
@@ -7570,7 +7572,7 @@ async function ptLoadProjectData(projectId) {
 
 // ─── RENDER FUNCTIONS ───
 
-var _ptViewMode = 'board';
+var _ptViewMode = 'timeline';
 
 function setPtView(v) {
   _ptViewMode = v;
@@ -10098,10 +10100,11 @@ async function savePtProject() {
   };
   var res;
   if (_ptModalMode === 'edit-project' && _ptCurrentId) {
-    res = await _supabase.from('projects').update(payload).eq('id', _ptCurrentId).eq('user_id', _currentUser.id).select().single();
-    if (!res.error && res.data) {
+    res = await _supabase.from('projects').update(payload).eq('id', _ptCurrentId).eq('user_id', _currentUser.id).select();
+    if (!res.error && res.data && res.data[0]) {
       var idx = _ptProjects.findIndex(function(p){ return p.id === _ptCurrentId; });
-      if (idx >= 0) _ptProjects[idx] = res.data;
+      if (idx >= 0) _ptProjects[idx] = res.data[0];
+      res = { data: res.data[0], error: null };
     }
   } else {
     payload.created_at = new Date().toISOString();
@@ -10317,8 +10320,10 @@ async function togglePtTask(i) {
   if (!_currentUser) return;
   var ts = window._ptTasks; if (!ts || !ts[i]) return;
   ts[i].status = ts[i].status === 'done' ? 'todo' : 'done';
-  await _supabase.from('project_tasks').update({status: ts[i].status}).eq('id', ts[i].id).eq('user_id', _currentUser.id);
+  // Optimistic update — re-render immediately, then persist
   renderPtTasks();
+  renderPtOverview();
+  await _supabase.from('project_tasks').update({status: ts[i].status}).eq('id', ts[i].id).eq('user_id', _currentUser.id);
 }
 
 var _ptEditIdx = null; // index of item being edited
@@ -10441,11 +10446,11 @@ async function updatePtTask() {
   _ptPendingAttachments = [];
   var selectedAssignees = Array.from(document.querySelectorAll('[name="ptm-assignee-cb"]:checked')).map(function(cb){ return cb.value; });
   var payload = { title: title, assignee: selectedAssignees.length ? JSON.stringify(selectedAssignees) : null, due_date: g('ptm-task-date') || null, status: g('ptm-task-status'), priority: g('ptm-task-priority'), notes: g('ptm-task-notes'), attachments: JSON.stringify(merged) };
-  var res = await _supabase.from('project_tasks').update(payload).eq('id', ts[window._ptEditTaskIdx].id).eq('user_id', _currentUser.id).select().single();
+  var res = await _supabase.from('project_tasks').update(payload).eq('id', ts[window._ptEditTaskIdx].id).eq('user_id', _currentUser.id).select();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
-  ts[window._ptEditTaskIdx] = res.data;
+  if (res.data && res.data[0]) ts[window._ptEditTaskIdx] = res.data[0];
   window._ptEditTaskIdx = null;
-  closePtModal(); renderPtTasks(); showToast('\u2713 Task updated');
+  closePtModal(); renderPtTasks(); renderPtOverview(); showToast('\u2713 Task updated');
 }
 
 async function cyclePtBillingStatus(i) {
