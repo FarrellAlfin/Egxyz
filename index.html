@@ -1588,6 +1588,91 @@ input[type=number]{-moz-appearance:textfield}
 .pt-gantt-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .pt-gantt-title{font-size:13px;font-weight:700;color:var(--ink)}
 .pt-gantt-today-note{font-size:11px;color:#E8594A;display:flex;align-items:center;gap:5px}
+/* ─── PT KPI Strip ─── */
+.pt-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.pt-kpi{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.pt-kpi-lbl{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.pt-kpi-trend{font-family:var(--font-mono);color:var(--tertiary);background:rgba(0,150,104,.1);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;text-transform:none;letter-spacing:0}
+.pt-kpi-trend.down{background:var(--red-light);color:var(--red)}
+.pt-kpi-v{font-family:var(--font-display);font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:6px}
+.pt-kpi-v small{font-size:15px;color:var(--ink-light);font-weight:600;margin-left:2px}
+.pt-kpi-sub{font-size:12px;color:var(--ink-light)}
+.pt-kpi-spark{position:absolute;right:14px;bottom:12px;display:flex;gap:2px;align-items:flex-end;height:22px}
+.pt-kpi-spark b{width:4px;background:var(--ink);border-radius:1px;display:block}
+.pt-kpi-spark b.a{background:var(--tertiary)}
+.pt-kpi.accent{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pt-kpi.accent .pt-kpi-lbl{color:rgba(255,255,255,.55)}
+.pt-kpi.accent .pt-kpi-sub{color:rgba(255,255,255,.7)}
+.pt-kpi.accent .pt-kpi-trend{background:var(--tertiary);color:#fff}
+.pt-kpi.accent .pt-kpi-spark b{background:rgba(255,255,255,.3)}
+.pt-kpi.accent .pt-kpi-spark b.a{background:var(--amber-mid)}
+/* ─── PT View Toolbar ─── */
+.pt-view-tools{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.pt-seg{display:inline-flex;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:2px}
+.pt-seg button{font-size:13px;padding:5px 12px;border-radius:5px;color:var(--ink-mid);font-weight:500;display:flex;align-items:center;gap:6px;transition:all .12s;cursor:pointer}
+.pt-seg button.active{background:var(--ink);color:#fff}
+.pt-seg button:hover:not(.active){background:var(--surface-container)}
+/* ─── PT Board (Kanban) ─── */
+.pt-board{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.pt-col{background:var(--cream-dark);border:1px solid var(--border);border-radius:10px;padding:10px;min-height:200px;display:flex;flex-direction:column;gap:8px}
+.pt-col-hdr{display:flex;align-items:center;gap:8px;padding:2px 4px 8px}
+.pt-col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pt-col-dot.planning{background:var(--blue)}
+.pt-col-dot.active{background:var(--tertiary);box-shadow:0 0 0 3px rgba(0,150,104,.2)}
+.pt-col-dot.on_hold{background:#F4A73A}
+.pt-col-dot.in_review{background:#F4A73A}
+.pt-col-dot.completed{background:var(--ink)}
+.pt-col-title{font-size:13px;font-weight:700;color:var(--ink)}
+.pt-col-count{font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);background:var(--white);padding:1px 7px;border-radius:100px;font-weight:600}
+.pt-col-add-btn{margin-left:auto;color:var(--ink-light);font-size:16px;line-height:1;padding:2px 6px;border-radius:4px;cursor:pointer;background:none;border:none}
+.pt-col-add-btn:hover{background:var(--white);color:var(--ink)}
+.pk{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.pk:hover{transform:translateY(-1px);box-shadow:var(--shadow);border-color:var(--tertiary)}
+.pk-client{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:6px}
+.pk-title{font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1.3;margin-bottom:10px}
+.pk-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink-light)}
+.pk-meta-l{font-family:var(--font-mono);font-weight:600}
+.pk-meta-l.late{color:var(--red)}
+.pk-budget{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--ink)}
+/* ─── PT Gallery ─── */
+.pt-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pg{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:all .18s;cursor:pointer;display:flex;flex-direction:column}
+.pg:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--tertiary)}
+.pg-banner{height:80px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px}
+.pg-banner-pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 80%,rgba(255,255,255,.18) 0,transparent 40%),radial-gradient(circle at 80% 20%,rgba(255,255,255,.12) 0,transparent 40%);opacity:.8}
+.pg-banner-status{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.92);color:var(--ink);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:100px}
+.pg-banner-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--tertiary)}
+.pg-banner-initials{position:relative;font-family:var(--font-display);font-weight:800;font-size:28px;color:#fff;letter-spacing:-.02em;opacity:.92}
+.pg-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:8px}
+.pg-client{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.pg-title{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--ink);line-height:1.3}
+.pg-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:auto;padding-top:10px;border-top:1px solid var(--border)}
+.pg-stat{padding:4px;border-right:1px dashed var(--border)}
+.pg-stat:last-child{border-right:none}
+.pg-stat-l{font-family:var(--font-mono);font-size:9px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:2px}
+.pg-stat-v{font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.pg-stat-v.acc{color:var(--tertiary)}
+.pg-ft{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--cream-dark);border-top:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);font-weight:600}
+/* ─── PT List Table ─── */
+.pt-tbl{background:var(--white);border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.pt-tbl-hdr{display:grid;grid-template-columns:2fr 1fr 110px 100px 130px;gap:12px;padding:10px 18px;background:var(--cream-dark);border-bottom:1.5px solid var(--border);font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em}
+.pt-tbl-row{display:grid;grid-template-columns:2fr 1fr 110px 100px 130px;gap:12px;padding:14px 18px;align-items:center;border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.pt-tbl-row:hover{background:var(--cream-dark)}
+.pt-tbl-row:last-child{border-bottom:none}
+.pt-tbl-name{display:flex;align-items:center;gap:10px;min-width:0}
+.pt-tbl-sw{width:4px;height:28px;border-radius:2px;flex-shrink:0}
+.pt-tbl-pname{font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pt-tbl-psub{font-size:11px;color:var(--ink-light);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pt-tbl-client{font-size:13px;color:var(--ink-mid)}
+.pt-tbl-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:100px}
+.pt-tbl-status.active{background:var(--amber-light);color:var(--tertiary)}
+.pt-tbl-status.planning{background:var(--blue-light);color:var(--blue)}
+.pt-tbl-status.on_hold,.pt-tbl-status.in_review{background:#FEF3C7;color:#92400E}
+.pt-tbl-status.completed{background:var(--surface-container);color:var(--ink-mid)}
+.pt-tbl-status::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pt-tbl-budget{font-family:var(--font-mono);font-weight:700;font-size:13px;color:var(--ink)}
+.pt-tbl-dates{font-family:var(--font-mono);font-size:11px;color:var(--ink-mid)}
+.pt-tbl-dates.late{color:var(--red);font-weight:600}
 .gantt-today-line{position:absolute;top:0;bottom:0;width:1.5px;background:var(--ink);opacity:.7;z-index:5;pointer-events:none}
 .gantt-hdl{position:absolute;top:0;height:100%;width:9px;cursor:ew-resize;background:rgba(255,255,255,0.82);display:flex;align-items:center;justify-content:center;transition:background .1s;z-index:4}
 .gantt-hdl:hover,.gantt-hdl:active{background:rgba(255,255,255,1);box-shadow:0 0 0 1.5px rgba(0,0,0,.18)}
@@ -3019,24 +3104,37 @@ var RateLimiter = (function() {
         </div>
         <!-- Project list view -->
         <div id="pt-list-view">
-          <div class="pt-list-header">
-            <span class="pt-list-title" id="pt-project-count">0 projects</span>
-            <div style="display:flex;gap:8px;align-items:center">
-              <select id="pt-gantt-sort" onchange="renderGlobalGantt()" style="font-size:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 8px;font-family:var(--font-body);background:var(--white);color:var(--ink);cursor:pointer">
-                <option value="created">Sort: Date added</option>
-                <option value="name">Sort: Name</option>
-                <option value="deadline">Sort: Deadline</option>
-              </select>
-              <button class="btn-outline" id="pt-list-toggle-btn" style="font-size:12px;padding:5px 12px" onclick="togglePtListView()">☰ List view</button>
-              <button class="pt-add-btn" onclick="openPtModal('new-project')">+ New project</button>
+          <!-- KPI Strip -->
+          <div class="pt-kpis" id="pt-kpi-strip"></div>
+          <!-- View Toolbar -->
+          <div class="pt-view-tools">
+            <div class="pt-seg" id="pt-view-seg">
+              <button data-v="board" onclick="setPtView('board')" class="active">▦ Board</button>
+              <button data-v="list" onclick="setPtView('list')">≡ List</button>
+              <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
+              <button data-v="timeline" onclick="setPtView('timeline')">⎯ Timeline</button>
+            </div>
+            <select id="pt-gantt-sort" onchange="if(window._ptViewMode==='timeline')renderGlobalGantt()" style="font-size:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:var(--white);color:var(--ink);cursor:pointer">
+              <option value="created">Sort: Date added</option>
+              <option value="name">Sort: Name</option>
+              <option value="deadline">Sort: Deadline</option>
+            </select>
+            <button class="pt-add-btn" style="margin-left:auto" onclick="openPtModal('new-project')">+ New project</button>
+          </div>
+          <!-- Board view (default) -->
+          <div id="pt-view-board"></div>
+          <!-- List view -->
+          <div id="pt-view-list" style="display:none"></div>
+          <!-- Gallery view -->
+          <div id="pt-view-gallery" style="display:none"></div>
+          <!-- Timeline view (existing gantt) -->
+          <div id="pt-view-timeline" style="display:none">
+            <div id="pt-global-gantt-wrap" class="pt-gantt-view">
+              <div id="pt-global-gantt"></div>
             </div>
           </div>
-          <!-- Project list (hidden by default, gantt is default) -->
-          <div id="pt-projects-list" style="display:none"><div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div></div>
-          <!-- Global gantt (shown by default) -->
-          <div id="pt-global-gantt-wrap" class="pt-gantt-view">
-            <div id="pt-global-gantt"></div>
-          </div>
+          <!-- Legacy compat (hidden) -->
+          <div id="pt-projects-list" style="display:none"></div>
         </div>
         <!-- Project detail view (hidden until project selected) -->
         <div id="pt-detail-view" style="display:none">
@@ -7472,29 +7570,201 @@ async function ptLoadProjectData(projectId) {
 
 // ─── RENDER FUNCTIONS ───
 
+var _ptViewMode = 'board';
+
+function setPtView(v) {
+  _ptViewMode = v;
+  document.querySelectorAll('#pt-view-seg button').forEach(function(b){
+    b.classList.toggle('active', b.dataset.v === v);
+  });
+  ['board','list','gallery','timeline'].forEach(function(name){
+    var el = document.getElementById('pt-view-' + name);
+    if (el) el.style.display = name === v ? '' : 'none';
+  });
+  renderPtCurrentView();
+}
+
+function renderPtCurrentView() {
+  renderPtKpis();
+  if (_ptViewMode === 'board') renderPtBoard();
+  else if (_ptViewMode === 'list') renderPtListTable();
+  else if (_ptViewMode === 'gallery') renderPtGallery();
+  else if (_ptViewMode === 'timeline') renderGlobalGantt();
+}
+
 function renderPtList() {
-  var list = document.getElementById('pt-projects-list');
-  var count = document.getElementById('pt-project-count');
-  if (count) count.textContent = _ptProjects.length + ' project' + (_ptProjects.length !== 1 ? 's' : '');
-  if (!_ptProjects.length) {
-    if (list) list.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+  renderPtCurrentView();
+}
+
+function renderPtKpis() {
+  var el = document.getElementById('pt-kpi-strip');
+  if (!el) return;
+  var projects = _ptProjects || [];
+  var active = projects.filter(function(p){ return p.status === 'active'; });
+  var planning = projects.filter(function(p){ return p.status === 'planning'; });
+  var completed = projects.filter(function(p){ return p.status === 'completed'; });
+  var totalBudget = projects.reduce(function(s,p){ return s + (parseFloat(p.budget)||0); }, 0);
+  var today = new Date(); today.setHours(0,0,0,0);
+  var upcoming = projects.filter(function(p){ return p.end_date && new Date(p.end_date+'T00:00:00') >= today; });
+  upcoming.sort(function(a,b){ return a.end_date < b.end_date ? -1 : 1; });
+  var nxt = upcoming[0];
+  var daysLeft = nxt ? Math.round((new Date(nxt.end_date+'T00:00:00') - today) / 86400000) : null;
+  var fmtK = function(n){ return n >= 1000 ? '$' + (n/1000).toFixed(n%1000===0?0:1) + 'k' : ('$'+n); };
+  el.innerHTML =
+    '<div class="pt-kpi">' +
+      '<div class="pt-kpi-lbl">Projects <span class="pt-kpi-trend">' + active.length + ' active</span></div>' +
+      '<div class="pt-kpi-v">' + projects.length + '</div>' +
+      '<div class="pt-kpi-sub">' + planning.length + ' planning · ' + completed.length + ' done</div>' +
+      '<div class="pt-kpi-spark"><b style="height:40%"></b><b style="height:55%"></b><b style="height:50%"></b><b style="height:70%"></b><b style="height:65%"></b><b class="a" style="height:' + Math.min(100, projects.length * 12 + 40) + '%"></b></div>' +
+    '</div>' +
+    '<div class="pt-kpi accent">' +
+      '<div class="pt-kpi-lbl">Total pipeline <span class="pt-kpi-trend">budget</span></div>' +
+      '<div class="pt-kpi-v">' + (totalBudget >= 1000 ? '$' + (totalBudget/1000).toFixed(1) + '<small>k</small>' : (totalBudget ? '$'+totalBudget : '—')) + '</div>' +
+      '<div class="pt-kpi-sub">Across ' + projects.length + ' project' + (projects.length!==1?'s':'') + '</div>' +
+      '<div class="pt-kpi-spark"><b style="height:30%"></b><b style="height:50%"></b><b style="height:45%"></b><b class="a" style="height:70%"></b><b class="a" style="height:80%"></b><b class="a" style="height:90%"></b></div>' +
+    '</div>' +
+    '<div class="pt-kpi">' +
+      '<div class="pt-kpi-lbl">Completed <span class="pt-kpi-trend">' + completed.length + ' done</span></div>' +
+      '<div class="pt-kpi-v">' + completed.length + '</div>' +
+      '<div class="pt-kpi-sub">Shipped this quarter</div>' +
+      '<div class="pt-kpi-spark"><b style="height:20%"></b><b style="height:35%"></b><b style="height:55%"></b><b style="height:60%"></b><b style="height:70%"></b><b class="a" style="height:80%"></b></div>' +
+    '</div>' +
+    (nxt ?
+      '<div class="pt-kpi">' +
+        '<div class="pt-kpi-lbl">Next deadline <span class="pt-kpi-trend' + (daysLeft !== null && daysLeft <= 7 ? ' down' : '') + '">' + (daysLeft !== null ? daysLeft + 'd' : '—') + '</span></div>' +
+        '<div class="pt-kpi-v">' + (nxt.end_date ? nxt.end_date.slice(5,10).replace('-','/') : '—') + '</div>' +
+        '<div class="pt-kpi-sub">' + escapeHTML(nxt.name||'') + (nxt.client_name ? ' · '+escapeHTML(nxt.client_name) : '') + '</div>' +
+        '<div class="pt-kpi-spark"><b style="height:90%"></b><b style="height:75%"></b><b style="height:60%"></b><b style="height:45%"></b><b style="height:30%"></b><b class="a" style="height:20%"></b></div>' +
+      '</div>'
+    :
+      '<div class="pt-kpi"><div class="pt-kpi-lbl">Next deadline</div><div class="pt-kpi-v">—</div><div class="pt-kpi-sub">No upcoming deadlines</div></div>'
+    );
+}
+
+function renderPtBoard() {
+  var el = document.getElementById('pt-view-board');
+  if (!el) return;
+  var projects = _ptProjects || [];
+  if (!projects.length) {
+    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
     return;
   }
-  if (list) list.innerHTML = _ptProjects.map(function(p) {
-    var statusClass = 'pt-status-' + (p.status || 'planning').replace(' ','_');
-    var statusLabel = (p.status || 'planning').replace('_',' ');
-    var dates = [p.start_date, p.end_date].filter(Boolean).map(function(d){ return d.slice(0,10); }).join(' → ');
-    return '<div class="pt-card' + (p.id === _ptCurrentId ? ' active' : '') + '" onclick="selectPtProject(\'' + p.id + '\')">' +
-      '<div class="pt-card-name">' + escapeHTML(p.name) + '</div>' +
-      (p.client_name ? '<div class="pt-card-client">' + escapeHTML(p.client_name) + '</div>' : '') +
-      '<div class="pt-card-meta"><span class="pt-status ' + statusClass + '">' + escapeHTML(statusLabel) + '</span>' +
-      (dates ? '<span style="font-size:11px;color:var(--ink-light)">' + escapeHTML(dates) + '</span>' : '') +
-      '</div></div>';
-  }).join('');
-  // Keep gantt in sync
-  if (document.getElementById('pt-global-gantt-wrap') && document.getElementById('pt-global-gantt-wrap').style.display !== 'none') {
-    renderGlobalGantt();
+  var cols = [
+    { key:'planning', label:'Planning', dot:'planning' },
+    { key:'active',   label:'Active',   dot:'active' },
+    { key:'in_review',label:'In review',dot:'in_review' },
+    { key:'completed',label:'Completed',dot:'completed' }
+  ];
+  el.innerHTML = '<div class="pt-board">' + cols.map(function(s) {
+    var items = projects.filter(function(p){ return (p.status||'planning') === s.key; });
+    var today = new Date(); today.setHours(0,0,0,0);
+    return '<div class="pt-col">' +
+      '<div class="pt-col-hdr">' +
+        '<span class="pt-col-dot ' + s.dot + '"></span>' +
+        '<span class="pt-col-title">' + s.label + '</span>' +
+        '<span class="pt-col-count">' + items.length + '</span>' +
+        '<button class="pt-col-add-btn" onclick="openPtModal(\'new-project\')">+</button>' +
+      '</div>' +
+      (items.length ? items.map(function(p) {
+        var color = getProjectColor(p.id);
+        var isLate = p.end_date && new Date(p.end_date+'T00:00:00') < today;
+        var dL = p.end_date ? Math.round((new Date(p.end_date+'T00:00:00') - today) / 86400000) : null;
+        var dateLbl = p.end_date ? (isLate ? 'Overdue · '+p.end_date.slice(5,10) : 'Due '+p.end_date.slice(5,10)+(dL!==null&&dL<=14?' · '+dL+'d':'')) : (p.start_date?'Starts '+p.start_date.slice(5,10):'No dates');
+        return '<div class="pk" onclick="selectPtProject(\'' + p.id + '\')">' +
+          '<div style="width:100%;height:3px;border-radius:2px;background:' + color + ';margin-bottom:8px"></div>' +
+          (p.client_name ? '<div class="pk-client">'+escapeHTML(p.client_name)+'</div>' : '') +
+          '<div class="pk-title">'+escapeHTML(p.name)+'</div>' +
+          '<div class="pk-meta">' +
+            '<span class="pk-meta-l'+(isLate?' late':'')+'">'+escapeHTML(dateLbl)+'</span>' +
+            (p.budget?'<span class="pk-budget">$'+Number(p.budget).toLocaleString()+'</span>':'') +
+          '</div>' +
+        '</div>';
+      }).join('') : '<div style="text-align:center;padding:20px 10px;color:var(--ink-light);font-size:12px">No projects</div>') +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function renderPtGallery() {
+  var el = document.getElementById('pt-view-gallery');
+  if (!el) return;
+  var projects = _ptProjects || [];
+  if (!projects.length) {
+    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+    return;
   }
+  var banners = [
+    'linear-gradient(135deg,#0a2e24 0%,#009668 100%)',
+    'linear-gradient(135deg,#1a1a2e 0%,#1D4ED8 100%)',
+    'linear-gradient(135deg,#2a1a0a 0%,#C8621A 100%)',
+    'linear-gradient(135deg,#0d1a2e 0%,#1967D2 100%)',
+    'linear-gradient(135deg,#2e0d1a 0%,#BA1A1A 100%)',
+    'linear-gradient(135deg,#2e2e0d 0%,#D97706 100%)',
+    'linear-gradient(135deg,#1a0a2e 0%,#7C3AED 100%)'
+  ];
+  var stLbl = { planning:'Planning', active:'Active', in_review:'In Review', on_hold:'On Hold', completed:'Shipped' };
+  var today = new Date(); today.setHours(0,0,0,0);
+  el.innerHTML = '<div class="pt-gallery">' + projects.map(function(p,i) {
+    var bg = banners[i % banners.length];
+    var ini = (p.name||'P').split(' ').slice(0,2).map(function(w){ return w[0]||''; }).join('').toUpperCase();
+    var sl = stLbl[p.status||'planning'] || (p.status||'Planning');
+    var isLate = p.end_date && new Date(p.end_date+'T00:00:00') < today;
+    var dlbl = p.end_date ? p.end_date.slice(5,10) : (p.start_date ? 'Starts '+p.start_date.slice(5,10) : '—');
+    return '<div class="pg" onclick="selectPtProject(\''+p.id+'\')">' +
+      '<div class="pg-banner" style="background:'+bg+'">' +
+        '<div class="pg-banner-pattern"></div>' +
+        '<div class="pg-banner-status">'+escapeHTML(sl)+'</div>' +
+        '<div class="pg-banner-initials">'+escapeHTML(ini)+'</div>' +
+      '</div>' +
+      '<div class="pg-body">' +
+        (p.client_name?'<div class="pg-client">'+escapeHTML(p.client_name)+'</div>':'') +
+        '<div class="pg-title">'+escapeHTML(p.name)+'</div>' +
+        (p.description?'<div style="font-size:12px;color:var(--ink-mid);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+escapeHTML(p.description)+'</div>':'') +
+        '<div class="pg-stats">' +
+          '<div class="pg-stat"><div class="pg-stat-l">Budget</div><div class="pg-stat-v acc">'+(p.budget?'$'+Number(p.budget).toLocaleString():'—')+'</div></div>' +
+          '<div class="pg-stat"><div class="pg-stat-l">Deadline</div><div class="pg-stat-v">'+escapeHTML(dlbl)+'</div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pg-ft">' +
+        '<span>'+escapeHTML(sl)+'</span>' +
+        '<span class="'+(isLate?'late':'')+'">'+escapeHTML(dlbl)+'</span>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function renderPtListTable() {
+  var el = document.getElementById('pt-view-list');
+  if (!el) return;
+  var projects = _ptProjects || [];
+  if (!projects.length) {
+    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+    return;
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var stLbl = { planning:'Planning', active:'Active', in_review:'In Review', on_hold:'On Hold', completed:'Shipped' };
+  el.innerHTML = '<div class="pt-tbl">' +
+    '<div class="pt-tbl-hdr"><span>Project</span><span>Client</span><span>Status</span><span>Budget</span><span>Deadline</span></div>' +
+    projects.map(function(p) {
+      var color = getProjectColor(p.id);
+      var sk = (p.status||'planning');
+      var sl = stLbl[sk] || sk;
+      var isLate = p.end_date && new Date(p.end_date+'T00:00:00') < today;
+      var dL = p.end_date ? Math.round((new Date(p.end_date+'T00:00:00') - today) / 86400000) : null;
+      var dlbl = p.end_date ? p.end_date.slice(5,10)+(dL!==null?(isLate?' · overdue':' · '+dL+'d'):'') : '—';
+      return '<div class="pt-tbl-row" onclick="selectPtProject(\''+p.id+'\')">' +
+        '<div class="pt-tbl-name">' +
+          '<span class="pt-tbl-sw" style="background:'+color+'"></span>' +
+          '<div><div class="pt-tbl-pname">'+escapeHTML(p.name)+'</div>' +
+          (p.description?'<div class="pt-tbl-psub">'+escapeHTML(p.description.slice(0,45))+(p.description.length>45?'…':'')+'</div>':'') +
+          '</div>' +
+        '</div>' +
+        '<div class="pt-tbl-client">'+escapeHTML(p.client_name||'—')+'</div>' +
+        '<div><span class="pt-tbl-status '+sk+'">'+escapeHTML(sl)+'</span></div>' +
+        '<div class="pt-tbl-budget">'+(p.budget?'$'+Number(p.budget).toLocaleString():'—')+'</div>' +
+        '<div class="pt-tbl-dates'+(isLate?' late':'')+'">'+escapeHTML(dlbl)+'</div>' +
+      '</div>';
+    }).join('') +
+  '</div>';
 }
 
 function selectPtProject(id) {
@@ -8696,15 +8966,8 @@ function toggleGlobalGantt() {
 }
 
 function togglePtListView() {
-  var listEl = document.getElementById('pt-projects-list');
-  var ganttEl = document.getElementById('pt-global-gantt-wrap');
-  var btn = document.getElementById('pt-list-toggle-btn');
-  if (!listEl || !ganttEl) return;
-  var listVisible = listEl.style.display !== 'none';
-  listEl.style.display = listVisible ? 'none' : '';
-  ganttEl.style.display = listVisible ? '' : 'none';
-  if (btn) btn.textContent = listVisible ? '\u2630 List view' : '\uD83D\uDCC5 Gantt view';
-  if (!listVisible) renderGlobalGantt();
+  // Redirect to timeline view in new UI
+  setPtView('timeline');
 }
 
 function _buildGanttRuler(rangeStart, totalDays, months, todayPct) {
