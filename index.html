@@ -700,20 +700,20 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .hs-sub{font-size:11px;margin-top:3px}
 .hs-sub.g{color:var(--sage)}.hs-sub.w{color:var(--amber)}.hs-sub.r{color:var(--red)}
 .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.kc{background:var(--cream-dark);border-radius:var(--radius);overflow:hidden;transition:box-shadow .15s,background .15s}
+.kc{background:var(--cream-dark);border-radius:var(--radius);overflow:visible;transition:box-shadow .15s,background .15s}
 .kc.drag-over{background:var(--amber-light);box-shadow:0 0 0 2px var(--amber-mid)}
 .kc-stripe{height:3px}
 .kc-header{padding:10px 12px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .kc-title{font-size:11px;font-weight:600;color:var(--ink)}
 .kc-cnt{font-size:10px;background:var(--white);border:1px solid var(--border);color:var(--ink-light);padding:1px 7px;border-radius:20px;font-family:var(--font-mono)}
 .kc-body{padding:8px;min-height:140px}
-.kk-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px 11px 10px;margin-bottom:14px;cursor:grab;transition:box-shadow .15s,transform .15s;position:relative;overflow:visible}
+.kk-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:18px 11px 10px;margin-bottom:14px;cursor:grab;transition:box-shadow .15s,transform .15s;position:relative;overflow:visible}
 .kk-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .kk-card:active{cursor:grabbing}
-.kk-cb{position:absolute;top:7px;width:18px;height:18px;border-radius:50%;background:var(--white);border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-mid);z-index:2;transition:transform .15s,box-shadow .15s;padding:0;line-height:1}
-.kk-cb:hover{transform:scale(1.15);box-shadow:0 2px 7px rgba(0,0,0,0.15)}
-.kk-cb-edit{right:30px;left:auto}.kk-cb-edit:hover{background:var(--amber-light);color:var(--amber);border-color:var(--amber)}
-.kk-cb-del{right:8px}.kk-cb-del:hover{background:#fef2f2;color:#dc2626;border-color:#fca5a5}
+.kk-cb{position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--white);border:1.5px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-mid);z-index:2;transition:transform .15s,box-shadow .15s;padding:0;line-height:1}
+.kk-cb:hover{transform:scale(1.18);box-shadow:0 3px 10px rgba(0,0,0,0.15)}
+.kk-cb-edit{left:-9px}.kk-cb-edit:hover{background:var(--amber-light);color:var(--amber);border-color:var(--amber)}
+.kk-cb-del{right:-9px}.kk-cb-del:hover{background:#fef2f2;color:#dc2626;border-color:#fca5a5}
 .kk-client{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px;padding-right:48px}
 .kk-project{font-size:11px;color:var(--ink-light);margin-bottom:7px;line-height:1.35}
 .kk-foot{display:flex;justify-content:space-between;align-items:center}
@@ -7803,7 +7803,7 @@ function renderPtMilestones() {
   }).join('');
 
   el.innerHTML =
-    '<div style="overflow-x:auto;cursor:default" id="ms-gantt-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
+    '<div style="overflow-x:auto;overflow-y:visible;width:100%;max-width:100%;cursor:default" id="ms-gantt-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
     '<table style="border-collapse:collapse;table-layout:fixed;width:' + (nameColW + barColW) + 'px">' +
     '<colgroup><col style="width:' + nameColW + 'px"><col style="width:' + barColW + 'px"></colgroup>' +
     '<thead>' +
@@ -8831,7 +8831,7 @@ function renderGlobalGantt() {
   }).join('');
 
   el.innerHTML =
-    '<div style="overflow-x:auto;cursor:default" id="gg-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
+    '<div style="overflow-x:auto;overflow-y:visible;width:100%;max-width:100%;cursor:default" id="gg-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '" data-px-per-day="' + PX_PER_DAY + '">' +
     '<table style="border-collapse:collapse;table-layout:fixed;width:' + (nameColW + barColW) + 'px">' +
     '<colgroup><col style="width:' + nameColW + 'px"><col style="width:' + barColW + 'px"></colgroup>' +
     '<thead>' +
