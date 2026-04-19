@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FreelanceKit — Run your freelance business like a pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Inter+Tight:wght@700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -49,7 +49,7 @@
   --purple:#6D28D9;--purple-light:#EDE9FE;
   --font-display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
   --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Arial,sans-serif;
-  --font-mono:'SF Mono',ui-monospace,'Cascadia Code',Menlo,monospace;
+  --font-mono:'Inter Tight',ui-monospace,monospace;
   --radius:12px;--radius-sm:8px;
   --shadow:0 2px 16px rgba(25,28,30,0.06);
   --shadow-md:0 8px 24px rgba(25,28,30,0.06);
@@ -1589,6 +1589,11 @@ input[type=number]{-moz-appearance:textfield}
 .pt-gantt-title{font-size:13px;font-weight:700;color:var(--ink)}
 .pt-gantt-today-note{font-size:11px;color:#E8594A;display:flex;align-items:center;gap:5px}
 .gantt-today-line{position:absolute;top:0;bottom:0;width:1.5px;background:var(--ink);opacity:.7;z-index:5;pointer-events:none}
+.gantt-hdl{position:absolute;top:0;height:100%;width:9px;cursor:ew-resize;background:rgba(255,255,255,0.82);display:flex;align-items:center;justify-content:center;transition:background .1s;z-index:4}
+.gantt-hdl:hover,.gantt-hdl:active{background:rgba(255,255,255,1);box-shadow:0 0 0 1.5px rgba(0,0,0,.18)}
+.gantt-hdl::after{content:'';display:block;width:2px;height:11px;background:rgba(0,0,0,.28);border-radius:2px}
+.gantt-bar{cursor:grab;user-select:none}
+.gantt-bar:active{cursor:grabbing}
 /* Task filter bar */
 .pt-filter-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--cream);border-radius:var(--radius-sm)}
 .pt-filter-btn{padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:11px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
@@ -7792,9 +7797,9 @@ function renderPtMilestones() {
       '<div style="position:relative;height:30px;background:var(--cream-dark);border-radius:4px" id="gantt-track-' + i + '" data-ms-idx="' + i + '">' +
       todayLine +
       '<div class="gantt-bar" data-ms-idx="' + i + '" style="position:absolute;left:' + leftPct + '%;width:' + widthPct + '%;height:100%;background:' + barColor + ';border-radius:4px;cursor:grab;display:flex;align-items:center;min-width:8px;box-sizing:border-box;z-index:1" onmousedown="ganttBarDown(event,' + i + ',\'move\')" onclick="if(!_ganttDrag||!_ganttDrag.hasMoved)openPtEditMilestone(' + i + ')">' +
-      '<div class="gantt-hdl" style="position:absolute;left:0;top:0;width:6px;height:100%;cursor:ew-resize;border-radius:4px 0 0 4px;background:rgba(0,0,0,.15)" onmousedown="event.stopPropagation();ganttBarDown(event,' + i + ',\'left\')"></div>' +
-      '<span style="font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;padding:0 10px">' + barLabel + '</span>' +
-      '<div class="gantt-hdl" style="position:absolute;right:0;top:0;width:6px;height:100%;cursor:ew-resize;border-radius:0 4px 4px 0;background:rgba(0,0,0,.15)" onmousedown="event.stopPropagation();ganttBarDown(event,' + i + ',\'right\')"></div>' +
+      '<div class="gantt-hdl" style="position:absolute;left:0;top:0;border-radius:4px 0 0 4px" onmousedown="event.stopPropagation();ganttBarDown(event,' + i + ',\'left\')"></div>' +
+      '<span style="font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;padding:0 12px">' + barLabel + '</span>' +
+      '<div class="gantt-hdl" style="position:absolute;right:0;top:0;border-radius:0 4px 4px 0" onmousedown="event.stopPropagation();ganttBarDown(event,' + i + ',\'right\')"></div>' +
       '</div></div>' +
       '<button class="pt-row-del" style="position:absolute;right:4px;top:50%;transform:translateY(-50%)" onclick="event.stopPropagation();deletePtItem(\'milestones\',' + i + ')">Delete</button>' +
       '</td></tr>';
@@ -8818,14 +8823,16 @@ function renderGlobalGantt() {
     return '<tr>' + nameCell +
       '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:5px 0;position:relative">' +
       todayLine +
-      '<div style="position:relative;height:28px;background:#F0EDE8;border-radius:6px;overflow:hidden;cursor:pointer" onclick="selectPtProject(\'' + p.id + '\')">' +
-      '<div style="position:absolute;left:' + leftPct + '%;width:' + widthPct + '%;height:100%;background:' + color + ';border-radius:6px;display:flex;align-items:center;padding:0 10px;min-width:6px;box-sizing:border-box;z-index:1;transition:opacity .15s" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">' +
-      '<span style="font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;letter-spacing:.01em">' + barLabel + '</span>' +
+      '<div style="position:relative;height:28px;background:#F0EDE8;border-radius:6px">' +
+      '<div class="gantt-bar" data-proj-id="' + p.id + '" style="position:absolute;left:' + leftPct + '%;width:' + widthPct + '%;height:100%;background:' + color + ';border-radius:6px;display:flex;align-items:center;min-width:8px;box-sizing:border-box;z-index:1" onmousedown="ganttBarDown(event,\'' + p.id + '\',\'move\',\'proj\')" onclick="if(!_ganttDrag||!_ganttDrag.hasMoved)selectPtProject(\'' + p.id + '\')">' +
+      '<div class="gantt-hdl" style="position:absolute;left:0;top:0;border-radius:6px 0 0 6px" onmousedown="event.stopPropagation();ganttBarDown(event,\'' + p.id + '\',\'left\',\'proj\')"></div>' +
+      '<span style="font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;letter-spacing:.01em;padding:0 12px">' + barLabel + '</span>' +
+      '<div class="gantt-hdl" style="position:absolute;right:0;top:0;border-radius:0 6px 6px 0" onmousedown="event.stopPropagation();ganttBarDown(event,\'' + p.id + '\',\'right\',\'proj\')"></div>' +
       '</div></div></td></tr>';
   }).join('');
 
   el.innerHTML =
-    '<div style="overflow-x:auto" id="gg-scroll" data-today-pct="' + (todayPct || '') + '">' +
+    '<div style="overflow-x:auto" id="gg-scroll" data-today-pct="' + (todayPct || '') + '" data-range-start="' + rangeStart.toISOString().slice(0,10) + '" data-total-days="' + totalDays + '">' +
     '<table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:600px">' +
     '<colgroup><col style="width:170px"></colgroup>' +
     '<thead>' +
@@ -9235,21 +9242,33 @@ function _ptScopeDocHTML() {
 // ── GANTT BAR DRAG ────────────────────────────────────────────────
 var _ganttDrag = null;
 
-function ganttBarDown(e, msIdx, mode) {
+// type: 'ms' = milestone (id is array index), 'proj' = project (id is UUID string)
+function ganttBarDown(e, id, mode, type) {
   if (mode === 'move' && e.button !== 0) return;
   e.preventDefault(); e.stopPropagation();
-  var scroll = document.getElementById('ms-gantt-scroll');
+  type = type || 'ms';
+  var nameColW = type === 'ms' ? 160 : 170;
+  var scroll = document.getElementById(type === 'ms' ? 'ms-gantt-scroll' : 'gg-scroll');
   if (!scroll) return;
   var rangeStart = new Date(scroll.dataset.rangeStart + 'T00:00:00');
   var totalDays  = parseInt(scroll.dataset.totalDays);
-  var ms = window._ptMilestones[msIdx];
-  var startDay = ms.start_date ? Math.round((new Date(ms.start_date + 'T00:00:00') - rangeStart) / 86400000) : 0;
-  var endDay   = ms.due_date   ? Math.round((new Date(ms.due_date   + 'T00:00:00') - rangeStart) / 86400000) : startDay;
-  _ganttDrag = { mode: mode, msIdx: msIdx,
+  var startDay, endDay;
+  if (type === 'ms') {
+    var ms = window._ptMilestones[id];
+    if (!ms) return;
+    startDay = ms.start_date ? Math.round((new Date(ms.start_date + 'T00:00:00') - rangeStart) / 86400000) : 0;
+    endDay   = ms.due_date   ? Math.round((new Date(ms.due_date   + 'T00:00:00') - rangeStart) / 86400000) : startDay;
+  } else {
+    var p = (_ptProjects || []).find(function(x){ return x.id === id; });
+    if (!p) return;
+    startDay = p.start_date ? Math.round((new Date(p.start_date + 'T00:00:00') - rangeStart) / 86400000) : 0;
+    endDay   = p.end_date   ? Math.round((new Date(p.end_date   + 'T00:00:00') - rangeStart) / 86400000) : startDay;
+  }
+  _ganttDrag = { type: type, id: id, mode: mode, nameColW: nameColW,
     origStartDay: startDay, origEndDay: endDay,
     startX: e.clientX, hasMoved: false,
     rangeStart: rangeStart, totalDays: totalDays,
-    curStartDay: startDay, curEndDay: endDay };
+    curStartDay: startDay, curEndDay: endDay, scrollEl: scroll };
   document.addEventListener('mousemove', _ganttDragMove);
   document.addEventListener('mouseup',   _ganttDragUp);
 }
@@ -9257,34 +9276,58 @@ function ganttBarDown(e, msIdx, mode) {
 function _ganttDragMove(e) {
   if (!_ganttDrag) return;
   var d = _ganttDrag;
-  var scroll = document.getElementById('ms-gantt-scroll');
-  // Width of bar area = scrollWidth minus the 160px sticky name column
-  var trackW = (scroll ? scroll.scrollWidth - 160 : 600);
+  var scroll = d.scrollEl;
+  // Pixel width of the bar area (total scroll width minus sticky name column)
+  var trackW = scroll ? Math.max(scroll.scrollWidth - d.nameColW, 200) : 600;
   var dx = e.clientX - d.startX;
   var daysDelta = Math.round(dx / trackW * d.totalDays);
   if (Math.abs(dx) > 3) d.hasMoved = true;
 
   var newStart = d.origStartDay, newEnd = d.origEndDay;
   if (d.mode === 'move') {
-    newStart = Math.max(0, d.origStartDay + daysDelta);
     var dur = d.origEndDay - d.origStartDay;
-    newEnd = newStart + dur;
+    // Clamp so bar stays within rendered range — no range extension
+    newStart = Math.max(0, Math.min(d.totalDays - 1 - dur, d.origStartDay + daysDelta));
+    newEnd   = newStart + dur;
   } else if (d.mode === 'left') {
     newStart = Math.max(0, Math.min(d.origEndDay, d.origStartDay + daysDelta));
-    newEnd = d.origEndDay;
+    newEnd   = d.origEndDay;
   } else {
     newStart = d.origStartDay;
-    newEnd = Math.max(d.origStartDay, d.origEndDay + daysDelta);
+    newEnd   = Math.max(d.origStartDay, Math.min(d.totalDays - 1, d.origEndDay + daysDelta));
   }
   d.curStartDay = newStart; d.curEndDay = newEnd;
 
-  // Update DOM — move the bar without full re-render
-  var barEl = document.querySelector('.gantt-bar[data-ms-idx="' + d.msIdx + '"]');
+  // Update bar position live
+  var barEl = d.type === 'ms'
+    ? document.querySelector('.gantt-bar[data-ms-idx="' + d.id + '"]')
+    : document.querySelector('.gantt-bar[data-proj-id="' + d.id + '"]');
   if (barEl) {
     var leftPct  = (newStart / d.totalDays * 100).toFixed(2);
-    var widthPct = Math.max(0.5, ((newEnd - newStart + 1) / d.totalDays * 100)).toFixed(2);
+    var widthPct = Math.max(0.4, ((newEnd - newStart + 1) / d.totalDays * 100)).toFixed(2);
     barEl.style.left  = leftPct  + '%';
     barEl.style.width = widthPct + '%';
+    // Instant date label update
+    var toDateStr = function(n) {
+      var dt = new Date(d.rangeStart); dt.setDate(dt.getDate() + n);
+      return dt.toISOString().slice(5, 10); // MM-DD
+    };
+    var labelEl = barEl.querySelector('span');
+    if (labelEl) {
+      var s = toDateStr(newStart), en = toDateStr(newEnd);
+      labelEl.textContent = s !== en ? s + '→' + en : s;
+    }
+  }
+
+  // Edge-scroll when cursor is near left/right edge of the gantt container
+  if (scroll) {
+    var rect = scroll.getBoundingClientRect();
+    var zone = 55, spd = 7;
+    if (e.clientX < rect.left + d.nameColW + zone) {
+      scroll.scrollLeft = Math.max(0, scroll.scrollLeft - spd);
+    } else if (e.clientX > rect.right - zone) {
+      scroll.scrollLeft += spd;
+    }
   }
 }
 
@@ -9293,17 +9336,27 @@ function _ganttDragUp(e) {
   document.removeEventListener('mouseup',   _ganttDragUp);
   if (!_ganttDrag) return;
   var d = _ganttDrag; _ganttDrag = null;
-  if (!d.hasMoved) return; // was a click — let onclick fire
+  if (!d.hasMoved) return; // was a click — let onclick fire naturally
 
-  var ms = window._ptMilestones[d.msIdx];
-  var toDate = function(dayOffset) {
-    var dt = new Date(d.rangeStart); dt.setDate(dt.getDate() + dayOffset);
+  var toDate = function(n) {
+    var dt = new Date(d.rangeStart); dt.setDate(dt.getDate() + n);
     return dt.toISOString().slice(0, 10);
   };
-  ms.start_date = toDate(d.curStartDay);
-  ms.due_date   = toDate(d.curEndDay);
-  _ganttSaveDates(ms);
-  renderPtMilestones();
+  if (d.type === 'ms') {
+    var ms = window._ptMilestones[d.id];
+    if (!ms) return;
+    ms.start_date = toDate(d.curStartDay);
+    ms.due_date   = toDate(d.curEndDay);
+    _ganttSaveDates(ms);
+    renderPtMilestones();
+  } else {
+    var p = (_ptProjects || []).find(function(x){ return x.id === d.id; });
+    if (!p) return;
+    p.start_date = toDate(d.curStartDay);
+    p.end_date   = toDate(d.curEndDay);
+    _ganttSaveProjDates(p);
+    renderGlobalGantt();
+  }
 }
 
 async function _ganttSaveDates(ms) {
@@ -9311,6 +9364,14 @@ async function _ganttSaveDates(ms) {
   await window._supabase.from('project_milestones')
     .update({ start_date: ms.start_date, due_date: ms.due_date })
     .eq('id', ms.id).eq('user_id', _currentUser.id);
+  showToast('✓ Dates updated');
+}
+
+async function _ganttSaveProjDates(p) {
+  if (!window._currentUser) return;
+  await window._supabase.from('projects')
+    .update({ start_date: p.start_date, end_date: p.end_date })
+    .eq('id', p.id).eq('user_id', _currentUser.id);
   showToast('✓ Dates updated');
 }
 
