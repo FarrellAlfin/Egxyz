@@ -1152,9 +1152,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .isf-btn:hover{border-color:var(--ink);color:var(--ink)}
 .isf-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .inv-hist-table{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.iht-head{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px auto;background:var(--cream-dark);border-bottom:1px solid var(--border)}
+.iht-head{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px 235px;background:var(--cream-dark);border-bottom:1px solid var(--border)}
 .iht-hc{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);padding:10px 14px}
-.iht-row{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px auto;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
+.iht-row{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px 235px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
 .iht-row:last-child{border-bottom:none}
 .iht-row:hover{background:var(--cream)}
 .iht-cell{padding:11px 14px;font-size:13px;color:var(--ink-mid)}
@@ -1461,7 +1461,7 @@ input[type=number]{-moz-appearance:textfield}
   .ct-head,.ct-row{grid-template-columns:1fr 1fr 60px}
   .ct-head-cell:nth-child(3),.ct-cell:nth-child(3),
   .ct-head-cell:nth-child(4),.ct-actions{display:none}
-  .iht-head,.iht-row{grid-template-columns:90px 1fr 80px 80px}
+  .iht-head,.iht-row{grid-template-columns:90px 1fr 80px 80px auto}
   .iht-hc:nth-child(3),.iht-cell:nth-child(3),
   .iht-hc:nth-child(6),.iht-actions{display:none}
 }
@@ -6120,24 +6120,24 @@ function _invPdfCss(fontId) {
     '.inv-brand-name{font-family:' + fontVal + ';font-size:20px;font-weight:400;color:#222;margin-bottom:3px}',
     '.inv-brand-detail{font-size:11px;color:#888;line-height:1.7}',
     '.inv-word{font-family:' + fontVal + ';font-size:32px;font-weight:300;color:#222;letter-spacing:-.02em;font-style:italic;text-align:right}',
-    '.inv-num{font-size:12px;color:#888;font-family:"Courier New",monospace;text-align:right;margin-top:3px}',
+    '.inv-num{font-size:12px;color:#888;font-family:' + fontVal + ';text-align:right;margin-top:3px}',
     '.inv-meta{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid #e5e5e0}',
     '.inv-meta-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:5px}',
     '.inv-meta-val{font-size:13px;color:#222}',
     '.inv-dates{display:flex;gap:24px;margin-bottom:22px}',
     '.inv-date-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:2px}',
-    '.inv-date-val{font-size:13px;font-weight:500;color:#222;font-family:"Courier New",monospace}',
+    '.inv-date-val{font-size:13px;font-weight:500;color:#222;font-family:' + fontVal + '}',
     '.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px}',
     '.inv-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;background:#f7f6f3;border-bottom:1px solid #e5e5e0}',
     '.inv-table th:not(:first-child){text-align:right}',
     '.inv-table td{padding:10px;font-size:13px;color:#222;border-bottom:1px solid #e5e5e0;vertical-align:top}',
-    '.inv-table td:not(:first-child){text-align:right;font-family:"Courier New",monospace}',
+    '.inv-table td:not(:first-child){text-align:right;font-family:' + fontVal + '}',
     '.inv-table tr:last-child td{border-bottom:none}',
     '.inv-totals{display:flex;justify-content:flex-end;margin-bottom:24px}',
     '.inv-tot-inner{width:240px}',
     '.inv-tot-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}',
     '.inv-tot-lbl{color:#555}',
-    '.inv-tot-val{font-weight:500;font-family:"Courier New",monospace}',
+    '.inv-tot-val{font-weight:500;font-family:' + fontVal + '}',
     '.inv-tot-div{height:1px;background:#e5e5e0;margin:8px 0}',
     '.inv-tot-grand{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;font-weight:700}',
     '.inv-footer{border-top:1px solid #e5e5e0;padding-top:20px}',
