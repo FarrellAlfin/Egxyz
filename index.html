@@ -1881,6 +1881,150 @@ input[type=number]{-moz-appearance:textfield}
 .attendee-row input{flex:1;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-family:var(--font-body);color:var(--ink);background:var(--cream)}
 .attendee-add-btn{padding:4px 10px;border:1.5px dashed var(--border);border-radius:6px;background:transparent;font-size:12px;color:var(--ink-light);cursor:pointer;font-family:var(--font-body)}
 .attendee-add-btn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — CROSS-PLATFORM
+═══════════════════════════════════════ */
+
+/* ── Landing page mobile nav ── */
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px 4px;border-radius:6px;z-index:260;flex-shrink:0}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--on-surface);border-radius:2px;transition:transform .22s ease,opacity .22s ease}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.lp-mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;background:var(--white);z-index:250;flex-direction:column;padding:28px 24px;overflow-y:auto;border-top:1px solid var(--border)}
+.lp-mobile-menu.open{display:flex}
+.lp-mm-link{font-size:16px;font-weight:500;color:var(--on-surface);padding:15px 0;border:none;border-bottom:1px solid var(--border);cursor:pointer;background:none;font-family:var(--font-body);text-align:left;width:100%;transition:color .15s}
+.lp-mm-link:hover{color:var(--tertiary)}
+.lp-mm-btns{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.lp-mm-btns button{width:100%;text-align:center;padding:14px;font-size:15px}
+/* ── App nav hamburger ── */
+.app-nav-hamburger{display:none;align-items:center;justify-content:center;background:none;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;padding:6px 9px;color:var(--ink-mid);font-size:18px;line-height:1;transition:all .15s;flex-shrink:0;margin-right:4px}
+.app-nav-hamburger:hover{border-color:var(--ink);color:var(--ink)}
+/* ── Mobile sidebar overlay ── */
+.mob-sb-overlay{display:none;position:fixed;inset:0;top:62px;background:rgba(25,28,30,.52);z-index:298}
+.mob-sb-overlay.open{display:block}
+
+/* ── LARGE TABLET (≤1024px) ── */
+@media(max-width:1024px){
+  .lp-hero-inner{padding:72px 32px 60px}
+  .lp-bento{padding:72px 32px}
+  .lp-hiw{padding:72px 32px}
+  .lp-pricing{padding:72px 32px}
+  .lp-cta{padding:80px 32px}
+  .lp-footer{padding:28px 32px}
+  h1{font-size:46px}
+  h2{font-size:36px}
+  .lp-bento-grid{grid-template-columns:repeat(2,1fr)}
+  .lp-bc-a{grid-column:span 2;grid-row:span 1}
+  .lp-bc-d{grid-column:span 2}
+  .lp-bc-f{grid-column:span 2}
+}
+
+/* Utility */
+.hide-on-mobile{display:inline}
+@media(max-width:768px){.hide-on-mobile{display:none!important}}
+
+/* ── MOBILE (≤768px) additions ── */
+@media(max-width:768px){
+  /* Landing page sections */
+  .lp-hero-inner{padding:56px 20px 44px}
+  .lp-hero-sub{font-size:15px}
+  .lp-bento{padding:60px 20px}
+  .lp-bento-grid{grid-template-columns:1fr!important}
+  .lp-bc-a,.lp-bc-d,.lp-bc-f{grid-column:1!important;grid-row:auto!important}
+  .lp-bc-a{min-height:260px}
+  .lp-hiw{padding:60px 20px}
+  .lp-hiw-steps{grid-template-columns:1fr}
+  .lp-hiw-steps::before{display:none}
+  .lp-pricing{padding:60px 20px}
+  .lp-cta{padding:72px 20px}
+  .lp-footer{padding:24px 20px;flex-direction:column;align-items:flex-start;gap:10px}
+  h2{font-size:30px}
+  /* Hamburger show, desktop links/btns hide */
+  .nav-hamburger{display:flex}
+  .nav-actions .btn-nav-ghost,.nav-actions .btn-nav-cta{display:none}
+  /* App hamburger */
+  .app-nav-hamburger{display:flex}
+  /* Mobile sidebar slide-in */
+  .dash-sidebar.mobile-open{display:flex!important;position:fixed;left:0;top:62px;bottom:0;z-index:299;width:240px;overflow-y:auto;box-shadow:4px 0 32px rgba(0,0,0,.22)}
+  /* Fixed panels full-width */
+  .notif-panel{width:calc(100vw - 32px);right:16px}
+  .timer-panel{width:calc(100vw - 32px);right:16px}
+  /* Kanban horizontal scroll on mobile */
+  .kanban{display:flex!important;grid-template-columns:unset!important;overflow-x:auto;gap:10px;padding-bottom:14px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+  .kanban>.kc{min-width:220px!important;flex-shrink:0;scroll-snap-align:start}
+  /* Financial overview */
+  .fo-manual-row,.fo-manual-row-head{grid-template-columns:1fr 90px auto}
+  .fo-add-form{grid-template-columns:1fr 1fr}
+  /* Home */
+  .home-hero{padding:22px 20px}
+  /* Sig modal */
+  .sig-modal{width:calc(100vw - 32px)!important}
+  /* Pipeline info */
+  .pf-info-box{max-width:calc(100vw - 32px)!important}
+  /* Pipeline kanban horizontal scroll */
+  #pf-kanban{display:flex!important;overflow-x:auto;gap:10px;padding-bottom:14px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+  #pf-kanban>.kc{min-width:210px!important;flex-shrink:0;scroll-snap-align:start}
+  /* PT KPI strip */
+  .pt-kpis{grid-template-columns:repeat(2,1fr)}
+  /* Wrap long nav-actions */
+  .nav-actions{gap:6px}
+  /* Invoice history table */
+  .iht-head,.iht-row{grid-template-columns:90px 1fr 80px auto!important}
+  .iht-hc:nth-child(5),.iht-cell:nth-child(5),
+  .iht-hc:nth-child(6),.iht-cell:nth-child(6){display:none}
+}
+
+/* ── SMALL PHONE (≤480px) ── */
+@media(max-width:480px){
+  h1{font-size:30px}
+  h2{font-size:24px}
+  .top-nav{padding:0 14px}
+  .lp-hero-inner{padding:44px 16px 36px;gap:28px}
+  .lp-hero-btns{flex-direction:column}
+  .lp-hero-btns .btn-hero-primary,.lp-hero-btns .btn-hero-ghost{width:100%;text-align:center}
+  .lp-bento{padding:44px 16px}
+  .lp-hiw{padding:44px 16px}
+  .lp-pricing{padding:44px 16px}
+  .lp-price-card{min-width:unset;padding:22px 18px}
+  .lp-cta{padding:56px 16px}
+  .lp-footer{padding:18px 16px}
+  .tmpl-panel{padding:14px 12px}
+  .home-hero{padding:16px 14px}
+  .home-hero-name{font-size:20px}
+  .quick-stats{grid-template-columns:1fr 1fr}
+  .home-quick-grid{grid-template-columns:1fr 1fr}
+  .fo-stats{grid-template-columns:repeat(2,1fr)}
+  .fo-manual-row,.fo-manual-row-head{grid-template-columns:1fr auto}
+  .fo-add-form{grid-template-columns:1fr}
+  .modal-box{max-width:calc(100vw - 24px)!important;border-radius:12px}
+  .pt-modal{max-width:calc(100vw - 24px)!important;border-radius:12px}
+  .sig-modal,.timer-modal{width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important}
+  .notif-panel,.timer-panel{width:calc(100vw - 24px);right:12px}
+  .nav-actions{gap:6px}
+  .nav-timer-btn{padding:4px 8px}
+  .pt-layout{grid-template-columns:1fr}
+  .pt-grid2{grid-template-columns:1fr}
+  .pt-kpis{grid-template-columns:1fr 1fr}
+  .calc-grid{grid-template-columns:1fr}
+  .inv-layout{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  /* auth page */
+  .auth-panel-inner{padding:28px 20px}
+  /* Timeline headers */
+  .iht-head,.iht-row{grid-template-columns:80px 1fr auto!important}
+  .iht-hc:nth-child(4),.iht-cell:nth-child(4),
+  .iht-hc:nth-child(5),.iht-cell:nth-child(5),
+  .iht-hc:nth-child(6),.iht-cell:nth-child(6){display:none}
+}
+
+/* ── LANDSCAPE PHONE ── */
+@media(max-width:812px) and (orientation:landscape){
+  .lp-hero-inner{padding:36px 24px 28px}
+  h1{font-size:34px}
+  .lp-hero-inner{grid-template-columns:1fr 1fr}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -2034,8 +2178,20 @@ var RateLimiter = (function() {
     <div class="nav-actions">
       <button class="btn-nav-ghost" onclick="showAuth('signin')">Sign in</button>
       <button class="btn-nav-cta" onclick="showAuth('signup','pro')">Get started free →</button>
+      <button class="nav-hamburger" id="lp-hamburger" onclick="toggleLpMobileNav()" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
+  <!-- Mobile nav menu -->
+  <div class="lp-mobile-menu" id="lp-mobile-menu">
+    <button class="lp-mm-link" onclick="scrollToSection('features');toggleLpMobileNav()">Features</button>
+    <button class="lp-mm-link" onclick="scrollToSection('pricing');toggleLpMobileNav()">Pricing</button>
+    <div class="lp-mm-btns">
+      <button class="btn-nav-ghost" style="width:100%;padding:13px;font-size:15px" onclick="showAuth('signin');toggleLpMobileNav()">Sign in</button>
+      <button class="btn-nav-cta" style="width:100%;padding:13px;font-size:15px" onclick="showAuth('signup','pro');toggleLpMobileNav()">Get started free →</button>
+    </div>
+  </div>
 
   <!-- ─── HERO ─── -->
   <section class="lp-hero" id="lp-hero-section">
@@ -2619,10 +2775,13 @@ var RateLimiter = (function() {
 <div class="page" id="page-dash">
 
   <nav class="top-nav">
-    <div class="nav-logo" onclick="showLanding()">Freelance<span>Kit</span></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="app-nav-hamburger" id="app-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">&#9776;</button>
+      <div class="nav-logo" onclick="showLanding()">Freelance<span>Kit</span></div>
+    </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:12px;background:var(--amber-light);color:var(--amber);padding:3px 10px;border-radius:20px;font-weight:600">Beta</span>
-      <span style="font-size:12px;color:var(--ink-light)">10 templates</span>
+      <span style="font-size:12px;color:var(--ink-light)" class="hide-on-mobile">10 templates</span>
     </div>
     <div class="nav-actions">
       <!-- Live Timer button -->
@@ -2701,6 +2860,9 @@ var RateLimiter = (function() {
       <div class="notif-empty">No notifications yet.</div>
     </div>
   </div>
+
+  <!-- Mobile sidebar overlay -->
+  <div class="mob-sb-overlay" id="mob-sb-overlay" onclick="toggleMobileSidebar()"></div>
 
   <div class="dash-layout">
     <!-- Sidebar -->
@@ -7691,6 +7853,41 @@ function toggleSidebar() {
     if (arrow) arrow.innerHTML = '&#9664;';
   }
 }
+
+/* ── Mobile nav (landing page) ── */
+function toggleLpMobileNav() {
+  var menu = document.getElementById('lp-mobile-menu');
+  var btn  = document.getElementById('lp-hamburger');
+  if (!menu) return;
+  var open = menu.classList.toggle('open');
+  if (btn) btn.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+/* ── Mobile sidebar (app) ── */
+function toggleMobileSidebar() {
+  var sidebar  = document.getElementById('dash-sidebar');
+  var overlay  = document.getElementById('mob-sb-overlay');
+  var hamburger = document.getElementById('app-hamburger');
+  if (!sidebar) return;
+  var open = sidebar.classList.toggle('mobile-open');
+  if (overlay)  overlay.classList.toggle('open', open);
+  if (hamburger) hamburger.setAttribute('aria-expanded', String(open));
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+/* Close mobile sidebar when a nav item is clicked */
+(function() {
+  document.addEventListener('click', function(e) {
+    var item = e.target.closest('.dsb-item');
+    if (item) {
+      var sidebar = document.getElementById('dash-sidebar');
+      if (sidebar && sidebar.classList.contains('mobile-open')) {
+        toggleMobileSidebar();
+      }
+    }
+  });
+})();
 
 // INIT
 calcRate();
