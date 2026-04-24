@@ -10317,18 +10317,14 @@ async function savePtShare() {
   var confirmed = btn && btn.dataset.confirmed === '1';
 
   if (!confirmed) {
-    // Check whether this email belongs to a FreelanceKit account.
-    // We look for a matching row in user_settings (users typically save their
-    // email there). If none is found we warn the inviter before proceeding.
+    // Check whether this email belongs to a registered FreelanceKit account.
+    // Uses a SECURITY DEFINER RPC that checks auth.users directly, bypassing
+    // RLS so we can look up any email without exposing private data.
     if (btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
-    var lookup = await _supabase
-      .from('user_settings')
-      .select('id')
-      .eq('email', email)
-      .limit(1);
+    var lookup = await _supabase.rpc('check_user_email_exists', { lookup_email: email });
     if (btn) { btn.disabled = false; }
 
-    var userFound = lookup.data && lookup.data.length > 0;
+    var userFound = lookup.data === true;
     if (!userFound) {
       // Show warning and let the inviter decide whether to send anyway.
       if (warnEl) {
