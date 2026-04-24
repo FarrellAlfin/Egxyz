@@ -227,13 +227,6 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-fo-bf.lp-animated{width:var(--bar-w)!important}
 .lp-fo-stat-v{font-size:14px;font-weight:700;color:var(--ink);font-family:var(--font-display);transition:color .3s}
 
-/* Pipeline animation */
-.lp-pipe-mover{position:absolute;background:var(--white);border:1.5px solid var(--tertiary-fixed);border-radius:4px;padding:5px 7px;pointer-events:none;z-index:10;opacity:0;transition:opacity .22s;box-shadow:0 2px 10px rgba(0,150,104,.18)}
-.lp-pipe-mover-n{font-size:9px;color:var(--ink-mid)}
-.lp-pipe-mover-v{font-size:9px;font-weight:700;color:var(--tertiary)}
-.lp-pipe-forecast{margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:var(--surface-container);border-radius:6px;padding:6px 10px}
-.lp-pipe-forecast-l{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);font-weight:700}
-.lp-pipe-forecast-v{font-size:13px;font-weight:800;color:var(--tertiary);font-family:var(--font-display)}
 
 /* Heatmap scatter */
 .lp-ts-hm-d{transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .55s ease}
@@ -2480,16 +2473,11 @@ var RateLimiter = (function() {
           <div class="lp-bc-tag" style="background:#FEE2E2;color:#B91C1C">Pipeline Tracker</div>
           <div class="lp-bc-title">See the dry<br>month coming.</div>
           <div class="lp-bc-desc">Weighted revenue forecast by stage. Drag cards, watch the forecast update. Never be blindsided by a slow period again.</div>
-          <div class="lp-pipe-cols" style="margin-top:14px;position:relative" id="lp-pipe-cols">
-            <div class="lp-pipe-col" id="lp-pc-0"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
-            <div class="lp-pipe-col" id="lp-pc-1"><div class="lp-pipe-col-h">Proposal</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Axiom</div><div class="lp-pipe-c-v">$8k</div></div></div>
-            <div class="lp-pipe-col" id="lp-pc-2"><div class="lp-pipe-col-h">Negot.</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Helix</div><div class="lp-pipe-c-v">$12k</div></div></div>
-            <div class="lp-pipe-col" id="lp-pc-3"><div class="lp-pipe-col-h">Won ✓</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Drift</div><div class="lp-pipe-c-v" style="color:var(--sage)">$6k</div></div></div>
-            <div class="lp-pipe-mover" id="lp-pipe-mover"><div class="lp-pipe-mover-n">Nova</div><div class="lp-pipe-mover-v">$9k</div></div>
-          </div>
-          <div class="lp-pipe-forecast" id="lp-pipe-forecast">
-            <span class="lp-pipe-forecast-l">Forecasted</span>
-            <span class="lp-pipe-forecast-v" id="lp-pipe-forecast-v">$33.4k</span>
+          <div class="lp-pipe-cols" style="margin-top:14px">
+            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
+            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Proposal</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Axiom</div><div class="lp-pipe-c-v">$8k</div></div></div>
+            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Negot.</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Helix</div><div class="lp-pipe-c-v">$12k</div></div></div>
+            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Won ✓</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Drift</div><div class="lp-pipe-c-v" style="color:var(--sage)">$6k</div></div></div>
           </div>
         </div>
 
@@ -4174,129 +4162,71 @@ function initLandingAnimations(){
 
   // ─── SCROLL ANIMATIONS ────────────────────────────────────────────
 
-  // 1. Financial Overview — bars grow + counters tick on scroll
+  // 1. Financial Overview — bars grow + counters tick; resets & replays on every scroll in/out
   (function(){
     var foCard = document.getElementById('lp-fo-stats');
-    if (!foCard || window._foAnimDone) return;
-    var obs = new IntersectionObserver(function(entries) {
-      if (!entries[0].isIntersecting) return;
-      obs.disconnect();
-      window._foAnimDone = true;
-      // Animate bars
-      var bars = document.querySelectorAll('#lp-fo-bars .lp-fo-bf');
-      bars.forEach(function(b, i) {
+    if (!foCard) return;
+    var foCounterTimers = [];
+    function foReset() {
+      clearTimeout(foCounterTimers._t);
+      document.querySelectorAll('#lp-fo-bars .lp-fo-bf').forEach(function(b) { b.classList.remove('lp-animated'); });
+      document.querySelectorAll('#lp-fo-stats .lp-fo-stat-v[data-target]').forEach(function(el) {
+        el.textContent = (el.dataset.prefix||'') + '0' + (el.dataset.suffix||'');
+      });
+    }
+    function foPlay() {
+      document.querySelectorAll('#lp-fo-bars .lp-fo-bf').forEach(function(b, i) {
         setTimeout(function() { b.classList.add('lp-animated'); }, i * 180);
       });
-      // Animate counters
-      var vals = document.querySelectorAll('#lp-fo-stats .lp-fo-stat-v[data-target]');
-      vals.forEach(function(el, i) {
+      document.querySelectorAll('#lp-fo-stats .lp-fo-stat-v[data-target]').forEach(function(el, i) {
         var target = parseInt(el.dataset.target, 10);
-        var prefix = el.dataset.prefix || '';
-        var suffix = el.dataset.suffix || '';
-        var dur = 1400;
-        var start = null;
+        var prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+        var dur = 1400, start = null;
         setTimeout(function() {
           requestAnimationFrame(function step(ts) {
             if (!start) start = ts;
             var prog = Math.min((ts - start) / dur, 1);
             var ease = 1 - Math.pow(1 - prog, 3);
-            var cur = Math.round(ease * target);
-            el.textContent = prefix + cur.toLocaleString() + suffix;
+            el.textContent = prefix + Math.round(ease * target).toLocaleString() + suffix;
             if (prog < 1) requestAnimationFrame(step);
           });
         }, i * 120);
       });
-    }, { threshold: 0.3 });
-    obs.observe(foCard);
-  })();
-
-  // 2. Pipeline — animated card slides Lead → Proposal → Negot. → Won, forecasted value ticks up
-  (function(){
-    var pipeWrap = document.getElementById('lp-pipe-cols');
-    var mover    = document.getElementById('lp-pipe-mover');
-    var foreVal  = document.getElementById('lp-pipe-forecast-v');
-    if (!pipeWrap || !mover || window._pipeAnimStarted) return;
-    var BASE_FORECAST = 33400; // sum of static cards
-    var DEAL_VAL = 9000;
-    var stages = [0,1,2,3].map(function(i){ return document.getElementById('lp-pc-'+i); });
-    function runPipeAnim() {
-      if (!stages[0]) return;
-      var cols     = pipeWrap.getBoundingClientRect();
-      var stageIdx = 0;
-      mover.style.opacity = '1';
-      function moveToStage(idx) {
-        var col = stages[idx];
-        if (!col) return;
-        var colR = col.getBoundingClientRect();
-        var left = colR.left - cols.left + 4;
-        var top  = colR.top  - cols.top  + 28;
-        mover.style.left = left + 'px';
-        mover.style.top  = top  + 'px';
-        // tick forecasted value up as deal progresses
-        var weights = [0.2, 0.45, 0.7, 1.0];
-        var fv = Math.round(BASE_FORECAST + DEAL_VAL * weights[idx]);
-        foreVal.textContent = '$' + (fv / 1000).toFixed(1) + 'k';
-        stageIdx = idx;
-        if (idx < 3) {
-          setTimeout(function() { moveToStage(idx + 1); }, 900);
-        } else {
-          // Won — pause then restart loop
-          setTimeout(function() {
-            mover.style.opacity = '0';
-            foreVal.textContent = '$' + (BASE_FORECAST / 1000).toFixed(1) + 'k';
-            setTimeout(runPipeAnim, 800);
-          }, 1200);
-        }
-      }
-      moveToStage(0);
     }
-    var obs = new IntersectionObserver(function(entries) {
-      if (!entries[0].isIntersecting) return;
-      obs.disconnect();
-      window._pipeAnimStarted = true;
-      mover.style.position = 'absolute';
-      // position at Lead initially (hidden)
-      var col0 = stages[0];
-      if (col0) {
-        var cols = pipeWrap.getBoundingClientRect();
-        var c0   = col0.getBoundingClientRect();
-        mover.style.left = (c0.left - cols.left + 4) + 'px';
-        mover.style.top  = (c0.top  - cols.top  + 28) + 'px';
-      }
-      mover.style.transition = 'left .55s cubic-bezier(.34,1.3,.64,1), top .55s ease, opacity .22s';
-      setTimeout(runPipeAnim, 400);
-    }, { threshold: 0.4 });
-    obs.observe(pipeWrap);
+    foReset();
+    new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) { foPlay(); } else { foReset(); }
+    }, { threshold: 0.3 }).observe(foCard);
   })();
 
-  // 3. Heatmap — cells scatter outward on load, converge to grid on scroll
+  // 2. Heatmap — scatter on exit, converge on enter; repeats every time
   (function(){
     var hmWrap = document.getElementById('lp-ts-heatmap');
-    if (!hmWrap || window._hmAnimDone) return;
-    // Wait for cells to exist (built just above)
+    if (!hmWrap) return;
     requestAnimationFrame(function() {
       var cells = hmWrap.querySelectorAll('.lp-ts-hm-d');
       if (!cells.length) return;
-      // Set random scatter offsets and start scattered
-      cells.forEach(function(c) {
-        var sx = (Math.random() - 0.5) * 90;
-        var sy = (Math.random() - 0.5) * 70;
-        c.style.setProperty('--sx', sx + 'px');
-        c.style.setProperty('--sy', sy + 'px');
-        // disable transition while setting initial state
-        c.style.transition = 'none';
-        c.classList.add('lp-scattered');
-        requestAnimationFrame(function(){ c.style.transition = ''; });
-      });
-      var obs = new IntersectionObserver(function(entries) {
-        if (!entries[0].isIntersecting) return;
-        obs.disconnect();
-        window._hmAnimDone = true;
+      function assignScatter() {
+        cells.forEach(function(c) {
+          c.style.setProperty('--sx', ((Math.random()-.5)*90)+'px');
+          c.style.setProperty('--sy', ((Math.random()-.5)*70)+'px');
+        });
+      }
+      function hmScatter() {
+        assignScatter();
+        cells.forEach(function(c) { c.classList.add('lp-scattered'); });
+      }
+      function hmConverge() {
         cells.forEach(function(c, i) {
           setTimeout(function() { c.classList.remove('lp-scattered'); }, i * 8);
         });
-      }, { threshold: 0.3 });
-      obs.observe(hmWrap);
+      }
+      // Start scattered
+      cells.forEach(function(c) { c.style.transition='none'; c.classList.add('lp-scattered'); });
+      requestAnimationFrame(function(){ cells.forEach(function(c){ c.style.transition=''; }); });
+      new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) { hmConverge(); } else { hmScatter(); }
+      }, { threshold: 0.3 }).observe(hmWrap);
     });
   })();
 }
