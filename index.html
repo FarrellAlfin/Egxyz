@@ -62,10 +62,10 @@ body{font-family:var(--font-body);background:var(--surface);color:var(--on-surfa
 
 /* ── SHARED NAV ── */
 .top-nav{
-  position:sticky;top:0;z-index:200;
-  background:rgba(247,249,251,0.85);backdrop-filter:blur(20px);
+  position:relative;z-index:200;
+  background:rgba(247,249,251,0.95);backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(198,198,205,0.15);height:62px;
-  display:flex;align-items:center;justify-content:space-between;padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
 }
 .nav-logo{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--on-surface);cursor:pointer;letter-spacing:-0.03em}
 .nav-logo span{color:var(--tertiary)}
@@ -406,10 +406,10 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* ════════════════════════════════════
    DASHBOARD
 ════════════════════════════════════ */
-.dash-layout{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 106px);transition:none}
+.dash-layout{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 62px);transition:none}
 
 /* Sidebar */
-.dash-sidebar{background:var(--surface-low);padding:0;position:sticky;top:106px;height:calc(100vh - 106px);overflow:hidden;transition:width .22s ease;display:none;flex-direction:column}
+.dash-sidebar{background:var(--surface-low);padding:0;position:sticky;top:62px;height:calc(100vh - 62px);overflow:hidden;transition:width .22s ease;display:none;flex-direction:column}
 .dsb-scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 0 8px}
 .dsb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--on-surface-light);padding:0 18px;margin:20px 0 8px;white-space:nowrap;overflow:hidden;transition:all .2s;font-family:var(--font-display)}
 .dsb-section:first-child{margin-top:8px}
@@ -431,23 +431,23 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .dash-layout.sb-collapsed .dash-sidebar{justify-content:center;align-items:center}
 .dash-layout.sb-collapsed .sb-toggle-arrow{transform:rotate(180deg)}
 
-/* App Top Nav (replaces sidebar on desktop) */
-.app-topnav{display:flex;align-items:center;gap:2px;padding:0 20px;height:44px;background:var(--surface-low);border-bottom:1px solid var(--outline);position:sticky;top:62px;z-index:110;overflow:visible}
-.atn-home-item{padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:color .15s,background .15s;flex-shrink:0}
+/* App Top Nav tabs — embedded inside .top-nav */
+.app-topnav{display:none!important}
+.atn-home-item{padding:6px 12px;font-size:13px;font-weight:500;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:color .15s,background .15s;flex-shrink:0}
 .atn-home-item:hover,.atn-home-item.active{color:var(--ink);background:var(--surface-container)}
 .atn-dd-wrap{position:relative;flex-shrink:0}
-.atn-trigger{padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:color .15s,background .15s;user-select:none;display:flex;align-items:center;gap:5px}
+.atn-trigger{padding:6px 12px;font-size:13px;font-weight:500;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:color .15s,background .15s;user-select:none;display:flex;align-items:center;gap:5px}
 .atn-trigger:hover,.atn-trigger.active{color:var(--ink);background:var(--surface-container)}
 .atn-trigger .atn-arrow{font-size:9px;opacity:0.6}
-.atn-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:200px;background:var(--surface);border-radius:10px;box-shadow:0 6px 32px rgba(0,0,0,0.13);border:1px solid var(--outline);z-index:300;padding:6px}
-.atn-dd-wrap:hover .atn-dropdown{display:block}
+.atn-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;min-width:200px;background:var(--surface);border-radius:10px;box-shadow:0 6px 32px rgba(0,0,0,0.13);border:1px solid var(--outline);z-index:300;padding:6px}
+.atn-dd-wrap.open .atn-dropdown{display:block}
 .atn-dd-item{padding:8px 12px;font-size:13px;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:background .12s,color .12s;white-space:nowrap}
 .atn-dd-item:hover{background:var(--surface-container);color:var(--ink)}
 .atn-dd-item.active{background:var(--surface-container);color:var(--ink);font-weight:600}
-@media(max-width:768px){.app-topnav{display:none}}
+@media(max-width:768px){.atn-in-topnav{display:none!important}}
 
 /* Main area */
-.dash-main{background:var(--surface);min-height:calc(100vh - 106px)}
+.dash-main{background:var(--surface);min-height:calc(100vh - 62px)}
 
 /* Template panels — hidden/shown */
 .tmpl-panel{display:none;padding:32px 40px;animation:fadeIn .25s ease}
@@ -1268,7 +1268,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .home-hero-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-mid);margin-bottom:6px;font-weight:600}
 .home-hero-name{font-size:26px;font-weight:700;color:var(--ink);margin:0 0 6px;font-family:var(--font-serif)}
 .home-hero-sub{font-size:13px;color:var(--ink-mid);margin:0}
-.home-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:12px}
+.home-section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:12px}
 .home-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
 .hq-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:5px}
 .hq-card:hover{border-color:var(--amber);box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -1280,31 +1280,31 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .home-widgets{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 @media(max-width:860px){.home-widgets{grid-template-columns:1fr}}
 .hw-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-.hw-title{font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.hw-title-action{font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-light);cursor:pointer;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:transparent;font-family:var(--font-body)}
+.hw-title{font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.hw-title-action{font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-light);cursor:pointer;padding:3px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;font-family:var(--font-body)}
 .hw-title-action:hover{border-color:var(--ink);color:var(--ink)}
 /* To-do */
 .todo-add-row{display:flex;gap:6px;margin-bottom:10px}
-.todo-inp{flex:1;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;font-family:var(--font-body);color:var(--ink);outline:none;background:var(--cream);min-width:0}
+.todo-inp{flex:1;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;font-family:var(--font-body);color:var(--ink);outline:none;background:var(--cream);min-width:0}
 .todo-inp:focus{border-color:var(--ink);background:var(--white)}
 .todo-proj-sel{border:1px solid var(--border);border-radius:6px;padding:7px 8px;font-size:11px;font-family:var(--font-body);color:var(--ink-mid);background:var(--cream);cursor:pointer;max-width:110px}
-.todo-add-btn{padding:7px 11px;background:var(--ink);color:var(--cream);border:none;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--font-body);white-space:nowrap;flex-shrink:0}
+.todo-add-btn{padding:7px 11px;background:var(--ink);color:var(--cream);border:none;border-radius:6px;font-size:14px;cursor:pointer;font-family:var(--font-body);white-space:nowrap;flex-shrink:0}
 .todo-add-btn:hover{background:var(--amber)}
 .todo-filter-row{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
-.todo-filter{padding:2px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:11px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
+.todo-filter{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
 .todo-filter.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .todo-list{max-height:420px;overflow-y:auto}
 .todo-item{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .todo-item:last-child{border-bottom:none}
 .todo-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .todo-check{width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:var(--sage)}
-.todo-text{flex:1;font-size:13px;color:var(--ink);line-height:1.3;min-width:0}
+.todo-text{flex:1;font-size:15px;color:var(--ink);line-height:1.3;min-width:0}
 .todo-text.done{text-decoration:line-through;color:var(--ink-light)}
 .todo-del{background:none;border:none;font-size:12px;color:var(--ink-light);cursor:pointer;padding:0 2px;opacity:0;transition:opacity .15s;flex-shrink:0}
 .todo-item:hover .todo-del{opacity:1}
-.hw-empty{text-align:center;color:var(--ink-light);font-size:13px;padding:18px 0}
-.todo-section-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;color:var(--ink-light);text-transform:uppercase;padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px}
-.todo-proj-task .todo-text{font-size:12px}
+.hw-empty{text-align:center;color:var(--ink-light);font-size:14px;padding:18px 0}
+.todo-section-lbl{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--ink-light);text-transform:uppercase;padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px}
+.todo-proj-task .todo-text{font-size:14px}
 /* Upcoming */
 .upcoming-list{max-height:260px;overflow-y:auto}
 .upc-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
@@ -1515,7 +1515,7 @@ input[type=number]{-moz-appearance:textfield}
 .cal-day.cal-today{background:var(--amber-light);border-color:var(--amber-mid)}
 .cal-day.cal-selected{border-color:var(--ink)}
 .cal-day.cal-other{opacity:.35}
-.cal-day-num{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.cal-day-num{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
 .cal-day.cal-today .cal-day-num{font-weight:700;color:var(--amber)}
 .cal-dots{display:flex;flex-wrap:wrap;gap:2px}
 .cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -1525,7 +1525,7 @@ input[type=number]{-moz-appearance:textfield}
 .cal-detail{margin-top:12px;padding:12px 14px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border)}
 .cal-detail-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .cal-detail-date{font-size:13px;font-weight:600;color:var(--ink)}
-.cal-detail-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.cal-detail-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .cal-detail-item:last-child{border-bottom:none}
 /* ── INVOICE EDIT MODAL ── */
 .foei-modal-body{max-height:80vh;overflow-y:auto}
@@ -2792,9 +2792,31 @@ var RateLimiter = (function() {
 <div class="page" id="page-dash">
 
   <nav class="top-nav">
-    <div style="display:flex;align-items:center;gap:6px">
+    <div style="display:flex;align-items:center;gap:16px">
       <button class="app-nav-hamburger" id="app-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">&#9776;</button>
-      <div class="nav-logo" onclick="showLanding()">Freelance<span>Kit</span></div>
+      <div class="nav-logo">Freelance<span>Kit</span></div>
+      <!-- Inline nav tabs -->
+      <div class="atn-home-item atn-in-topnav" id="atn-home" onclick="showPanel('home',null)">Home</div>
+      <div class="atn-dd-wrap atn-in-topnav">
+        <div class="atn-trigger atn-biz-trigger" id="atn-biz">Business Operations <span class="atn-arrow">▾</span></div>
+        <div class="atn-dropdown">
+          <div class="atn-dd-item" data-panel="clients" onclick="showPanel('clients',null)">Client Contacts</div>
+          <div class="atn-dd-item" data-panel="invhistory" onclick="showPanel('invhistory',null)">Financial Overview</div>
+          <div class="atn-dd-item" data-panel="projects" onclick="showPanel('projects',null)">Project Tracker</div>
+          <div class="atn-dd-item" data-panel="pipeline" onclick="showPanel('pipeline',null)">Pipeline Tracker</div>
+          <div class="atn-dd-item" data-panel="tax" onclick="showPanel('tax',null)">Tax Tracker</div>
+          <div class="atn-dd-item" data-panel="timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
+          <div class="atn-dd-item" data-panel="invoice" onclick="showPanel('invoice',null)">Invoice Builder</div>
+          <div class="atn-dd-item" data-panel="ratecalc" onclick="showPanel('ratecalc',null)">Rate Calculator</div>
+        </div>
+      </div>
+      <div class="atn-dd-wrap atn-in-topnav">
+        <div class="atn-trigger atn-ob-trigger" id="atn-ob">Client Onboarding <span class="atn-arrow">▾</span></div>
+        <div class="atn-dropdown">
+          <div class="atn-dd-item" data-panel="welcome" onclick="showPanel('welcome',null)">Welcome Packet</div>
+          <div class="atn-dd-item" data-panel="brief" onclick="showPanel('brief',null)">Project Brief Form</div>
+        </div>
+      </div>
     </div>
     <div class="nav-actions">
       <!-- Live Timer button -->
@@ -2873,33 +2895,6 @@ var RateLimiter = (function() {
       <div class="notif-empty">No notifications yet.</div>
     </div>
   </div>
-
-  <!-- App Top Navigation Bar -->
-  <nav class="app-topnav" id="app-topnav">
-    <div class="atn-home-item" id="atn-home" onclick="showPanel('home',null)">Home</div>
-
-    <div class="atn-dd-wrap">
-      <div class="atn-trigger atn-biz-trigger" id="atn-biz">Business Operations <span class="atn-arrow">▾</span></div>
-      <div class="atn-dropdown">
-        <div class="atn-dd-item" data-panel="clients" onclick="showPanel('clients',null)">Client Contacts</div>
-        <div class="atn-dd-item" data-panel="invhistory" onclick="showPanel('invhistory',null)">Financial Overview</div>
-        <div class="atn-dd-item" data-panel="projects" onclick="showPanel('projects',null)">Project Tracker</div>
-        <div class="atn-dd-item" data-panel="pipeline" onclick="showPanel('pipeline',null)">Pipeline Tracker</div>
-        <div class="atn-dd-item" data-panel="tax" onclick="showPanel('tax',null)">Tax Tracker</div>
-        <div class="atn-dd-item" data-panel="timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
-        <div class="atn-dd-item" data-panel="invoice" onclick="showPanel('invoice',null)">Invoice Builder</div>
-        <div class="atn-dd-item" data-panel="ratecalc" onclick="showPanel('ratecalc',null)">Rate Calculator</div>
-      </div>
-    </div>
-
-    <div class="atn-dd-wrap">
-      <div class="atn-trigger atn-ob-trigger" id="atn-ob">Client Onboarding <span class="atn-arrow">▾</span></div>
-      <div class="atn-dropdown">
-        <div class="atn-dd-item" data-panel="welcome" onclick="showPanel('welcome',null)">Welcome Packet</div>
-        <div class="atn-dd-item" data-panel="brief" onclick="showPanel('brief',null)">Project Brief Form</div>
-      </div>
-    </div>
-  </nav>
 
   <!-- Mobile sidebar overlay -->
   <div class="mob-sb-overlay" id="mob-sb-overlay" onclick="toggleMobileSidebar()"></div>
@@ -4069,6 +4064,21 @@ function fm(n,sym='$'){return sym+Math.round(n).toLocaleString()}
 function fmD(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 
 // ═══════════════ NAVIGATION ═══════════════
+var _atnDdReady = false;
+function initAtnDropdowns() {
+  if (_atnDdReady) return;
+  _atnDdReady = true;
+  document.querySelectorAll('.atn-dd-wrap').forEach(function(wrap) {
+    var closeTimer;
+    wrap.addEventListener('mouseenter', function() {
+      clearTimeout(closeTimer);
+      wrap.classList.add('open');
+    });
+    wrap.addEventListener('mouseleave', function() {
+      closeTimer = setTimeout(function() { wrap.classList.remove('open'); }, 280);
+    });
+  });
+}
 function showDash(panel){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-dash').classList.add('active');
@@ -4076,6 +4086,7 @@ function showDash(panel){
   showPanel(target, document.getElementById('nav-'+target));
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
+  initAtnDropdowns();
 }
 function showLanding(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
