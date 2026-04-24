@@ -223,7 +223,21 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-fo-br{display:flex;align-items:center;gap:8px}
 .lp-fo-br-l{font-size:10px;color:var(--ink-mid);width:70px;flex-shrink:0}
 .lp-fo-bw{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
-.lp-fo-bf{height:100%;border-radius:3px;transition:width 1.2s ease}
+.lp-fo-bf{height:100%;border-radius:3px;width:0!important;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+.lp-fo-bf.lp-animated{width:var(--bar-w)!important}
+.lp-fo-stat-v{font-size:14px;font-weight:700;color:var(--ink);font-family:var(--font-display);transition:color .3s}
+
+/* Pipeline animation */
+.lp-pipe-mover{position:absolute;background:var(--white);border:1.5px solid var(--tertiary-fixed);border-radius:4px;padding:5px 7px;pointer-events:none;z-index:10;opacity:0;transition:opacity .22s;box-shadow:0 2px 10px rgba(0,150,104,.18)}
+.lp-pipe-mover-n{font-size:9px;color:var(--ink-mid)}
+.lp-pipe-mover-v{font-size:9px;font-weight:700;color:var(--tertiary)}
+.lp-pipe-forecast{margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:var(--surface-container);border-radius:6px;padding:6px 10px}
+.lp-pipe-forecast-l{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);font-weight:700}
+.lp-pipe-forecast-v{font-size:13px;font-weight:800;color:var(--tertiary);font-family:var(--font-display)}
+
+/* Heatmap scatter */
+.lp-ts-hm-d{transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .55s ease}
+.lp-ts-hm-d.lp-scattered{opacity:0;transform:translate(var(--sx),var(--sy)) scale(.3)}
 .lp-fo-br-v{font-size:10px;font-weight:700;color:var(--ink-mid);width:40px;text-align:right}
 .lp-tax-qs{display:flex;gap:4px;margin-bottom:10px}
 .lp-tax-q{flex:1;text-align:center;padding:5px 0;border-radius:5px;font-size:10px;font-weight:600;border:1.5px solid var(--border);color:var(--ink-mid);font-family:var(--font-body)}
@@ -264,10 +278,10 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-pricing-inner{max-width:960px;margin:0 auto}
 .lp-pricing-hdr{text-align:center;margin-bottom:52px}
 .lp-price-grid{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
-.lp-price-card{flex:1;min-width:280px;max-width:420px;background:var(--white);border-radius:16px;padding:34px;box-shadow:0 2px 16px rgba(25,28,30,.06);border:1.5px solid var(--border);transition:transform .13s ease-out,box-shadow .13s ease-out,border-color .25s;will-change:transform;position:relative}
+.lp-price-card{flex:1;min-width:280px;max-width:420px;background:var(--white);border-radius:16px;padding:34px;box-shadow:0 2px 16px rgba(25,28,30,.06);border:1.5px solid var(--border);transition:box-shadow .2s,border-color .25s;position:relative}
 .lp-price-card:hover{box-shadow:0 12px 40px rgba(25,28,30,.12)}
-.lp-price-card.featured{background:var(--primary-container);border-color:transparent;position:relative;overflow:hidden}
-.lp-price-card.featured::after{content:'Most popular';position:absolute;top:20px;right:-26px;background:var(--tertiary-fixed);color:var(--on-tertiary-fixed);font-size:9px;font-weight:700;padding:4px 36px;transform:rotate(45deg);letter-spacing:.05em;text-transform:uppercase}
+.lp-price-card.featured{background:var(--primary-container);border-color:transparent;position:relative;overflow:visible;padding-top:48px}
+.lp-price-card.featured::before{content:'Most popular';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--tertiary-fixed);color:var(--on-tertiary-fixed);font-size:10px;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .lp-price-tier{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:8px;font-family:var(--font-display)}
 .lp-price-card.featured .lp-price-tier{color:var(--tertiary-fixed-dim)}
 .lp-price-amt{font-family:var(--font-display);font-size:52px;font-weight:800;letter-spacing:-.06em;line-height:1;margin-bottom:4px;color:var(--ink)}
@@ -309,9 +323,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 /* Vanishing-point grid floor */
 .lp-hero-grid{position:absolute;bottom:0;left:0;right:0;height:56%;pointer-events:none;z-index:0;overflow:hidden}
 .lp-hero-grid::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,150,104,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,150,104,.08) 1px,transparent 1px);background-size:58px 58px;transform:perspective(480px) rotateX(66deg);transform-origin:50% 0%;mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%)}
-/* Pricing glare */
-.lp-price-card-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;opacity:0;transition:opacity .18s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.12) 0%,transparent 55%)}
-.lp-price-card:hover .lp-price-card-glare{opacity:1}
+/* Pricing glare — removed */
 /* "How it Works" step number 3D flip on hover */
 .lp-hiw-num{transition:transform .38s cubic-bezier(.23,1,.32,1),box-shadow .38s ease}
 .lp-hiw-step:hover .lp-hiw-num{transform:perspective(300px) rotateY(22deg) scale(1.14);box-shadow:0 10px 28px rgba(25,28,30,.28)}
@@ -2448,16 +2460,16 @@ var RateLimiter = (function() {
               <div class="lp-bc-desc">Track every invoice — paid, pending, overdue. Aging reports, by-client breakdown, MoM trends, and an annual income goal bar. Know exactly where you stand at any moment.</div>
             </div>
             <div>
-              <div class="lp-fo-stats">
-                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Total earned</div><div class="lp-fo-stat-v">$48,200</div></div>
-                <div class="lp-fo-stat"><div class="lp-fo-stat-l">This month</div><div class="lp-fo-stat-v">$6,400</div></div>
-                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Outstanding</div><div class="lp-fo-stat-v" style="color:#D97706">$3,200</div></div>
-                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Eff. rate</div><div class="lp-fo-stat-v">$94/h</div></div>
+              <div class="lp-fo-stats" id="lp-fo-stats">
+                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Total earned</div><div class="lp-fo-stat-v" data-target="48200" data-prefix="$" data-suffix="">$0</div></div>
+                <div class="lp-fo-stat"><div class="lp-fo-stat-l">This month</div><div class="lp-fo-stat-v" data-target="6400" data-prefix="$" data-suffix="">$0</div></div>
+                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Outstanding</div><div class="lp-fo-stat-v" style="color:#D97706" data-target="3200" data-prefix="$" data-suffix="">$0</div></div>
+                <div class="lp-fo-stat"><div class="lp-fo-stat-l">Eff. rate</div><div class="lp-fo-stat-v" data-target="94" data-prefix="$" data-suffix="/h">$0/h</div></div>
               </div>
-              <div class="lp-fo-bars">
-                <div class="lp-fo-br"><span class="lp-fo-br-l">Acme Corp</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="width:72%;background:var(--sage)"></div></div><span class="lp-fo-br-v">$18k</span></div>
-                <div class="lp-fo-br"><span class="lp-fo-br-l">Studio Haus</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="width:48%;background:var(--amber-mid)"></div></div><span class="lp-fo-br-v">$12k</span></div>
-                <div class="lp-fo-br"><span class="lp-fo-br-l">Indie Brands</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="width:32%;background:#6366f1"></div></div><span class="lp-fo-br-v">$8k</span></div>
+              <div class="lp-fo-bars" id="lp-fo-bars">
+                <div class="lp-fo-br"><span class="lp-fo-br-l">Acme Corp</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="--bar-w:72%;background:var(--sage)"></div></div><span class="lp-fo-br-v">$18k</span></div>
+                <div class="lp-fo-br"><span class="lp-fo-br-l">Studio Haus</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="--bar-w:48%;background:var(--amber-mid)"></div></div><span class="lp-fo-br-v">$12k</span></div>
+                <div class="lp-fo-br"><span class="lp-fo-br-l">Indie Brands</span><div class="lp-fo-bw"><div class="lp-fo-bf" style="--bar-w:32%;background:#6366f1"></div></div><span class="lp-fo-br-v">$8k</span></div>
               </div>
             </div>
           </div>
@@ -2468,11 +2480,16 @@ var RateLimiter = (function() {
           <div class="lp-bc-tag" style="background:#FEE2E2;color:#B91C1C">Pipeline Tracker</div>
           <div class="lp-bc-title">See the dry<br>month coming.</div>
           <div class="lp-bc-desc">Weighted revenue forecast by stage. Drag cards, watch the forecast update. Never be blindsided by a slow period again.</div>
-          <div class="lp-pipe-cols" style="margin-top:14px">
-            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
-            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Proposal</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Axiom</div><div class="lp-pipe-c-v">$8k</div></div></div>
-            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Negot.</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Helix</div><div class="lp-pipe-c-v">$12k</div></div></div>
-            <div class="lp-pipe-col"><div class="lp-pipe-col-h">Won ✓</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Drift</div><div class="lp-pipe-c-v" style="color:var(--sage)">$6k</div></div></div>
+          <div class="lp-pipe-cols" style="margin-top:14px;position:relative" id="lp-pipe-cols">
+            <div class="lp-pipe-col" id="lp-pc-0"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
+            <div class="lp-pipe-col" id="lp-pc-1"><div class="lp-pipe-col-h">Proposal</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Axiom</div><div class="lp-pipe-c-v">$8k</div></div></div>
+            <div class="lp-pipe-col" id="lp-pc-2"><div class="lp-pipe-col-h">Negot.</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Helix</div><div class="lp-pipe-c-v">$12k</div></div></div>
+            <div class="lp-pipe-col" id="lp-pc-3"><div class="lp-pipe-col-h">Won ✓</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Drift</div><div class="lp-pipe-c-v" style="color:var(--sage)">$6k</div></div></div>
+            <div class="lp-pipe-mover" id="lp-pipe-mover"><div class="lp-pipe-mover-n">Nova</div><div class="lp-pipe-mover-v">$9k</div></div>
+          </div>
+          <div class="lp-pipe-forecast" id="lp-pipe-forecast">
+            <span class="lp-pipe-forecast-l">Forecasted</span>
+            <span class="lp-pipe-forecast-v" id="lp-pipe-forecast-v">$33.4k</span>
           </div>
         </div>
 
@@ -4076,7 +4093,7 @@ function initAtnDropdowns() {
       wrap.classList.add('open');
     });
     wrap.addEventListener('mouseleave', function() {
-      closeTimer = setTimeout(function() { wrap.classList.remove('open'); }, 140);
+      closeTimer = setTimeout(function() { wrap.classList.remove('open'); }, 75);
     });
   });
 }
@@ -4143,44 +4160,145 @@ function initLandingAnimations(){
     });
   }
 
-  // 2. Pricing card 3D tilt + glare
-  document.querySelectorAll('#page-landing .lp-price-card').forEach(function(card) {
-    if (!card.querySelector('.lp-price-card-glare')) {
-      var g = document.createElement('div');
-      g.className = 'lp-price-card-glare';
-      card.appendChild(g);
-    }
-    var pcRaf = null;
-    card.addEventListener('mousemove', function(e) {
-      if (pcRaf) cancelAnimationFrame(pcRaf);
-      pcRaf = requestAnimationFrame(function() {
-        var r = card.getBoundingClientRect();
-        var x = (e.clientX - r.left) / r.width;
-        var y = (e.clientY - r.top)  / r.height;
-        var cx = x - 0.5, cy = y - 0.5;
-        card.style.transform = 'perspective(800px) rotateY(' + (cx * 12) + 'deg) rotateX(' + (-cy * 12) + 'deg) translateZ(16px)';
-        card.style.boxShadow = (-cx*16) + 'px ' + (10 + cy*16) + 'px ' + (32 + Math.abs(cy)*20) + 'px rgba(25,28,30,.14)';
-        var glare = card.querySelector('.lp-price-card-glare');
-        if (glare) glare.style.background = 'radial-gradient(circle at ' + (x*100) + '% ' + (y*100) + '%, rgba(255,255,255,.14) 0%, transparent 52%)';
-      });
-    });
-    card.addEventListener('mouseleave', function() {
-      card.style.transform = '';
-      card.style.boxShadow = '';
-      var glare = card.querySelector('.lp-price-card-glare');
-      if (glare) glare.style.background = '';
-    });
-  });
+  // Pricing card 3D tilt removed — simple hover shadow only
 
-  // 4. Mobile gyroscope tilt for hero mockup
+  // Mobile gyroscope tilt for hero mockup
   if (window.DeviceOrientationEvent && /Mobi|Android/i.test(navigator.userAgent)) {
     window.addEventListener('deviceorientation', function(e) {
       if (!mockupEl) return;
-      var gx = Math.max(-15, Math.min(15, (e.gamma || 0)));  // left-right tilt
-      var gy = Math.max(-10, Math.min(10, (e.beta  || 0) - 30)); // front-back
+      var gx = Math.max(-15, Math.min(15, (e.gamma || 0)));
+      var gy = Math.max(-10, Math.min(10, (e.beta  || 0) - 30));
       mockupEl.style.transform = 'perspective(1100px) rotateY(' + (gx * 0.8) + 'deg) rotateX(' + (-gy * 0.5) + 'deg)';
     });
   }
+
+  // ─── SCROLL ANIMATIONS ────────────────────────────────────────────
+
+  // 1. Financial Overview — bars grow + counters tick on scroll
+  (function(){
+    var foCard = document.getElementById('lp-fo-stats');
+    if (!foCard || window._foAnimDone) return;
+    var obs = new IntersectionObserver(function(entries) {
+      if (!entries[0].isIntersecting) return;
+      obs.disconnect();
+      window._foAnimDone = true;
+      // Animate bars
+      var bars = document.querySelectorAll('#lp-fo-bars .lp-fo-bf');
+      bars.forEach(function(b, i) {
+        setTimeout(function() { b.classList.add('lp-animated'); }, i * 180);
+      });
+      // Animate counters
+      var vals = document.querySelectorAll('#lp-fo-stats .lp-fo-stat-v[data-target]');
+      vals.forEach(function(el, i) {
+        var target = parseInt(el.dataset.target, 10);
+        var prefix = el.dataset.prefix || '';
+        var suffix = el.dataset.suffix || '';
+        var dur = 1400;
+        var start = null;
+        setTimeout(function() {
+          requestAnimationFrame(function step(ts) {
+            if (!start) start = ts;
+            var prog = Math.min((ts - start) / dur, 1);
+            var ease = 1 - Math.pow(1 - prog, 3);
+            var cur = Math.round(ease * target);
+            el.textContent = prefix + cur.toLocaleString() + suffix;
+            if (prog < 1) requestAnimationFrame(step);
+          });
+        }, i * 120);
+      });
+    }, { threshold: 0.3 });
+    obs.observe(foCard);
+  })();
+
+  // 2. Pipeline — animated card slides Lead → Proposal → Negot. → Won, forecasted value ticks up
+  (function(){
+    var pipeWrap = document.getElementById('lp-pipe-cols');
+    var mover    = document.getElementById('lp-pipe-mover');
+    var foreVal  = document.getElementById('lp-pipe-forecast-v');
+    if (!pipeWrap || !mover || window._pipeAnimStarted) return;
+    var BASE_FORECAST = 33400; // sum of static cards
+    var DEAL_VAL = 9000;
+    var stages = [0,1,2,3].map(function(i){ return document.getElementById('lp-pc-'+i); });
+    function runPipeAnim() {
+      if (!stages[0]) return;
+      var cols     = pipeWrap.getBoundingClientRect();
+      var stageIdx = 0;
+      mover.style.opacity = '1';
+      function moveToStage(idx) {
+        var col = stages[idx];
+        if (!col) return;
+        var colR = col.getBoundingClientRect();
+        var left = colR.left - cols.left + 4;
+        var top  = colR.top  - cols.top  + 28;
+        mover.style.left = left + 'px';
+        mover.style.top  = top  + 'px';
+        // tick forecasted value up as deal progresses
+        var weights = [0.2, 0.45, 0.7, 1.0];
+        var fv = Math.round(BASE_FORECAST + DEAL_VAL * weights[idx]);
+        foreVal.textContent = '$' + (fv / 1000).toFixed(1) + 'k';
+        stageIdx = idx;
+        if (idx < 3) {
+          setTimeout(function() { moveToStage(idx + 1); }, 900);
+        } else {
+          // Won — pause then restart loop
+          setTimeout(function() {
+            mover.style.opacity = '0';
+            foreVal.textContent = '$' + (BASE_FORECAST / 1000).toFixed(1) + 'k';
+            setTimeout(runPipeAnim, 800);
+          }, 1200);
+        }
+      }
+      moveToStage(0);
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      if (!entries[0].isIntersecting) return;
+      obs.disconnect();
+      window._pipeAnimStarted = true;
+      mover.style.position = 'absolute';
+      // position at Lead initially (hidden)
+      var col0 = stages[0];
+      if (col0) {
+        var cols = pipeWrap.getBoundingClientRect();
+        var c0   = col0.getBoundingClientRect();
+        mover.style.left = (c0.left - cols.left + 4) + 'px';
+        mover.style.top  = (c0.top  - cols.top  + 28) + 'px';
+      }
+      mover.style.transition = 'left .55s cubic-bezier(.34,1.3,.64,1), top .55s ease, opacity .22s';
+      setTimeout(runPipeAnim, 400);
+    }, { threshold: 0.4 });
+    obs.observe(pipeWrap);
+  })();
+
+  // 3. Heatmap — cells scatter outward on load, converge to grid on scroll
+  (function(){
+    var hmWrap = document.getElementById('lp-ts-heatmap');
+    if (!hmWrap || window._hmAnimDone) return;
+    // Wait for cells to exist (built just above)
+    requestAnimationFrame(function() {
+      var cells = hmWrap.querySelectorAll('.lp-ts-hm-d');
+      if (!cells.length) return;
+      // Set random scatter offsets and start scattered
+      cells.forEach(function(c) {
+        var sx = (Math.random() - 0.5) * 90;
+        var sy = (Math.random() - 0.5) * 70;
+        c.style.setProperty('--sx', sx + 'px');
+        c.style.setProperty('--sy', sy + 'px');
+        // disable transition while setting initial state
+        c.style.transition = 'none';
+        c.classList.add('lp-scattered');
+        requestAnimationFrame(function(){ c.style.transition = ''; });
+      });
+      var obs = new IntersectionObserver(function(entries) {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        window._hmAnimDone = true;
+        cells.forEach(function(c, i) {
+          setTimeout(function() { c.classList.remove('lp-scattered'); }, i * 8);
+        });
+      }, { threshold: 0.3 });
+      obs.observe(hmWrap);
+    });
+  })();
 }
 
 function showPanel(id,el){
