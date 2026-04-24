@@ -2479,6 +2479,10 @@ var RateLimiter = (function() {
             <div class="lp-pipe-col"><div class="lp-pipe-col-h">Negot.</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Helix</div><div class="lp-pipe-c-v">$12k</div></div></div>
             <div class="lp-pipe-col"><div class="lp-pipe-col-h">Won ✓</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Drift</div><div class="lp-pipe-c-v" style="color:var(--sage)">$6k</div></div></div>
           </div>
+          <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:var(--surface-container);border-radius:6px;padding:6px 10px">
+            <span style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);font-weight:700">Forecasted</span>
+            <span style="font-size:13px;font-weight:800;color:var(--tertiary);font-family:var(--font-display)">$33.4k</span>
+          </div>
         </div>
 
         <!-- Timesheet + Heatmap (2col) -->
@@ -4081,7 +4085,7 @@ function initAtnDropdowns() {
       wrap.classList.add('open');
     });
     wrap.addEventListener('mouseleave', function() {
-      closeTimer = setTimeout(function() { wrap.classList.remove('open'); }, 75);
+      closeTimer = setTimeout(function() { wrap.classList.remove('open'); }, 25);
     });
   });
 }
