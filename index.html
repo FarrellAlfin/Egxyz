@@ -10268,7 +10268,8 @@ function openShareModal() {
   var html = '<div class="pt-modal-title">👥 Share project</div>' +
     '<p style="font-size:13px;color:var(--ink-mid);margin:0 0 16px">Invite a FreelanceKit user by email to collaborate on tasks, notes, and duties.</p>' +
     '<div class="pt-field"><label>Email address</label>' +
-    '<div style="display:flex;gap:8px"><input class="pt-inp" id="ptm-share-email" placeholder="colleague@example.com" style="flex:1"><button class="pt-save-btn" style="flex-shrink:0" onclick="savePtShare()">Invite</button></div></div>' +
+    '<div style="display:flex;gap:8px"><input class="pt-inp" id="ptm-share-email" placeholder="colleague@example.com" style="flex:1" oninput="clearShareWarn()"><button class="pt-save-btn" id="ptm-share-btn" style="flex-shrink:0" onclick="savePtShare()">Invite</button></div></div>' +
+    '<div id="ptm-share-warn" style="display:none;margin-top:10px;padding:10px 12px;background:#FFFBEA;border:1.5px solid #F59E0B;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6"></div>' +
     '<div id="ptm-shares-current" style="margin-top:12px"></div>' +
     '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Close</button></div>';
   var overlay = document.getElementById('pt-modal');
@@ -10277,6 +10278,13 @@ function openShareModal() {
   body.innerHTML = html;
   overlay.classList.add('open');
   _renderShareList();
+}
+
+function clearShareWarn() {
+  var w = document.getElementById('ptm-share-warn');
+  if (w) { w.style.display = 'none'; w.innerHTML = ''; }
+  var btn = document.getElementById('ptm-share-btn');
+  if (btn) { btn.textContent = 'Invite'; delete btn.dataset.confirmed; }
 }
 
 function _renderShareList() {
@@ -10295,10 +10303,49 @@ function _renderShareList() {
 }
 
 async function savePtShare() {
-  var email = (document.getElementById('ptm-share-email') || {}).value;
+  var emailEl = document.getElementById('ptm-share-email');
+  var btn     = document.getElementById('ptm-share-btn');
+  var warnEl  = document.getElementById('ptm-share-warn');
+  var email   = (emailEl || {}).value || '';
+  email = email.trim().toLowerCase();
   if (!email || !email.includes('@')) { showToast('Enter a valid email'); return; }
   if (!_currentUser || !_ptCurrentId) return;
   if (!_supabase) { showToast('Database not connected'); return; }
+
+  // If the inviter already saw the "not found" warning and clicked "Send anyway",
+  // skip the account check and go straight to sending.
+  var confirmed = btn && btn.dataset.confirmed === '1';
+
+  if (!confirmed) {
+    // Check whether this email belongs to a FreelanceKit account.
+    // We look for a matching row in user_settings (users typically save their
+    // email there). If none is found we warn the inviter before proceeding.
+    if (btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
+    var lookup = await _supabase
+      .from('user_settings')
+      .select('id')
+      .eq('email', email)
+      .limit(1);
+    if (btn) { btn.disabled = false; }
+
+    var userFound = lookup.data && lookup.data.length > 0;
+    if (!userFound) {
+      // Show warning and let the inviter decide whether to send anyway.
+      if (warnEl) {
+        warnEl.innerHTML =
+          '⚠️ <strong>' + escapeHTML(email) + '</strong> doesn\'t appear to have a FreelanceKit account yet. ' +
+          'They\'ll need to sign up first before they can accept this invite.';
+        warnEl.style.display = '';
+      }
+      if (btn) { btn.textContent = 'Send anyway'; btn.dataset.confirmed = '1'; }
+      return; // Hold — let the inviter decide
+    }
+    // Account found — clear any stale warning and fall through to send.
+    if (warnEl) { warnEl.style.display = 'none'; }
+  }
+
+  // ── Send the invite ──
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
   var ownerName = getMyFullName()
     || (_currentUser.user_metadata && (_currentUser.user_metadata.full_name || _currentUser.user_metadata.name))
     || _currentUser.email || 'Someone';
@@ -10306,13 +10353,16 @@ async function savePtShare() {
     project_id: _ptCurrentId,
     owner_id: _currentUser.id,
     owner_name: ownerName,
-    shared_email: email.trim().toLowerCase(),
+    shared_email: email,
     status: 'pending',
     created_at: new Date().toISOString()
-  }).select().single();
+  }).select();
+  if (btn) { btn.disabled = false; btn.textContent = 'Invite'; delete btn.dataset.confirmed; }
   if (res.error) { showToast('Error: ' + res.error.message); return; }
-  _ptShares.push(res.data);
-  document.getElementById('ptm-share-email').value = '';
+  var row = res.data && res.data[0];
+  if (row) _ptShares.push(row);
+  if (emailEl) emailEl.value = '';
+  if (warnEl) { warnEl.style.display = 'none'; }
   _renderShareList();
   loadPtShares(_ptCurrentId);
   showToast('\u2713 Invite sent to ' + email);
