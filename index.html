@@ -1213,9 +1213,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .isf-btn:hover{border-color:var(--ink);color:var(--ink)}
 .isf-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .inv-hist-table{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.iht-head{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px 235px;background:var(--cream-dark);border-bottom:1px solid var(--border)}
+.iht-head{display:grid;grid-template-columns:repeat(6,1fr);background:var(--cream-dark);border-bottom:1px solid var(--border)}
 .iht-hc{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);padding:10px 14px}
-.iht-row{display:grid;grid-template-columns:100px 1fr 1fr 90px 90px 120px 235px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
+.iht-row{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--border);align-items:center;transition:background .15s;cursor:pointer}
 .iht-row:last-child{border-bottom:none}
 .iht-row:hover{background:var(--cream)}
 .iht-cell{padding:11px 14px;font-size:13px;color:var(--ink-mid)}
@@ -1522,9 +1522,8 @@ input[type=number]{-moz-appearance:textfield}
   .ct-head,.ct-row{grid-template-columns:1fr 1fr 60px}
   .ct-head-cell:nth-child(3),.ct-cell:nth-child(3),
   .ct-head-cell:nth-child(4),.ct-actions{display:none}
-  .iht-head,.iht-row{grid-template-columns:90px 1fr 80px 80px auto}
-  .iht-hc:nth-child(3),.iht-cell:nth-child(3),
-  .iht-hc:nth-child(6),.iht-actions{display:none}
+  .iht-head,.iht-row{grid-template-columns:80px 1fr 1fr 80px 80px auto}
+  .iht-hc:nth-child(3),.iht-cell:nth-child(3){display:none}
 }
 /* ─── Invoice Builder extras ─── */
 .logo-upload-btn{display:inline-flex;align-items:center;gap:7px;background:var(--cream-dark);border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
@@ -1971,9 +1970,9 @@ input[type=number]{-moz-appearance:textfield}
   /* Wrap long nav-actions */
   .nav-actions{gap:6px}
   /* Invoice history table */
-  .iht-head,.iht-row{grid-template-columns:90px 1fr 80px auto!important}
-  .iht-hc:nth-child(5),.iht-cell:nth-child(5),
-  .iht-hc:nth-child(6),.iht-cell:nth-child(6){display:none}
+  .iht-head,.iht-row{grid-template-columns:80px 1fr 80px auto!important}
+  .iht-hc:nth-child(3),.iht-cell:nth-child(3),
+  .iht-hc:nth-child(5),.iht-cell:nth-child(5){display:none}
 }
 
 /* ── SMALL PHONE (≤480px) ── */
@@ -2012,11 +2011,11 @@ input[type=number]{-moz-appearance:textfield}
   .settings-grid{grid-template-columns:1fr}
   /* auth page */
   .auth-panel-inner{padding:28px 20px}
-  /* Timeline headers */
-  .iht-head,.iht-row{grid-template-columns:80px 1fr auto!important}
+  /* Invoice history table small phone */
+  .iht-head,.iht-row{grid-template-columns:70px 1fr auto!important}
+  .iht-hc:nth-child(3),.iht-cell:nth-child(3),
   .iht-hc:nth-child(4),.iht-cell:nth-child(4),
-  .iht-hc:nth-child(5),.iht-cell:nth-child(5),
-  .iht-hc:nth-child(6),.iht-cell:nth-child(6){display:none}
+  .iht-hc:nth-child(5),.iht-cell:nth-child(5){display:none}
 }
 
 /* ── LANDSCAPE PHONE ── */
@@ -3867,7 +3866,6 @@ var RateLimiter = (function() {
               <div class="iht-hc">Total</div>
               <div class="iht-hc">Due</div>
               <div class="iht-hc">Status</div>
-              <div class="iht-hc"></div>
             </div>
             <div id="inv-history-body"><div class="inv-hist-empty">No invoices saved yet. Build one in the Invoice Builder and click Save.</div></div>
           </div>
@@ -3998,11 +3996,14 @@ var RateLimiter = (function() {
         <div style="text-align:right;padding:14px 0 4px;font-size:16px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);margin-top:14px">Total: <span id="foei-total">$0.00</span></div>
       </div>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid var(--border);background:var(--cream)">
-      <button class="btn-outline" onclick="foCloseEditInv()">Cancel</button>
-      <button class="btn-outline" onclick="foeiShowFullPreview()">&#128196; Preview</button>
-      <button class="btn-outline" onclick="foeiDownloadPdf()">&#8659; Download PDF</button>
-      <button class="pt-save-btn" onclick="foSaveEditInv()">Save changes</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 24px;border-top:1px solid var(--border);background:var(--cream)">
+      <button class="iht-btn" style="color:#B91C1C;border-color:#FECACA;padding:7px 14px;font-size:12px" onclick="foDeleteFromEdit()">🗑 Delete invoice</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-outline" onclick="foCloseEditInv()">Cancel</button>
+        <button class="btn-outline" onclick="foeiShowFullPreview()">&#128196; Preview</button>
+        <button class="btn-outline" onclick="foeiDownloadPdf()">&#8659; PDF</button>
+        <button class="pt-save-btn" onclick="foSaveEditInv()">Save changes</button>
+      </div>
     </div>
   </div>
 </div>
@@ -6235,24 +6236,13 @@ function renderInvHistory() {
   var fmtAmt  = function(n){ return '$'+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
   body.innerHTML = list.map(function(inv) {
     var iid = escapeHTML(inv.id);
-    var statusOpts = ['draft','sent','paid','overdue'].map(function(s){
-      return '<option value="' + s + '"' + (inv.status===s?' selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
-    }).join('');
-    return '<div class="iht-row">' +
+    return '<div class="iht-row" onclick="foOpenEditInv(\'' + iid + '\')" title="Click to edit">' +
       '<div class="iht-cell num">' + escapeHTML(inv.invoice_number||'—') + '</div>' +
       '<div class="iht-cell">' + escapeHTML(inv.client_name||'—') + '</div>' +
       '<div class="iht-cell" style="font-size:12px;color:var(--ink-light)">' + escapeHTML(inv.project||'—') + '</div>' +
       '<div class="iht-cell amount">' + fmtAmt(inv.total) + '</div>' +
       '<div class="iht-cell" style="font-size:12px">' + fmtDate(inv.due_date) + '</div>' +
-      '<div class="iht-cell">' +
-        '<select class="inv-badge ' + escapeHTML(inv.status) + '" data-inv-id="' + iid + '" onchange="this.className=\'inv-badge \'+this.value; updateInvStatus(this.dataset.invId,this.value)">' +
-        statusOpts + '</select>' +
-      '</div>' +
-      '<div class="iht-actions">' +
-      '<button class="iht-btn" data-inv-id="' + iid + '" onclick="editInvoiceFromHistory(this.dataset.invId)">Edit</button>' +
-      '<button class="iht-btn" data-inv-id="' + iid + '" onclick="foPreviewInvoice(this.dataset.invId)">Preview</button>' +
-      '<button class="iht-btn" data-inv-id="' + iid + '" onclick="downloadInvoicePDFFromHistory(this.dataset.invId)">PDF</button>' +
-      '<button class="iht-btn" style="color:#B91C1C;border-color:#FECACA" data-inv-id="' + iid + '" onclick="deleteInvoice(this.dataset.invId)">Delete</button></div>' +
+      '<div class="iht-cell"><span class="inv-badge ' + escapeHTML(inv.status||'draft') + '">' + (inv.status||'draft').charAt(0).toUpperCase()+(inv.status||'draft').slice(1) + '</span></div>' +
     '</div>';
   }).join('');
 }
@@ -6334,6 +6324,12 @@ function foOpenEditInv(id) {
 }
 function foCloseEditInv() {
   document.getElementById('fo-inv-edit-modal').style.display = 'none';
+}
+function foDeleteFromEdit() {
+  if (!_foEditInvId) return;
+  if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  foCloseEditInv();
+  deleteInvoice(_foEditInvId);
 }
 function foeiRenderItems() {
   var wrap = document.getElementById('foei-items-wrap');
@@ -8788,7 +8784,7 @@ function renderPtMeetings() {
   var me = window._ptMeetings || [];
   var el = document.getElementById('pt-meetings-list');
   if (!el) return;
-  if (!me.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--ink-light);font-size:13px">No meeting notes yet. Click "+ Add note" to create one.</div>'; return; }
+  if (!me.length) { el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--ink-light);font-size:13px;text-align:center;flex-direction:column;gap:8px"><span style="font-size:28px">📋</span>No meeting notes yet.<br><span style="font-size:12px">Click &ldquo;+ Add note&rdquo; to create one.</span></div>'; return; }
   el.innerHTML = me.map(function(m, i) {
     var purpose = m.purpose || 'Meeting note';
     var dateStr = '—';
@@ -10801,6 +10797,15 @@ function openPtEditBilling(i) {
     if (!(_invoices || []).find(function(i){ return i.id === existingInv.id; })) {
       (_invoices = _invoices || []).unshift(existingInv);
     }
+    // Sync billing card status FROM the invoice so both sides show the same value
+    var invToBilling = {draft:'pending', sent:'invoiced', overdue:'invoiced', paid:'paid'};
+    var freshStatus = invToBilling[existingInv.status] || b.status;
+    if (freshStatus !== b.status) {
+      b.status = freshStatus;
+      if (_supabase && _currentUser) {
+        _supabase.from('project_billing').update({status: freshStatus}).eq('id', b.id).eq('user_id', _currentUser.id);
+      }
+    }
     foOpenEditInv(existingInv.id);
   } else {
     // No linked invoice yet — pre-fill a new one; line items are fully editable
@@ -10906,6 +10911,15 @@ async function cyclePtBillingStatus(i) {
   var cycle = {pending:'invoiced', invoiced:'paid', paid:'pending'};
   bs[i].status = cycle[bs[i].status] || 'pending';
   await _supabase.from('project_billing').update({status: bs[i].status}).eq('id', bs[i].id).eq('user_id', _currentUser.id);
+  // Sync status to the linked invoice so both stay in step
+  var invStatus = {pending:'draft', invoiced:'sent', paid:'paid'}[bs[i].status] || 'draft';
+  var linkedId = _getBillingInvLink(bs[i].id);
+  if (linkedId && _supabase) {
+    _supabase.from('invoices').update({status: invStatus, updated_at: new Date().toISOString()}).eq('id', linkedId).eq('user_id', _currentUser.id);
+    var inv = (_invoices || []).find(function(x){ return x.id === linkedId; });
+    if (inv) inv.status = invStatus;
+    renderInvHistory();
+  }
   renderPtBilling();
 }
 
