@@ -1801,9 +1801,9 @@ input[type=number]{-moz-appearance:textfield}
 .pt-doc-task{font-size:11px;color:var(--ink-light);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Multi-assignee checkbox list */
 .pt-assignee-cb-list{display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);max-height:160px;overflow-y:auto}
-.pt-assignee-cb-label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);cursor:pointer;padding:5px 8px;border-radius:6px;transition:background .12s}
+.pt-assignee-cb-label{display:flex;align-items:flex-start;gap:0;font-size:13px;color:var(--ink);cursor:pointer;padding:5px 8px;border-radius:6px;transition:background .12s}
 .pt-assignee-cb-label:hover{background:var(--cream)}
-.pt-assignee-cb-label input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;border:2px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;position:relative;transition:border-color .15s,background .15s;flex-shrink:0;margin-right:8px}
+.pt-assignee-cb-label input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;border:2px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;position:relative;transition:border-color .15s,background .15s;flex-shrink:0;margin-top:3px;margin-right:14px}
 .pt-assignee-cb-label input[type="checkbox"]:checked{background:var(--sage);border-color:var(--sage)}
 .pt-assignee-cb-label input[type="checkbox"]:checked::after{content:'';position:absolute;left:3px;top:0px;width:5px;height:9px;border:2px solid #fff;border-left:none;border-top:none;transform:rotate(45deg)}
 .pt-filter-sep{width:1px;height:16px;background:var(--border);flex-shrink:0}
@@ -10209,7 +10209,7 @@ function openPtModal(mode) {
     var assigneeHtml = ppl.length
       ? '<div class="pt-assignee-cb-list">' + ppl.map(function(p){
           var chk = curAssignees.indexOf(p.name) >= 0 ? ' checked' : '';
-          return '<label class="pt-assignee-cb-label"><input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + chk + '><span style="line-height:1.4;font-weight:500">' + escapeHTML(p.name) + (p.role ? ' <span style="font-size:11px;font-weight:400;color:var(--ink-light)">· ' + escapeHTML(p.role) + '</span>' : '') + '</span></label>';
+          return '<label class="pt-assignee-cb-label"><input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + chk + '><span style="line-height:1.3;font-weight:500;padding-top:1px">' + escapeHTML(p.name) + (p.role ? '<br><span style="font-size:11px;font-weight:400;color:var(--ink-light)">· ' + escapeHTML(p.role) + '</span>' : '') + '</span></label>';
         }).join('') + '</div>'
       : '<div style="font-size:12px;color:var(--ink-light);padding:6px 0">Add people in the Overview tab first</div>';
     html = '<div class="pt-modal-title">' + (mode === 'edit-task' ? 'Edit task' : 'Add task') + '</div>' +
