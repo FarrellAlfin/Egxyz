@@ -122,8 +122,8 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 @keyframes lp-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes lp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
 /* Scroll reveals */
-.lp-reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
-.lp-reveal.visible{opacity:1;transform:translateY(0)}
+.lp-reveal{opacity:0;transform:perspective(900px) rotateX(14deg) translateY(30px);transition:opacity .72s cubic-bezier(.23,1,.32,1),transform .72s cubic-bezier(.23,1,.32,1)}
+.lp-reveal.visible{opacity:1;transform:perspective(900px) rotateX(0deg) translateY(0)}
 .lp-reveal-r{opacity:0;transform:translateX(22px);transition:opacity .7s ease,transform .7s ease}
 .lp-reveal-r.visible{opacity:1;transform:translateX(0)}
 [data-d="1"]{transition-delay:.1s}[data-d="2"]{transition-delay:.2s}[data-d="3"]{transition-delay:.3s}
@@ -141,8 +141,8 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-hero-vis{position:relative;animation:lp-right .8s .25s ease both}
 /* Mockup window */
 .lp-mockup-wrap{position:relative}
-.lp-mockup-win{background:#141922;border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,.28);overflow:hidden;border:1px solid rgba(255,255,255,.07);transform:perspective(1000px) rotateY(-4deg) rotateX(2deg);transition:transform .5s ease}
-.lp-mockup-win:hover{transform:perspective(1000px) rotateY(-1deg) rotateX(0deg)}
+.lp-mockup-win{background:#141922;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);transform:perspective(1100px) rotateY(-10deg) rotateX(5deg) translateZ(0);transition:transform .7s cubic-bezier(.23,1,.32,1),box-shadow .7s ease;will-change:transform;box-shadow:0 36px 90px rgba(0,0,0,.42),32px 0 64px rgba(0,0,0,.14),0 0 0 1px rgba(255,255,255,.05) inset}
+.lp-mockup-win:hover{transform:perspective(1100px) rotateY(-4deg) rotateX(2deg) translateZ(14px);box-shadow:0 48px 110px rgba(0,0,0,.46),24px 0 50px rgba(0,0,0,.1)}
 .lp-mw-bar{background:#0d1117;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .lp-mw-dot{width:9px;height:9px;border-radius:50%}
 .lp-mw-url{font-size:10px;color:rgba(255,255,255,.25);margin-left:10px;font-family:var(--font-mono)}
@@ -183,8 +183,8 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-bento-inner{max-width:1120px;margin:0 auto}
 .lp-bento-hdr{text-align:center;margin-bottom:56px}
 .lp-bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.lp-bc{background:var(--white);border-radius:16px;padding:26px;border:1.5px solid var(--border);transition:transform .25s,box-shadow .25s,border-color .25s;overflow:hidden;position:relative}
-.lp-bc:hover{transform:translateY(-4px);box-shadow:0 16px 44px rgba(25,28,30,.08);border-color:rgba(0,150,104,.2)}
+.lp-bc{background:var(--white);border-radius:16px;padding:26px;border:1.5px solid var(--border);transition:transform .13s ease-out,box-shadow .13s ease-out,border-color .25s;overflow:hidden;position:relative;will-change:transform;transform-style:flat}
+.lp-bc:hover{box-shadow:0 16px 44px rgba(25,28,30,.1);border-color:rgba(0,150,104,.22)}
 .lp-bc-a{grid-column:span 2;grid-row:span 2;background:var(--ink);border-color:transparent;display:flex;flex-direction:column}
 .lp-bc-a:hover{border-color:rgba(0,200,140,.25)}
 .lp-bc-d{grid-column:span 3}
@@ -264,8 +264,8 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-pricing-inner{max-width:960px;margin:0 auto}
 .lp-pricing-hdr{text-align:center;margin-bottom:52px}
 .lp-price-grid{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
-.lp-price-card{flex:1;min-width:280px;max-width:420px;background:var(--white);border-radius:16px;padding:34px;box-shadow:0 2px 16px rgba(25,28,30,.06);border:1.5px solid var(--border);transition:all .25s}
-.lp-price-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(25,28,30,.1)}
+.lp-price-card{flex:1;min-width:280px;max-width:420px;background:var(--white);border-radius:16px;padding:34px;box-shadow:0 2px 16px rgba(25,28,30,.06);border:1.5px solid var(--border);transition:transform .13s ease-out,box-shadow .13s ease-out,border-color .25s;will-change:transform;position:relative}
+.lp-price-card:hover{box-shadow:0 12px 40px rgba(25,28,30,.12)}
 .lp-price-card.featured{background:var(--primary-container);border-color:transparent;position:relative;overflow:hidden}
 .lp-price-card.featured::after{content:'Most popular';position:absolute;top:20px;right:-26px;background:var(--tertiary-fixed);color:var(--on-tertiary-fixed);font-size:9px;font-weight:700;padding:4px 36px;transform:rotate(45deg);letter-spacing:.05em;text-transform:uppercase}
 .lp-price-tier{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:8px;font-family:var(--font-display)}
@@ -297,6 +297,44 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-footer-logo span{color:var(--tertiary-fixed)}
 .lp-footer-r{font-size:12px;color:rgba(250,247,242,.3)}
 
+/* ═══════ 3D LANDING EFFECTS ═══════ */
+/* Depth orbs */
+.lp-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(72px);z-index:0;opacity:0;animation-fill-mode:forwards}
+.lp-orb-1{width:460px;height:460px;background:radial-gradient(circle,rgba(0,150,104,.18) 0%,transparent 65%);top:-110px;right:2%;animation:lp-orb-a 11s ease-in-out 0.4s infinite}
+.lp-orb-2{width:280px;height:280px;background:radial-gradient(circle,rgba(200,98,26,.13) 0%,transparent 65%);bottom:-20px;left:50%;animation:lp-orb-b 14s ease-in-out 2.2s infinite}
+.lp-orb-3{width:210px;height:210px;background:radial-gradient(circle,rgba(109,40,217,.14) 0%,transparent 65%);top:28%;right:0%;animation:lp-orb-c 8.5s ease-in-out 0.9s infinite}
+@keyframes lp-orb-a{0%{opacity:0}5%{opacity:.9}45%{opacity:1;transform:translate(-24px,-30px) scale(1.07)}75%{opacity:.72;transform:translate(16px,20px) scale(.93)}100%{opacity:.9;transform:translate(0,0) scale(1)}}
+@keyframes lp-orb-b{0%{opacity:0}8%{opacity:.65}50%{opacity:.5;transform:translate(-22px,-38px) scale(1.13)}100%{opacity:.65;transform:translate(0,0) scale(1)}}
+@keyframes lp-orb-c{0%{opacity:0}6%{opacity:.6}50%{opacity:.85;transform:translate(-16px,-13px) scale(1.1)}100%{opacity:.6;transform:translate(0,0) scale(1)}}
+/* Vanishing-point grid floor */
+.lp-hero-grid{position:absolute;bottom:0;left:0;right:0;height:56%;pointer-events:none;z-index:0;overflow:hidden}
+.lp-hero-grid::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,150,104,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,150,104,.08) 1px,transparent 1px);background-size:58px 58px;transform:perspective(480px) rotateX(66deg);transform-origin:50% 0%;mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%)}
+/* Cursor light halo */
+.lp-cursor-halo{position:absolute;width:520px;height:520px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(0,150,104,.07) 0%,transparent 65%);z-index:0;transition:opacity .4s;opacity:0}
+/* Bento glare */
+.lp-bc-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;opacity:0;transition:opacity .18s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.16) 0%,transparent 55%)}
+.lp-bc:hover .lp-bc-glare{opacity:1}
+/* Pricing glare */
+.lp-price-card-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;opacity:0;transition:opacity .18s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.12) 0%,transparent 55%)}
+.lp-price-card:hover .lp-price-card-glare{opacity:1}
+/* "How it Works" step number 3D flip on hover */
+.lp-hiw-num{transition:transform .38s cubic-bezier(.23,1,.32,1),box-shadow .38s ease}
+.lp-hiw-step:hover .lp-hiw-num{transform:perspective(300px) rotateY(22deg) scale(1.14);box-shadow:0 10px 28px rgba(25,28,30,.28)}
+/* Step connector glow pulse */
+.lp-hiw-steps::before{animation:lp-conn-pulse 3.5s ease-in-out infinite}
+@keyframes lp-conn-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+/* Ticker item 3D hover */
+.lp-tick-item{transition:transform .22s ease}
+.lp-tick-item:hover{transform:perspective(500px) translateZ(12px) scale(1.05)}
+/* Hero h1 em — green shadow depth */
+.lp-hero-h1 em{display:inline-block;text-shadow:0 1px 0 rgba(0,150,104,.25),0 3px 8px rgba(0,150,104,.08),0 6px 20px rgba(0,0,0,.06)}
+/* Floating cards depth hint */
+.lp-float-card{transform-origin:center center}
+/* CTA h2 em depth */
+.lp-cta h2 em{display:inline-block;text-shadow:0 2px 0 rgba(111,251,190,.2),0 5px 15px rgba(0,0,0,.12)}
+/* Hero badge 3D pop */
+.lp-hero-badge{transition:transform .25s ease,box-shadow .25s ease}
+.lp-hero-badge:hover{transform:perspective(400px) rotateX(-8deg) translateY(-2px);box-shadow:0 6px 18px rgba(0,150,104,.18)}
 /* Auth page */
 .page-auth-wrap{min-height:100vh;display:flex;flex-direction:column;background:var(--surface)}
 .auth-nav{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid rgba(198,198,205,0.15);background:rgba(247,249,251,0.85);backdrop-filter:blur(20px)}
@@ -2005,7 +2043,12 @@ var RateLimiter = (function() {
   </nav>
 
   <!-- ─── HERO ─── -->
-  <section class="lp-hero">
+  <section class="lp-hero" id="lp-hero-section">
+   <div class="lp-hero-grid"></div>
+   <div class="lp-orb lp-orb-1"></div>
+   <div class="lp-orb lp-orb-2"></div>
+   <div class="lp-orb lp-orb-3"></div>
+   <div class="lp-cursor-halo" id="lp-cursor-halo"></div>
    <div class="lp-hero-inner">
     <div>
       <div class="lp-hero-badge">✦ Free during beta</div>
@@ -3865,6 +3908,111 @@ function initLandingAnimations(){
   document.querySelectorAll('#page-landing .lp-reveal,#page-landing .lp-reveal-r').forEach(function(el){
     window._lpObs.observe(el);
   });
+
+  // ─── 3D EFFECTS ───────────────────────────────────────────────
+
+  // 1. Hero: mouse-driven mockup tilt + cursor halo
+  var heroEl = document.getElementById('lp-hero-section');
+  var mockupEl = heroEl && heroEl.querySelector('.lp-mockup-win');
+  var haloEl = document.getElementById('lp-cursor-halo');
+  if (heroEl && mockupEl) {
+    var heroRaf = null;
+    heroEl.addEventListener('mousemove', function(e) {
+      if (heroRaf) cancelAnimationFrame(heroRaf);
+      heroRaf = requestAnimationFrame(function() {
+        var rect = heroEl.getBoundingClientRect();
+        var cx = (e.clientX - rect.left) / rect.width - 0.5;   // -0.5…0.5
+        var cy = (e.clientY - rect.top)  / rect.height - 0.5;
+        // Tilt mockup based on cursor position in hero
+        var ry = cx * -16, rx = cy * 9;
+        mockupEl.style.transform = 'perspective(1100px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) translateZ(24px)';
+        mockupEl.style.boxShadow = '0 36px 90px rgba(0,0,0,.42),' + (-cx*18) + 'px 0 50px rgba(0,0,0,.1)';
+        // Move cursor halo
+        if (haloEl) {
+          haloEl.style.left = (e.clientX - rect.left) + 'px';
+          haloEl.style.top  = (e.clientY - rect.top) + 'px';
+          haloEl.style.opacity = '1';
+        }
+      });
+    });
+    heroEl.addEventListener('mouseleave', function() {
+      mockupEl.style.transform = '';
+      mockupEl.style.boxShadow = '';
+      if (haloEl) haloEl.style.opacity = '0';
+    });
+  }
+
+  // 2. Bento card 3D tilt + moving glare
+  document.querySelectorAll('#page-landing .lp-bc').forEach(function(card) {
+    // Inject glare div if not present
+    if (!card.querySelector('.lp-bc-glare')) {
+      var g = document.createElement('div');
+      g.className = 'lp-bc-glare';
+      card.appendChild(g);
+    }
+    var cardRaf = null;
+    var maxTilt = card.classList.contains('lp-bc-a') ? 5 : 9;
+    card.addEventListener('mousemove', function(e) {
+      if (cardRaf) cancelAnimationFrame(cardRaf);
+      cardRaf = requestAnimationFrame(function() {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width;
+        var y = (e.clientY - r.top)  / r.height;
+        var cx = x - 0.5, cy = y - 0.5;
+        card.style.transform = 'perspective(900px) rotateY(' + (cx * maxTilt * 2) + 'deg) rotateX(' + (-cy * maxTilt * 2) + 'deg) translateZ(14px)';
+        // Dynamic shadow direction
+        card.style.boxShadow = (-cx*12) + 'px ' + (8 + cy*18) + 'px ' + (28 + Math.abs(cy)*22) + 'px rgba(25,28,30,.12)';
+        // Glare follows pointer
+        var glare = card.querySelector('.lp-bc-glare');
+        if (glare) glare.style.background = 'radial-gradient(circle at ' + (x*100) + '% ' + (y*100) + '%, rgba(255,255,255,.18) 0%, transparent 52%)';
+      });
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      var glare = card.querySelector('.lp-bc-glare');
+      if (glare) glare.style.background = '';
+    });
+  });
+
+  // 3. Pricing card 3D tilt + glare
+  document.querySelectorAll('#page-landing .lp-price-card').forEach(function(card) {
+    if (!card.querySelector('.lp-price-card-glare')) {
+      var g = document.createElement('div');
+      g.className = 'lp-price-card-glare';
+      card.appendChild(g);
+    }
+    var pcRaf = null;
+    card.addEventListener('mousemove', function(e) {
+      if (pcRaf) cancelAnimationFrame(pcRaf);
+      pcRaf = requestAnimationFrame(function() {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width;
+        var y = (e.clientY - r.top)  / r.height;
+        var cx = x - 0.5, cy = y - 0.5;
+        card.style.transform = 'perspective(800px) rotateY(' + (cx * 12) + 'deg) rotateX(' + (-cy * 12) + 'deg) translateZ(16px)';
+        card.style.boxShadow = (-cx*16) + 'px ' + (10 + cy*16) + 'px ' + (32 + Math.abs(cy)*20) + 'px rgba(25,28,30,.14)';
+        var glare = card.querySelector('.lp-price-card-glare');
+        if (glare) glare.style.background = 'radial-gradient(circle at ' + (x*100) + '% ' + (y*100) + '%, rgba(255,255,255,.14) 0%, transparent 52%)';
+      });
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      var glare = card.querySelector('.lp-price-card-glare');
+      if (glare) glare.style.background = '';
+    });
+  });
+
+  // 4. Mobile gyroscope tilt for hero mockup
+  if (window.DeviceOrientationEvent && /Mobi|Android/i.test(navigator.userAgent)) {
+    window.addEventListener('deviceorientation', function(e) {
+      if (!mockupEl) return;
+      var gx = Math.max(-15, Math.min(15, (e.gamma || 0)));  // left-right tilt
+      var gy = Math.max(-10, Math.min(10, (e.beta  || 0) - 30)); // front-back
+      mockupEl.style.transform = 'perspective(1100px) rotateY(' + (gx * 0.8) + 'deg) rotateX(' + (-gy * 0.5) + 'deg)';
+    });
+  }
 }
 
 function showPanel(id,el){
