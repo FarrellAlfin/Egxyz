@@ -309,11 +309,6 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 /* Vanishing-point grid floor */
 .lp-hero-grid{position:absolute;bottom:0;left:0;right:0;height:56%;pointer-events:none;z-index:0;overflow:hidden}
 .lp-hero-grid::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,150,104,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,150,104,.08) 1px,transparent 1px);background-size:58px 58px;transform:perspective(480px) rotateX(66deg);transform-origin:50% 0%;mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.15) 100%)}
-/* Cursor light halo */
-.lp-cursor-halo{position:absolute;width:520px;height:520px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(0,150,104,.07) 0%,transparent 65%);z-index:0;transition:opacity .4s;opacity:0}
-/* Bento glare */
-.lp-bc-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;opacity:0;transition:opacity .18s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.16) 0%,transparent 55%)}
-.lp-bc:hover .lp-bc-glare{opacity:1}
 /* Pricing glare */
 .lp-price-card-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;opacity:0;transition:opacity .18s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.12) 0%,transparent 55%)}
 .lp-price-card:hover .lp-price-card-glare{opacity:1}
@@ -2048,7 +2043,6 @@ var RateLimiter = (function() {
    <div class="lp-orb lp-orb-1"></div>
    <div class="lp-orb lp-orb-2"></div>
    <div class="lp-orb lp-orb-3"></div>
-   <div class="lp-cursor-halo" id="lp-cursor-halo"></div>
    <div class="lp-hero-inner">
     <div>
       <div class="lp-hero-badge">✦ Free during beta</div>
@@ -3911,71 +3905,29 @@ function initLandingAnimations(){
 
   // ─── 3D EFFECTS ───────────────────────────────────────────────
 
-  // 1. Hero: mouse-driven mockup tilt + cursor halo
+  // 1. Hero: mouse-driven mockup tilt
   var heroEl = document.getElementById('lp-hero-section');
   var mockupEl = heroEl && heroEl.querySelector('.lp-mockup-win');
-  var haloEl = document.getElementById('lp-cursor-halo');
   if (heroEl && mockupEl) {
     var heroRaf = null;
     heroEl.addEventListener('mousemove', function(e) {
       if (heroRaf) cancelAnimationFrame(heroRaf);
       heroRaf = requestAnimationFrame(function() {
         var rect = heroEl.getBoundingClientRect();
-        var cx = (e.clientX - rect.left) / rect.width - 0.5;   // -0.5…0.5
+        var cx = (e.clientX - rect.left) / rect.width - 0.5;
         var cy = (e.clientY - rect.top)  / rect.height - 0.5;
-        // Tilt mockup based on cursor position in hero
         var ry = cx * -16, rx = cy * 9;
         mockupEl.style.transform = 'perspective(1100px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) translateZ(24px)';
         mockupEl.style.boxShadow = '0 36px 90px rgba(0,0,0,.42),' + (-cx*18) + 'px 0 50px rgba(0,0,0,.1)';
-        // Move cursor halo
-        if (haloEl) {
-          haloEl.style.left = (e.clientX - rect.left) + 'px';
-          haloEl.style.top  = (e.clientY - rect.top) + 'px';
-          haloEl.style.opacity = '1';
-        }
       });
     });
     heroEl.addEventListener('mouseleave', function() {
       mockupEl.style.transform = '';
       mockupEl.style.boxShadow = '';
-      if (haloEl) haloEl.style.opacity = '0';
     });
   }
 
-  // 2. Bento card 3D tilt + moving glare
-  document.querySelectorAll('#page-landing .lp-bc').forEach(function(card) {
-    // Inject glare div if not present
-    if (!card.querySelector('.lp-bc-glare')) {
-      var g = document.createElement('div');
-      g.className = 'lp-bc-glare';
-      card.appendChild(g);
-    }
-    var cardRaf = null;
-    var maxTilt = card.classList.contains('lp-bc-a') ? 5 : 9;
-    card.addEventListener('mousemove', function(e) {
-      if (cardRaf) cancelAnimationFrame(cardRaf);
-      cardRaf = requestAnimationFrame(function() {
-        var r = card.getBoundingClientRect();
-        var x = (e.clientX - r.left) / r.width;
-        var y = (e.clientY - r.top)  / r.height;
-        var cx = x - 0.5, cy = y - 0.5;
-        card.style.transform = 'perspective(900px) rotateY(' + (cx * maxTilt * 2) + 'deg) rotateX(' + (-cy * maxTilt * 2) + 'deg) translateZ(14px)';
-        // Dynamic shadow direction
-        card.style.boxShadow = (-cx*12) + 'px ' + (8 + cy*18) + 'px ' + (28 + Math.abs(cy)*22) + 'px rgba(25,28,30,.12)';
-        // Glare follows pointer
-        var glare = card.querySelector('.lp-bc-glare');
-        if (glare) glare.style.background = 'radial-gradient(circle at ' + (x*100) + '% ' + (y*100) + '%, rgba(255,255,255,.18) 0%, transparent 52%)';
-      });
-    });
-    card.addEventListener('mouseleave', function() {
-      card.style.transform = '';
-      card.style.boxShadow = '';
-      var glare = card.querySelector('.lp-bc-glare');
-      if (glare) glare.style.background = '';
-    });
-  });
-
-  // 3. Pricing card 3D tilt + glare
+  // 2. Pricing card 3D tilt + glare
   document.querySelectorAll('#page-landing .lp-price-card').forEach(function(card) {
     if (!card.querySelector('.lp-price-card-glare')) {
       var g = document.createElement('div');
