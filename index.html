@@ -1391,6 +1391,20 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .timer-modal-btn.save{background:var(--ink);color:var(--cream)}
 .timer-modal-btn.save:hover{background:var(--amber)}
 .timer-modal-btn.cancel{background:none;border:1.5px solid var(--border);color:var(--ink)}
+/* ── TIME ROLL PICKER ── */
+.tr-wrap{display:inline-flex;align-items:flex-end;gap:4px;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:6px 10px;user-select:none}
+.tr-col{display:flex;flex-direction:column;align-items:center;gap:0}
+.tr-arrow{background:none;border:none;cursor:pointer;font-size:11px;color:var(--ink-mid);padding:3px 10px;line-height:1;font-weight:900;transition:color .1s;border-radius:4px;font-family:var(--font-body)}
+.tr-arrow:hover{color:var(--ink);background:var(--border)}
+.tr-drum{width:44px;height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;border-radius:6px}
+.tr-drum::before,.tr-drum::after{content:'';position:absolute;left:0;right:0;height:18px;z-index:1;pointer-events:none}
+.tr-drum::before{top:0;background:linear-gradient(to bottom,var(--cream),transparent)}
+.tr-drum::after{bottom:0;background:linear-gradient(to top,var(--cream),transparent)}
+.tr-item{width:100%;height:22px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);transition:transform .12s ease,opacity .12s ease}
+.tr-item.tr-prev,.tr-item.tr-next{font-size:12px;color:var(--ink-light);opacity:.55}
+.tr-item.tr-curr{font-size:22px;font-weight:800;color:var(--ink)}
+.tr-colon{font-size:20px;font-weight:800;color:var(--ink);padding:0 2px;margin-bottom:18px}
+.tr-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-top:3px}
 /* ── CONTRIBUTION GRID ── */
 .contrib-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px}
 .contrib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -3826,13 +3840,13 @@ var RateLimiter = (function() {
         </div>
         <div class="ct-controls" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input class="m-inp" id="ct-search" placeholder="Search clients…" style="flex:1;min-width:160px;margin-bottom:0" oninput="renderClientList()">
-          <select class="m-sel" id="ct-sort" style="width:150px" onchange="renderClientList()">
+          <select class="m-sel" id="ct-sort" style="width:150px" onchange="renderClientList()" oninput="renderClientList()">
             <option value="name-asc">Name A–Z</option>
             <option value="name-desc">Name Z–A</option>
             <option value="company-asc">Company A–Z</option>
             <option value="newest">Newest first</option>
           </select>
-          <select class="m-sel" id="ct-filter" style="width:150px" onchange="renderClientList()">
+          <select class="m-sel" id="ct-filter" style="width:150px" onchange="renderClientList()" oninput="renderClientList()">
             <option value="all">All clients</option>
             <option value="linked">Has projects</option>
             <option value="unlinked">No projects</option>
@@ -4128,6 +4142,104 @@ function fmtPhoneInput(el){
 function blockNeg(e){
   var k=e.key;
   if(k==='-'||k==='+'||k==='e'||k==='E'){e.preventDefault();}
+}
+
+// ═══════════════ TIME ROLL PICKER ═══════════════
+var _trState = {};
+function trBuildHTML(id, maxH) {
+  maxH = maxH || 23;
+  return '<div class="tr-wrap" id="tr-'+id+'" onwheel="trWheel(event,\''+id+'\')">'+
+    '<div class="tr-col">'+
+      '<button class="tr-arrow" onclick="trStep(\''+id+'\',\'h\',-1)">&#9650;</button>'+
+      '<div class="tr-drum" id="tr-'+id+'-h"></div>'+
+      '<button class="tr-arrow" onclick="trStep(\''+id+'\',\'h\',1)">&#9660;</button>'+
+      '<div class="tr-lbl">hrs</div>'+
+    '</div>'+
+    '<div class="tr-colon">:</div>'+
+    '<div class="tr-col">'+
+      '<button class="tr-arrow" onclick="trStep(\''+id+'\',\'m\',-1)">&#9650;</button>'+
+      '<div class="tr-drum" id="tr-'+id+'-m"></div>'+
+      '<button class="tr-arrow" onclick="trStep(\''+id+'\',\'m\',1)">&#9660;</button>'+
+      '<div class="tr-lbl">min</div>'+
+    '</div>'+
+  '</div>';
+}
+function trInit(id, maxH, h, m) {
+  maxH = maxH || 23;
+  _trState[id] = { h: h||0, m: m||0, maxH: maxH };
+  _trRender(id);
+}
+function trStep(id, col, dir) {
+  var s = _trState[id]; if (!s) return;
+  if (col === 'h') {
+    s.h = (s.h + dir + s.maxH + 1) % (s.maxH + 1);
+  } else {
+    var mSteps = 12; // 0,5,10..55
+    var idx = Math.round(s.m / 5);
+    idx = (idx + dir + mSteps) % mSteps;
+    s.m = idx * 5;
+  }
+  _trRender(id);
+}
+function trWheel(e, id) {
+  e.preventDefault();
+  // Determine which column the wheel is over
+  var el = e.target.closest('.tr-col');
+  if (!el) return;
+  var col = el.querySelector('.tr-lbl') && el.querySelector('.tr-lbl').textContent.trim() === 'hrs' ? 'h' : 'm';
+  trStep(id, col, e.deltaY > 0 ? 1 : -1);
+}
+function _trRender(id) {
+  var s = _trState[id]; if (!s) return;
+  var hEl = document.getElementById('tr-'+id+'-h');
+  var mEl = document.getElementById('tr-'+id+'-m');
+  if (hEl) {
+    var pH = (s.h - 1 + s.maxH + 1) % (s.maxH + 1);
+    var nH = (s.h + 1) % (s.maxH + 1);
+    hEl.innerHTML =
+      '<div class="tr-item tr-prev">'+pH+'</div>'+
+      '<div class="tr-item tr-curr">'+s.h+'</div>'+
+      '<div class="tr-item tr-next">'+nH+'</div>';
+  }
+  if (mEl) {
+    var mSteps = 12;
+    var mIdx = Math.round(s.m / 5);
+    var pM = ((mIdx - 1 + mSteps) % mSteps) * 5;
+    var nM = ((mIdx + 1) % mSteps) * 5;
+    var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+    mEl.innerHTML =
+      '<div class="tr-item tr-prev">'+pad(pM)+'</div>'+
+      '<div class="tr-item tr-curr">'+pad(s.m)+'</div>'+
+      '<div class="tr-item tr-next">'+pad(nM)+'</div>';
+  }
+}
+function trGetHours(id) {
+  var s = _trState[id]; if (!s) return 0;
+  return s.h + s.m / 60;
+}
+function trGetLabel(id) {
+  var s = _trState[id]; if (!s) return '';
+  if (s.h === 0 && s.m === 0) return '';
+  var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+  return s.h + 'h ' + pad(s.m) + 'm';
+}
+function trParseDuration(str) {
+  // Parse "2h 30m", "1 hour", "90 mins", "1.5" etc → {h, m}
+  if (!str) return {h:0, m:0};
+  var h = 0, m = 0;
+  var hM = str.match(/(\d+(?:\.\d+)?)\s*h/i);
+  var mM = str.match(/(\d+)\s*m/i);
+  if (hM) h = parseFloat(hM[1]);
+  if (mM) m = parseInt(mM[1]);
+  // Plain decimal like "1.5"
+  if (!hM && !mM) {
+    var dec = parseFloat(str);
+    if (!isNaN(dec)) { h = Math.floor(dec); m = Math.round((dec - h) * 60); }
+  }
+  // Round minutes to nearest 5
+  m = Math.round(m / 5) * 5;
+  if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
+  return {h: Math.min(h, 23), m: Math.min(m, 55)};
 }
 
 // ═══════════════ NAVIGATION ═══════════════
@@ -5795,7 +5907,15 @@ async function loadClients() {
   if (res.data) { _clients = res.data; renderClientList(); }
 }
 
+var _renderClientListRaf = null;
 function renderClientList() {
+  if (_renderClientListRaf) cancelAnimationFrame(_renderClientListRaf);
+  _renderClientListRaf = requestAnimationFrame(function() {
+    _renderClientListRaf = null;
+    _renderClientListSync();
+  });
+}
+function _renderClientListSync() {
   var body = document.getElementById('client-list-body');
   var count = document.getElementById('client-count');
   if (!body) return;
@@ -5857,7 +5977,7 @@ function renderClientList() {
       '</div>' +
     '</div>';
   }).join('');
-}
+} // end _renderClientListSync
 
 function _clientModalHasData() {
   return ['cm-name','cm-company','cm-email','cm-phone','cm-address'].some(function(id){
@@ -7835,8 +7955,9 @@ function calShowAddForm(ds, editId) {
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:10px">'+(editId?'Edit Event':'New Event')+'</div>'+
       '<div class="m-lbl" style="margin-top:0">Title *</div><input class="m-inp" id="cal-ev-title" placeholder="e.g. Client call" style="margin-bottom:0">'+
       '<div class="m-lbl">Location</div><input class="m-inp" id="cal-ev-location" placeholder="e.g. Zoom / 123 Street" style="margin-bottom:0">'+
-      '<div class="m-lbl">Duration</div><input class="m-inp" id="cal-ev-duration" placeholder="e.g. 1 hour, 30 mins" style="margin-bottom:0">'+
-      '<div class="m-lbl">Project</div>'+
+      '<div class="m-lbl">Duration</div>'+
+      trBuildHTML('cal-dur', 12)+
+      '<div class="m-lbl" style="margin-top:10px">Project</div>'+
       '<select class="m-sel" id="cal-ev-project">'+
         '<option value="">No project</option>'+
         ((window._ptProjects||[]).filter(function(p){ return p.status!=='completed'&&p.status!=='archived'; }).map(function(p){ return '<option value="'+escapeHTML(p.name)+'">'+escapeHTML(p.name)+'</option>'; }).join(''))+
@@ -7847,10 +7968,11 @@ function calShowAddForm(ds, editId) {
       '</div>'+
     '</div>';
   setTimeout(function(){
+    var durParsed = ev ? trParseDuration(ev.duration||'') : {h:1,m:0};
+    trInit('cal-dur', 12, durParsed.h, durParsed.m);
     if (ev) {
       var t=document.getElementById('cal-ev-title'); if(t) t.value=ev.title||'';
       var l=document.getElementById('cal-ev-location'); if(l) l.value=ev.location||'';
-      var d=document.getElementById('cal-ev-duration'); if(d) d.value=ev.duration||'';
       var p=document.getElementById('cal-ev-project'); if(p) p.value=ev.project||'';
     }
     var t=document.getElementById('cal-ev-title'); if(t) t.focus();
@@ -7860,7 +7982,7 @@ function calShowAddForm(ds, editId) {
 function calSaveEvent(ds, editId) {
   var title    = (document.getElementById('cal-ev-title')||{}).value||'';
   var location = (document.getElementById('cal-ev-location')||{}).value||'';
-  var duration = (document.getElementById('cal-ev-duration')||{}).value||'';
+  var duration = trGetLabel('cal-dur');
   var project  = (document.getElementById('cal-ev-project')||{}).value||'';
   if (!title.trim()) { showToast('Title is required'); return; }
   if (editId) {
@@ -10929,7 +11051,7 @@ function openPtModal(mode) {
       '<div style="font-size:12px;color:var(--ink-mid);margin-bottom:12px">Logging as: <strong>' + escapeHTML(myName || 'You') + '</strong></div>' +
       '<div class="pt-grid2">' +
       '<div class="pt-field"><label>Date</label><input class="pt-inp" type="date" id="ptm-time-date"></div>' +
-      '<div class="pt-field"><label>Hours *</label><input class="pt-inp" type="number" id="ptm-time-hrs" placeholder="0.5" min="0.25" step="0.25"></div>' +
+      '<div class="pt-field"><label>Hours *</label>' + trBuildHTML('ptm-time-roll', 23) + '</div>' +
       '</div>' +
       '<div class="pt-field"><label>Description</label><input class="pt-inp" id="ptm-time-desc" placeholder="What did you work on?"></div>' +
       '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="savePtTime()">Log time</button></div>';
@@ -10941,6 +11063,7 @@ function openPtModal(mode) {
     var el = document.getElementById(id); if (el && !el.value) el.value = today;
   });
   overlay.classList.add('open');
+  if (mode === 'add-time') { trInit('ptm-time-roll', 23, 0, 0); }
 }
 
 function closePtModal() {
@@ -11093,7 +11216,7 @@ async function savePtMeeting() {
 async function savePtTime() {
   if (!_currentUser || !_ptCurrentId) return;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
-  var hrs = parseFloat(g('ptm-time-hrs')); if (!hrs || hrs <= 0) { showToast('Hours required'); return; }
+  var hrs = trGetHours('ptm-time-roll'); if (!hrs || hrs <= 0) { showToast('Hours required'); return; }
   var myName = getMyFullName()
     || (_currentUser.user_metadata && (_currentUser.user_metadata.full_name || _currentUser.user_metadata.name))
     || (_currentUser.email ? _currentUser.email.split('@')[0] : null);
@@ -11122,18 +11245,20 @@ function openPtEditTime(i) {
     '<div style="font-size:12px;color:var(--ink-mid);margin-bottom:12px">Logged by: <strong>' + escapeHTML(h.person_name || 'You') + '</strong></div>' +
     '<div class="pt-grid2">' +
     '<div class="pt-field"><label>Date</label><input class="pt-inp" type="date" id="ptm-time-date" value="' + (h.log_date ? h.log_date.slice(0,10) : '') + '"></div>' +
-    '<div class="pt-field"><label>Hours *</label><input class="pt-inp" type="number" id="ptm-time-hrs" min="0.25" step="0.25" value="' + (h.hours || '') + '"></div>' +
+    '<div class="pt-field"><label>Hours *</label>' + trBuildHTML('ptm-time-roll', 23) + '</div>' +
     '</div>' +
     '<div class="pt-field"><label>Description</label><input class="pt-inp" id="ptm-time-desc" value="' + escapeHTML(h.description || '') + '"></div>' +
     '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="updatePtTime()">Save changes</button></div>';
   overlay.classList.add('open');
+  var _totalMins = Math.round((h.hours || 0) * 60);
+  trInit('ptm-time-roll', 23, Math.floor(_totalMins / 60), _totalMins % 60);
 }
 
 async function updatePtTime() {
   if (!_currentUser) return;
   var hr = window._ptHours; if (!hr || _ptEditIdx === null || !hr[_ptEditIdx]) return;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
-  var hrs = parseFloat(g('ptm-time-hrs')); if (!hrs || hrs <= 0) { showToast('Hours required'); return; }
+  var hrs = trGetHours('ptm-time-roll'); if (!hrs || hrs <= 0) { showToast('Hours required'); return; }
   var payload = { log_date: g('ptm-time-date') || null, hours: hrs, description: g('ptm-time-desc') };
   var res = await _supabase.from('project_timesheet').update(payload).eq('id', hr[_ptEditIdx].id).eq('user_id', _currentUser.id).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
