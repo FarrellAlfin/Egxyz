@@ -174,7 +174,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 /* Ticker */
 .lp-ticker{background:var(--ink);overflow:hidden;line-height:0}
 .lp-ticker-track{display:flex;width:max-content;animation:lp-ticker 32s linear infinite}
-.lp-ticker-track:hover{animation-play-state:paused}
+
 .lp-tick-item{display:flex;align-items:center;gap:12px;padding:14px 32px;border-right:1px solid rgba(255,255,255,.07);flex-shrink:0}
 .lp-tick-n{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--tertiary-fixed);letter-spacing:-.04em}
 .lp-tick-l{font-size:11px;color:rgba(250,247,242,.45);line-height:1.3;max-width:110px}
@@ -948,6 +948,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* Toast */
 .toast{position:fixed;bottom:22px;right:22px;z-index:2000;background:var(--ink);color:var(--cream);padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;display:none;align-items:center;gap:9px;box-shadow:var(--shadow-md)}
 .toast.show{display:flex;animation:toastIn .25s ease}
+.toast-undo-btn{background:rgba(255,255,255,.18);border:none;border-radius:4px;color:var(--cream);font-size:12px;font-weight:700;padding:2px 9px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
+.toast-undo-btn:hover{background:rgba(255,255,255,.3)}
 @keyframes toastIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 
 /* ── GLOBAL ANIMATION SYSTEM ── */
@@ -1188,10 +1190,10 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .client-empty{text-align:center;padding:40px;color:var(--ink-light);font-size:14px}
 
 /* ── FINANCIAL OVERVIEW ── */
-.fo-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
-.fo-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.fo-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:28px}
+.fo-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;min-width:0;overflow:hidden}
 .fo-sc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:6px}
-.fo-sc-val{font-size:24px;font-weight:700;font-family:var(--font-mono);color:var(--ink);line-height:1}
+.fo-sc-val{font-size:clamp(16px,2.2vw,24px);font-weight:700;font-family:var(--font-mono);color:var(--ink);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fo-sc-val.fo-sc-warn{color:var(--amber)}
 .fo-sc-val.fo-sc-accent{color:var(--sage)}
 .fo-sc-sub{font-size:11px;color:var(--ink-light);margin-top:4px}
@@ -1409,6 +1411,9 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-l3{background:#30a14e}
 .cg-l4{background:#216e39}
 .cg-legend{display:flex;align-items:center;gap:5px;margin-top:10px;justify-content:flex-end;font-size:10px;color:var(--ink-light)}
+.cg-info-btn{background:none;border:none;font-size:13px;color:var(--ink-light);cursor:pointer;padding:0 2px;line-height:1;border-radius:50%;transition:color .15s}
+.cg-info-btn:hover{color:var(--ink)}
+.cg-info-popup{position:absolute;top:42px;left:0;right:0;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:11px;color:var(--ink);z-index:100;box-shadow:var(--shadow-md);line-height:1.5}
 .cg-legend-cell{width:11px;height:11px;border-radius:2px}
 /* ── Calendar-style contribution grid ── */
 .cg-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;width:100%}
@@ -2294,7 +2299,6 @@ var RateLimiter = (function() {
     <div class="lp-ticker-track">
       <div class="lp-tick-item"><span class="lp-tick-n">12</span><span class="lp-tick-l">tools in one kit</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">$0</span><span class="lp-tick-l">free during beta</span></div>
-      <div class="lp-tick-item"><span class="lp-tick-n">Multi</span><span class="lp-tick-l">currency support throughout</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">4</span><span class="lp-tick-l">financial overview tabs</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">Live</span><span class="lp-tick-l">pipeline revenue forecast</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">Goals</span><span class="lp-tick-l">annual income tracker</span></div>
@@ -2303,7 +2307,6 @@ var RateLimiter = (function() {
       <!-- Duplicate for infinite scroll -->
       <div class="lp-tick-item"><span class="lp-tick-n">12</span><span class="lp-tick-l">tools in one kit</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">$0</span><span class="lp-tick-l">free during beta</span></div>
-      <div class="lp-tick-item"><span class="lp-tick-n">Multi</span><span class="lp-tick-l">currency support throughout</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">4</span><span class="lp-tick-l">financial overview tabs</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">Live</span><span class="lp-tick-l">pipeline revenue forecast</span></div>
       <div class="lp-tick-item"><span class="lp-tick-n">Goals</span><span class="lp-tick-l">annual income tracker</span></div>
@@ -2426,7 +2429,7 @@ var RateLimiter = (function() {
         <!-- Tax Tracker (1col) -->
         <div class="lp-bc lp-reveal" data-d="3">
           <div class="lp-bc-tag" style="background:var(--purple-light);color:var(--purple)">Tax Tracker</div>
-          <div class="lp-bc-title">Never miss a<br>tax deadline.</div>
+          <div class="lp-bc-title">Never miss a tax deadline.</div>
           <div class="lp-bc-desc">Log quarterly income &amp; expenses. See your estimated tax due instantly — in any currency.</div>
           <div style="margin-top:14px">
             <div class="lp-tax-qs">
@@ -2471,7 +2474,7 @@ var RateLimiter = (function() {
         <!-- Pipeline (1col) -->
         <div class="lp-bc lp-reveal" data-d="1">
           <div class="lp-bc-tag" style="background:#FEE2E2;color:#B91C1C">Pipeline Tracker</div>
-          <div class="lp-bc-title">See the dry<br>month coming.</div>
+          <div class="lp-bc-title">See the dry month coming.</div>
           <div class="lp-bc-desc">Weighted revenue forecast by stage. Drag cards, watch the forecast update. Never be blindsided by a slow period again.</div>
           <div class="lp-pipe-cols" style="margin-top:14px">
             <div class="lp-pipe-col"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
@@ -3008,9 +3011,12 @@ var RateLimiter = (function() {
           </div>
 
           <!-- Activity Grid -->
-          <div class="hw-card">
+          <div class="hw-card" style="position:relative">
             <div class="hw-title">
-              <span>Activity</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span>Activity</span>
+                <button class="cg-info-btn" onclick="toggleContribInfo(this)" title="How is this calculated?">ⓘ</button>
+              </div>
               <div class="cg-legend">
                 <span>Less</span>
                 <div class="cg-legend-cell cg-l0"></div>
@@ -3021,7 +3027,19 @@ var RateLimiter = (function() {
                 <span>More</span>
               </div>
             </div>
-            <div class="contrib-subtitle" id="contrib-total" style="margin-bottom:12px;font-size:11px;color:var(--ink-light)">Loading activity…</div>
+            <div class="cg-info-popup" id="cg-info-popup" style="display:none">
+              <div style="font-weight:700;margin-bottom:6px">How activity is calculated</div>
+              Each cell represents one day. The colour intensity shows how many hours you logged in your timesheet on that day:
+              <ul style="margin:6px 0 0 16px;padding:0">
+                <li>Empty — no activity</li>
+                <li style="color:rgba(0,150,104,.55)">Light — 1–2 hours</li>
+                <li style="color:rgba(0,150,104,.75)">Medium — 2–4 hours</li>
+                <li style="color:rgba(0,150,104,.9)">Dark — 4–7 hours</li>
+                <li style="color:rgba(0,150,104,1)">Darkest — 7+ hours</li>
+              </ul>
+              <div style="margin-top:8px;color:var(--ink-light)">Covers the last 16 weeks. Hover any cell to see the exact date &amp; hours.</div>
+            </div>
+            <div class="contrib-subtitle" id="contrib-total" style="margin-bottom:8px;font-size:11px;color:var(--ink-light)">Loading activity…</div>
             <div class="cg-outer" id="contrib-grid-cells"></div>
           </div>
 
@@ -3082,7 +3100,7 @@ var RateLimiter = (function() {
         </div>
         <div class="inv-layout">
           <div class="inv-panel">
-            <div class="ip-head"><span style="font-size:14px">⚙️</span><span class="ip-head-title">Invoice builder</span><span class="ip-head-badge">Live preview →</span></div>
+            <div class="ip-head"><span style="font-size:14px">⚙️</span><span class="ip-head-title">Invoice builder</span></div>
             <div class="ip-body">
               <!-- Logo upload -->
               <div class="ip-field">
@@ -3799,6 +3817,20 @@ var RateLimiter = (function() {
           <span style="font-size:13px;color:var(--ink-mid)" id="client-count">0 clients</span>
           <button class="btn-use" onclick="openClientModal()">+ Add client</button>
         </div>
+        <div class="ct-controls" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <input class="m-inp" id="ct-search" placeholder="Search clients…" style="flex:1;min-width:160px;margin-bottom:0" oninput="renderClientList()">
+          <select class="m-sel" id="ct-sort" style="width:150px" onchange="renderClientList()">
+            <option value="name-asc">Name A–Z</option>
+            <option value="name-desc">Name Z–A</option>
+            <option value="company-asc">Company A–Z</option>
+            <option value="newest">Newest first</option>
+          </select>
+          <select class="m-sel" id="ct-filter" style="width:150px" onchange="renderClientList()">
+            <option value="all">All clients</option>
+            <option value="linked">Has projects</option>
+            <option value="unlinked">No projects</option>
+          </select>
+        </div>
         <div class="client-table">
           <div class="ct-head">
             <div class="ct-head-cell">Name</div>
@@ -3925,7 +3957,7 @@ var RateLimiter = (function() {
           </div>
           <div id="fo-add-income-form" style="display:none" class="fo-add-form">
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Description</div><input class="pt-inp" id="fo-inc-desc" placeholder="e.g. Cash payment from client"></div>
-            <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Amount ($)</div><input class="pt-inp" id="fo-inc-amount" type="number" placeholder="0"></div>
+            <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Amount ($)</div><input class="pt-inp" id="fo-inc-amount" type="number" placeholder="0" min="0" oninput="if(parseFloat(this.value)<0)this.value=0"></div>
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Date</div><input class="pt-inp" id="fo-inc-date" type="date"></div>
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Source</div><input class="pt-inp" id="fo-inc-source" placeholder="e.g. Bank transfer"></div>
             <div style="display:flex;gap:6px;padding-top:19px"><button class="pt-save-btn" onclick="foSaveIncome()">Save</button><button class="btn-outline" onclick="foHideAddIncome()">Cancel</button></div>
@@ -4035,8 +4067,8 @@ var RateLimiter = (function() {
         <div id="foei-items-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;background:var(--white)"></div>
         <button onclick="foeiAddItem()" class="btn-outline" style="font-size:12px;padding:4px 12px;margin-bottom:16px">+ Add line item</button>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-          <div><div class="m-lbl">Tax (%)</div><input class="m-inp" id="foei-tax" type="number" placeholder="0" style="margin-bottom:0" oninput="foeiUpdateTotal()"></div>
-          <div><div class="m-lbl">Discount (%)</div><input class="m-inp" id="foei-disc" type="number" placeholder="0" style="margin-bottom:0" oninput="foeiUpdateTotal()"></div>
+          <div><div class="m-lbl">Tax (%)</div><input class="m-inp" id="foei-tax" type="number" placeholder="0" min="0" style="margin-bottom:0" oninput="if(parseFloat(this.value)<0)this.value=0;foeiUpdateTotal()"></div>
+          <div><div class="m-lbl">Discount (%)</div><input class="m-inp" id="foei-disc" type="number" placeholder="0" min="0" style="margin-bottom:0" oninput="if(parseFloat(this.value)<0)this.value=0;foeiUpdateTotal()"></div>
         </div>
         <div><div class="m-lbl">Notes</div><textarea class="pt-ta" id="foei-notes" style="min-height:56px;margin-bottom:0" oninput="foeiRenderPreview()"></textarea></div>
         <div style="text-align:right;padding:14px 0 4px;font-size:16px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);margin-top:14px">Total: <span id="foei-total">$0.00</span></div>
@@ -4068,7 +4100,8 @@ var RateLimiter = (function() {
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════ SHARED ═══════════════
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),3200)}
+function showToast(msg,undoCb){const t=document.getElementById('toast');showToast._undo=undoCb||null;t.innerHTML='<span>'+escapeHTML(msg)+'</span>'+(undoCb?'<button class="toast-undo-btn" onclick="showToast._doUndo()">Undo</button>':'');t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>{t.classList.remove('show');showToast._undo=null;},undoCb?4500:3200);}
+showToast._doUndo=function(){if(showToast._undo){showToast._undo();showToast._undo=null;const t=document.getElementById('toast');t.classList.remove('show');clearTimeout(showToast._t);}}
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 function fm(n,sym='$'){return sym+Math.round(n).toLocaleString()}
 function fmD(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
@@ -4407,11 +4440,11 @@ function renderLineItems(){
              placeholder="Description">
       <input class="ip-inp" style="padding:5px 8px;font-size:12px;text-align:right"
              type="number" value="${li.qty}"
-             onchange="lineItems[${i}].qty=parseFloat(this.value)||0;updateLineTotal(${i});updateInv()"
+             onchange="lineItems[${i}].qty=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].qty;updateLineTotal(${i});updateInv()"
              min="0" step="0.5">
       <input class="ip-inp" style="padding:5px 8px;font-size:12px;text-align:right"
              type="number" value="${li.rate}"
-             onchange="lineItems[${i}].rate=parseFloat(this.value)||0;updateLineTotal(${i});updateInv()"
+             onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate;updateLineTotal(${i});updateInv()"
              min="0" step="10">
       <div class="li-total-cell" id="litot-${i}">${fmD(li.qty*li.rate)}</div>
       <button class="li-remove" onclick="lineItems.splice(${i},1);renderLineItems();updateInv()">&#215;</button>
@@ -4916,8 +4949,8 @@ async function generateInvoiceDocx() {
   var clientEmail = g('i-email');
   var project = g('i-project');
   var notes = g('i-notes');
-  var taxPct = parseFloat(g('i-tax'))||0;
-  var discPct = parseFloat(g('i-disc'))||0;
+  var taxPct = Math.max(0, parseFloat(g('i-tax'))||0);
+  var discPct = Math.max(0, parseFloat(g('i-disc'))||0);
   var payMethod = getInvPay();
 
   var sub = lineItems.reduce(function(s,li){ return s+li.qty*li.rate; }, 0);
@@ -5158,8 +5191,7 @@ function renderPipeline(){
           const ptBtn = si===4 ? (linked
             ? `<button class="kk-pt-btn" onclick="event.stopPropagation();openPtProjectFromPipeline('${linked.id}')">Open in Tracker →</button>`
             : `<button class="kk-pt-btn kk-pt-btn-create" onclick="event.stopPropagation();createProjectFromPipeline('${c.id}')">+ Create Project</button>`) : '';
-          return `<div class="kk-card" draggable="true" data-id="${c.id}" data-stage="${si}" ondragstart="pfDragStart(event)" ondragend="pfDragEnd(event)" ondragover="pfColDragOver(event,this.closest('.kc'))" ondragleave="pfDragLeave(event,this.closest('.kc'))" ondrop="pfColDrop(event,${si},this.closest('.kc'))">
-          <button class="kk-cb kk-cb-edit" onclick="event.stopPropagation();openPipelineEditModal('${c.id}')" title="Edit">✏</button>
+          return `<div class="kk-card" draggable="true" data-id="${c.id}" data-stage="${si}" style="cursor:pointer" onclick="if(!_pfDragged)openPipelineEditModal('${c.id}')" ondragstart="pfDragStart(event)" ondragend="pfDragEnd(event)" ondragover="pfColDragOver(event,this.closest('.kc'))" ondragleave="pfDragLeave(event,this.closest('.kc'))" ondrop="pfColDrop(event,${si},this.closest('.kc'))">
           <button class="kk-cb kk-cb-del" onclick="event.stopPropagation();deletePfCard('${c.id}')" title="Delete">✕</button>
           <span class="kk-temp temp-${c.temp}">${c.temp==='hot'?'🔥 Hot':c.temp==='warm'?'Warm':'❄️ Cold'}</span>
           <div class="kk-client">${escapeHTML(c.client)}</div>
@@ -5186,14 +5218,21 @@ function renderPipeline(){
     <div class="hs-card"><div class="hs-lbl">Hot leads</div><div class="hs-val">${hot}</div><div class="hs-sub ${hot>=1?'w':'r'}">${hot>=1?'Follow up now':'Need more'}</div></div>`;
 }
 // Drag handlers — read id from data attribute to avoid UUID-in-JS-expression bug
+var _pfDragged = false;
 function pfDragStart(e){
+  _pfDragged = false;
   pfDragId = e.currentTarget.dataset.id;
   e.currentTarget.style.opacity='.4';
   e.currentTarget.style.transform='scale(1.02)';
   e.dataTransfer.effectAllowed='move';
   e.dataTransfer.setData('text/plain', pfDragId);
 }
-function pfDragEnd(e){e.currentTarget.style.opacity='1';e.currentTarget.style.transform='';}
+function pfDragEnd(e){
+  e.currentTarget.style.opacity='1';
+  e.currentTarget.style.transform='';
+  _pfDragged = true;
+  setTimeout(function(){ _pfDragged = false; }, 100);
+}
 function pfColDragOver(e,col){e.preventDefault();e.dataTransfer.dropEffect='move';if(col)col.classList.add('drag-over');}
 function pfDragLeave(e,col){if(col&&!col.contains(e.relatedTarget))col.classList.remove('drag-over');}
 function pfColDrop(e,stage,col){
@@ -5212,6 +5251,21 @@ function openPipelineModal(stage=2){
   document.getElementById('pm-stage').value=stage;
   document.getElementById('pipe-modal').classList.add('open');
 }
+function _parsePipeDate(raw, label) {
+  // Prefer raw ISO string
+  if (raw && /^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  // Try to parse formatted label like "Apr 12" → assume current year first, else prev year
+  if (label) {
+    var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    var m = label.match(/^([A-Za-z]+)\s+(\d+)$/);
+    if (m && months[m[1]] !== undefined) {
+      var yr = new Date().getFullYear();
+      var d = new Date(yr, months[m[1]], parseInt(m[2]));
+      return d.toISOString().slice(0,10);
+    }
+  }
+  return '';
+}
 function openPipelineEditModal(id){
   var c=pfClients.find(x=>String(x.id)===String(id));if(!c)return;
   var ti=document.getElementById('pm-modal-title'),sb=document.getElementById('pm-save-btn'),ei=document.getElementById('pm-edit-id');
@@ -5223,8 +5277,7 @@ function openPipelineEditModal(id){
   document.getElementById('pm-value').value=c.value||'';
   document.getElementById('pm-stage').value=c.stage||0;
   document.getElementById('pm-temp').value=c.temp||'warm';
-  // Reverse date label back to YYYY-MM-DD if possible (stored as "Apr 12" so clear it)
-  document.getElementById('pm-date').value='';
+  document.getElementById('pm-date').value=_parsePipeDate(c.date_raw, c.date);
   document.getElementById('pipe-modal').classList.add('open');
 }
 function closePipeModal(e){if(e.target.id==='pipe-modal')closePipeModalBtn()}
@@ -5238,7 +5291,7 @@ async function addPipeClient(){
   if(!client){showToast('⚠️ Enter a client name');return}
   const dr=document.getElementById('pm-date').value;
   const dateLabel=dr?new Date(dr+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
-  var newCard={id:pfNextId++,client,project:document.getElementById('pm-project').value,value:parseFloat(document.getElementById('pm-value').value)||0,stage:parseInt(document.getElementById('pm-stage').value),temp:document.getElementById('pm-temp').value,date:dateLabel};
+  var newCard={id:pfNextId++,client,project:document.getElementById('pm-project').value,value:parseFloat(document.getElementById('pm-value').value)||0,stage:parseInt(document.getElementById('pm-stage').value),temp:document.getElementById('pm-temp').value,date:dateLabel,date_raw:dr||''};
   pfClients.push(newCard);
   closePipeModalBtn();['pm-client','pm-project','pm-value','pm-date'].forEach(id=>document.getElementById(id).value='');
   renderPipeline();showToast('\u2713 Client added to pipeline');
@@ -5255,7 +5308,7 @@ async function updatePfCard(id){
   c.value=parseFloat(document.getElementById('pm-value').value)||0;
   c.stage=parseInt(document.getElementById('pm-stage').value);
   c.temp=document.getElementById('pm-temp').value;
-  if(dr)c.date=dateLabel;
+  if(dr){c.date=dateLabel;c.date_raw=dr;}else if(!dr&&document.getElementById('pm-date').value===''&&c.date){/* keep existing date */}
   await savePipelineCardFull(c);
   closePipeModalBtn();renderPipeline();showToast('\u2713 Client updated');
 }
@@ -5567,7 +5620,7 @@ function setLoggedInUser(user) {
   if (ddName) ddName.textContent = name;
   if (ddEmail) ddEmail.textContent = user.email || '';
   var wbEl = document.querySelector('.wb-text h3');
-  if (wbEl) wbEl.textContent = 'Welcome back, ' + name.split(' ')[0] + '.';
+  if (wbEl) wbEl.textContent = 'Welcome back, ' + name.split(' ')[0] + '!';
   // Start inactivity timer now that a real user is logged in
   _startInactivityTimer();
   // Load all user data in background — errors here must never block login
@@ -5721,62 +5774,119 @@ async function loadClients() {
 function renderClientList() {
   var body = document.getElementById('client-list-body');
   var count = document.getElementById('client-count');
-  if (count) count.textContent = _clients.length + ' client' + (_clients.length !== 1 ? 's' : '');
   if (!body) return;
-  if (!_clients.length) {
-    body.innerHTML = '<div class="client-empty">No clients yet. Add your first client above.</div>';
+
+  // Search / sort / filter
+  var searchQ = ((document.getElementById('ct-search')||{}).value||'').toLowerCase().trim();
+  var sortV = ((document.getElementById('ct-sort')||{}).value||'name-asc');
+  var filterV = ((document.getElementById('ct-filter')||{}).value||'all');
+
+  var list = _clients.slice();
+
+  // Filter
+  if (filterV === 'linked') {
+    list = list.filter(function(cl){ return (_ptProjects||[]).some(function(p){ return p.client_name === cl.name; }); });
+  } else if (filterV === 'unlinked') {
+    list = list.filter(function(cl){ return !(_ptProjects||[]).some(function(p){ return p.client_name === cl.name; }); });
+  }
+
+  // Search
+  if (searchQ) {
+    list = list.filter(function(cl){
+      return (cl.name||'').toLowerCase().indexOf(searchQ) !== -1 ||
+             (cl.email||'').toLowerCase().indexOf(searchQ) !== -1 ||
+             (cl.company||'').toLowerCase().indexOf(searchQ) !== -1 ||
+             (cl.phone||'').toLowerCase().indexOf(searchQ) !== -1;
+    });
+  }
+
+  // Sort
+  list.sort(function(a,b){
+    if (sortV === 'name-desc') return (b.name||'').localeCompare(a.name||'');
+    if (sortV === 'company-asc') return (a.company||'').localeCompare(b.company||'');
+    if (sortV === 'newest') return (b.created_at||'') > (a.created_at||'') ? 1 : -1;
+    return (a.name||'').localeCompare(b.name||'');
+  });
+
+  if (count) count.textContent = list.length + ' of ' + _clients.length + ' client' + (_clients.length !== 1 ? 's' : '');
+
+  if (!list.length) {
+    body.innerHTML = '<div class="client-empty">' + (_clients.length ? 'No clients match your search.' : 'No clients yet. Add your first client above.') + '</div>';
     return;
   }
-  body.innerHTML = _clients.map(function(cl) {
+  body.innerHTML = list.map(function(cl) {
     var linkedProjs = (_ptProjects || []).filter(function(p){ return p.client_name === cl.name; });
     var projHtml = linkedProjs.length
-      ? linkedProjs.map(function(p){ return '<span class="ct-proj-chip" onclick="openPtProjectFromPipeline(\'' + p.id + '\')" title="Open project">' + escapeHTML(p.name) + '</span>'; }).join('')
+      ? linkedProjs.map(function(p){ return '<span class="ct-proj-chip" onclick="event.stopPropagation();openPtProjectFromPipeline(\'' + p.id + '\')" title="Open project">' + escapeHTML(p.name) + '</span>'; }).join('')
       : '<span style="color:var(--ink-light);font-size:12px">None</span>';
-    return '<div class="ct-row">' +
+    return '<div class="ct-row" style="cursor:pointer" onclick="openEditClientModal(\'' + escapeHTML(cl.id) + '\')">' +
       '<div class="ct-cell name">' + escapeHTML(cl.name||'') + '</div>' +
       '<div class="ct-cell email">' + escapeHTML(cl.email||'—') + '</div>' +
       '<div class="ct-cell" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.phone||'—') + '</div>' +
       '<div class="ct-cell">' + escapeHTML(cl.company||'—') + '</div>' +
       '<div class="ct-cell" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' + projHtml +
-        '<button class="ct-btn" data-client-id="' + escapeHTML(cl.id) + '" data-client-name="' + escapeHTML(cl.name||'') + '" onclick="openClientLinkModal(this.dataset.clientId, this.dataset.clientName)" style="font-size:10px;padding:2px 7px;margin-left:4px" title="Link / unlink projects">🔗</button>' +
+        '<button class="ct-btn" data-client-id="' + escapeHTML(cl.id) + '" data-client-name="' + escapeHTML(cl.name||'') + '" onclick="event.stopPropagation();openClientLinkModal(this.dataset.clientId, this.dataset.clientName)" style="font-size:10px;padding:2px 7px;margin-left:4px" title="Link / unlink projects">🔗</button>' +
       '</div>' +
       '<div class="ct-actions">' +
-        '<button class="ct-btn del" data-client-id="' + escapeHTML(cl.id) + '" onclick="deleteClient(this.dataset.clientId)">Delete</button>' +
+        '<button class="ct-btn del" data-client-id="' + escapeHTML(cl.id) + '" onclick="event.stopPropagation();deleteClient(this.dataset.clientId)">Delete</button>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
-function openClientModal() { document.getElementById('client-modal').classList.add('open'); }
-function closeClientModal() {
-  document.getElementById('client-modal').classList.remove('open');
-  ['cm-name','cm-company','cm-email','cm-phone','cm-address','cm-contact','cm-notes'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.value='';
+function _clientModalHasData() {
+  return ['cm-name','cm-company','cm-email','cm-phone','cm-address'].some(function(id){
+    var el = document.getElementById(id); return el && el.value.trim() !== '';
   });
 }
-
+function clientModalBackdropClose() {
+  if (_clientModalHasData()) {
+    if (!confirm('You have unsaved changes. Close anyway?')) return;
+  }
+  closeClientModal();
+}
+function openClientModal() {
+  document.getElementById('client-modal').classList.add('open');
+  var btn = document.getElementById('cm-add-btn');
+  if (btn) btn.disabled = false;
+}
+function closeClientModal() {
+  document.getElementById('client-modal').classList.remove('open');
+  ['cm-name','cm-company','cm-email','cm-phone','cm-address'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  var sel = document.getElementById('cm-phone-code'); if (sel) sel.selectedIndex = 0;
+}
+function addClientOnce() {
+  var btn = document.getElementById('cm-add-btn');
+  if (btn) btn.disabled = true;
+  addClient().catch(function(){ if (btn) btn.disabled = false; });
+}
 async function addClient() {
-  if (!_currentUser) { showToast('Sign in to add clients'); return; }
+  if (!_currentUser) { showToast('Sign in to add clients'); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
   var name = document.getElementById('cm-name').value.trim();
   var nameCheck = Validate.text(name, 'Name', 1, 200);
-  if (!nameCheck.ok) { showToast(nameCheck.msg); return; }
+  if (!nameCheck.ok) { showToast(nameCheck.msg); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
   var email = document.getElementById('cm-email').value.trim();
-  if (email) { var emailCheck = Validate.email(email); if (!emailCheck.ok) { showToast(emailCheck.msg); return; } }
+  if (email) { var emailCheck = Validate.email(email); if (!emailCheck.ok) { showToast(emailCheck.msg); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; } }
   var company = document.getElementById('cm-company').value.trim();
   var companyCheck = Validate.text(company, 'Company', 0, 200);
-  if (!companyCheck.ok) { showToast(companyCheck.msg); return; }
+  if (!companyCheck.ok) { showToast(companyCheck.msg); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
+  var phoneCode = (document.getElementById('cm-phone-code') || {}).value || '';
+  if (phoneCode === '+1-CA') phoneCode = '+1';
+  if (phoneCode === '+other') phoneCode = '';
+  var phoneNum = document.getElementById('cm-phone').value.trim();
+  var phone = (phoneCode && phoneNum) ? phoneCode + ' ' + phoneNum : (phoneNum || null);
   var payload = {
     user_id: _currentUser.id,
     name: name,
     company: company,
     email: email,
-    phone: document.getElementById('cm-phone').value.trim().slice(0, 50) || null,
-    address: document.getElementById('cm-address').value.trim().slice(0, 300) || null,
-    contact_person: document.getElementById('cm-contact').value.trim().slice(0, 200),
-    notes: document.getElementById('cm-notes').value.trim().slice(0, 1000)
+    phone: phone ? phone.slice(0, 50) : null,
+    address: document.getElementById('cm-address').value.trim().slice(0, 300) || null
   };
   var res = await _supabase.from('clients').insert(payload).select().single();
-  if (res.error) { showToast('Error: ' + res.error.message); return; }
+  if (res.error) { showToast('Error: ' + res.error.message); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
   _clients.push(res.data);
   _clients.sort(function(a,b){ return a.name.localeCompare(b.name); });
   renderClientList();
@@ -5789,6 +5899,66 @@ async function deleteClient(id) {
   await _supabase.from('clients').delete().eq('id', id).eq('user_id', _currentUser.id);
   _clients = _clients.filter(function(cl){ return cl.id !== id; });
   renderClientList();
+}
+
+// ── Edit client ──
+var _editClientId = null;
+function openEditClientModal(id) {
+  var cl = _clients.find(function(c){ return c.id === id; });
+  if (!cl) return;
+  _editClientId = id;
+  var set = function(eid, val){ var e=document.getElementById(eid); if(e) e.value=val||''; };
+  set('cem-name', cl.name);
+  set('cem-company', cl.company);
+  set('cem-email', cl.email);
+  set('cem-address', cl.address);
+  // Parse phone: split code from number
+  var phone = cl.phone || '';
+  var codeMatch = phone.match(/^(\+\d{1,4})\s?(.*)$/);
+  if (codeMatch) {
+    var sel = document.getElementById('cem-phone-code');
+    if (sel) {
+      // Try to match +44, +61 etc
+      for (var i=0; i<sel.options.length; i++) {
+        var optVal = sel.options[i].value.replace('-CA','');
+        if (optVal === codeMatch[1]) { sel.selectedIndex = i; break; }
+      }
+    }
+    set('cem-phone', codeMatch[2]);
+  } else {
+    set('cem-phone', phone);
+  }
+  document.getElementById('edit-client-modal').classList.add('open');
+}
+function closeEditClientModal() {
+  document.getElementById('edit-client-modal').classList.remove('open');
+  _editClientId = null;
+}
+async function saveEditClient() {
+  var id = _editClientId;
+  if (!id) return;
+  var name = document.getElementById('cem-name').value.trim();
+  if (!name) { showToast('Name is required'); return; }
+  var phoneCode = (document.getElementById('cem-phone-code') || {}).value || '';
+  if (phoneCode === '+1-CA') phoneCode = '+1';
+  if (phoneCode === '+other') phoneCode = '';
+  var phoneNum = document.getElementById('cem-phone').value.trim();
+  var phone = (phoneCode && phoneNum) ? phoneCode + ' ' + phoneNum : (phoneNum || null);
+  var payload = {
+    name: name,
+    company: document.getElementById('cem-company').value.trim().slice(0,200),
+    email: document.getElementById('cem-email').value.trim().slice(0,200),
+    phone: phone ? phone.slice(0,50) : null,
+    address: document.getElementById('cem-address').value.trim().slice(0,300) || null
+  };
+  var res = await _supabase.from('clients').update(payload).eq('id', id).eq('user_id', _currentUser.id).select().single();
+  if (res.error) { showToast('Error: ' + res.error.message); return; }
+  var idx = _clients.findIndex(function(c){ return c.id === id; });
+  if (idx !== -1) _clients[idx] = Object.assign({}, _clients[idx], res.data);
+  _clients.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  renderClientList();
+  closeEditClientModal();
+  showToast('✓ Client updated');
 }
 
 var _clmClientId = null;
@@ -6299,7 +6469,7 @@ function foHideAddIncome() {
 }
 function foSaveIncome() {
   var desc = (document.getElementById('fo-inc-desc') || {}).value || '';
-  var amount = parseFloat((document.getElementById('fo-inc-amount') || {}).value) || 0;
+  var amount = Math.max(0, parseFloat((document.getElementById('fo-inc-amount') || {}).value) || 0);
   var date = (document.getElementById('fo-inc-date') || {}).value || '';
   var source = (document.getElementById('fo-inc-source') || {}).value || '';
   if (!desc || !amount) { showToast('Description and amount are required'); return; }
@@ -7059,6 +7229,24 @@ function _recordContrib(n) {
   } catch(e) {}
 }
 
+function toggleContribInfo(btn) {
+  var popup = document.getElementById('cg-info-popup');
+  if (!popup) return;
+  var visible = popup.style.display !== 'none';
+  popup.style.display = visible ? 'none' : 'block';
+  if (!visible) {
+    // Close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', function _cgClose(e) {
+        if (!popup.contains(e.target) && e.target !== btn) {
+          popup.style.display = 'none';
+        }
+        document.removeEventListener('click', _cgClose);
+      });
+    }, 10);
+  }
+}
+
 async function renderContribGrid() {
   var el = document.getElementById('contrib-grid-cells');
   var totalEl = document.getElementById('contrib-total');
@@ -7093,9 +7281,26 @@ async function renderContribGrid() {
 
   var totalHrs = Object.values(counts).reduce(function(a,b){ return a+(b||0); }, 0);
   var DAY_LABELS = ['Su','M','Tu','W','Th','F','Sa'];
+  var MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // Build month labels row: show month name at first week that starts in a new month
+  var monthHtml = '<div class="cg-month-row">';
+  var lastMonth = -1;
+  for (var w = 0; w < WEEKS; w++) {
+    var wStart = new Date(startDate);
+    wStart.setDate(startDate.getDate() + w * 7);
+    var mo = wStart.getMonth();
+    if (mo !== lastMonth) {
+      monthHtml += '<div class="cg-ml" style="flex:1">' + MONTH_ABBR[mo] + '</div>';
+      lastMonth = mo;
+    } else {
+      monthHtml += '<div class="cg-ml" style="flex:1"></div>';
+    }
+  }
+  monthHtml += '</div>';
 
   // Build: day labels + week columns (each column = 1 week, flex:1 fills container)
-  var html = '<div class="cg-body">';
+  var html = '<div class="cg-wrap">' + monthHtml + '<div class="cg-body">';
   html += '<div class="cg-day-labels">';
   DAY_LABELS.forEach(function(l){ html += '<div class="cg-dl">' + l + '</div>'; });
   html += '</div><div class="cg-cols">';
@@ -7114,7 +7319,7 @@ async function renderContribGrid() {
     }
     html += '</div>';
   }
-  html += '</div></div>';
+  html += '</div></div></div>';
   el.innerHTML = html;
 
   if (totalEl) totalEl.textContent = totalHrs.toFixed(1) + ' hours logged in the last 16 weeks';
@@ -7506,8 +7711,8 @@ function calShowDay(ds) {
       '<button class="hw-title-action" onclick="calShowAddForm(\''+ds+'\')">+ Add event</button>'+
     '</div>'+
     (its.length ? its.map(function(it){
-      return '<div class="cal-detail-item">'+
-        '<span class="cal-dot '+it.type+'"></span>'+
+      return '<div class="cal-detail-item"'+(it.id?' style="cursor:pointer" onclick="calEditEvent('+it.id+',\''+ds+'\')"':'')+'>'+
+        '<span class="cal-dot '+it.type+'">'+'</span>'+
         '<div style="flex:1;min-width:0">'+
           '<div style="font-size:12px;color:var(--ink);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHTML(it.label)+'</div>'+
           (it.location?'<div style="font-size:11px;color:var(--ink-light)">\uD83D\uDCCD '+escapeHTML(it.location)+'</div>':'')+
@@ -7515,8 +7720,7 @@ function calShowDay(ds) {
           (it.project?'<div style="font-size:11px;color:var(--ink-light)">&#128193; '+escapeHTML(it.project)+'</div>':'')+
         '</div>'+
         (it.id?'<div style="display:flex;gap:4px;flex-shrink:0">'+
-          '<button class="pt-row-edit" onclick="calEditEvent('+it.id+',\''+ds+'\')">Edit</button>'+
-          '<button class="pt-btn-del" onclick="calDeleteEvent('+it.id+')">Delete</button>'+
+          '<button class="pt-btn-del" onclick="event.stopPropagation();calDeleteEvent('+it.id+')">Delete</button>'+
         '</div>':'')+
         '</div>';
     }).join('') : '<div style="font-size:12px;color:var(--ink-light);padding:6px 0">No events scheduled</div>') +
@@ -7578,11 +7782,20 @@ function calSaveEvent(ds, editId) {
   calShowDay(ds);
 }
 function calDeleteEvent(id) {
+  var deleted = _calEvents.find(function(e){ return e.id === id; });
+  var savedDay = _calSelectedDay;
   _calEvents = _calEvents.filter(function(e){ return e.id !== id; });
   localStorage.setItem('fk_cal_events', JSON.stringify(_calEvents));
   renderCalendar();
-  if (_calSelectedDay) calShowDay(_calSelectedDay);
-  showToast('Event removed');
+  if (savedDay) calShowDay(savedDay);
+  showToast('Event removed', deleted ? function() {
+    _calEvents.push(deleted);
+    _calEvents.sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    localStorage.setItem('fk_cal_events', JSON.stringify(_calEvents));
+    renderCalendar();
+    if (savedDay) calShowDay(savedDay);
+    showToast('Event restored');
+  } : null);
 }
 function calEditEvent(id, ds) {
   calShowAddForm(ds, id);
@@ -7663,7 +7876,12 @@ async function loadPipelineCards() {
   var res = await _supabase.from('pipeline_cards').select('*').eq('user_id', _currentUser.id).order('created_at');
   if (res.data && res.data.length) {
     pfClients = res.data.map(function(r) {
-      return { id: r.id, client: r.client_name, project: r.project||'', value: r.value||0, stage: r.stage||0, temp: r.temp||'warm', date: r.close_date||'' };
+      var cd = r.close_date || '';
+      // close_date may be ISO (yyyy-mm-dd) from new saves, or formatted label from old saves
+      var isISO = /^\d{4}-\d{2}-\d{2}$/.test(cd);
+      var dateLabel = isISO ? new Date(cd+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : cd;
+      var dateRaw = isISO ? cd : '';
+      return { id: r.id, client: r.client_name, project: r.project||'', value: r.value||0, stage: r.stage||0, temp: r.temp||'warm', date: dateLabel, date_raw: dateRaw };
     });
     if (typeof renderPipeline==='function') renderPipeline();
   }
@@ -7676,7 +7894,7 @@ async function savePipelineCard(card) {
     await _supabase.from('pipeline_cards').update({ stage: card.stage }).eq('id', card.id).eq('user_id', _currentUser.id);
   } else {
     var payload = { user_id: _currentUser.id, client_name: card.client, project: card.project,
-      value: card.value, stage: card.stage, temp: card.temp, close_date: card.date };
+      value: card.value, stage: card.stage, temp: card.temp, close_date: card.date_raw || card.date };
     var res = await _supabase.from('pipeline_cards').insert(payload).select();
     if (res.data && res.data[0]) card.id = res.data[0].id;
   }
@@ -7684,7 +7902,7 @@ async function savePipelineCard(card) {
 async function savePipelineCardFull(card) {
   if (!_currentUser) return;
   var payload = { client_name: card.client, project: card.project,
-    value: card.value, stage: card.stage, temp: card.temp, close_date: card.date };
+    value: card.value, stage: card.stage, temp: card.temp, close_date: card.date_raw || card.date };
   if (typeof card.id === 'string' && card.id.includes('-')) {
     await _supabase.from('pipeline_cards').update(payload).eq('id', card.id).eq('user_id', _currentUser.id);
   }
@@ -11100,7 +11318,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 </div>
 
 <!-- Client contacts modal -->
-<div class="modal-overlay" id="client-modal" onclick="if(event.target===this)closeClientModal()">
+<div class="modal-overlay" id="client-modal" onclick="if(event.target===this)clientModalBackdropClose()">
   <div class="modal-box">
     <div class="modal-hd"><span class="modal-title">Add client</span><button class="modal-close" onclick="closeClientModal()">&#10005;</button></div>
     <div class="modal-bd">
@@ -11108,15 +11326,113 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
       <div class="m-lbl">Company</div><input class="m-inp" id="cm-company" placeholder="Company or business name">
       <div class="m-row2">
         <div><div class="m-lbl">Email</div><input class="m-inp" id="cm-email" type="email" placeholder="client@company.com" style="margin-bottom:0"></div>
-        <div><div class="m-lbl">Phone</div><input class="m-inp" id="cm-phone" type="tel" placeholder="+1 555 000 0000" style="margin-bottom:0"></div>
+        <div>
+          <div class="m-lbl">Phone</div>
+          <div class="cm-phone-wrap" style="display:flex;gap:4px;align-items:center">
+            <select class="m-sel" id="cm-phone-code" style="width:90px;flex-shrink:0;padding:6px 4px;font-size:12px">
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+1-CA">🇨🇦 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+64">🇳🇿 +64</option>
+              <option value="+65">🇸🇬 +65</option>
+              <option value="+60">🇲🇾 +60</option>
+              <option value="+62">🇮🇩 +62</option>
+              <option value="+63">🇵🇭 +63</option>
+              <option value="+66">🇹🇭 +66</option>
+              <option value="+84">🇻🇳 +84</option>
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+86">🇨🇳 +86</option>
+              <option value="+81">🇯🇵 +81</option>
+              <option value="+82">🇰🇷 +82</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+33">🇫🇷 +33</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+39">🇮🇹 +39</option>
+              <option value="+31">🇳🇱 +31</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+45">🇩🇰 +45</option>
+              <option value="+358">🇫🇮 +358</option>
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+27">🇿🇦 +27</option>
+              <option value="+20">🇪🇬 +20</option>
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+254">🇰🇪 +254</option>
+              <option value="+971">🇦🇪 +971</option>
+              <option value="+966">🇸🇦 +966</option>
+              <option value="+other">Other</option>
+            </select>
+            <input class="m-inp" id="cm-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1">
+          </div>
+        </div>
       </div>
       <div class="m-lbl" style="margin-top:10px">Address</div><input class="m-inp" id="cm-address" placeholder="Street, City, Country">
-      <div class="m-lbl">Contact person</div><input class="m-inp" id="cm-contact" placeholder="e.g. Jamie Reyes">
-      <div class="m-lbl">Notes</div><input class="m-inp" id="cm-notes" placeholder="Optional notes">
     </div>
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeClientModal()">Cancel</button>
-      <button class="btn-use" onclick="addClient()">Add client</button>
+      <button class="btn-use" id="cm-add-btn" onclick="addClientOnce()">Add client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit client modal -->
+<div class="modal-overlay" id="edit-client-modal" onclick="if(event.target===this)closeEditClientModal()">
+  <div class="modal-box">
+    <div class="modal-hd"><span class="modal-title">Edit client</span><button class="modal-close" onclick="closeEditClientModal()">&#10005;</button></div>
+    <div class="modal-bd">
+      <div class="m-lbl">Name</div><input class="m-inp" id="cem-name" placeholder="Client's full name">
+      <div class="m-lbl">Company</div><input class="m-inp" id="cem-company" placeholder="Company or business name">
+      <div class="m-row2">
+        <div><div class="m-lbl">Email</div><input class="m-inp" id="cem-email" type="email" placeholder="client@company.com" style="margin-bottom:0"></div>
+        <div>
+          <div class="m-lbl">Phone</div>
+          <div style="display:flex;gap:4px;align-items:center">
+            <select class="m-sel" id="cem-phone-code" style="width:90px;flex-shrink:0;padding:6px 4px;font-size:12px">
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+1-CA">🇨🇦 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+64">🇳🇿 +64</option>
+              <option value="+65">🇸🇬 +65</option>
+              <option value="+60">🇲🇾 +60</option>
+              <option value="+62">🇮🇩 +62</option>
+              <option value="+63">🇵🇭 +63</option>
+              <option value="+66">🇹🇭 +66</option>
+              <option value="+84">🇻🇳 +84</option>
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+86">🇨🇳 +86</option>
+              <option value="+81">🇯🇵 +81</option>
+              <option value="+82">🇰🇷 +82</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+33">🇫🇷 +33</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+39">🇮🇹 +39</option>
+              <option value="+31">🇳🇱 +31</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+45">🇩🇰 +45</option>
+              <option value="+358">🇫🇮 +358</option>
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+27">🇿🇦 +27</option>
+              <option value="+20">🇪🇬 +20</option>
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+254">🇰🇪 +254</option>
+              <option value="+971">🇦🇪 +971</option>
+              <option value="+966">🇸🇦 +966</option>
+              <option value="+other">Other</option>
+            </select>
+            <input class="m-inp" id="cem-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1">
+          </div>
+        </div>
+      </div>
+      <div class="m-lbl" style="margin-top:10px">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country">
+    </div>
+    <div class="modal-ft">
+      <button class="btn-outline" onclick="closeEditClientModal()">Cancel</button>
+      <button class="btn-use" onclick="saveEditClient()">Save changes</button>
     </div>
   </div>
 </div>
