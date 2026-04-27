@@ -1173,9 +1173,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* ── CLIENT DIRECTORY ── */
 .client-dir-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .client-table{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.ct-head{display:grid;grid-template-columns:160px 1.3fr 170px 1fr 1fr 80px;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
+.ct-head{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr 80px;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
 .ct-head-cell{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);padding:10px 14px}
-.ct-row{display:grid;grid-template-columns:160px 1.3fr 170px 1fr 1fr 80px;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
+.ct-row{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr 80px;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
 .ct-row:last-child{border-bottom:none}
 .ct-row:hover{background:var(--cream)}
 .ct-cell{padding:11px 14px;font-size:13px;color:var(--ink-mid)}
@@ -1222,9 +1222,12 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fo-proj-amt{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;flex-shrink:0}
 .fo-proj-bar-wrap{height:5px;background:var(--border);border-radius:3px;width:100%}
 .fo-proj-bar-fill{height:5px;background:var(--sage);border-radius:3px;transition:width .3s}
-.fo-manual-row{display:grid;grid-template-columns:1fr 100px 110px 80px auto;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--white)}
+.fo-manual-row{display:grid;grid-template-columns:minmax(120px,1.8fr) 120px 110px 110px auto;gap:0;align-items:center;padding:0;border-bottom:1px solid var(--border);background:var(--white);cursor:pointer;transition:background .12s}
+.fo-manual-row:hover{background:var(--cream)}
 .fo-manual-row:last-child{border-bottom:none}
-.fo-manual-row-head{display:grid;grid-template-columns:1fr 100px 110px 80px auto;gap:10px;padding:8px 14px;background:var(--cream-dark);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light)}
+.fo-manual-cell{padding:11px 14px;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fo-manual-row-head{display:grid;grid-template-columns:minmax(120px,1.8fr) 120px 110px 110px auto;gap:0;padding:0;background:var(--cream-dark);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light)}
+.fo-manual-head-cell{padding:8px 14px}
 .fo-manual-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--white)}
 .fo-add-form{background:var(--cream);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 130px 140px 90px auto;gap:10px;align-items:end}
 .fo-empty{text-align:center;padding:40px;color:var(--ink-light);font-size:13px}
@@ -1538,6 +1541,8 @@ input[type=number]{-moz-appearance:textfield}
 .cal-detail-date{font-size:13px;font-weight:600;color:var(--ink)}
 .cal-detail-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 .cal-detail-item:last-child{border-bottom:none}
+.cal-done-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.cal-done-item:last-child{border-bottom:none}
 /* ── INVOICE EDIT MODAL ── */
 .foei-modal-body{max-height:80vh;overflow-y:auto}
 .foei-form-col{padding:24px}
@@ -1984,6 +1989,8 @@ input[type=number]{-moz-appearance:textfield}
   .kanban>.kc{min-width:220px!important;flex-shrink:0;scroll-snap-align:start}
   /* Financial overview */
   .fo-manual-row,.fo-manual-row-head{grid-template-columns:1fr 90px auto}
+  .fo-manual-row .fo-manual-cell:nth-child(3),.fo-manual-row .fo-manual-cell:nth-child(4),
+  .fo-manual-row-head .fo-manual-head-cell:nth-child(3),.fo-manual-row-head .fo-manual-head-cell:nth-child(4){display:none}
   .fo-add-form{grid-template-columns:1fr 1fr}
   /* Home */
   .home-hero{padding:22px 20px}
@@ -3145,8 +3152,8 @@ var RateLimiter = (function() {
               <button class="add-li-btn" onclick="addLineItem()">+ Add line item</button>
               <div class="ip-divider"></div>
               <div class="ip-row2">
-                <div class="ip-field"><div class="ip-lbl">Tax %</div><input class="ip-inp" type="number" id="i-tax" value="0" min="0" max="100" oninput="updateInv()"></div>
-                <div class="ip-field"><div class="ip-lbl">Discount %</div><input class="ip-inp" type="number" id="i-disc" value="0" min="0" max="100" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Tax %</div><input class="ip-inp" type="number" id="i-tax" value="0" min="0" max="100" onkeydown="blockNeg(event)" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Discount %</div><input class="ip-inp" type="number" id="i-disc" value="0" min="0" max="100" onkeydown="blockNeg(event)" oninput="updateInv()"></div>
               </div>
               <!-- Payment section -->
               <div class="ip-field">
@@ -3837,6 +3844,7 @@ var RateLimiter = (function() {
             <div class="ct-head-cell">Email</div>
             <div class="ct-head-cell">Phone</div>
             <div class="ct-head-cell">Company</div>
+            <div class="ct-head-cell">Address</div>
             <div class="ct-head-cell">Projects</div>
             <div class="ct-head-cell"></div>
           </div>
@@ -3957,7 +3965,7 @@ var RateLimiter = (function() {
           </div>
           <div id="fo-add-income-form" style="display:none" class="fo-add-form">
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Description</div><input class="pt-inp" id="fo-inc-desc" placeholder="e.g. Cash payment from client"></div>
-            <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Amount ($)</div><input class="pt-inp" id="fo-inc-amount" type="number" placeholder="0" min="0" oninput="if(parseFloat(this.value)<0)this.value=0"></div>
+            <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Amount ($)</div><input class="pt-inp" id="fo-inc-amount" type="number" placeholder="0" min="0" onkeydown="blockNeg(event)" oninput=""></div>
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Date</div><input class="pt-inp" id="fo-inc-date" type="date"></div>
             <div><div style="font-size:11px;font-weight:600;color:var(--ink-light);margin-bottom:4px">Source</div><input class="pt-inp" id="fo-inc-source" placeholder="e.g. Bank transfer"></div>
             <div style="display:flex;gap:6px;padding-top:19px"><button class="pt-save-btn" onclick="foSaveIncome()">Save</button><button class="btn-outline" onclick="foHideAddIncome()">Cancel</button></div>
@@ -4067,8 +4075,8 @@ var RateLimiter = (function() {
         <div id="foei-items-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;background:var(--white)"></div>
         <button onclick="foeiAddItem()" class="btn-outline" style="font-size:12px;padding:4px 12px;margin-bottom:16px">+ Add line item</button>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-          <div><div class="m-lbl">Tax (%)</div><input class="m-inp" id="foei-tax" type="number" placeholder="0" min="0" style="margin-bottom:0" oninput="if(parseFloat(this.value)<0)this.value=0;foeiUpdateTotal()"></div>
-          <div><div class="m-lbl">Discount (%)</div><input class="m-inp" id="foei-disc" type="number" placeholder="0" min="0" style="margin-bottom:0" oninput="if(parseFloat(this.value)<0)this.value=0;foeiUpdateTotal()"></div>
+          <div><div class="m-lbl">Tax (%)</div><input class="m-inp" id="foei-tax" type="number" placeholder="0" min="0" style="margin-bottom:0" onkeydown="blockNeg(event)" oninput="foeiUpdateTotal()"></div>
+          <div><div class="m-lbl">Discount (%)</div><input class="m-inp" id="foei-disc" type="number" placeholder="0" min="0" style="margin-bottom:0" onkeydown="blockNeg(event)" oninput="foeiUpdateTotal()"></div>
         </div>
         <div><div class="m-lbl">Notes</div><textarea class="pt-ta" id="foei-notes" style="min-height:56px;margin-bottom:0" oninput="foeiRenderPreview()"></textarea></div>
         <div style="text-align:right;padding:14px 0 4px;font-size:16px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);margin-top:14px">Total: <span id="foei-total">$0.00</span></div>
@@ -4105,6 +4113,22 @@ showToast._doUndo=function(){if(showToast._undo){showToast._undo();showToast._un
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 function fm(n,sym='$'){return sym+Math.round(n).toLocaleString()}
 function fmD(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+
+// Phone input masking: (xxx) xxx xxxx
+function fmtPhoneInput(el){
+  var digits=el.value.replace(/\D/g,'').slice(0,10);
+  var fmt='';
+  if(digits.length===0)fmt='';
+  else if(digits.length<=3)fmt='('+digits;
+  else if(digits.length<=6)fmt='('+digits.slice(0,3)+') '+digits.slice(3);
+  else fmt='('+digits.slice(0,3)+') '+digits.slice(3,6)+' '+digits.slice(6);
+  el.value=fmt;
+}
+// Block negative / non-numeric on number inputs
+function blockNeg(e){
+  var k=e.key;
+  if(k==='-'||k==='+'||k==='e'||k==='E'){e.preventDefault();}
+}
 
 // ═══════════════ NAVIGATION ═══════════════
 var _atnDdReady = false;
@@ -4416,7 +4440,7 @@ function updateHomeHero(){
     var m=_currentUser.user_metadata;
     name=(m&&(m.full_name||m.name))||(_currentUser.email?_currentUser.email.split('@')[0]:'')||'there';
   }
-  el.textContent=name.charAt(0).toUpperCase()+name.slice(1)+'.';
+  el.textContent=name.charAt(0).toUpperCase()+name.slice(1)+'!';
 }
 initHomeGrid();
 
@@ -4440,11 +4464,11 @@ function renderLineItems(){
              placeholder="Description">
       <input class="ip-inp" style="padding:5px 8px;font-size:12px;text-align:right"
              type="number" value="${li.qty}"
-             onchange="lineItems[${i}].qty=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].qty;updateLineTotal(${i});updateInv()"
+             onkeydown="blockNeg(event)" onchange="lineItems[${i}].qty=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].qty;updateLineTotal(${i});updateInv()"
              min="0" step="0.5">
       <input class="ip-inp" style="padding:5px 8px;font-size:12px;text-align:right"
              type="number" value="${li.rate}"
-             onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate;updateLineTotal(${i});updateInv()"
+             onkeydown="blockNeg(event)" onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate;updateLineTotal(${i});updateInv()"
              min="0" step="10">
       <div class="li-total-cell" id="litot-${i}">${fmD(li.qty*li.rate)}</div>
       <button class="li-remove" onclick="lineItems.splice(${i},1);renderLineItems();updateInv()">&#215;</button>
@@ -5824,6 +5848,7 @@ function renderClientList() {
       '<div class="ct-cell email">' + escapeHTML(cl.email||'—') + '</div>' +
       '<div class="ct-cell" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.phone||'—') + '</div>' +
       '<div class="ct-cell">' + escapeHTML(cl.company||'—') + '</div>' +
+      '<div class="ct-cell" style="font-size:12px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHTML(cl.address||'—') + '</div>' +
       '<div class="ct-cell" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' + projHtml +
         '<button class="ct-btn" data-client-id="' + escapeHTML(cl.id) + '" data-client-name="' + escapeHTML(cl.name||'') + '" onclick="event.stopPropagation();openClientLinkModal(this.dataset.clientId, this.dataset.clientName)" style="font-size:10px;padding:2px 7px;margin-left:4px" title="Link / unlink projects">🔗</button>' +
       '</div>' +
@@ -6487,6 +6512,7 @@ function foDeleteIncome(id) {
   foRenderManualList();
   renderFinancialOverview();
 }
+var _foEditingIncomeId = null;
 function foRenderManualList() {
   var el = document.getElementById('fo-manual-list');
   if (!el) return;
@@ -6495,17 +6521,58 @@ function foRenderManualList() {
     return;
   }
   el.innerHTML = '<div class="fo-manual-wrap">' +
-    '<div class="fo-manual-row-head"><div>Description</div><div>Amount</div><div>Date</div><div>Source</div><div></div></div>' +
+    '<div class="fo-manual-row-head">' +
+      '<div class="fo-manual-head-cell">Description</div>' +
+      '<div class="fo-manual-head-cell">Amount</div>' +
+      '<div class="fo-manual-head-cell">Date</div>' +
+      '<div class="fo-manual-head-cell">Source</div>' +
+      '<div class="fo-manual-head-cell"></div>' +
+    '</div>' +
     _foManualIncome.slice().reverse().map(function(m) {
-      return '<div class="fo-manual-row">' +
-        '<div style="font-size:13px;color:var(--ink)">' + escapeHTML(m.desc) + '</div>' +
-        '<div style="font-family:var(--font-mono);font-size:13px;font-weight:600">' + fmD(m.amount) + '</div>' +
-        '<div style="font-size:12px;color:var(--ink-mid)">' + (m.date || '—') + '</div>' +
-        '<div style="font-size:12px;color:var(--ink-mid)">' + escapeHTML(m.source || '—') + '</div>' +
-        '<button class="pt-btn-del" onclick="foDeleteIncome(' + m.id + ')">Delete</button>' +
+      return '<div class="fo-manual-row" onclick="foOpenEditIncome(' + m.id + ')" title="Click to edit">' +
+        '<div class="fo-manual-cell" style="color:var(--ink);font-weight:500">' + escapeHTML(m.desc) + '</div>' +
+        '<div class="fo-manual-cell" style="font-family:var(--font-mono);font-weight:600">' + fmD(m.amount) + '</div>' +
+        '<div class="fo-manual-cell" style="color:var(--ink-mid);font-size:12px">' + (m.date || '—') + '</div>' +
+        '<div class="fo-manual-cell" style="color:var(--ink-mid);font-size:12px">' + escapeHTML(m.source || '—') + '</div>' +
+        '<div class="fo-manual-cell" style="padding-right:10px">' +
+          '<button class="pt-btn-del" onclick="event.stopPropagation();foDeleteIncome(' + m.id + ')">Delete</button>' +
+        '</div>' +
         '</div>';
     }).join('') +
     '</div>';
+}
+function foOpenEditIncome(id) {
+  var m = _foManualIncome.find(function(x){ return x.id === id; });
+  if (!m) return;
+  _foEditingIncomeId = id;
+  var set = function(eid,val){ var e=document.getElementById(eid);if(e)e.value=val||''; };
+  set('fo-edit-inc-desc', m.desc);
+  set('fo-edit-inc-amount', m.amount);
+  set('fo-edit-inc-date', m.date);
+  set('fo-edit-inc-source', m.source);
+  document.getElementById('fo-edit-income-modal').classList.add('open');
+}
+function foCloseEditIncome() {
+  document.getElementById('fo-edit-income-modal').classList.remove('open');
+  _foEditingIncomeId = null;
+}
+function foSaveEditIncome() {
+  var id = _foEditingIncomeId;
+  if (!id) return;
+  var m = _foManualIncome.find(function(x){ return x.id === id; });
+  if (!m) return;
+  var desc = (document.getElementById('fo-edit-inc-desc')||{}).value||'';
+  var amount = Math.max(0, parseFloat((document.getElementById('fo-edit-inc-amount')||{}).value)||0);
+  if (!desc || !amount) { showToast('Description and amount are required'); return; }
+  m.desc = desc;
+  m.amount = amount;
+  m.date = (document.getElementById('fo-edit-inc-date')||{}).value||'';
+  m.source = (document.getElementById('fo-edit-inc-source')||{}).value||'';
+  localStorage.setItem('fk_manual_income', JSON.stringify(_foManualIncome));
+  foCloseEditIncome();
+  foRenderManualList();
+  renderFinancialOverview();
+  showToast('✓ Income entry updated');
 }
 
 function renderInvHistory() {
@@ -7724,7 +7791,33 @@ function calShowDay(ds) {
         '</div>':'')+
         '</div>';
     }).join('') : '<div style="font-size:12px;color:var(--ink-light);padding:6px 0">No events scheduled</div>') +
-    '<div id="cal-add-form-wrap"></div>';
+    '<div id="cal-add-form-wrap"></div>' +
+    _calRecentlyCompleted();
+}
+function _calRecentlyCompleted() {
+  var todayStr = new Date().toISOString().slice(0,10);
+  // Past events: date < today, most recent first, up to 5
+  var past = _calEvents
+    .filter(function(e){ return e.date < todayStr; })
+    .sort(function(a,b){ return b.date > a.date ? 1 : b.date < a.date ? -1 : 0; })
+    .slice(0, 5);
+  if (!past.length) return '';
+  var rows = past.map(function(e){
+    var d = new Date(e.date+'T12:00:00');
+    var dlbl = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return '<div class="cal-done-item">'+
+      '<span class="cal-dot event" style="opacity:.45"></span>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:12px;color:var(--ink-mid);text-decoration:line-through;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHTML(e.title)+'</div>'+
+        (e.project?'<div style="font-size:11px;color:var(--ink-light)">'+escapeHTML(e.project)+'</div>':'')+
+      '</div>'+
+      '<span style="font-size:11px;color:var(--ink-light);white-space:nowrap;flex-shrink:0">'+dlbl+'</span>'+
+    '</div>';
+  }).join('');
+  return '<div style="margin-top:14px">'+
+    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:6px">Recently completed</div>'+
+    rows+
+  '</div>';
 }
 function calAddEvent(dateStr) {
   calShowAddForm(dateStr || new Date().toISOString().slice(0,10));
@@ -11320,7 +11413,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 <!-- Client contacts modal -->
 <div class="modal-overlay" id="client-modal" onclick="if(event.target===this)clientModalBackdropClose()">
   <div class="modal-box">
-    <div class="modal-hd"><span class="modal-title">Add client</span><button class="modal-close" onclick="closeClientModal()">&#10005;</button></div>
+    <div class="modal-hd"><span class="modal-title">Add client</span><button class="modal-close" onclick="clientModalBackdropClose()">&#10005;</button></div>
     <div class="modal-bd">
       <div class="m-lbl">Name</div><input class="m-inp" id="cm-name" placeholder="Client's full name">
       <div class="m-lbl">Company</div><input class="m-inp" id="cm-company" placeholder="Company or business name">
@@ -11330,41 +11423,41 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           <div class="m-lbl">Phone</div>
           <div class="cm-phone-wrap" style="display:flex;gap:4px;align-items:center">
             <select class="m-sel" id="cm-phone-code" style="width:90px;flex-shrink:0;padding:6px 4px;font-size:12px">
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+1-CA">🇨🇦 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+64">🇳🇿 +64</option>
-              <option value="+65">🇸🇬 +65</option>
-              <option value="+60">🇲🇾 +60</option>
-              <option value="+62">🇮🇩 +62</option>
-              <option value="+63">🇵🇭 +63</option>
-              <option value="+66">🇹🇭 +66</option>
-              <option value="+84">🇻🇳 +84</option>
-              <option value="+91">🇮🇳 +91</option>
-              <option value="+86">🇨🇳 +86</option>
-              <option value="+81">🇯🇵 +81</option>
-              <option value="+82">🇰🇷 +82</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+34">🇪🇸 +34</option>
-              <option value="+39">🇮🇹 +39</option>
-              <option value="+31">🇳🇱 +31</option>
-              <option value="+46">🇸🇪 +46</option>
-              <option value="+47">🇳🇴 +47</option>
-              <option value="+45">🇩🇰 +45</option>
-              <option value="+358">🇫🇮 +358</option>
-              <option value="+55">🇧🇷 +55</option>
-              <option value="+52">🇲🇽 +52</option>
-              <option value="+27">🇿🇦 +27</option>
-              <option value="+20">🇪🇬 +20</option>
-              <option value="+234">🇳🇬 +234</option>
-              <option value="+254">🇰🇪 +254</option>
-              <option value="+971">🇦🇪 +971</option>
-              <option value="+966">🇸🇦 +966</option>
+              <option value="+1">US +1</option>
+              <option value="+1-CA">CA +1</option>
+              <option value="+44">UK +44</option>
+              <option value="+61">AU +61</option>
+              <option value="+64">NZ +64</option>
+              <option value="+65">SG +65</option>
+              <option value="+60">MY +60</option>
+              <option value="+62">ID +62</option>
+              <option value="+63">PH +63</option>
+              <option value="+66">TH +66</option>
+              <option value="+84">VN +84</option>
+              <option value="+91">IN +91</option>
+              <option value="+86">CN +86</option>
+              <option value="+81">JP +81</option>
+              <option value="+82">KR +82</option>
+              <option value="+49">DE +49</option>
+              <option value="+33">FR +33</option>
+              <option value="+34">ES +34</option>
+              <option value="+39">IT +39</option>
+              <option value="+31">NL +31</option>
+              <option value="+46">SE +46</option>
+              <option value="+47">NO +47</option>
+              <option value="+45">DK +45</option>
+              <option value="+358">FI +358</option>
+              <option value="+55">BR +55</option>
+              <option value="+52">MX +52</option>
+              <option value="+27">ZA +27</option>
+              <option value="+20">EG +20</option>
+              <option value="+234">NG +234</option>
+              <option value="+254">KE +254</option>
+              <option value="+971">AE +971</option>
+              <option value="+966">SA +966</option>
               <option value="+other">Other</option>
             </select>
-            <input class="m-inp" id="cm-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1">
+            <input class="m-inp" id="cm-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="14">
           </div>
         </div>
       </div>
@@ -11390,41 +11483,41 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           <div class="m-lbl">Phone</div>
           <div style="display:flex;gap:4px;align-items:center">
             <select class="m-sel" id="cem-phone-code" style="width:90px;flex-shrink:0;padding:6px 4px;font-size:12px">
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+1-CA">🇨🇦 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+64">🇳🇿 +64</option>
-              <option value="+65">🇸🇬 +65</option>
-              <option value="+60">🇲🇾 +60</option>
-              <option value="+62">🇮🇩 +62</option>
-              <option value="+63">🇵🇭 +63</option>
-              <option value="+66">🇹🇭 +66</option>
-              <option value="+84">🇻🇳 +84</option>
-              <option value="+91">🇮🇳 +91</option>
-              <option value="+86">🇨🇳 +86</option>
-              <option value="+81">🇯🇵 +81</option>
-              <option value="+82">🇰🇷 +82</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+34">🇪🇸 +34</option>
-              <option value="+39">🇮🇹 +39</option>
-              <option value="+31">🇳🇱 +31</option>
-              <option value="+46">🇸🇪 +46</option>
-              <option value="+47">🇳🇴 +47</option>
-              <option value="+45">🇩🇰 +45</option>
-              <option value="+358">🇫🇮 +358</option>
-              <option value="+55">🇧🇷 +55</option>
-              <option value="+52">🇲🇽 +52</option>
-              <option value="+27">🇿🇦 +27</option>
-              <option value="+20">🇪🇬 +20</option>
-              <option value="+234">🇳🇬 +234</option>
-              <option value="+254">🇰🇪 +254</option>
-              <option value="+971">🇦🇪 +971</option>
-              <option value="+966">🇸🇦 +966</option>
+              <option value="+1">US +1</option>
+              <option value="+1-CA">CA +1</option>
+              <option value="+44">UK +44</option>
+              <option value="+61">AU +61</option>
+              <option value="+64">NZ +64</option>
+              <option value="+65">SG +65</option>
+              <option value="+60">MY +60</option>
+              <option value="+62">ID +62</option>
+              <option value="+63">PH +63</option>
+              <option value="+66">TH +66</option>
+              <option value="+84">VN +84</option>
+              <option value="+91">IN +91</option>
+              <option value="+86">CN +86</option>
+              <option value="+81">JP +81</option>
+              <option value="+82">KR +82</option>
+              <option value="+49">DE +49</option>
+              <option value="+33">FR +33</option>
+              <option value="+34">ES +34</option>
+              <option value="+39">IT +39</option>
+              <option value="+31">NL +31</option>
+              <option value="+46">SE +46</option>
+              <option value="+47">NO +47</option>
+              <option value="+45">DK +45</option>
+              <option value="+358">FI +358</option>
+              <option value="+55">BR +55</option>
+              <option value="+52">MX +52</option>
+              <option value="+27">ZA +27</option>
+              <option value="+20">EG +20</option>
+              <option value="+234">NG +234</option>
+              <option value="+254">KE +254</option>
+              <option value="+971">AE +971</option>
+              <option value="+966">SA +966</option>
               <option value="+other">Other</option>
             </select>
-            <input class="m-inp" id="cem-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1">
+            <input class="m-inp" id="cem-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="14">
           </div>
         </div>
       </div>
@@ -11433,6 +11526,25 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeEditClientModal()">Cancel</button>
       <button class="btn-use" onclick="saveEditClient()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit income entry modal -->
+<div class="modal-overlay" id="fo-edit-income-modal" onclick="if(event.target===this)foCloseEditIncome()">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-hd"><span class="modal-title">Edit income entry</span><button class="modal-close" onclick="foCloseEditIncome()">&#10005;</button></div>
+    <div class="modal-bd">
+      <div class="m-lbl">Description</div><input class="m-inp" id="fo-edit-inc-desc" placeholder="e.g. Cash payment from client">
+      <div class="m-lbl">Amount ($)</div><input class="m-inp" id="fo-edit-inc-amount" type="number" placeholder="0" min="0" onkeydown="blockNeg(event)">
+      <div class="m-row2">
+        <div><div class="m-lbl">Date</div><input class="m-inp" id="fo-edit-inc-date" type="date" style="margin-bottom:0"></div>
+        <div><div class="m-lbl">Source</div><input class="m-inp" id="fo-edit-inc-source" placeholder="e.g. Bank transfer" style="margin-bottom:0"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-outline" onclick="foCloseEditIncome()">Cancel</button>
+      <button class="btn-use" onclick="foSaveEditIncome()">Save changes</button>
     </div>
   </div>
 </div>
