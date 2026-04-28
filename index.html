@@ -1483,6 +1483,10 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .doc-tb-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
 .doc-body.editable-mode{outline:none;caret-color:var(--ink)}
 .doc-body.editable-mode:focus{outline:none}
+.doc-tb-font-sel{font-size:12px;font-family:var(--font-body);padding:3px 6px;border:1.5px solid var(--border);border-radius:5px;background:var(--white);color:var(--ink);cursor:pointer;height:28px}
+.doc-tb-sz-btn{width:22px;height:22px;border:1.5px solid var(--border);border-radius:4px;background:var(--white);font-size:14px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.doc-tb-sz-val{font-size:12px;font-weight:600;color:var(--ink);min-width:22px;text-align:center;font-family:var(--font-mono)}
+.doc-tb-color-lbl:hover{background:var(--surface-white)}
 .doc-body.editable-mode .field,.doc-body.editable-mode .field-block{background:transparent;color:inherit;border-bottom:none;cursor:text}
 .field[contenteditable=true]:hover{background:rgba(111,251,190,0.25);cursor:text}
 .field[contenteditable=true]:focus{outline:2px solid var(--tertiary);border-color:var(--tertiary);background:rgba(111,251,190,0.3);cursor:text}
@@ -1605,7 +1609,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-save-btn:hover{opacity:.85}
 /* Milestone / task rows */
 .pt-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px}
-.pt-check{width:18px;height:18px;border:2px solid var(--border);border-radius:50%;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px}
+.pt-check{width:18px;height:18px;border:2px solid #93C5FD;background:#EFF6FF;border-radius:50%;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px}
 .pt-check.done{border-color:var(--sage);background:var(--sage-light);color:var(--sage)}
 .pt-row-name{flex:1;font-size:13px;color:var(--ink)}
 .pt-row-name.done{text-decoration:line-through;color:var(--ink-light)}
@@ -3452,10 +3456,9 @@ var RateLimiter = (function() {
           <div class="pt-detail-hdr">
             <button class="pt-back-btn" onclick="ptBackToList()">← All projects</button>
             <span class="pt-detail-name" id="pt-detail-name"></span>
-            <span class="pt-status" id="pt-detail-status-badge"></span>
-            <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto">Edit</button>
-            <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border)" onclick="openShareModal()">👥 Share</button>
-            <button class="pt-row-del" onclick="deletePtProject()" title="Delete project">Delete</button>
+            <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto;min-width:72px">Edit</button>
+            <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:72px" onclick="openShareModal()">Share</button>
+            <button class="pt-add-btn" style="background:var(--white);color:#B91C1C;border:1.5px solid #FECACA;min-width:72px" onclick="deletePtProject()" title="Delete project">Delete</button>
           </div>
           <div class="pt-tabs">
             <button class="pt-tab active" onclick="showPtTab('overview',this)">Overview</button>
@@ -3961,6 +3964,17 @@ var RateLimiter = (function() {
             </div>
             <button class="btn-use" onclick="_editingInvoiceId=null;_syncInvProjLinkUI();showPanel('invoice',document.getElementById('nav-invoice'))">+ New invoice</button>
           </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+            <input id="fo-inv-search" class="pt-inp" placeholder="Search invoices…" style="flex:1;min-width:160px;max-width:280px;margin:0" oninput="renderInvHistory()">
+            <select id="fo-inv-sort" class="pt-inp" style="min-width:160px;margin:0" onchange="renderInvHistory()">
+              <option value="date-desc">Newest first</option>
+              <option value="date-asc">Oldest first</option>
+              <option value="due-asc">Due date (soonest)</option>
+              <option value="amount-desc">Amount (high→low)</option>
+              <option value="amount-asc">Amount (low→high)</option>
+              <option value="client">Client (A–Z)</option>
+            </select>
+          </div>
           <div class="inv-hist-table">
             <div class="iht-head">
               <div class="iht-hc">Invoice #</div>
@@ -4086,7 +4100,7 @@ var RateLimiter = (function() {
           <div><div class="m-lbl">Client name</div><input class="m-inp" id="foei-client" style="margin-bottom:0" oninput="foeiRenderPreview()"></div>
           <div><div class="m-lbl">Contact person</div><input class="m-inp" id="foei-contact" style="margin-bottom:0" oninput="foeiRenderPreview()"></div>
           <div><div class="m-lbl">Client email</div><input class="m-inp" id="foei-email" style="margin-bottom:0" oninput="foeiRenderPreview()"></div>
-          <div><div class="m-lbl">Project</div><input class="m-inp" id="foei-project" style="margin-bottom:0" oninput="foeiRenderPreview()"></div>
+          <div><div class="m-lbl">Project</div><select class="m-sel" id="foei-project" style="margin-bottom:0" onchange="foeiRenderPreview()"><option value="">— No project —</option></select></div>
         </div>
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:8px;margin-top:4px">Line Items</div>
         <div id="foei-items-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;background:var(--white)"></div>
@@ -6673,9 +6687,25 @@ function foSaveEditIncome() {
 function renderInvHistory() {
   var body = document.getElementById('inv-history-body');
   if (!body) return;
-  var list = _invFilter === 'all' ? _invoices : _invoices.filter(function(i){ return i.status === _invFilter; });
+  var searchTerm = ((document.getElementById('fo-inv-search')||{}).value||'').toLowerCase().trim();
+  var sortBy = (document.getElementById('fo-inv-sort')||{}).value || 'date-desc';
+  var list = _invFilter === 'all' ? (_invoices||[]) : (_invoices||[]).filter(function(i){ return i.status === _invFilter; });
+  if (searchTerm) {
+    list = list.filter(function(inv){
+      return (inv.invoice_number||'').toLowerCase().indexOf(searchTerm) >= 0 ||
+             (inv.client_name||'').toLowerCase().indexOf(searchTerm) >= 0 ||
+             (inv.project||'').toLowerCase().indexOf(searchTerm) >= 0;
+    });
+  }
+  list = list.slice();
+  if (sortBy === 'date-asc') list.sort(function(a,b){ return (a.issue_date||'').localeCompare(b.issue_date||''); });
+  else if (sortBy === 'due-asc') list.sort(function(a,b){ return (a.due_date||'9999').localeCompare(b.due_date||'9999'); });
+  else if (sortBy === 'amount-desc') list.sort(function(a,b){ return (parseFloat(b.total)||0)-(parseFloat(a.total)||0); });
+  else if (sortBy === 'amount-asc') list.sort(function(a,b){ return (parseFloat(a.total)||0)-(parseFloat(b.total)||0); });
+  else if (sortBy === 'client') list.sort(function(a,b){ return (a.client_name||'').localeCompare(b.client_name||''); });
+  else list.sort(function(a,b){ return (b.issue_date||'').localeCompare(a.issue_date||''); }); // date-desc default
   if (!list.length) {
-    body.innerHTML = '<div class="inv-hist-empty">' + (_invFilter === 'all' ? 'No invoices saved yet.' : 'No ' + _invFilter + ' invoices.') + '</div>';
+    body.innerHTML = '<div class="inv-hist-empty">' + (searchTerm ? 'No invoices match your search.' : _invFilter === 'all' ? 'No invoices saved yet.' : 'No ' + _invFilter + ' invoices.') + '</div>';
     return;
   }
   var fmtDate = function(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—'; };
@@ -6759,7 +6789,20 @@ function foOpenEditInv(id) {
   g('foei-client', inv.client_name);
   g('foei-contact', inv.client_contact);
   g('foei-email', inv.client_email);
-  g('foei-project', inv.project);
+  // Populate project dropdown
+  var projSel = document.getElementById('foei-project');
+  if (projSel) {
+    var currentProj = inv.project || '';
+    var opts = '<option value="">— No project —</option>';
+    var projs = window._ptProjects || [];
+    projs.forEach(function(p){ opts += '<option value="' + escapeHTML(p.name) + '"' + (p.name === currentProj ? ' selected' : '') + '>' + escapeHTML(p.name) + '</option>'; });
+    if (currentProj && !projs.find(function(p){ return p.name === currentProj; })) {
+      opts += '<option value="' + escapeHTML(currentProj) + '" selected>' + escapeHTML(currentProj) + '</option>';
+    }
+    projSel.innerHTML = opts;
+  } else {
+    var el2 = document.getElementById('foei-project'); if (el2) el2.value = inv.project || '';
+  }
   g('foei-tax', inv.tax_pct || 0);
   g('foei-disc', inv.discount_pct || 0);
   g('foei-notes', inv.notes || '');
@@ -7004,6 +7047,15 @@ async function foSaveEditInv() {
   renderFinancialOverview();
   // Sync linked billing row status
   _syncInvoiceStatusToBilling(savedInvId, payload.status);
+  // Also sync billing amount to match updated invoice total
+  var _billingId = _getInvBillingLink(savedInvId);
+  if (_billingId && _currentUser && _supabase) {
+    if (window._ptBilling) {
+      var _bi = window._ptBilling.findIndex(function(b){ return b.id === _billingId; });
+      if (_bi >= 0) { window._ptBilling[_bi].amount = total; }
+    }
+    _supabase.from('project_billing').update({ amount: total, updated_at: new Date().toISOString() }).eq('id', _billingId).eq('user_id', _currentUser.id);
+  }
   if (typeof renderPtBilling === 'function') renderPtBilling();
   showToast('\u2713 Invoice updated');
   // Persist to Supabase in the background; re-render once server confirms
@@ -7120,10 +7172,30 @@ async function editScenarioName(id, btn) {
 
 // ─── PROJECT COLORS ───────────────────────────────────────────────────────────
 var PROJECT_COLORS = ['#D4A853','#2D6A4F','#1D4ED8','#7C3AED','#DC2626','#0891B2','#059669','#D97706','#DB2777','#6366F1'];
+function _ptLoadColorMap() {
+  try { return JSON.parse(localStorage.getItem('fk_pt_color_map')) || {}; } catch(e) { return {}; }
+}
+function _ptSaveColorMap(map) {
+  try { localStorage.setItem('fk_pt_color_map', JSON.stringify(map)); } catch(e) {}
+}
 function getProjectColor(projectId) {
   if (!projectId) return '#9CA3AF';
+  var map = _ptLoadColorMap();
+  if (map[projectId] != null) return PROJECT_COLORS[map[projectId] % PROJECT_COLORS.length];
+  // Fallback: assign by index (for projects that haven't been assigned yet)
   var idx = (window._ptProjects || []).findIndex(function(p){ return p.id === projectId; });
   return PROJECT_COLORS[Math.max(0,idx) % PROJECT_COLORS.length];
+}
+function _ptAssignColorToProject(projectId) {
+  if (!projectId) return;
+  var map = _ptLoadColorMap();
+  if (map[projectId] != null) return; // already assigned
+  // Find the next unused color index
+  var usedIndices = Object.values(map).map(Number);
+  var nextIdx = 0;
+  while (usedIndices.indexOf(nextIdx) >= 0) nextIdx++;
+  map[projectId] = nextIdx;
+  _ptSaveColorMap(map);
 }
 
 // ─── LIVE TIMER ───────────────────────────────────────────────────────────────
@@ -8475,6 +8547,7 @@ async function loadProjects() {
     });
   }
   _ptProjects = projects;
+  (window._ptProjects || []).forEach(function(p){ if (p && p.id) _ptAssignColorToProject(p.id); });
   renderPtList();
   // Restore last open project after page refresh
   var _savedProjId = localStorage.getItem('fk_pt_project');
@@ -8775,16 +8848,15 @@ function selectPtProject(id) {
   if (ptPanelHdr) ptPanelHdr.style.display = 'none';
   // Populate header
   document.getElementById('pt-detail-name').textContent = proj.name;
-  var badge = document.getElementById('pt-detail-status-badge');
-  if (badge) {
-    var sc = 'pt-status pt-status-' + (proj.status || 'planning').replace(' ','_');
-    badge.className = sc;
-    badge.textContent = (proj.status || 'planning').replace('_',' ');
-  }
   // Populate overview tab
   var fmtDate = function(d){ return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; };
   document.getElementById('ptv-client').textContent = proj.client_name || '—';
-  document.getElementById('ptv-status').textContent = (proj.status || '—').replace('_',' ');
+  var _stEl = document.getElementById('ptv-status');
+  if (_stEl) {
+    var _stVal = (proj.status || 'planning');
+    var _stLabel = _stVal.replace('_',' ');
+    _stEl.innerHTML = '<span class="pt-status pt-status-' + _stVal.replace(' ','_') + '" style="font-size:12px">' + _stLabel + '</span>';
+  }
   document.getElementById('ptv-start').textContent = fmtDate(proj.start_date);
   document.getElementById('ptv-end').textContent = fmtDate(proj.end_date);
   document.getElementById('ptv-budget').textContent = proj.budget ? '$' + Number(proj.budget).toLocaleString() : '—';
@@ -9033,7 +9105,7 @@ function renderPtMilestones() {
   var rows = ms.map(function(m, i) {
     var msStart = m.start_date ? new Date(m.start_date + 'T00:00:00') : (m.due_date ? new Date(m.due_date + 'T00:00:00') : null);
     var msEnd   = m.due_date   ? new Date(m.due_date   + 'T00:00:00') : msStart;
-    var rowBg = m.completed ? 'background:#F0FDF4' : '';
+    var rowBg = m.completed ? 'background:#F0FDF4' : 'background:#EFF6FF';
     var nameCell = '<td style="padding:8px 10px;font-size:13px;color:var(--ink);border-top:1px solid var(--border);' + msSticky + (m.completed ? ';background:#F0FDF4' : '') + '">' +
       '<div style="display:flex;align-items:center;gap:8px;white-space:nowrap">' +
       '<div class="pt-ms-drag-hdl" draggable="true" ondragstart="ptMsDragStart(event,' + i + ')" style="cursor:grab;color:var(--ink-light);font-size:14px;flex-shrink:0;user-select:none">⠿</div>' +
@@ -9049,7 +9121,7 @@ function renderPtMilestones() {
     var barDays = (msEnd - msStart) / 86400000 + 1;
     var leftPct = (barStartOffset / totalDays * 100).toFixed(2);
     var widthPct = Math.min(100 - parseFloat(leftPct), (barDays / totalDays * 100)).toFixed(2);
-    var barColor = m.completed ? '#16A34A' : 'var(--amber)';
+    var barColor = m.completed ? '#16A34A' : '#1D4ED8';
     var startLbl = m.start_date ? m.start_date.slice(5,10) : '';
     var endLbl   = m.due_date   ? m.due_date.slice(5,10)   : '';
     var barLabel = startLbl && endLbl && startLbl !== endLbl ? startLbl + '→' + endLbl : (endLbl || startLbl);
@@ -10096,9 +10168,11 @@ var _sigCanvas = null;
 var _sigCtx = null;
 var _sigDrawing = false;
 var _sigTab = 'draw';
+var _sigDocType = 'contract';
 
-function openSigModal(target) {
+function openSigModal(target, docType) {
   _sigTarget = target;
+  _sigDocType = docType || 'contract';
   var overlay = document.getElementById('sig-modal-overlay');
   if (!overlay) return;
   var titleEl = document.getElementById('sig-modal-title');
@@ -10230,15 +10304,17 @@ function applySig() {
     try { localStorage.setItem('fk_sig_user', dataUrl); } catch(e) {}
     showToast('✓ Signature saved for future use');
   }
-  // Place image in document
-  var imgArea = document.getElementById('sig-img-area-' + _sigTarget);
+  // Place image in document (use doc-type-scoped ID to avoid conflicts between contract/scope tabs)
+  var imgArea = document.getElementById('sig-img-area-' + _sigDocType + '-' + _sigTarget) ||
+                document.getElementById('sig-img-area-' + _sigTarget);
   if (imgArea) {
     imgArea.innerHTML = '<img src="' + dataUrl + '" style="max-height:56px;max-width:100%;object-fit:contain">';
   }
   // Set printed name when typed
   if (_sigTab === 'type') {
     var inp = document.getElementById('sig-type-inp');
-    var printedEl = document.getElementById('sig-printed-' + _sigTarget);
+    var printedEl = document.getElementById('sig-printed-' + _sigDocType + '-' + _sigTarget) ||
+                    document.getElementById('sig-printed-' + _sigTarget);
     if (inp && printedEl) printedEl.textContent = inp.value.trim();
   }
   closeSigModal();
@@ -10247,11 +10323,13 @@ function applySig() {
   }
 }
 
-function loadSavedSig(target) {
+function loadSavedSig(target, docType) {
   var saved = null;
   try { saved = localStorage.getItem('fk_sig_user'); } catch(e) {}
   if (!saved) { showToast('No saved signature — use ✍ Sign to create one'); return; }
-  var imgArea = document.getElementById('sig-img-area-' + target);
+  var dt = docType || _sigDocType || 'contract';
+  var imgArea = document.getElementById('sig-img-area-' + dt + '-' + target) ||
+                document.getElementById('sig-img-area-' + target);
   if (imgArea) {
     imgArea.innerHTML = '<img src="' + saved + '" style="max-height:56px;max-width:100%;object-fit:contain">';
     showToast('✓ Saved signature applied');
@@ -10293,26 +10371,67 @@ function renderPtDocTab(type) {
       '</div>' +
     '</div>' +
     '<div class="doc-toolbar" id="' + prefix + '-toolbar">' +
+      '<select class="doc-tb-font-sel" title="Font family" onmousedown="event.stopPropagation()" onchange="document.execCommand(\'fontName\',false,this.value)">' +
+        '<option value="Arial">Arial</option>' +
+        '<option value="Georgia">Georgia</option>' +
+        '<option value="Times New Roman">Times New Roman</option>' +
+        '<option value="Courier New">Courier New</option>' +
+        '<option value="Verdana">Verdana</option>' +
+      '</select>' +
+      '<div class="doc-tb-sep"></div>' +
+      '<button class="doc-tb-sz-btn" title="Decrease size" onmousedown="event.preventDefault();_docFontSize(-1,\'' + prefix + '\')">&#8722;</button>' +
+      '<span class="doc-tb-sz-val" id="' + prefix + '-sz">11</span>' +
+      '<button class="doc-tb-sz-btn" title="Increase size" onmousedown="event.preventDefault();_docFontSize(1,\'' + prefix + '\')">+</button>' +
+      '<div class="doc-tb-sep"></div>' +
       '<button class="doc-tb-btn" title="Bold" onmousedown="event.preventDefault();document.execCommand(\'bold\')"><b>B</b></button>' +
       '<button class="doc-tb-btn" title="Italic" onmousedown="event.preventDefault();document.execCommand(\'italic\')"><i>I</i></button>' +
       '<button class="doc-tb-btn" title="Underline" onmousedown="event.preventDefault();document.execCommand(\'underline\')"><u>U</u></button>' +
       '<div class="doc-tb-sep"></div>' +
-      '<button class="doc-tb-btn" title="Heading" onmousedown="event.preventDefault();document.execCommand(\'formatBlock\',false,\'h2\')" style="font-size:11px;font-weight:700">H2</button>' +
-      '<button class="doc-tb-btn" title="Normal text" onmousedown="event.preventDefault();document.execCommand(\'formatBlock\',false,\'p\')" style="font-size:11px">¶</button>' +
+      '<label class="doc-tb-color-lbl" title="Text color" style="cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:1px;padding:3px 6px;border-radius:4px" onmousedown="event.preventDefault();document.getElementById(\'' + prefix + '-color-inp\').click()">' +
+        '<span style="font-size:13px;font-weight:700;line-height:1">A</span>' +
+        '<span class="doc-tb-color-bar" id="' + prefix + '-color-bar" style="height:3px;width:14px;background:#191c1e;border-radius:2px;display:block"></span>' +
+      '</label>' +
+      '<input type="color" id="' + prefix + '-color-inp" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" oninput="_docApplyColor(this.value,\'' + prefix + '\')" onchange="_docApplyColor(this.value,\'' + prefix + '\')">' +
       '<div class="doc-tb-sep"></div>' +
-      '<button class="doc-tb-btn" title="Align left" onmousedown="event.preventDefault();document.execCommand(\'justifyLeft\')" style="font-size:11px;font-weight:600">Left</button>' +
-      '<button class="doc-tb-btn" title="Center" onmousedown="event.preventDefault();document.execCommand(\'justifyCenter\')" style="font-size:11px;font-weight:600">Center</button>' +
-      '<button class="doc-tb-btn" title="Align right" onmousedown="event.preventDefault();document.execCommand(\'justifyRight\')" style="font-size:11px;font-weight:600">Right</button>' +
-      '<div class="doc-tb-sep"></div>' +
-      '<button class="doc-tb-btn" title="Undo" onmousedown="event.preventDefault();document.execCommand(\'undo\')" style="font-size:13px">&#8630;</button>' +
-      '<button class="doc-tb-btn" title="Redo" onmousedown="event.preventDefault();document.execCommand(\'redo\')" style="font-size:13px">&#8631;</button>' +
-      '<span style="font-size:11px;color:var(--ink-light);margin-left:8px">Click anywhere in the document to edit</span>' +
+      '<button class="doc-tb-btn" title="Clear formatting" onmousedown="event.preventDefault();document.execCommand(\'removeFormat\')" style="font-size:14px">&#10000;</button>' +
     '</div>' +
     '<div class="doc-wrap" style="max-height:70vh;overflow-y:auto">' +
       '<div class="doc-bar"><div class="db-dot" style="background:#E8594A"></div><div class="db-dot" style="background:#F4A73A;margin-left:4px"></div><div class="db-dot" style="background:#5DC86A;margin-left:4px"></div>' +
       '<span class="db-name">FreelanceKit — ' + title + '.pdf</span><span class="db-fmt">Editable</span></div>' +
       '<div class="doc-body" id="' + prefix + '-doc-body">' + docBody + '</div>' +
     '</div>';
+  // Add Enter key handler for contract to insert a new divider + paragraph
+  if (isContract) {
+    setTimeout(function() {
+      var dbEl = document.getElementById(prefix + '-doc-body');
+      if (dbEl && !dbEl._enterHandlerAttached) {
+        dbEl._enterHandlerAttached = true;
+        dbEl.addEventListener('keydown', function(e) {
+          if (e.key !== 'Enter' || !dbEl.isContentEditable || dbEl.contentEditable !== 'true') return;
+          e.preventDefault();
+          var sel = window.getSelection();
+          if (!sel.rangeCount) return;
+          var range = sel.getRangeAt(0);
+          range.deleteContents();
+          // Insert hr + p
+          var frag = document.createDocumentFragment();
+          var hr = document.createElement('hr');
+          hr.className = 'doc-divider';
+          var p = document.createElement('p');
+          p.innerHTML = '<br>';
+          frag.appendChild(hr);
+          frag.appendChild(p);
+          range.insertNode(frag);
+          // Move cursor to new paragraph
+          var newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        });
+      }
+    }, 100);
+  }
   // Only auto-fill if no saved version exists
   if (!saved && _ptCurrentId) {
     var p = (_ptProjects || []).find(function(x){ return x.id === _ptCurrentId; });
@@ -10349,6 +10468,14 @@ function ptToggleDocEdit(prefix) {
   body.querySelectorAll('.field, .field-block').forEach(function(el) {
     el.contentEditable = on ? 'inherit' : 'false';
   });
+  // Always keep entire signature boxes non-editable
+  body.querySelectorAll('.sig-box').forEach(function(el) {
+    el.contentEditable = 'false';
+  });
+  // But re-enable date fields within sig boxes so user can type dates
+  body.querySelectorAll('.sig-box .sig-date-field').forEach(function(el) {
+    el.contentEditable = on ? 'true' : 'false';
+  });
   // Always keep signature action rows non-editable so buttons remain clickable
   body.querySelectorAll('.sig-actions-row').forEach(function(el) {
     el.contentEditable = 'false';
@@ -10374,6 +10501,25 @@ function _ptAutoFillDoc(prefix, p) {
   ptToggleDocEdit(prefix);
 }
 
+var _docCurrentFontSize = {};
+function _docFontSize(delta, prefix) {
+  _docCurrentFontSize[prefix] = Math.max(6, Math.min(72, (_docCurrentFontSize[prefix] || 11) + delta));
+  var szEl = document.getElementById(prefix + '-sz');
+  if (szEl) szEl.textContent = _docCurrentFontSize[prefix];
+  // Map to execCommand size 1-7
+  var pts = _docCurrentFontSize[prefix];
+  var sizes = [8,10,12,14,18,24,36]; var fsVal = 1;
+  for (var i = 0; i < sizes.length; i++) { if (pts >= sizes[i]) fsVal = i+1; }
+  document.execCommand('styleWithCSS', false, false);
+  document.execCommand('fontSize', false, String(fsVal));
+}
+function _docApplyColor(color, prefix) {
+  var bar = document.getElementById(prefix + '-color-bar');
+  if (bar) bar.style.background = color;
+  document.execCommand('styleWithCSS', false, false);
+  document.execCommand('foreColor', false, color);
+}
+
 function ptPrintDoc(prefix) {
   var body = document.getElementById(prefix + '-doc-body');
   if (!body) return;
@@ -10388,25 +10534,21 @@ function _ptContractDocHTML() {
     '<div class="sig-grid">' +
       '<div class="sig-box">' +
         '<div class="sig-box-lbl">Freelancer</div>' +
-        '<div class="sig-img-area" id="sig-img-area-freelancer"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-contract-freelancer"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
+          '<span id="sig-printed-contract-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
           '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
         '</div>' +
         '<div class="sig-actions-row" contenteditable="false">' +
-          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\')">Sign</button>' +
-          '<button class="sig-btn" onclick="loadSavedSig(\'freelancer\')">Use saved</button>' +
+          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\',\'contract\')">Sign</button>' +
+          '<button class="sig-btn" onclick="loadSavedSig(\'freelancer\',\'contract\')">Use saved</button>' +
         '</div>' +
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-box-lbl">Client</div>' +
-        '<div class="sig-img-area" id="sig-img-area-client"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-contract-client" style="min-height:30px"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
-          '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
-        '</div>' +
-        '<div class="sig-actions-row" contenteditable="false">' +
-          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'client\')">Sign</button>' +
+          '<span id="sig-printed-contract-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -10415,7 +10557,6 @@ function _ptContractDocHTML() {
     sections += (i === 1 ? '' : '<hr class="doc-divider">') + '<h2>' + i + '.</h2><p><br></p>';
   }
   return '<div style="text-align:center;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Freelance Services Agreement</div>' +
-    '<div style="text-align:center;font-size:11px;color:var(--ink-light);margin-bottom:28px;font-family:var(--font-body);letter-spacing:.04em;text-transform:uppercase">FreelanceKit Template · freelancekit.io</div>' +
     '<hr class="doc-thick">' +
     sections +
     '<hr class="doc-thick"><h2>Signatures</h2>' +
@@ -10432,30 +10573,25 @@ function _ptScopeDocHTML() {
     '<div class="sig-grid">' +
       '<div class="sig-box">' +
         '<div class="sig-box-lbl">Freelancer</div>' +
-        '<div class="sig-img-area" id="sig-img-area-freelancer"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-scope-freelancer"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
+          '<span id="sig-printed-scope-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
           '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
         '</div>' +
         '<div class="sig-actions-row" contenteditable="false">' +
-          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\')">Sign</button>' +
-          '<button class="sig-btn" onclick="loadSavedSig(\'freelancer\')">Use saved</button>' +
+          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\',\'scope\')">Sign</button>' +
+          '<button class="sig-btn" onclick="loadSavedSig(\'freelancer\',\'scope\')">Use saved</button>' +
         '</div>' +
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-box-lbl">Client</div>' +
-        '<div class="sig-img-area" id="sig-img-area-client"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-scope-client" style="min-height:30px"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
-          '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
-        '</div>' +
-        '<div class="sig-actions-row" contenteditable="false">' +
-          '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'client\')">Sign</button>' +
+          '<span id="sig-printed-scope-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
         '</div>' +
       '</div>' +
     '</div>';
   return '<div style="text-align:center;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Scope Change Order</div>' +
-    '<div style="text-align:center;font-size:11px;color:var(--ink-light);margin-bottom:28px;font-family:var(--font-body);letter-spacing:.04em;text-transform:uppercase">FreelanceKit Template · Addendum to Freelance Services Agreement</div>' +
     '<hr class="doc-thick">' +
     '<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-family:var(--font-body)">' +
       '<tr><td ' + tdLbl + '>Change Order #</td><td ' + tdVal + '><span class="field">[#001]</span></td></tr>' +
@@ -11155,6 +11291,7 @@ async function savePtProject() {
     res = await _supabase.from('projects').insert(payload).select().single();
     if (!res.error && res.data) {
       _ptProjects.unshift(res.data);
+      _ptAssignColorToProject(res.data.id);
       // Auto-add the current user (first + last name only) as a person on the new project
       var myFirst = (document.getElementById('my-firstname') || {}).value || '';
       var myLast  = (document.getElementById('my-lastname')  || {}).value || '';
