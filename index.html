@@ -1391,18 +1391,12 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .timer-modal-btn.save{background:var(--ink);color:var(--cream)}
 .timer-modal-btn.save:hover{background:var(--amber)}
 .timer-modal-btn.cancel{background:none;border:1.5px solid var(--border);color:var(--ink)}
-/* ── TIME ROLL PICKER ── */
-.tr-wrap{display:inline-block;user-select:none;-webkit-user-select:none;touch-action:none}
-.tr-picker{display:flex;align-items:center;position:relative;height:220px;background:#111;border-radius:18px;overflow:hidden;padding:0 18px}
-.tr-hl{position:absolute;left:18px;right:18px;top:50%;transform:translateY(-50%);height:44px;background:#2c2c2e;border-radius:11px;pointer-events:none;z-index:1}
-.tr-col{width:58px;height:220px;overflow:hidden;position:relative;z-index:2;cursor:ns-resize;flex-shrink:0}
-.tr-list{display:flex;flex-direction:column}
-.tr-cell{height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:rgba(255,255,255,0.28);font-family:var(--font-mono,monospace)}
-.tr-cell.tr-sel{color:#fff;font-size:26px}
-.tr-unit{flex-shrink:0;height:44px;display:flex;align-items:center;padding:0 10px 0 4px;font-size:15px;font-weight:500;color:rgba(255,255,255,0.85);position:relative;z-index:2}
-.tr-fade-t,.tr-fade-b{position:absolute;left:0;right:0;height:90px;pointer-events:none;z-index:3}
-.tr-fade-t{top:0;background:linear-gradient(to bottom,#111 0%,transparent 100%)}
-.tr-fade-b{bottom:0;background:linear-gradient(to top,#111 0%,transparent 100%)}
+/* ── DURATION INPUT (hrs + min boxes) ── */
+.tr-wrap{display:inline-flex;align-items:center;gap:5px}
+.tr-hrs,.tr-min{width:54px;padding:7px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;text-align:center;background:var(--cream);color:var(--ink);font-family:var(--font-mono,monospace);-moz-appearance:textfield}
+.tr-hrs::-webkit-outer-spin-button,.tr-hrs::-webkit-inner-spin-button,.tr-min::-webkit-outer-spin-button,.tr-min::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.tr-hrs:focus,.tr-min:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(0,150,104,.15)}
+.tr-sep{font-size:13px;font-weight:600;color:var(--ink-mid)}
 /* ── CONTRIBUTION GRID ── */
 .contrib-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px}
 .contrib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -1426,9 +1420,9 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-l3{background:#30a14e}
 .cg-l4{background:#216e39}
 .cg-legend{display:flex;align-items:center;gap:5px;margin-top:10px;justify-content:flex-end;font-size:10px;color:var(--ink-light)}
-.cg-info-btn{background:none;border:none;font-size:14px;color:var(--ink-light);cursor:pointer;padding:2px 5px;line-height:1;border-radius:50%;transition:all .15s;position:absolute;top:12px;right:12px;z-index:10}
-.cg-info-btn:hover{color:var(--ink);background:var(--border)}
-.cg-info-popup{position:absolute;top:36px;right:12px;left:auto;width:272px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;font-size:11px;color:var(--ink);z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.12);line-height:1.6}
+.cg-info-btn{background:none;border:none;font-size:13px;color:var(--ink-light);cursor:pointer;padding:0 2px;line-height:1;border-radius:50%;transition:color .15s}
+.cg-info-btn:hover{color:var(--ink)}
+.cg-info-popup{position:absolute;top:calc(100% + 6px);left:0;width:272px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;font-size:11px;color:var(--ink);z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.12);line-height:1.6}
 .cg-legend-cell{width:11px;height:11px;border-radius:2px}
 /* ── Calendar-style contribution grid ── */
 .cg-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;width:100%}
@@ -3030,10 +3024,24 @@ var RateLimiter = (function() {
           </div>
 
           <!-- Activity Grid -->
-          <div class="hw-card" style="position:relative">
-            <button class="cg-info-btn" onclick="toggleContribInfo(this)" title="How is this calculated?">ⓘ</button>
+          <div class="hw-card">
             <div class="hw-title">
-              <span>Activity</span>
+              <div style="display:flex;align-items:center;gap:6px;position:relative">
+                <span>Activity</span>
+                <button class="cg-info-btn" onclick="toggleContribInfo(this)" title="How is this calculated?">ⓘ</button>
+                <div class="cg-info-popup" id="cg-info-popup" style="display:none">
+                  <div style="font-weight:700;margin-bottom:6px">How activity is calculated</div>
+                  Each cell represents one day. The colour intensity shows how many hours you logged in your timesheet on that day:
+                  <ul style="margin:6px 0 0 16px;padding:0">
+                    <li>Empty — no activity</li>
+                    <li style="color:rgba(0,150,104,.55)">Light — 1–2 hours</li>
+                    <li style="color:rgba(0,150,104,.75)">Medium — 2–4 hours</li>
+                    <li style="color:rgba(0,150,104,.9)">Dark — 4–7 hours</li>
+                    <li style="color:rgba(0,150,104,1)">Darkest — 7+ hours</li>
+                  </ul>
+                  <div style="margin-top:8px;color:var(--ink-light)">Covers the last 16 weeks. Hover any cell to see the exact date &amp; hours.</div>
+                </div>
+              </div>
               <div class="cg-legend">
                 <span>Less</span>
                 <div class="cg-legend-cell cg-l0"></div>
@@ -3043,18 +3051,6 @@ var RateLimiter = (function() {
                 <div class="cg-legend-cell cg-l4"></div>
                 <span>More</span>
               </div>
-            </div>
-            <div class="cg-info-popup" id="cg-info-popup" style="display:none">
-              <div style="font-weight:700;margin-bottom:6px">How activity is calculated</div>
-              Each cell represents one day. The colour intensity shows how many hours you logged in your timesheet on that day:
-              <ul style="margin:6px 0 0 16px;padding:0">
-                <li>Empty — no activity</li>
-                <li style="color:rgba(0,150,104,.55)">Light — 1–2 hours</li>
-                <li style="color:rgba(0,150,104,.75)">Medium — 2–4 hours</li>
-                <li style="color:rgba(0,150,104,.9)">Dark — 4–7 hours</li>
-                <li style="color:rgba(0,150,104,1)">Darkest — 7+ hours</li>
-              </ul>
-              <div style="margin-top:8px;color:var(--ink-light)">Covers the last 16 weeks. Hover any cell to see the exact date &amp; hours.</div>
             </div>
             <div class="contrib-subtitle" id="contrib-total" style="margin-bottom:8px;font-size:11px;color:var(--ink-light)">Loading activity…</div>
             <div class="cg-outer" id="contrib-grid-cells"></div>
@@ -4140,115 +4136,39 @@ function blockNeg(e){
   if(k==='-'||k==='+'||k==='e'||k==='E'){e.preventDefault();}
 }
 
-// ═══════════════ TIME ROLL PICKER ═══════════════
-// ── TIME ROLL PICKER (iOS-style drum) ──
-var _trState = {};
+// ═══════════════ DURATION INPUT (hrs + min boxes) ═══════════════
 function trBuildHTML(id, maxH) {
   maxH = maxH != null ? maxH : 23;
-  var q = function(s){ return s.replace(/'/g,"\\'"); };
   return '<div class="tr-wrap" id="tr-'+id+'">'+
-    '<div class="tr-picker">'+
-      '<div class="tr-hl"></div>'+
-      '<div class="tr-col" id="tr-'+id+'-hc"'+
-        ' onwheel="trWheel(event,\''+id+'\',\'h\')"'+
-        ' onmousedown="trDragStart(event,\''+id+'\',\'h\')"'+
-        ' ontouchstart="trTouchStart(event,\''+id+'\',\'h\')">'+
-        '<div class="tr-list" id="tr-'+id+'-hl"></div>'+
-      '</div>'+
-      '<div class="tr-unit">hours</div>'+
-      '<div style="width:10px;flex-shrink:0"></div>'+
-      '<div class="tr-col" id="tr-'+id+'-mc"'+
-        ' onwheel="trWheel(event,\''+id+'\',\'m\')"'+
-        ' onmousedown="trDragStart(event,\''+id+'\',\'m\')"'+
-        ' ontouchstart="trTouchStart(event,\''+id+'\',\'m\')">'+
-        '<div class="tr-list" id="tr-'+id+'-ml"></div>'+
-      '</div>'+
-      '<div class="tr-unit">min</div>'+
-      '<div class="tr-fade-t"></div>'+
-      '<div class="tr-fade-b"></div>'+
-    '</div>'+
+    '<input class="tr-hrs" type="number" id="tr-'+id+'-h" min="0" max="'+maxH+'" placeholder="0" onkeydown="blockNeg(event)">'+
+    '<span class="tr-sep">h</span>'+
+    '<input class="tr-min" type="number" id="tr-'+id+'-m" min="0" max="59" placeholder="00" onkeydown="blockNeg(event)">'+
+    '<span class="tr-sep">m</span>'+
   '</div>';
 }
 function trInit(id, maxH, h, m) {
-  maxH = maxH != null ? maxH : 23;
-  _trState[id] = { h: h||0, m: m||0, maxH: maxH };
-  _trRender(id);
-}
-function trStep(id, col, dir) {
-  var s = _trState[id]; if (!s) return;
-  if (col === 'h') {
-    s.h = ((s.h + dir) % (s.maxH + 1) + s.maxH + 1) % (s.maxH + 1);
-  } else {
-    s.m = ((s.m + dir) + 60) % 60;
-  }
-  _trRender(id);
-}
-function trWheel(e, id, col) {
-  e.preventDefault();
-  trStep(id, col, e.deltaY > 0 ? 1 : -1);
-}
-function trDragStart(e, id, col) {
-  e.preventDefault();
-  var s = _trState[id]; if (!s) return;
-  var startY = e.clientY;
-  var startVal = col === 'h' ? s.h : s.m;
-  var maxVal = col === 'h' ? s.maxH : 59;
-  function onMove(ev) {
-    var delta = Math.round((startY - ev.clientY) / 30);
-    var nv = ((startVal + delta) % (maxVal + 1) + maxVal + 1) % (maxVal + 1);
-    if (_trState[id] && _trState[id][col] !== nv) { _trState[id][col] = nv; _trRender(id); }
-  }
-  function onUp() {
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-  }
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
-}
-function trTouchStart(e, id, col) {
-  var startY = e.touches[0].clientY;
-  var s = _trState[id]; if (!s) return;
-  var startVal = col === 'h' ? s.h : s.m;
-  var maxVal = col === 'h' ? s.maxH : 59;
-  function onMove(ev) {
-    ev.preventDefault();
-    var delta = Math.round((startY - ev.touches[0].clientY) / 30);
-    var nv = ((startVal + delta) % (maxVal + 1) + maxVal + 1) % (maxVal + 1);
-    if (_trState[id] && _trState[id][col] !== nv) { _trState[id][col] = nv; _trRender(id); }
-  }
-  function onEnd() {
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend', onEnd);
-  }
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('touchend', onEnd);
-}
-function _trRender(id) {
-  var s = _trState[id]; if (!s) return;
-  function renderCol(el, val, maxVal, fmt) {
-    if (!el) return;
-    var html = '';
-    for (var i = -2; i <= 2; i++) {
-      var v = ((val + i) % (maxVal + 1) + maxVal + 1) % (maxVal + 1);
-      html += '<div class="tr-cell'+(i===0?' tr-sel':'')+'">'+ fmt(v) +'</div>';
-    }
-    el.innerHTML = html;
-  }
-  renderCol(document.getElementById('tr-'+id+'-hl'), s.h, s.maxH, function(v){ return v; });
-  var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
-  renderCol(document.getElementById('tr-'+id+'-ml'), s.m, 59, pad);
+  var hEl = document.getElementById('tr-'+id+'-h');
+  var mEl = document.getElementById('tr-'+id+'-m');
+  if (hEl) hEl.value = h || 0;
+  if (mEl) mEl.value = m || 0;
 }
 function trGetHours(id) {
-  var s = _trState[id]; if (!s) return 0;
-  return s.h + s.m / 60;
+  var hEl = document.getElementById('tr-'+id+'-h');
+  var mEl = document.getElementById('tr-'+id+'-m');
+  var h = hEl ? (parseFloat(hEl.value) || 0) : 0;
+  var m = mEl ? (parseFloat(mEl.value) || 0) : 0;
+  return h + m / 60;
 }
 function trGetLabel(id) {
-  var s = _trState[id]; if (!s) return '';
-  if (s.h === 0 && s.m === 0) return '';
+  var hEl = document.getElementById('tr-'+id+'-h');
+  var mEl = document.getElementById('tr-'+id+'-m');
+  var h = hEl ? (parseInt(hEl.value) || 0) : 0;
+  var m = mEl ? (parseInt(mEl.value) || 0) : 0;
+  if (h === 0 && m === 0) return '';
   var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
-  if (s.h === 0) return pad(s.m) + 'm';
-  if (s.m === 0) return s.h + 'h';
-  return s.h + 'h ' + pad(s.m) + 'm';
+  if (h === 0) return pad(m) + 'm';
+  if (m === 0) return h + 'h';
+  return h + 'h ' + pad(m) + 'm';
 }
 function trParseDuration(str) {
   if (!str) return {h:0, m:0};
