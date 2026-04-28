@@ -3425,7 +3425,7 @@ var RateLimiter = (function() {
               <button data-v="board" onclick="setPtView('board')">▦ Board</button>
             </div>
             <div class="pt-view-tools-sep"></div>
-            <select id="pt-gantt-sort" onchange="if(window._ptViewMode==='timeline')renderGlobalGantt()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
+            <select id="pt-gantt-sort" onchange="renderPtCurrentView()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
               <option value="created">Sort: Date added</option>
               <option value="name">Sort: Name</option>
               <option value="deadline">Sort: Deadline</option>
@@ -8511,7 +8511,24 @@ function setPtView(v) {
     var el = document.getElementById('pt-view-' + name);
     if (el) el.style.display = name === v ? '' : 'none';
   });
+  // Hide sort control for board view (board has its own status-column ordering)
+  var sortSel = document.getElementById('pt-gantt-sort');
+  if (sortSel) sortSel.style.display = v === 'board' ? 'none' : '';
   renderPtCurrentView();
+}
+
+// Shared sort helper — used by list, gallery, and timeline
+function _ptSortedProjects(all) {
+  var sortSel = document.getElementById('pt-gantt-sort');
+  var sortBy = sortSel ? sortSel.value : 'created';
+  var arr = (all ? (_ptProjects || []) : (_ptProjects || []).filter(function(p){ return p.status !== 'completed' && p.status !== 'archived'; })).slice();
+  if (sortBy === 'name') {
+    arr.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  } else if (sortBy === 'deadline') {
+    arr.sort(function(a,b){ return (a.end_date||'9999') < (b.end_date||'9999') ? -1 : 1; });
+  }
+  // 'created' keeps original server order
+  return arr;
 }
 
 function renderPtCurrentView() {
@@ -8613,7 +8630,7 @@ function renderPtBoard() {
 function renderPtGallery() {
   var el = document.getElementById('pt-view-gallery');
   if (!el) return;
-  var projects = _ptProjects || [];
+  var projects = _ptSortedProjects(true);
   if (!projects.length) {
     el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
     return;
@@ -8690,7 +8707,7 @@ function renderPtGallery() {
 function renderPtListTable() {
   var el = document.getElementById('pt-view-list');
   if (!el) return;
-  var projects = _ptProjects || [];
+  var projects = _ptSortedProjects(true);
   if (!projects.length) {
     el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
     return;
@@ -9969,14 +9986,7 @@ function ganttScrollToToday(wrapperId) {
 function renderGlobalGantt() {
   var el = document.getElementById('pt-global-gantt');
   if (!el) return;
-  var sortSel = document.getElementById('pt-gantt-sort');
-  var sortBy = sortSel ? sortSel.value : 'created';
-  var active = (_ptProjects || []).filter(function(p){ return p.status !== 'completed' && p.status !== 'archived'; });
-  if (sortBy === 'name') {
-    active = active.slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
-  } else if (sortBy === 'deadline') {
-    active = active.slice().sort(function(a,b){ return (a.end_date||'9999') < (b.end_date||'9999') ? -1 : 1; });
-  }
+  var active = _ptSortedProjects(false);
   if (!active.length) { el.innerHTML = '<div style="padding:20px;color:var(--ink-light);font-size:13px">No active projects found.</div>'; return; }
 
   var allDates = [];
