@@ -1422,7 +1422,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-legend{display:flex;align-items:center;gap:5px;margin-top:10px;justify-content:flex-end;font-size:10px;color:var(--ink-light)}
 .cg-info-btn{background:none;border:none;font-size:13px;color:var(--ink-light);cursor:pointer;padding:0 2px;line-height:1;border-radius:50%;transition:color .15s}
 .cg-info-btn:hover{color:var(--ink)}
-.cg-info-popup{position:absolute;top:calc(100% + 6px);left:0;width:272px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;font-size:11px;color:var(--ink);z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.12);line-height:1.6}
+.cg-info-popup{position:absolute;top:calc(100% + 6px);left:0;width:272px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;font-size:11px;color:var(--ink);z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.12);line-height:1.6;text-transform:none;letter-spacing:normal;font-weight:400}
 .cg-legend-cell{width:11px;height:11px;border-radius:2px}
 /* ── Calendar-style contribution grid ── */
 .cg-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;width:100%}
@@ -3134,7 +3134,7 @@ var RateLimiter = (function() {
               </div>
               <div class="ip-field"><div class="ip-lbl">Your name / business</div><input class="ip-inp" id="i-yourname" value="" placeholder="Your name or business" oninput="updateInv()"></div>
               <div class="ip-field"><div class="ip-lbl">Your email</div><input class="ip-inp" id="i-youremail" value="" placeholder="hello@yourbusiness.com" oninput="updateInv()"></div>
-              <div class="ip-field"><div class="ip-lbl">Your phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><input class="ip-inp" id="i-yourphone" placeholder="+1 (555) 000-0000" oninput="updateInv()"></div>
+              <div class="ip-field"><div class="ip-lbl">Your phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-yourphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-yourphone" type="tel" placeholder="(555) 000 0000" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="14"></div></div>
               <div class="ip-divider"></div>
               <div class="ip-row2">
                 <div class="ip-field"><div class="ip-lbl">Invoice #</div><input class="ip-inp" id="i-num" value="INV-001" oninput="updateInv()"></div>
@@ -3153,7 +3153,7 @@ var RateLimiter = (function() {
               <div class="ip-field"><div class="ip-lbl">Contact person</div><input class="ip-inp" id="i-contact" value="" placeholder="Contact name" oninput="updateInv()"></div>
               <div class="ip-row2">
                 <div class="ip-field"><div class="ip-lbl">Client email</div><input class="ip-inp" id="i-email" value="" placeholder="client@example.com" oninput="updateInv()"></div>
-                <div class="ip-field"><div class="ip-lbl">Client phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><input class="ip-inp" id="i-clientphone" placeholder="+1 (555) 000-0000" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Client phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-clientphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-clientphone" type="tel" placeholder="(555) 000 0000" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="14"></div></div>
               </div>
               <div class="ip-field"><div class="ip-lbl">Client address <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><input class="ip-inp" id="i-clientaddress" placeholder="123 Street, City, Country" oninput="updateInv()"></div>
               <div class="ip-field"><div class="ip-lbl">Project</div><input class="ip-inp" id="i-project" value="" placeholder="Project name" oninput="updateInv()"></div>
@@ -4131,6 +4131,29 @@ function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrol
 function fm(n,sym='$'){return sym+Math.round(n).toLocaleString()}
 function fmD(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 
+// Invoice phone helpers: combine code+number / parse combined back
+var _invPhoneCodes = ['+1-CA','+44','+61','+64','+65','+60','+62','+63','+66','+84','+91','+86','+81','+82','+49','+33','+34','+39','+31','+46','+47','+45','+358','+55','+52','+27','+20','+234','+254','+971','+966','+1'];
+function _getInvPhone(codeId, numId) {
+  var code = (document.getElementById(codeId)||{}).value||'';
+  var num  = (document.getElementById(numId)||{}).value||'';
+  if (!num) return '';
+  return (code && code !== '+other') ? code.replace('-CA','') + ' ' + num : num;
+}
+function _setInvPhone(codeId, numId, fullPhone) {
+  var codeEl = document.getElementById(codeId);
+  var numEl  = document.getElementById(numId);
+  if (!fullPhone) { if(numEl) numEl.value=''; return; }
+  if (!codeEl) { if(numEl) numEl.value=fullPhone; return; }
+  for (var i=0; i<_invPhoneCodes.length; i++) {
+    var prefix = _invPhoneCodes[i].replace('-CA','');
+    if (fullPhone.startsWith(prefix+' ')) {
+      codeEl.value = _invPhoneCodes[i];
+      if (numEl) numEl.value = fullPhone.slice(prefix.length+1);
+      return;
+    }
+  }
+  if (numEl) numEl.value = fullPhone;
+}
 // Phone input masking: (xxx) xxx xxxx
 function fmtPhoneInput(el){
   var digits=el.value.replace(/\D/g,'').slice(0,10);
@@ -4688,10 +4711,10 @@ function updateInv(){
   // Your email
   const yeEl=g('p-youremail'); if(yeEl) yeEl.textContent=g('i-youremail')?.value||'';
   // Your phone (optional)
-  const yphEl=g('p-yourphone'); const yphVal=g('i-yourphone')?.value||'';
+  const yphEl=g('p-yourphone'); const yphVal=_getInvPhone('i-yourphone-code','i-yourphone');
   if(yphEl){yphEl.textContent=yphVal;yphEl.style.display=yphVal?'':'none';}
   // Client phone (optional)
-  const cphEl=g('p-ccphone'); const cphVal=g('i-clientphone')?.value||'';
+  const cphEl=g('p-ccphone'); const cphVal=_getInvPhone('i-clientphone-code','i-clientphone');
   if(cphEl){cphEl.textContent=cphVal;cphEl.style.display=cphVal?'':'none';}
   // Client address (optional)
   const cadEl=g('p-caddress'); const cadVal=g('i-clientaddress')?.value||'';
@@ -6232,9 +6255,9 @@ async function saveInvoiceToHistory() {
     issue_date: g('i-issued'), due_date: g('i-due'), terms: g('i-terms-text')||'',
     freelancer_name: g('i-yourname').slice(0,200),
     freelancer_email: g('i-youremail').slice(0,254),
-    freelancer_phone: g('i-yourphone').slice(0,50),
+    freelancer_phone: _getInvPhone('i-yourphone-code','i-yourphone').slice(0,50),
     client_contact: g('i-contact').slice(0,200),
-    client_phone: g('i-clientphone').slice(0,50),
+    client_phone: _getInvPhone('i-clientphone-code','i-clientphone').slice(0,50),
     client_address: g('i-clientaddress').slice(0,300),
     status: 'draft', updated_at: new Date().toISOString()
   };
@@ -6674,12 +6697,12 @@ function _loadInvFromRecord(inv) {
   var set = function(eid, val){ var el=document.getElementById(eid); if(el) el.value=val||''; };
   set('i-yourname', inv.freelancer_name || '');
   set('i-youremail', inv.freelancer_email || '');
-  set('i-yourphone', inv.freelancer_phone || '');
+  _setInvPhone('i-yourphone-code','i-yourphone', inv.freelancer_phone||'');
   set('i-num', inv.invoice_number);
   set('i-issued', inv.issue_date); set('i-due', inv.due_date);
   set('i-terms-text', inv.terms || '');
   set('i-client', inv.client_name); set('i-contact', inv.client_contact || '');
-  set('i-email', inv.client_email); set('i-clientphone', inv.client_phone || '');
+  set('i-email', inv.client_email); _setInvPhone('i-clientphone-code','i-clientphone', inv.client_phone||'');
   set('i-clientaddress', inv.client_address || '');
   set('i-project', inv.project);
   set('i-tax', inv.tax_pct); set('i-disc', inv.discount_pct);
@@ -9219,7 +9242,7 @@ function createInvoiceFromProject() {
     if (cl) {
       set('i-contact', cl.contact_person || cl.name);
       set('i-email', cl.email);
-      set('i-clientphone', cl.phone);
+      _setInvPhone('i-clientphone-code','i-clientphone', cl.phone);
       set('i-clientaddress', cl.address);
     }
     if (typeof updateInv === 'function') updateInv();
@@ -11401,7 +11424,7 @@ function openPtEditBilling(i) {
         if (cl) {
           set('i-contact', cl.contact_person || cl.name);
           set('i-email', cl.email);
-          set('i-clientphone', cl.phone);
+          _setInvPhone('i-clientphone-code','i-clientphone', cl.phone);
           set('i-clientaddress', cl.address);
         }
       }
