@@ -8545,26 +8545,22 @@ function renderPtKpis() {
       '<div class="pt-kpi-lbl">Projects <span class="pt-kpi-trend">' + active.length + ' active</span></div>' +
       '<div class="pt-kpi-v">' + projects.length + '</div>' +
       '<div class="pt-kpi-sub">' + planning.length + ' planning · ' + completed.length + ' done</div>' +
-      '<div class="pt-kpi-spark"><b style="height:40%"></b><b style="height:55%"></b><b style="height:50%"></b><b style="height:70%"></b><b style="height:65%"></b><b class="a" style="height:' + Math.min(100, projects.length * 12 + 40) + '%"></b></div>' +
     '</div>' +
     '<div class="pt-kpi accent">' +
       '<div class="pt-kpi-lbl">Total pipeline <span class="pt-kpi-trend">budget</span></div>' +
       '<div class="pt-kpi-v">' + (totalBudget >= 1000 ? '$' + (totalBudget/1000).toFixed(1) + '<small>k</small>' : (totalBudget ? '$'+totalBudget : '—')) + '</div>' +
       '<div class="pt-kpi-sub">Across ' + projects.length + ' project' + (projects.length!==1?'s':'') + '</div>' +
-      '<div class="pt-kpi-spark"><b style="height:30%"></b><b style="height:50%"></b><b style="height:45%"></b><b class="a" style="height:70%"></b><b class="a" style="height:80%"></b><b class="a" style="height:90%"></b></div>' +
     '</div>' +
     '<div class="pt-kpi">' +
       '<div class="pt-kpi-lbl">Completed <span class="pt-kpi-trend">' + completed.length + ' done</span></div>' +
       '<div class="pt-kpi-v">' + completed.length + '</div>' +
       '<div class="pt-kpi-sub">Shipped this quarter</div>' +
-      '<div class="pt-kpi-spark"><b style="height:20%"></b><b style="height:35%"></b><b style="height:55%"></b><b style="height:60%"></b><b style="height:70%"></b><b class="a" style="height:80%"></b></div>' +
     '</div>' +
     (nxt ?
       '<div class="pt-kpi">' +
         '<div class="pt-kpi-lbl">Next deadline <span class="pt-kpi-trend' + (daysLeft !== null && daysLeft <= 7 ? ' down' : '') + '">' + (daysLeft !== null ? daysLeft + 'd' : '—') + '</span></div>' +
         '<div class="pt-kpi-v">' + (nxt.end_date ? nxt.end_date.slice(5,10).replace('-','/') : '—') + '</div>' +
         '<div class="pt-kpi-sub">' + escapeHTML(nxt.name||'') + (nxt.client_name ? ' · '+escapeHTML(nxt.client_name) : '') + '</div>' +
-        '<div class="pt-kpi-spark"><b style="height:90%"></b><b style="height:75%"></b><b style="height:60%"></b><b style="height:45%"></b><b style="height:30%"></b><b class="a" style="height:20%"></b></div>' +
       '</div>'
     :
       '<div class="pt-kpi"><div class="pt-kpi-lbl">Next deadline</div><div class="pt-kpi-v">—</div><div class="pt-kpi-sub">No upcoming deadlines</div></div>'
