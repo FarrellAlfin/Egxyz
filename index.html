@@ -1633,13 +1633,14 @@ input[type=number]{-moz-appearance:textfield}
 .pt-bs-invoiced{background:#DBEAFE;color:#1E40AF}
 .pt-bill-total{font-size:14px;font-weight:700;color:var(--amber);padding:4px 0}
 /* Billing cards */
-.pt-bill-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.pt-bill-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px}
-.pt-bill-card-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
-.pt-bill-card-amt{font-size:22px;font-weight:700;font-family:var(--font-mono);color:var(--ink);margin-bottom:12px;line-height:1}
-.pt-bill-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-bottom:12px}
-.pt-bill-card-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);margin-bottom:2px}
-.pt-bill-card-val{font-size:12px;color:var(--ink);font-weight:500}
+.pt-bill-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pt-bill-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:border-color .15s,box-shadow .15s}
+.pt-bill-card:hover{border-color:var(--amber);box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.pt-bill-card-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.pt-bill-card-amt{font-size:24px;font-weight:700;font-family:var(--font-mono);color:var(--ink);margin-bottom:14px;line-height:1}
+.pt-bill-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:12px}
+.pt-bill-card-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);margin-bottom:3px}
+.pt-bill-card-val{font-size:13px;color:var(--ink);font-weight:500}
 /* Shared delete button */
 .pt-btn-del{background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:#B91C1C;font-size:11px;font-weight:600;padding:2px 7px;flex-shrink:0;font-family:var(--font-body)}
 .pt-btn-del:hover{background:#FEE2E2;border-color:#B91C1C}
@@ -1805,14 +1806,14 @@ input[type=number]{-moz-appearance:textfield}
 .pt-task-col-empty{text-align:center;padding:18px 0;color:var(--ink-light);font-size:12px}
 /* Task cards */
 .pt-tasks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:4px}
-.pt-task-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;transition:border-color .15s}
+.pt-task-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;transition:border-color .15s}
 .pt-task-card:hover{border-color:var(--amber-mid)}
 .pt-task-card.done-card{opacity:.55}
-.pt-task-card-hdr{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
-.pt-task-card-title{font-size:13px;font-weight:600;color:var(--ink);flex:1;line-height:1.4}
+.pt-task-card-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.pt-task-card-title{font-size:15px;font-weight:600;color:var(--ink);flex:1;line-height:1.4}
 .pt-task-card-title.done{text-decoration:line-through;color:var(--ink-light)}
-.pt-task-card-notes{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pt-task-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pt-task-card-notes{font-size:13px;color:var(--ink-mid);line-height:1.55;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pt-task-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pt-task-card-actions{display:flex;justify-content:flex-end;gap:5px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
 .pt-assignee-chips{display:flex;gap:3px;flex-wrap:wrap}
 /* Overview pulse cards */
@@ -1850,9 +1851,9 @@ input[type=number]{-moz-appearance:textfield}
 .pt-doc-task{font-size:11px;color:var(--ink-light);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Multi-assignee checkbox list */
 .pt-assignee-cb-list{display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);max-height:160px;overflow-y:auto}
-.pt-assignee-cb-label{display:flex;align-items:flex-start;gap:0;font-size:13px;color:var(--ink);cursor:pointer;padding:5px 8px;border-radius:6px;transition:background .12s}
+.pt-assignee-cb-label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);cursor:pointer;padding:6px 8px;border-radius:6px;transition:background .12s}
 .pt-assignee-cb-label:hover{background:var(--cream)}
-.pt-assignee-cb-label input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;border:2px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;position:relative;transition:border-color .15s,background .15s;flex-shrink:0;margin-top:3px;margin-right:14px}
+.pt-assignee-cb-label input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;border:2px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;position:relative;transition:border-color .15s,background .15s;flex-shrink:0;margin:0}
 .pt-assignee-cb-label input[type="checkbox"]:checked{background:var(--sage);border-color:var(--sage)}
 .pt-assignee-cb-label input[type="checkbox"]:checked::after{content:'';position:absolute;left:3px;top:0px;width:5px;height:9px;border:2px solid #fff;border-left:none;border-top:none;transform:rotate(45deg)}
 .pt-filter-sep{width:1px;height:16px;background:var(--border);flex-shrink:0}
@@ -1894,12 +1895,12 @@ input[type=number]{-moz-appearance:textfield}
 .pt-person-add:hover{border-color:var(--amber);color:var(--amber)}
 .pt-row.person-drag-over{background:#FFF8EC;border:1.5px dashed var(--amber)}
 /* Meeting notes cards */
-.mn-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all .15s;position:relative}
+.mn-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;cursor:pointer;transition:all .15s;position:relative}
 .mn-card:hover{border-color:var(--amber);box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.mn-card-purpose{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
-.mn-card-meta{font-size:12px;color:var(--ink-light);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.mn-card-actions{display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
-.mn-card-notes-preview{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mn-card-purpose{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.mn-card-meta{font-size:13px;color:var(--ink-light);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.mn-card-actions{display:flex;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.mn-card-notes-preview{font-size:13px;color:var(--ink-mid);line-height:1.55;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .mn-loc-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
 .mn-loc-badge.zoom{background:#E8F0FF;color:#1A56DB}
 .mn-loc-badge.gmeet{background:#FEF2F2;color:#C53030}
@@ -3456,9 +3457,9 @@ var RateLimiter = (function() {
           <div class="pt-detail-hdr">
             <button class="pt-back-btn" onclick="ptBackToList()">← All projects</button>
             <span class="pt-detail-name" id="pt-detail-name"></span>
-            <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto;min-width:72px">Edit</button>
-            <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:72px" onclick="openShareModal()">Share</button>
-            <button class="pt-add-btn" style="background:var(--white);color:#B91C1C;border:1.5px solid #FECACA;min-width:72px" onclick="deletePtProject()" title="Delete project">Delete</button>
+            <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto;min-width:80px;width:80px">Edit</button>
+            <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:80px;width:80px" onclick="openShareModal()">Share</button>
+            <button class="pt-add-btn" style="background:#E8594A;color:#fff;border:1.5px solid #E8594A;min-width:80px;width:80px" onclick="deletePtProject()" title="Delete project">Delete</button>
           </div>
           <div class="pt-tabs">
             <button class="pt-tab active" onclick="showPtTab('overview',this)">Overview</button>
@@ -3501,9 +3502,9 @@ var RateLimiter = (function() {
             <div class="pt-ov-main-row">
               <!-- Left: Client / Status / Start / End / Budget -->
               <div class="pt-ov-info-col">
+                <div style="margin-bottom:14px"><div id="ptv-status" style="display:inline-flex"></div></div>
                 <div class="pt-grid2">
                   <div class="pt-field"><label>Client</label><div id="ptv-client" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
-                  <div class="pt-field"><label>Status</label><div id="ptv-status" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
                   <div class="pt-field"><label>Start date</label><div id="ptv-start" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
                   <div class="pt-field"><label>End date</label><div id="ptv-end" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
                 </div>
@@ -3577,7 +3578,7 @@ var RateLimiter = (function() {
           <!-- Meeting notes tab -->
           <div class="pt-tab-content" id="pt-tab-meetings" style="display:none">
             <div class="pt-sec-hdr">Meeting notes <button class="pt-add-btn" onclick="openMeetingEditor()">+ Add note</button></div>
-            <div id="pt-meetings-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:4px"></div>
+            <div id="pt-meetings-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px;margin-top:4px"></div>
           </div>
           <!-- Timesheet tab -->
           <div class="pt-tab-content" id="pt-tab-hours" style="display:none">
@@ -3610,6 +3611,7 @@ var RateLimiter = (function() {
             <div style="display:flex;gap:8px;align-items:center">
               <button class="pt-add-btn" style="background:transparent;color:var(--ink);border:1.5px solid var(--border)" onclick="printMeetingNote()">⬇ PDF</button>
               <button class="pt-add-btn" id="mn-edit-btn" onclick="toggleMeetingEdit()">Edit</button>
+              <button class="pt-add-btn" style="background:#E8594A;color:#fff;border-color:#E8594A" onclick="if(_mnEditIdx!==null&&_mnEditIdx!==undefined){closeMeetingPopup();deletePtItem('meetings',_mnEditIdx)}">Delete</button>
               <button class="pt-back-btn" onclick="closeMeetingPopup()">✕ Close</button>
             </div>
           </div>
@@ -8854,8 +8856,8 @@ function selectPtProject(id) {
   var _stEl = document.getElementById('ptv-status');
   if (_stEl) {
     var _stVal = (proj.status || 'planning');
-    var _stLabel = _stVal.replace('_',' ');
-    _stEl.innerHTML = '<span class="pt-status pt-status-' + _stVal.replace(' ','_') + '" style="font-size:12px">' + _stLabel + '</span>';
+    var _stLabel = _stVal.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    _stEl.innerHTML = '<span class="pt-status pt-status-' + _stVal.replace(/ /g,'_') + '" style="font-size:14px;padding:5px 14px;border-radius:20px;font-weight:700;letter-spacing:.03em">' + _stLabel + '</span>';
   }
   document.getElementById('ptv-start').textContent = fmtDate(proj.start_date);
   document.getElementById('ptv-end').textContent = fmtDate(proj.end_date);
@@ -8885,6 +8887,19 @@ function selectPtProject(id) {
   ptLoadProjectData(id);
   // Load shares + people
   if (typeof loadPtShares === 'function') loadPtShares(id);
+  // Auto-add current user to people involved if not already present
+  (function() {
+    var myFirst = (document.getElementById('my-firstname') || {}).value || '';
+    var myLast  = (document.getElementById('my-lastname')  || {}).value || '';
+    var myName  = [myFirst, myLast].filter(Boolean).join(' ') || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
+    if (myName) {
+      var existingPeople = loadPtPeople(id);
+      var alreadyAdded = existingPeople.some(function(p){ return p.name && p.name.toLowerCase() === myName.toLowerCase(); });
+      if (!alreadyAdded) {
+        savePtPeople(existingPeople.concat([{ name: myName, role: 'Freelancer', side: 'freelancer' }]), id);
+      }
+    }
+  })();
   renderPtPeople();
   // Highlight in list
   renderPtList();
@@ -8892,6 +8907,7 @@ function selectPtProject(id) {
 
 function ptBackToList() {
   _ptCurrentId = null;
+  _ptDocRenderedFor = {}; // reset so doc tabs re-render for next project
   localStorage.removeItem('fk_pt_project');
   document.getElementById('pt-list-view').style.display = '';
   document.getElementById('pt-detail-view').style.display = 'none';
@@ -8908,9 +8924,9 @@ function showPtTab(tab, btn) {
   if (el) el.style.display = '';
   document.querySelectorAll('#pt-detail-view .pt-tab').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
-  // Render doc tabs on first open, then auto-link to current project
-  if (tab === 'contract') renderPtDocTab('contract');
-  if (tab === 'scope') renderPtDocTab('scope');
+  // Render doc tabs only when first opened or when project changes
+  if (tab === 'contract' && (_ptDocRenderedFor && _ptDocRenderedFor.contract !== _ptCurrentId)) renderPtDocTab('contract');
+  if (tab === 'scope' && (_ptDocRenderedFor && _ptDocRenderedFor.scope !== _ptCurrentId)) renderPtDocTab('scope');
 }
 
 function renderPtAllTabs() {
@@ -9114,7 +9130,7 @@ function renderPtMilestones() {
       '</div></td>';
     if (!msStart) {
       return '<tr style="' + rowBg + '" ondragover="ptMsDragOver(event,' + i + ')" ondrop="ptMsDrop(event,' + i + ')" ondragleave="ptMsDragLeave(event)">' + nameCell +
-        '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light)">No dates set · <button class="pt-row-edit" onclick="openPtEditMilestone(' + i + ')">Edit</button> <button class="pt-row-del" onclick="deletePtItem(\'milestones\',' + i + ')">Delete</button></td></tr>';
+        '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light)">No dates set · <button class="pt-row-edit" onclick="openPtEditMilestone(' + i + ')">Edit</button></td></tr>';
     }
     if (msStart > msEnd) msEnd = msStart;
     var barStartOffset = Math.max(0, (msStart - rangeStart) / 86400000);
@@ -9134,7 +9150,6 @@ function renderPtMilestones() {
       '<span style="font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;padding:0 12px">' + barLabel + '</span>' +
       '<div class="gantt-hdl" style="position:absolute;right:0;top:0;border-radius:0 4px 4px 0" onmousedown="event.stopPropagation();ganttBarDown(event,' + i + ',\'right\')"></div>' +
       '</div></div>' +
-      '<button class="pt-row-del" style="position:absolute;right:4px;top:50%;transform:translateY(-50%)" onclick="event.stopPropagation();deletePtItem(\'milestones\',' + i + ')">Delete</button>' +
       '</td></tr>';
   }).join('');
 
@@ -9216,22 +9231,18 @@ function renderPtTasks() {
       return '<span class="pt-assignee" title="' + escapeHTML(a) + '">' + ini + '</span>';
     }).join('');
     var attachArr = []; try { attachArr = JSON.parse(t.attachments||'[]'); } catch(e){}
-    return '<div class="pt-task-card' + (done ? ' done-card' : '') + '" data-idx="' + realIdx + '">' +
+    return '<div class="pt-task-card' + (done ? ' done-card' : '') + '" data-idx="' + realIdx + '" style="cursor:pointer" onclick="openPtEditTask(' + realIdx + ')">' +
       '<div class="pt-task-card-hdr">' +
-        '<div class="pt-check' + (done ? ' done' : '') + '" onclick="togglePtTask(' + realIdx + ')" title="' + (done ? 'Mark to do' : 'Mark done') + '">' + (done ? '&#10003;' : '') + '</div>' +
+        '<div class="pt-check' + (done ? ' done' : '') + '" onclick="event.stopPropagation();togglePtTask(' + realIdx + ')" title="' + (done ? 'Mark to do' : 'Mark done') + '">' + (done ? '&#10003;' : '') + '</div>' +
         '<span class="pt-task-card-title' + (done ? ' done' : '') + '">' + escapeHTML(t.title) + '</span>' +
-        '<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;flex-shrink:0;' + prioStyle[prio] + '">' + prioLabels[prio] + '</span>' +
+        '<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0;' + prioStyle[prio] + '">' + prioLabels[prio] + '</span>' +
       '</div>' +
       (t.notes ? '<div class="pt-task-card-notes">' + escapeHTML(t.notes) + '</div>' : '') +
       '<div class="pt-task-card-meta">' +
         (t.due_date ? '<span class="pt-row-date" style="' + (overdue && !done ? 'color:#DC2626;font-weight:600' : '') + '">' + (overdue && !done ? '⚠ ' : '') + t.due_date.slice(0,10) + '</span>' : '') +
-        (attachArr.length ? '<span style="font-size:11px;color:var(--ink-mid)">📎 ' + attachArr.length + '</span>' : '') +
+        (attachArr.length ? '<span style="font-size:12px;color:var(--ink-mid)">📎 ' + attachArr.length + '</span>' : '') +
       '</div>' +
       (avatars ? '<div class="pt-assignee-chips" style="margin-top:8px">' + avatars + '</div>' : '') +
-      '<div class="pt-task-card-actions">' +
-        '<button class="pt-row-edit" style="font-weight:700" onclick="openPtEditTask(' + realIdx + ')">Edit</button>' +
-        '<button class="pt-btn-del" onclick="deletePtItem(\'tasks\',' + realIdx + ')">Delete</button>' +
-      '</div>' +
     '</div>';
   }
 
@@ -9279,7 +9290,8 @@ function renderPtBilling() {
     var fmtAmt = '$' + (parseFloat(b.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
     var fmtDate = b.due_date ? b.due_date.slice(0,10) : '—';
     var typeLabel = b.billing_type === 'per_phase' ? 'Per phase' : 'One-time';
-    return '<div class="pt-bill-card">' +
+    return '<div class="pt-bill-card" style="cursor:pointer" onclick="openPtEditBilling(' + i + ')" title="Click to edit">' +
+      '<div class="pt-bill-card-lbl" style="margin-bottom:3px">Invoice Number</div>' +
       '<div class="pt-bill-card-name">' + escapeHTML(b.phase_name) + '</div>' +
       '<div class="pt-bill-card-amt">' + fmtAmt + '</div>' +
       '<div class="pt-bill-card-grid">' +
@@ -9287,12 +9299,8 @@ function renderPtBilling() {
         '<div><div class="pt-bill-card-lbl">Due date</div><div class="pt-bill-card-val">' + fmtDate + '</div></div>' +
         '<div><div class="pt-bill-card-lbl">Type</div><div class="pt-bill-card-val">' + typeLabel + '</div></div>' +
         '<div><div class="pt-bill-card-lbl">Status</div>' +
-          '<span class="pt-bill-status ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="cyclePtBillingStatus(' + i + ')" title="Click to change">' + (statusLabels[b.status]||'Pending') + '</span>' +
+          '<span class="pt-bill-status ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="event.stopPropagation();cyclePtBillingStatus(' + i + ')" title="Click to change status">' + (statusLabels[b.status]||'Pending') + '</span>' +
         '</div>' +
-      '</div>' +
-      '<div class="pt-task-card-actions">' +
-        '<button class="pt-row-edit" style="font-weight:700" onclick="openPtEditBilling(' + i + ')">Edit</button>' +
-        '<button class="pt-btn-del" onclick="deletePtItem(\'billing\',' + i + ')">Delete</button>' +
       '</div>' +
     '</div>';
   }).join('') + '</div>';
@@ -9474,18 +9482,13 @@ function renderPtMeetings() {
     var freelAtts = []; try { freelAtts = JSON.parse(m.freelancer_attendees||'[]'); } catch(e){}
     var totalPeople = clientAtts.length + freelAtts.length;
     return '<div class="mn-card" onclick="openMeetingPopup(' + i + ')">' +
-      '<div class="mn-card-purpose">' + escapeHTML(purpose) + '</div>' +
-      '<div class="mn-card-meta" style="margin-top:6px">' +
+      '<div class="mn-card-purpose" style="font-size:15px">' + escapeHTML(purpose) + '</div>' +
+      '<div class="mn-card-meta" style="margin-top:8px;font-size:13px">' +
         '<span>📅 ' + dateStr + '</span>' +
         (totalPeople > 0 ? '<span>👥 ' + totalPeople + ' attendee' + (totalPeople !== 1 ? 's' : '') + '</span>' : '') +
       '</div>' +
-      (locBadge ? '<div style="margin-top:7px">' + locBadge + '</div>' : '') +
-      (notesText ? '<div class="mn-card-notes-preview">' + escapeHTML(notesText) + (notesText.length >= 100 ? '…' : '') + '</div>' : '') +
-      '<div class="mn-card-actions" onclick="event.stopPropagation()">' +
-        '<button class="pt-row-edit" onclick="openMeetingEditor(' + i + ')">Edit</button>' +
-        '<button class="pt-row-edit" onclick="openMeetingPopup(' + i + ');setTimeout(printMeetingNote,300)">PDF</button>' +
-        '<button class="pt-note-del" onclick="deletePtItem(\'meetings\',' + i + ')">Delete</button>' +
-      '</div>' +
+      (locBadge ? '<div style="margin-top:8px">' + locBadge + '</div>' : '') +
+      (notesText ? '<div class="mn-card-notes-preview" style="font-size:13px;margin-top:8px">' + escapeHTML(notesText) + (notesText.length >= 100 ? '…' : '') + '</div>' : '') +
     '</div>';
   }).join('');
 }
@@ -10349,6 +10352,7 @@ function openDocForProject(docId) {
 // ─── PROJECT DOC TABS (CONTRACT / SCOPE) ───
 
 var _ptDocEditMode = {};
+var _ptDocRenderedFor = {};
 
 function renderPtDocTab(type) {
   var el = document.getElementById('pt-tab-' + type);
@@ -10358,6 +10362,7 @@ function renderPtDocTab(type) {
   var title = isContract ? 'Client Contract' : 'Scope Change Order';
   var downloadFile = isContract ? 'FreelanceKit_Client_Contract.pdf' : 'FreelanceKit_Scope_Change_Order.pdf';
   // Load saved content from localStorage if available for this project
+  _ptDocRenderedFor[type] = _ptCurrentId; // track which project this was rendered for
   var savedKey = _ptCurrentId ? 'fk_doc_' + type + '_' + _ptCurrentId : null;
   var saved = savedKey ? localStorage.getItem(savedKey) : null;
   var docBody = saved || (isContract ? _ptContractDocHTML() : _ptScopeDocHTML());
@@ -10367,7 +10372,7 @@ function renderPtDocTab(type) {
       '<div style="display:flex;gap:8px;align-items:center">' +
         '<button class="doc-edit-toggle" id="' + prefix + '-edit-toggle" onclick="ptToggleDocEdit(\'' + prefix + '\')">Edit</button>' +
         '<button class="doc-edit-toggle" style="background:var(--ink);color:var(--cream);border-color:var(--ink)" onclick="ptSaveDoc(\'' + type + '\')">Save</button>' +
-        '<button class="doc-edit-toggle" style="color:#E8594A;border-color:#E8594A" onclick="ptPrintDoc(\'' + prefix + '\')">Download PDF</button>' +
+        '<button class="doc-edit-toggle" style="background:#E8594A;color:#fff;border-color:#E8594A" onclick="ptPrintDoc(\'' + prefix + '\')">Download PDF</button>' +
       '</div>' +
     '</div>' +
     '<div class="doc-toolbar" id="' + prefix + '-toolbar">' +
@@ -11184,7 +11189,7 @@ function openPtModal(mode) {
     var assigneeHtml = ppl.length
       ? '<div class="pt-assignee-cb-list">' + ppl.map(function(p){
           var chk = curAssignees.indexOf(p.name) >= 0 ? ' checked' : '';
-          return '<label class="pt-assignee-cb-label"><input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + chk + '><span style="line-height:1.3;font-weight:500;padding-top:1px">' + escapeHTML(p.name) + (p.role ? '<br><span style="font-size:11px;font-weight:400;color:var(--ink-light)">· ' + escapeHTML(p.role) + '</span>' : '') + '</span></label>';
+          return '<label class="pt-assignee-cb-label"><input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + chk + '><span style="font-weight:500">' + escapeHTML(p.name) + '</span></label>';
         }).join('') + '</div>'
       : '<div style="font-size:12px;color:var(--ink-light);padding:6px 0">Add people in the Overview tab first</div>';
     html = '<div class="pt-modal-title">' + (mode === 'edit-task' ? 'Edit task' : 'Add task') + '</div>' +
@@ -11255,12 +11260,15 @@ function closePtModal() {
   var overlay = document.getElementById('pt-modal');
   if (overlay) overlay.classList.remove('open');
   _ptPendingAttachments = [];
+  _ptSaving = false; // always release save lock when modal closes
 }
 
 // ─── SAVE HANDLERS ───
 
+var _ptSaving = false;
 async function savePtProject() {
   if (!_currentUser) return;
+  if (_ptSaving) return; _ptSaving = true;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
   var name = g('ptm-name'); if (!name) { showToast('Project name is required'); return; }
   var payload = {
@@ -11274,7 +11282,7 @@ async function savePtProject() {
   var res;
   if (_ptModalMode === 'edit-project' && _ptCurrentId) {
     res = await _supabase.from('projects').update(payload).eq('id', _ptCurrentId).eq('user_id', _currentUser.id).select();
-    if (res.error) { showToast('Error: ' + res.error.message); return; }
+    if (res.error) { _ptSaving = false; showToast('Error: ' + res.error.message); return; }
     // Always apply the new values locally — don't depend on res.data being non-empty
     var idx = _ptProjects.findIndex(function(p){ return p.id === _ptCurrentId; });
     if (idx >= 0) {
@@ -11307,7 +11315,8 @@ async function savePtProject() {
       }
     }
   }
-  if (res.error) { showToast('Error: ' + res.error.message); return; }
+  if (res.error) { _ptSaving = false; showToast('Error: ' + res.error.message); return; }
+  _ptSaving = false;
   closePtModal();
   renderPtList();
   if (typeof renderGlobalGantt === 'function') renderGlobalGantt();
@@ -11317,6 +11326,7 @@ async function savePtProject() {
 
 async function savePtMilestone() {
   if (!_currentUser || !_ptCurrentId) return;
+  if (_ptSaving) return; _ptSaving = true;
   var title = document.getElementById('ptm-ms-title')&&document.getElementById('ptm-ms-title').value.trim();
   if (!title) { showToast('Milestone name required'); return; }
   var startEl = document.getElementById('ptm-ms-start');
@@ -11341,11 +11351,12 @@ async function savePtMilestone() {
       } catch(x) {}
     }
   }
-  closePtModal(); renderPtMilestones(); if(typeof renderGlobalGantt==='function') renderGlobalGantt(); showToast('\u2713 Milestone added');
+  _ptSaving = false; closePtModal(); renderPtMilestones(); if(typeof renderGlobalGantt==='function') renderGlobalGantt(); showToast('\u2713 Milestone added');
 }
 
 async function savePtTask() {
   if (!_currentUser || !_ptCurrentId) return;
+  if (_ptSaving) return; _ptSaving = true;
   var title = document.getElementById('ptm-task-title')&&document.getElementById('ptm-task-title').value.trim();
   if (!title) { showToast('Task title required'); return; }
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
@@ -11361,11 +11372,12 @@ async function savePtTask() {
   var res = await _supabase.from('project_tasks').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   window._ptTasks = window._ptTasks || []; window._ptTasks.push(res.data);
-  closePtModal(); renderPtTasks(); showToast('\u2713 Task added');
+  _ptSaving = false; closePtModal(); renderPtTasks(); showToast('\u2713 Task added');
 }
 
 async function savePtBilling() {
   if (!_currentUser || !_ptCurrentId) return;
+  if (_ptSaving) return; _ptSaving = true;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
   var name = g('ptm-bill-name'); if (!name) { showToast('Phase name required'); return; }
   var amount = parseFloat(g('ptm-bill-amount')); if (!amount) { showToast('Amount required'); return; }
@@ -11375,11 +11387,12 @@ async function savePtBilling() {
   var res = await _supabase.from('project_billing').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   window._ptBilling = window._ptBilling || []; window._ptBilling.push(res.data);
-  closePtModal(); renderPtBilling(); showToast('\u2713 Billing phase added');
+  _ptSaving = false; closePtModal(); renderPtBilling(); showToast('\u2713 Billing phase added');
 }
 
 async function savePtMeeting() {
   if (!_currentUser || !_ptCurrentId) return;
+  if (_ptSaving) return; _ptSaving = true;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
   var notes = g('ptm-meet-notes'); if (!notes) { showToast('Notes required'); return; }
   // Handle multi-select or plain input for attendees
@@ -11396,7 +11409,7 @@ async function savePtMeeting() {
   var res = await _supabase.from('project_meetings').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   window._ptMeetings = window._ptMeetings || []; window._ptMeetings.unshift(res.data);
-  closePtModal(); renderPtMeetings(); showToast('\u2713 Meeting note saved');
+  _ptSaving = false; closePtModal(); renderPtMeetings(); showToast('\u2713 Meeting note saved');
 }
 
 async function savePtTime() {
