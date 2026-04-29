@@ -1335,11 +1335,18 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .recent-chip:hover{border-color:var(--amber);background:var(--amber-light)}
 .recent-chip-icon{font-size:12px}
 /* ── LIVE TIMER BUTTON ── */
-.nav-timer-btn{display:flex;align-items:center;gap:6px;background:var(--surface-low);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.nav-timer-btn{display:flex;align-items:center;gap:6px;background:var(--surface-low);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .2s;font-family:var(--font-body);max-width:260px}
 .nav-timer-btn:hover{border-color:var(--sage)}
 .nav-timer-btn.running{border-color:var(--sage);background:#f0faf4}
-.nav-timer-icon{font-size:14px;line-height:1}
-.nav-timer-mini{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--sage);letter-spacing:.04em}
+.nav-timer-btn.paused{border-color:#E74C3C;background:#fef2f2}
+.nav-timer-btn.paused .nav-timer-mini{color:#E74C3C}
+.nav-timer-icon{font-size:14px;line-height:1;flex-shrink:0}
+.nav-timer-mini{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--sage);letter-spacing:.04em;flex-shrink:0}
+.nav-timer-proj{font-size:12px;font-weight:500;color:var(--ink-mid);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none}
+.nav-timer-btn.running .nav-timer-proj,.nav-timer-btn.paused .nav-timer-proj{display:block}
+@keyframes pulse-green{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.75)}}
+.nav-timer-dot{display:none;width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.nav-timer-btn.running .nav-timer-dot{display:block;animation:pulse-green 1.2s ease-in-out infinite}
 /* ── TIMER PANEL ── */
 .timer-panel{position:fixed;top:66px;right:130px;width:340px;min-height:520px;background:#0f1624;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.4);z-index:490;display:none;flex-direction:column;padding:24px 22px 20px;color:#fff}
 .timer-panel.open{display:flex}
@@ -2862,7 +2869,9 @@ var RateLimiter = (function() {
     <div class="nav-actions">
       <!-- Live Timer button -->
       <button class="nav-timer-btn" id="nav-timer-btn" onclick="toggleTimerPanel()" title="Quick Active Timer">
-        <span class="nav-timer-icon">⏱</span>
+        <span class="nav-timer-dot" id="nav-timer-dot"></span>
+        <span class="nav-timer-icon" id="nav-timer-icon">⏱</span>
+        <span class="nav-timer-proj" id="nav-timer-proj"></span>
         <span class="nav-timer-mini" id="nav-timer-mini" style="display:none">00:00:00</span>
       </button>
       <button class="notif-bell" id="notif-bell-btn" onclick="toggleNotificationPanel()" title="Notifications" style="display:none">
@@ -2910,8 +2919,8 @@ var RateLimiter = (function() {
   <div class="timer-panel" id="timer-panel">
     <div class="tp-title">Quick Active Timer</div>
     <div class="tp-label">Currently Tracking</div>
-    <select class="tp-select" id="tp-project-sel">
-      <option value="">— No project —</option>
+    <select class="tp-select" id="tp-project-sel" style="border-color:var(--amber)">
+      <option value="">— Select a project to start —</option>
     </select>
     <div class="tp-clock" id="tp-clock">00:00:00</div>
     <div class="tp-status idle" id="tp-status">Ready to start</div>
@@ -7259,7 +7268,7 @@ function toggleTimerPanel() {
   var sel = document.getElementById('tp-project-sel');
   if (sel) {
     var cur = sel.value;
-    sel.innerHTML = '<option value="">— No project —</option>';
+    sel.innerHTML = '<option value="">— Select a project to start —</option>';
     (_ptProjects || []).forEach(function(p) {
       var opt = document.createElement('option');
       opt.value = p.id;
@@ -7338,15 +7347,28 @@ function timerToggle() {
   var status = document.getElementById('tp-status');
   var navBtn = document.getElementById('nav-timer-btn');
   var mini = document.getElementById('nav-timer-mini');
+  var projLabel = document.getElementById('nav-timer-proj');
+  var sel = document.getElementById('tp-project-sel');
   if (_timerRunning) {
     // Pause
     clearInterval(_timerInterval);
     _timerRunning = false;
     if (playBtn) playBtn.innerHTML = '&#9654; Resume';
     if (status) { status.textContent = 'Paused'; status.className = 'tp-status paused'; }
-    if (navBtn) navBtn.classList.remove('running');
+    if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
   } else {
-    // Start / Resume
+    // Start / Resume — require a project to be selected
+    if (sel && !sel.value) {
+      showToast('Please select a project first');
+      if (sel) sel.focus();
+      return;
+    }
+    // Set project label in nav pill
+    if (projLabel && sel && sel.value) {
+      var selOpt = sel.options[sel.selectedIndex];
+      var projName = selOpt ? selOpt.textContent.split(' · ')[0].trim() : '';
+      projLabel.textContent = projName.slice(0, 20) + (projName.length > 20 ? '…' : '');
+    }
     _timerRunning = true;
     _timerInterval = setInterval(function() {
       _timerSeconds++;
@@ -7355,7 +7377,7 @@ function timerToggle() {
     if (playBtn) playBtn.innerHTML = '&#9646;&#9646; Pause';
     if (saveBtn) { saveBtn.disabled = false; }
     if (status) { status.textContent = 'Recording...'; status.className = 'tp-status'; }
-    if (navBtn) navBtn.classList.add('running');
+    if (navBtn) { navBtn.classList.remove('paused'); navBtn.classList.add('running'); }
     if (mini) mini.style.display = '';
   }
 }
@@ -7375,8 +7397,10 @@ function timerStop() {
   if (playBtn) playBtn.innerHTML = '&#9654; Start';
   if (saveBtn) saveBtn.disabled = true;
   if (status) { status.textContent = 'Ready to start'; status.className = 'tp-status idle'; }
-  if (navBtn) navBtn.classList.remove('running');
+  if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.remove('paused'); }
   if (mini) { mini.textContent = '00:00:00'; mini.style.display = 'none'; }
+  var projLabel = document.getElementById('nav-timer-proj');
+  if (projLabel) projLabel.textContent = '';
   // Close the panel and open the log modal
   var panel = document.getElementById('timer-panel');
   if (panel) panel.classList.remove('open');
@@ -8613,6 +8637,7 @@ async function loadProjects() {
     selectPtProject(_savedProjId);
   }
   if (typeof updateTodoProjDropdowns === 'function') updateTodoProjDropdowns();
+  if (typeof renderTodos === 'function') renderTodos(); // re-render now that _ptProjects is populated
   if (typeof populateDocProjSelects === 'function') populateDocProjSelects();
   if (typeof renderClientList === 'function') renderClientList();
 }
