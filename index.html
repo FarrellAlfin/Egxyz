@@ -67,7 +67,7 @@ body{font-family:var(--font-body);background:var(--surface);color:var(--on-surfa
   border-bottom:1px solid rgba(198,198,205,0.15);height:62px;
   display:flex;align-items:center;justify-content:space-between;padding:0 24px;
 }
-.nav-logo{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--on-surface);cursor:pointer;letter-spacing:-0.03em}
+.nav-logo{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--on-surface);cursor:pointer;letter-spacing:-0.03em}
 .nav-logo span{color:var(--tertiary)}
 .nav-actions{display:flex;align-items:center;gap:10px}
 .btn-nav-ghost{padding:9px 18px;border-radius:4px;border:1.5px solid var(--outline-variant);background:transparent;color:var(--on-surface-mid);font-family:var(--font-body);font-size:14px;cursor:pointer;transition:all .2s}
@@ -443,7 +443,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .atn-dd-wrap{position:relative;flex-shrink:0}
 .atn-trigger{padding:7px 13px;font-size:15px;font-weight:500;color:var(--ink-mid);cursor:pointer;border-radius:6px;font-family:var(--font-display);transition:color .15s,background .15s;user-select:none;display:flex;align-items:center;gap:5px}
 .atn-trigger:hover,.atn-trigger.active{color:var(--ink);background:var(--surface-container)}
-.atn-trigger .atn-arrow{font-size:11px;opacity:1;color:var(--ink);font-weight:700;transition:transform .18s ease}
+.atn-trigger .atn-arrow{font-size:15px;opacity:1;color:var(--ink);font-weight:700;transition:transform .18s ease}
 .atn-dd-wrap.open .atn-trigger .atn-arrow{transform:rotate(180deg)}
 .atn-dropdown{position:absolute;top:calc(100% + 8px);left:0;min-width:220px;background:var(--surface);border-radius:12px;box-shadow:0 6px 32px rgba(0,0,0,0.13);border:1px solid var(--outline);z-index:300;padding:8px;flex-direction:column;gap:2px;display:none}
 .atn-dd-wrap.open .atn-dropdown{display:flex}
@@ -1091,7 +1091,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* ── CALENDAR SIDE-BY-SIDE ── */
 .cal-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
 .cal-detail-panel{background:var(--cream);border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-height:320px}
-.cal-detail-empty{font-size:13px;color:var(--ink-light);padding:20px 0;text-align:center}
+.cal-detail-empty{font-size:15px;color:var(--ink-light);padding:20px 0;text-align:center}
 .cal-event-form{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:12px}
 .cal-event-form .m-lbl{margin-top:8px;margin-bottom:3px}
 .cal-event-form .m-inp,.cal-event-form .m-sel{margin-bottom:0;font-size:12px}
@@ -1173,9 +1173,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* ── CLIENT DIRECTORY ── */
 .client-dir-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .client-table{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.ct-head{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr 80px;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
+.ct-head{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
 .ct-head-cell{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);padding:11px 14px}
-.ct-row{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr 80px;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
+.ct-row{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
 .ct-row:last-child{border-bottom:none}
 .ct-row:hover{background:var(--cream)}
 .ct-cell{padding:13px 14px;font-size:14px;color:var(--ink-mid)}
@@ -1400,8 +1400,8 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 /* ── CONTRIBUTION GRID ── */
 .contrib-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px}
 .contrib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.contrib-title{font-size:13px;font-weight:700;color:var(--ink)}
-.contrib-subtitle{font-size:11px;color:var(--ink-light)}
+.contrib-title{font-size:14px;font-weight:700;color:var(--ink)}
+.contrib-subtitle{font-size:13px;color:var(--ink-light)}
 .cg-outer{width:100%}
 .cg-wrap{display:flex;flex-direction:column;gap:4px;width:100%}
 .cg-month-row{display:flex;gap:3px;padding-left:26px}
@@ -1426,8 +1426,8 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-legend-cell{width:11px;height:11px;border-radius:2px}
 /* ── Calendar-style contribution grid ── */
 .cg-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;width:100%}
-.cg-cal-dow{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-light);text-align:center;padding-bottom:5px}
-.cg-cal-cell{border-radius:5px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:default;transition:opacity .15s}
+.cg-cal-dow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-light);text-align:center;padding-bottom:5px}
+.cg-cal-cell{border-radius:5px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:default;transition:opacity .15s}
 .cg-cal-cell:hover:not(.cg-cal-empty){opacity:.75}
 .cg-cal-today{outline:2px solid var(--ink);outline-offset:1px;font-weight:800}
 .cg-cal-future{opacity:.22;pointer-events:none}
@@ -1559,7 +1559,7 @@ input[type=number]{-moz-appearance:textfield}
 .foei-paper{background:#fff;border:1px solid #e0e0e0;border-radius:4px;padding:28px;font-family:-apple-system,sans-serif;font-size:12px;color:#222;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 @media(max-width:768px){
   .settings-grid{grid-template-columns:1fr}
-  .ct-head,.ct-row{grid-template-columns:1fr 1fr 60px}
+  .ct-head,.ct-row{grid-template-columns:1fr 1fr}
   .ct-head-cell:nth-child(3),.ct-cell:nth-child(3),
   .ct-head-cell:nth-child(4),.ct-actions{display:none}
   .iht-head,.iht-row{grid-template-columns:80px 1fr 1fr 80px 80px auto}
@@ -3064,7 +3064,7 @@ var RateLimiter = (function() {
                 <span>More</span>
               </div>
             </div>
-            <div class="contrib-subtitle" id="contrib-total" style="margin-bottom:8px;font-size:11px;color:var(--ink-light)">Loading activity…</div>
+            <div class="contrib-subtitle" id="contrib-total" style="margin-bottom:8px">Loading activity…</div>
             <div class="cg-outer" id="contrib-grid-cells"></div>
           </div>
 
@@ -3460,7 +3460,7 @@ var RateLimiter = (function() {
             <span class="pt-detail-name" id="pt-detail-name"></span>
             <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto;min-width:80px;width:80px">Edit</button>
             <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:80px;width:80px" onclick="openShareModal()">Share</button>
-            <button class="pt-add-btn" style="background:#C0392B;color:#fff;border:1.5px solid #C0392B;min-width:80px;width:80px" onclick="deletePtProject()" title="Delete project">Delete</button>
+            <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;min-width:80px;width:80px" onclick="deletePtProject()" title="Delete project">Delete</button>
           </div>
           <div class="pt-tabs">
             <button class="pt-tab active" onclick="showPtTab('overview',this)">Overview</button>
@@ -3612,7 +3612,7 @@ var RateLimiter = (function() {
             <div style="display:flex;gap:8px;align-items:center">
               <button class="pt-add-btn" style="background:transparent;color:var(--ink);border:1.5px solid var(--border)" onclick="printMeetingNote()">⬇ PDF</button>
               <button class="pt-add-btn" id="mn-edit-btn" onclick="toggleMeetingEdit()">Edit</button>
-              <button class="pt-add-btn" style="background:#C0392B;color:#fff;border-color:#C0392B" onclick="if(_mnEditIdx!==null&&_mnEditIdx!==undefined){closeMeetingPopup();deletePtItem('meetings',_mnEditIdx)}">Delete</button>
+              <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border-color:#E74C3C" onclick="if(_mnEditIdx!==null&&_mnEditIdx!==undefined){closeMeetingPopup();deletePtItem('meetings',_mnEditIdx)}">Delete</button>
               <button class="pt-back-btn" onclick="closeMeetingPopup()">✕ Close</button>
             </div>
           </div>
@@ -3869,7 +3869,6 @@ var RateLimiter = (function() {
             <div class="ct-head-cell">Company</div>
             <div class="ct-head-cell">Address</div>
             <div class="ct-head-cell">Projects</div>
-            <div class="ct-head-cell"></div>
           </div>
           <div id="client-list-body"><div class="client-empty">No clients yet. Add your first client above.</div></div>
         </div>
@@ -5964,9 +5963,6 @@ function _renderClientListSync() {
       '<div class="ct-cell" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' + projHtml +
         '<button class="ct-btn" data-client-id="' + escapeHTML(cl.id) + '" data-client-name="' + escapeHTML(cl.name||'') + '" onclick="event.stopPropagation();openClientLinkModal(this.dataset.clientId, this.dataset.clientName)" style="font-size:10px;padding:2px 7px;margin-left:4px" title="Link / unlink projects">🔗</button>' +
       '</div>' +
-      '<div class="ct-actions">' +
-        '<button class="ct-btn del" data-client-id="' + escapeHTML(cl.id) + '" onclick="event.stopPropagation();deleteClient(this.dataset.clientId)">Delete</button>' +
-      '</div>' +
     '</div>';
   }).join('');
 } // end _renderClientListSync
@@ -5982,8 +5978,17 @@ function clientModalBackdropClose() {
   }
   closeClientModal();
 }
+function _populateClientProjectDropdown(selId, preselectedId) {
+  var sel = document.getElementById(selId);
+  if (!sel) return;
+  var projects = _ptProjects || [];
+  sel.innerHTML = '<option value="">— None —</option>' +
+    projects.map(function(p){ return '<option value="' + escapeHTML(p.id) + '">' + escapeHTML(p.name) + '</option>'; }).join('');
+  if (preselectedId) sel.value = preselectedId;
+}
 function openClientModal() {
   document.getElementById('client-modal').classList.add('open');
+  _populateClientProjectDropdown('cm-project', '');
   var btn = document.getElementById('cm-add-btn');
   if (btn) btn.disabled = false;
 }
@@ -5993,6 +5998,7 @@ function closeClientModal() {
     var el=document.getElementById(id); if(el) el.value='';
   });
   var sel = document.getElementById('cm-phone-code'); if (sel) sel.selectedIndex = 0;
+  var pSel = document.getElementById('cm-project'); if (pSel) pSel.value = '';
 }
 function addClientOnce() {
   var btn = document.getElementById('cm-add-btn');
@@ -6026,6 +6032,14 @@ async function addClient() {
   if (res.error) { showToast('Error: ' + res.error.message); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
   _clients.push(res.data);
   _clients.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  // Link to project if one was selected
+  var cmProjSel = document.getElementById('cm-project');
+  var cmProjId = cmProjSel ? cmProjSel.value : '';
+  if (cmProjId) {
+    await _supabase.from('projects').update({ client_name: name }).eq('id', cmProjId).eq('user_id', _currentUser.id);
+    var proj = (_ptProjects||[]).find(function(p){ return p.id === cmProjId; });
+    if (proj) proj.client_name = name;
+  }
   renderClientList();
   closeClientModal();
   showToast('\u2713 Client added');
@@ -6065,6 +6079,9 @@ function openEditClientModal(id) {
   } else {
     set('cem-phone', phone);
   }
+  // Populate project dropdown and pre-select linked project
+  var linkedProj = (_ptProjects||[]).find(function(p){ return p.client_name === cl.name; });
+  _populateClientProjectDropdown('cem-project', linkedProj ? linkedProj.id : '');
   document.getElementById('edit-client-modal').classList.add('open');
 }
 function closeEditClientModal() {
@@ -6093,6 +6110,14 @@ async function saveEditClient() {
   var idx = _clients.findIndex(function(c){ return c.id === id; });
   if (idx !== -1) _clients[idx] = Object.assign({}, _clients[idx], res.data);
   _clients.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  // Update linked project if one was selected
+  var cemProjSel = document.getElementById('cem-project');
+  var cemProjId = cemProjSel ? cemProjSel.value : '';
+  if (cemProjId) {
+    await _supabase.from('projects').update({ client_name: name }).eq('id', cemProjId).eq('user_id', _currentUser.id);
+    var proj = (_ptProjects||[]).find(function(p){ return p.id === cemProjId; });
+    if (proj) proj.client_name = name;
+  }
   renderClientList();
   closeEditClientModal();
   showToast('✓ Client updated');
@@ -11216,7 +11241,7 @@ function openPtModal(mode) {
       '</div></div></div>' +
       '<div class="pt-modal-ft">' +
         '<button class="btn-outline" onclick="closePtModal()">Cancel</button>' +
-        (mode === 'edit-task' && window._ptEditTaskIdx !== undefined ? '<button style="background:#C0392B;color:#fff;border:1.5px solid #C0392B;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-right:auto" onclick="closePtModal();deletePtItem(\'tasks\',' + window._ptEditTaskIdx + ')">Delete</button>' : '') +
+        (mode === 'edit-task' && window._ptEditTaskIdx !== undefined ? '<button style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-right:auto" onclick="closePtModal();deletePtItem(\'tasks\',' + window._ptEditTaskIdx + ')">Delete</button>' : '') +
         '<button class="pt-save-btn" onclick="' + (mode === 'edit-task' ? 'updatePtTask()' : 'savePtTask()') + '">' + (mode === 'edit-task' ? 'Save changes' : 'Add task') + '</button>' +
       '</div>';
   } else if (mode === 'add-billing') {
@@ -11747,12 +11772,14 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 
 <!-- Client contacts modal -->
 <div class="modal-overlay" id="client-modal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width:620px">
     <div class="modal-hd"><span class="modal-title">Add client</span><button class="modal-close" onclick="clientModalBackdropClose()">&#10005;</button></div>
     <div class="modal-bd">
-      <div class="m-lbl">Name</div><input class="m-inp" id="cm-name" placeholder="Client's full name">
-      <div class="m-lbl">Company</div><input class="m-inp" id="cm-company" placeholder="Company or business name">
       <div class="m-row2">
+        <div><div class="m-lbl">Name</div><input class="m-inp" id="cm-name" placeholder="Client's full name" style="margin-bottom:0"></div>
+        <div><div class="m-lbl">Company</div><input class="m-inp" id="cm-company" placeholder="Company or business name" style="margin-bottom:0"></div>
+      </div>
+      <div class="m-row2" style="margin-top:12px">
         <div><div class="m-lbl">Email</div><input class="m-inp" id="cm-email" type="email" placeholder="client@company.com" style="margin-bottom:0"></div>
         <div>
           <div class="m-lbl">Phone</div>
@@ -11796,7 +11823,15 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           </div>
         </div>
       </div>
-      <div class="m-lbl" style="margin-top:10px">Address</div><input class="m-inp" id="cm-address" placeholder="Street, City, Country">
+      <div class="m-row2" style="margin-top:12px">
+        <div><div class="m-lbl">Address</div><input class="m-inp" id="cm-address" placeholder="Street, City, Country" style="margin-bottom:0"></div>
+        <div>
+          <div class="m-lbl">Connected Project</div>
+          <select class="m-inp" id="cm-project" style="margin-bottom:0">
+            <option value="">— None —</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeClientModal()">Cancel</button>
@@ -11807,7 +11842,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 
 <!-- Edit client modal -->
 <div class="modal-overlay" id="edit-client-modal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width:620px">
     <div class="modal-hd"><span class="modal-title">Edit client</span><button class="modal-close" onclick="closeEditClientModal()">&#10005;</button></div>
     <div class="modal-bd">
       <div class="m-lbl">Name</div><input class="m-inp" id="cem-name" placeholder="Client's full name">
@@ -11856,10 +11891,19 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           </div>
         </div>
       </div>
-      <div class="m-lbl" style="margin-top:10px">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country">
+      <div class="m-row2" style="margin-top:12px">
+        <div><div class="m-lbl">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country" style="margin-bottom:0"></div>
+        <div>
+          <div class="m-lbl">Connected Project</div>
+          <select class="m-inp" id="cem-project" style="margin-bottom:0">
+            <option value="">— None —</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeEditClientModal()">Cancel</button>
+      <button style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;padding:8px 16px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-right:auto" onclick="var cid=_editClientId;closeEditClientModal();deleteClient(cid)">Delete</button>
       <button class="btn-use" onclick="saveEditClient()">Save changes</button>
     </div>
   </div>
