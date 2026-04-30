@@ -1884,6 +1884,112 @@ input[type=number]{-moz-appearance:textfield}
 .pt-row.pt-drag-over{border-top:2.5px solid var(--amber);background:var(--amber-light)}
 /* In-progress status dot */
 .pt-inprog-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
+/* ─── Project Overview v2 (po-*) ─── */
+.po-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.po-metric{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px}
+.po-metric-lbl{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:8px}
+.po-metric-v{font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;margin-bottom:5px}
+.po-metric-v small{font-size:13px;color:var(--ink-light);font-weight:600;margin-left:2px}
+.po-metric-sub{font-size:11.5px;color:var(--ink-light);font-family:var(--font-mono);font-weight:600}
+.po-metric-sub.late{color:var(--red)}
+.po-metric-bar{height:5px;background:var(--surface);border-radius:100px;overflow:hidden;margin-top:6px}
+.po-metric-bar-fill{height:100%;background:var(--ink);border-radius:100px;transition:width .4s ease}
+.po-metric-bar-fill.acc{background:var(--sage)}
+.po-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:flex-start}
+.po-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.po-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px}
+.po-card-eye{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
+.po-card-hdr-tight{margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.po-card-hdr-tight .po-card-eye{margin-bottom:0}
+.po-link{font-size:12px;color:var(--ink-mid);font-weight:600;padding:2px 6px;border-radius:4px;background:none;border:none;cursor:pointer}
+.po-link:hover{background:var(--surface);color:var(--ink)}
+/* milestone rows */
+.po-ms{list-style:none;display:flex;flex-direction:column;gap:0;position:relative;padding:4px 0 0;margin:0}
+.po-ms::before{content:'';position:absolute;left:13px;top:20px;bottom:20px;width:2px;background:var(--surface);border-radius:2px}
+.po-ms-row{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border);position:relative}
+.po-ms-row:last-child{border-bottom:none}
+.po-ms-mark{width:28px;height:28px;border-radius:50%;background:var(--white);border:2px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--ink-light);position:relative;z-index:1;flex-shrink:0}
+.po-ms-row.done .po-ms-mark{background:var(--sage);border-color:var(--sage);color:#fff;font-size:13px}
+.po-ms-row.active .po-ms-mark{background:var(--white);border-color:var(--ink);box-shadow:0 0 0 4px rgba(25,28,30,.06)}
+.po-ms-dot{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.po-ms-content{min-width:0}
+.po-ms-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.po-ms-top b{font-family:var(--font-display);font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em;line-height:1.35}
+.po-ms-row.done .po-ms-top b{color:var(--ink-mid)}
+.po-ms-date{font-family:var(--font-mono);font-size:11px;color:var(--ink-light);font-weight:600}
+.po-ms-date.late{color:var(--red);font-weight:700}
+.po-ms-sub{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:2px}
+/* activity feed */
+.po-act{display:flex;flex-direction:column;gap:0}
+.po-act-row{display:grid;grid-template-columns:32px 1fr auto;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.po-act-row:last-child{border-bottom:none}
+.po-act-av{width:28px;height:28px;border-radius:50%;background:var(--surface);color:var(--ink-mid);font-family:var(--font-mono);font-size:10px;font-weight:700;display:grid;place-items:center;margin-top:2px;flex-shrink:0}
+.po-act-txt{font-size:13px;color:var(--ink);line-height:1.5;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-act-time{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-light);font-weight:600;white-space:nowrap;margin-top:3px}
+/* sidebar */
+.po-side{display:flex;flex-direction:column;gap:16px}
+.po-next{background:var(--ink);color:#fff;border-radius:12px;padding:18px 20px;border:1.5px solid var(--ink);position:relative;overflow:hidden}
+.po-next::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(111,251,190,.18) 0,transparent 70%);pointer-events:none}
+.po-next-lbl{font-family:var(--font-mono);font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.po-next-count{font-family:var(--font-mono);background:rgba(255,255,255,.1);padding:1px 7px;border-radius:100px;color:#fff;font-weight:600;letter-spacing:0;text-transform:none}
+.po-next-t{font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:-.015em;line-height:1.3;color:#fff;margin-bottom:8px;position:relative;z-index:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.po-next-meta{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:12px;position:relative;z-index:1}
+.po-next-due{color:#4edea3}
+.po-next-btns{display:grid;grid-template-columns:1fr auto;gap:6px;position:relative;z-index:1}
+.po-next-btn{background:#6ffbbe;color:var(--ink);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:700;transition:opacity .15s;border:none;cursor:pointer;text-align:center}
+.po-next-btn:hover{opacity:.9}
+.po-next-btn.ghost{background:rgba(255,255,255,.12);color:#fff}
+/* client card new design */
+.po-hero-tag{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);font-weight:600;margin-bottom:6px;flex-wrap:wrap}
+.po-hero-sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.po-hero-client{color:var(--ink);font-weight:700}
+.po-hero-sep{color:var(--border);font-size:14px}
+.po-hero-status{display:inline-flex;align-items:center;gap:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:10.5px}
+.po-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.po-hero-meta{font-size:12px;color:var(--ink-light);font-family:var(--font-mono);font-weight:600}
+/* document rows */
+.po-doc-row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:8px;cursor:pointer;transition:background .1s;text-decoration:none}
+.po-doc-row:hover{background:var(--surface)}
+.po-doc-ic{width:28px;height:34px;border-radius:3px;background:var(--surface);display:grid;place-items:center;font-family:var(--font-mono);font-size:8px;font-weight:700;color:var(--ink-mid);flex-shrink:0;position:relative}
+.po-doc-ic::after{content:'';position:absolute;top:0;right:0;border-style:solid;border-width:0 5px 5px 0;border-color:transparent var(--white) transparent transparent}
+.po-doc-ic.pdf{background:#FEE2E2;color:#991B1B}
+.po-doc-ic.doc{background:#DBEAFE;color:#1E40AF}
+.po-doc-ic.fig{background:#F3E8FF;color:#6B21A8}
+.po-doc-ic.img{background:#FEF3C7;color:#92400E}
+.po-doc-ic.sig{background:rgba(0,150,104,.12);color:var(--sage)}
+.po-doc-info{flex:1;min-width:0}
+.po-doc-n{font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-doc-meta{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);margin-top:1px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-doc-dl{opacity:0;color:var(--ink-light);font-size:13px;padding:4px;flex-shrink:0}
+.po-doc-row:hover .po-doc-dl{opacity:1}
+/* hours bar chart */
+.po-hours-wrap{display:flex;align-items:flex-end;gap:5px;height:68px;margin:4px 0 8px;padding:0 1px}
+.po-hours-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.po-hours-bar{width:100%;background:var(--surface);border-radius:3px 3px 0 0;min-height:3px;overflow:hidden;display:flex;align-items:flex-end}
+.po-hours-bar-fill{width:100%;background:var(--ink);border-radius:3px 3px 0 0;transition:height .3s ease}
+.po-hours-bar-fill.today{background:var(--sage)}
+.po-hours-d{font-family:var(--font-mono);font-size:9px;color:var(--ink-light);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.po-hours-d.today{color:var(--sage)}
+.po-hours-ft{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-mid);font-family:var(--font-mono);font-weight:600;padding-top:8px;border-top:1px dashed var(--border)}
+.po-hours-ft b{color:var(--ink);font-weight:700}
+/* client detail popup */
+.cl-detail-popup{position:fixed;inset:0;background:rgba(25,28,30,.55);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px}
+.cl-detail-inner{background:var(--white);border-radius:16px;width:100%;max-width:560px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(25,28,30,.22)}
+.cl-detail-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.cl-detail-av{width:48px;height:48px;border-radius:12px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:18px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.cl-detail-hdr-info{flex:1;min-width:0}
+.cl-detail-name{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-detail-company{font-size:13px;color:var(--ink-mid)}
+.cl-detail-body{overflow-y:auto;padding:20px 24px;flex:1;display:flex;flex-direction:column;gap:18px}
+.cl-detail-section-lbl{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:8px}
+.cl-detail-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+.cl-detail-info-item{font-size:13px;color:var(--ink);display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-detail-proj-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;margin-bottom:6px;transition:border-color .15s}
+.cl-detail-proj-row:hover{border-color:var(--ink)}
+.cl-detail-proj-name{font-size:13px;font-weight:600;color:var(--ink)}
+.cl-detail-proj-meta{font-size:11px;color:var(--ink-light);font-family:var(--font-mono);margin-top:1px}
+.cl-detail-ft{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:space-between;flex-shrink:0;align-items:center}
+.cl-detail-link-row{display:flex;gap:8px;align-items:center}
 /* Document links in overview */
 .pt-doc-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .pt-doc-link{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;transition:all .15s;text-decoration:none}
@@ -2877,10 +2983,10 @@ var RateLimiter = (function() {
         <span class="nav-timer-proj" id="nav-timer-proj"></span>
       </button>
       <button class="notif-bell" id="notif-bell-btn" onclick="toggleNotificationPanel()" title="Notifications" style="display:none">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 2C12 2 7 5 7 12V17L5 19H19L17 17V12C17 5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M7 17H17" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2C12 2 5.5 5.5 5.5 12V17L3.5 19H20.5L18.5 17V12C18.5 5.5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M5.5 17H18.5" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/>
         </svg>
         <span class="notif-badge" id="notif-badge"></span>
       </button>
@@ -3492,78 +3598,97 @@ var RateLimiter = (function() {
           </div>
           <!-- Overview tab -->
           <div class="pt-tab-content" id="pt-tab-overview">
-            <!-- Pulse stat cards -->
-            <div class="pt-ov-pulse-row">
-              <div class="pt-ov-pulse-card">
-                <div class="pt-ov-pulse-lbl">Productivity Pulse</div>
-                <div class="pt-ov-pulse-val"><span id="ptv-pulse-hrs">—</span></div>
-                <div class="pt-ov-pulse-sub">hours logged</div>
+            <!-- 4-up metrics strip -->
+            <div class="po-metrics">
+              <div class="po-metric">
+                <div class="po-metric-lbl">Hours Logged</div>
+                <div class="po-metric-v"><span id="ptv-pulse-hrs">—</span><small>hrs</small></div>
+                <div class="po-metric-sub">total time tracked</div>
               </div>
-              <div class="pt-ov-pulse-card" style="background:var(--ink);border-color:var(--ink)">
-                <div class="pt-ov-pulse-lbl" style="color:rgba(250,247,242,.55)">Upcoming</div>
-                <div class="pt-ov-pulse-val" style="color:var(--cream)"><span id="ptv-deadline-count">—</span></div>
-                <div class="pt-ov-pulse-sub" style="color:rgba(250,247,242,.65)">Deadlines this week</div>
+              <div class="po-metric">
+                <div class="po-metric-lbl">Upcoming</div>
+                <div class="po-metric-v"><span id="ptv-deadline-count">—</span></div>
+                <div class="po-metric-sub">deadlines this week</div>
               </div>
-              <div class="pt-ov-pulse-card">
-                <div class="pt-ov-pulse-lbl">Tasks Done</div>
-                <div class="pt-ov-pulse-val"><span id="ptv-task-done-pct">—</span></div>
-                <div class="pt-ov-pulse-sub" id="ptv-task-done-sub">of tasks complete</div>
-                <div class="util-bar-wrap" style="margin-top:8px"><div class="util-fill" id="ptv-task-bar" style="width:0%"></div></div>
+              <div class="po-metric">
+                <div class="po-metric-lbl">Tasks Done</div>
+                <div class="po-metric-v"><span id="ptv-task-done-pct">—</span></div>
+                <div class="po-metric-sub" id="ptv-task-done-sub">of tasks complete</div>
+                <div class="po-metric-bar"><div class="po-metric-bar-fill acc" id="ptv-task-bar" style="width:0%"></div></div>
               </div>
-              <div class="pt-ov-pulse-card">
-                <div class="pt-ov-pulse-lbl">Overdue</div>
-                <div class="pt-ov-pulse-val"><span id="ptv-overdue-count">—</span></div>
-                <div class="pt-ov-pulse-sub" id="ptv-overdue-sub">overdue tasks</div>
-                <div style="margin-top:8px;font-size:10px;font-weight:600;color:var(--ink-light)" id="ptv-overdue-note"></div>
+              <div class="po-metric">
+                <div class="po-metric-lbl">Overdue</div>
+                <div class="po-metric-v"><span id="ptv-overdue-count">—</span></div>
+                <div class="po-metric-sub" id="ptv-overdue-note">all on schedule</div>
               </div>
             </div>
-            <!-- Main 2-column row: project info left, key documents right -->
-            <div class="pt-ov-main-row">
-              <!-- Left: Client / Status / Start / End / Budget -->
-              <div class="pt-ov-info-col">
-                <div style="margin-bottom:14px"><div id="ptv-status" style="display:inline-flex"></div></div>
-                <div class="pt-grid2">
-                  <div class="pt-field"><label>Client</label><div id="ptv-client" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
-                  <div class="pt-field"><label>Start date</label><div id="ptv-start" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
-                  <div class="pt-field"><label>End date</label><div id="ptv-end" style="font-size:14px;color:var(--ink);padding:6px 0">—</div></div>
+            <!-- Main 2-col grid -->
+            <div class="po-grid">
+              <!-- Left: main content -->
+              <div class="po-main">
+                <!-- Project Plan -->
+                <div class="po-card">
+                  <div class="po-card-hdr-tight">
+                    <div class="po-card-eye">Project Plan</div>
+                    <button class="po-link" onclick="showPtTab('tasks', document.querySelectorAll('#pt-detail-view .pt-tab')[2])">View all →</button>
+                  </div>
+                  <ul class="po-ms" id="ptv-plan-list"></ul>
                 </div>
-                <div id="ptv-client-card" style="display:none;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:12px">
-                  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);margin-bottom:8px">Client contact</div>
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-                    <div id="ptv-cl-email" style="font-size:13px;color:var(--ink)"></div>
-                    <div id="ptv-cl-phone" style="font-size:13px;color:var(--ink)"></div>
-                    <div id="ptv-cl-company" style="font-size:12px;color:var(--ink-mid)"></div>
-                    <div id="ptv-cl-address" style="font-size:12px;color:var(--ink-mid)"></div>
+                <!-- Recent Activity -->
+                <div class="po-card">
+                  <div class="po-card-hdr-tight">
+                    <div class="po-card-eye">Recent Activity</div>
+                  </div>
+                  <div class="po-act" id="ptv-activity-list"></div>
+                </div>
+              </div>
+              <!-- Right: sidebar -->
+              <div class="po-side">
+                <!-- Next Up dark card -->
+                <div class="po-next">
+                  <div class="po-next-lbl">Next Up <span class="po-next-count" id="ptv-next-count">0</span></div>
+                  <div class="po-next-t" id="ptv-next-title">All clear!</div>
+                  <div class="po-next-meta">
+                    <span class="po-next-due" id="ptv-next-due"></span>
+                  </div>
+                  <div class="po-next-btns">
+                    <button class="po-next-btn" id="ptv-next-done-btn" onclick="ptNextTaskDone()" style="display:none">Mark done</button>
+                    <button class="po-next-btn ghost" style="grid-column:1/-1" id="ptv-next-all-btn" onclick="showPtTab('tasks', document.querySelectorAll('#pt-detail-view .pt-tab')[2])">View all tasks</button>
                   </div>
                 </div>
-                <div class="pt-field"><label>Budget</label><div id="ptv-budget" style="font-size:16px;font-weight:700;color:var(--amber);padding:6px 0">—</div></div>
+                <!-- Client info card -->
+                <div class="po-card" id="ptv-client-info-card">
+                  <div class="po-card-eye">Client</div>
+                  <div id="ptv-client-detail-content">
+                    <div style="font-size:13px;color:var(--ink-light)">No client linked.</div>
+                  </div>
+                </div>
+                <!-- Time This Week -->
+                <div class="po-card">
+                  <div class="po-card-eye">Time This Week</div>
+                  <div class="po-hours-wrap" id="ptv-hours-chart"></div>
+                  <div class="po-hours-ft">
+                    <span>This week</span>
+                    <b id="ptv-hours-week-total">0 <small style="font-size:10px;font-weight:400;color:var(--ink-mid)">hrs</small></b>
+                  </div>
+                </div>
+                <!-- Key Documents -->
+                <div class="po-card">
+                  <div class="po-card-eye">Key Documents</div>
+                  <div id="ptv-docs-list"></div>
+                </div>
+                <!-- People Involved -->
+                <div class="po-card">
+                  <div class="po-card-eye">People Involved</div>
+                  <div class="pt-people-wrap" id="ptv-people-wrap">
+                    <button class="pt-person-add" onclick="openAddPersonModal()">+ Add person</button>
+                  </div>
+                </div>
               </div>
-              <!-- Right: Key Documents dedicated box -->
-              <div class="pt-ov-docs-box">
-                <div class="pt-ov-section-hdr">Key Documents</div>
-                <div id="ptv-docs-list"></div>
-              </div>
             </div>
-            <!-- Active Collaborators strip -->
-            <div class="pt-ov-collabs-strip" id="ptv-shares-wrap" style="display:none">
-              <div id="ptv-shares-list" style="display:flex;flex-direction:column;gap:0;padding:4px 0"></div>
-            </div>
-            <!-- Full width: Description / Contract / People / Timeline -->
-            <div class="pt-field"><label>Description</label><div id="ptv-desc" style="font-size:13px;color:var(--ink);line-height:1.7;padding:6px 0;white-space:pre-wrap">—</div></div>
-            <div class="pt-field" id="ptv-contract-wrap" style="display:none">
-              <label>Project contract / scope notes</label>
-              <div id="ptv-contract" style="font-size:13px;color:var(--ink);line-height:1.7;padding:10px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);white-space:pre-wrap"></div>
-            </div>
-            <div class="pt-field">
-              <label>People involved</label>
-              <div class="pt-people-wrap" id="ptv-people-wrap">
-                <button class="pt-person-add" onclick="openAddPersonModal()">+ Add person</button>
-              </div>
-            </div>
-            <!-- Active Timeline -->
-            <div class="pt-ov-section">
-              <div class="pt-ov-section-hdr">Active Timeline</div>
-              <div id="ptv-timeline-list"></div>
+            <!-- Shares (hidden, preserved for functionality) -->
+            <div id="ptv-shares-wrap" style="display:none">
+              <div id="ptv-shares-list"></div>
             </div>
           </div>
           <!-- Milestones tab -->
@@ -5970,7 +6095,7 @@ function _renderClientListSync() {
     var projHtml = linkedProjs.length
       ? linkedProjs.map(function(p){ return '<span class="ct-proj-chip" onclick="event.stopPropagation();openPtProjectFromPipeline(\'' + p.id + '\')" title="Open project">' + escapeHTML(p.name) + '</span>'; }).join('')
       : '<span style="color:var(--ink-light);font-size:12px">None</span>';
-    return '<div class="ct-row" style="cursor:pointer" onclick="openEditClientModal(\'' + escapeHTML(cl.id) + '\')">' +
+    return '<div class="ct-row" style="cursor:pointer" onclick="openClientDetailPopup(\'' + escapeHTML(cl.id) + '\')">' +
       '<div class="ct-cell name">' + escapeHTML(cl.name||'') + '</div>' +
       '<div class="ct-cell email">' + escapeHTML(cl.email||'—') + '</div>' +
       '<div class="ct-cell" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.phone||'—') + '</div>' +
@@ -6137,6 +6262,124 @@ async function saveEditClient() {
   renderClientList();
   closeEditClientModal();
   showToast('✓ Client updated');
+}
+
+// ── Client detail popup ─────────────────────────────────────
+var _clDetailId = null;
+
+function openClientDetailPopup(clientId) {
+  var cl = (_clients || []).find(function(c){ return c.id === clientId; });
+  if (!cl) return;
+  _clDetailId = clientId;
+  // Header
+  var avEl = document.getElementById('cl-detail-av');
+  var nameEl = document.getElementById('cl-detail-name');
+  var companyEl = document.getElementById('cl-detail-company');
+  var ini = (cl.name||'CL').slice(0,2).toUpperCase();
+  if (avEl) avEl.textContent = ini;
+  if (nameEl) nameEl.textContent = cl.name || '';
+  if (companyEl) companyEl.textContent = cl.company || '';
+  // Contact info
+  var infoEl = document.getElementById('cl-detail-info-grid');
+  if (infoEl) {
+    var items = [];
+    if (cl.email) items.push('<div class="cl-detail-info-item">✉ <a href="mailto:' + escapeHTML(cl.email) + '" style="color:inherit;text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.email) + '</a></div>');
+    if (cl.phone) items.push('<div class="cl-detail-info-item">📞 ' + escapeHTML(cl.phone) + '</div>');
+    if (cl.address) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1">📍 ' + escapeHTML(cl.address) + '</div>');
+    infoEl.innerHTML = items.length ? items.join('') : '<div style="font-size:13px;color:var(--ink-light);grid-column:1/-1">No contact info.</div>';
+  }
+  // Projects
+  _clDetailRenderProjects();
+  _clDetailPopulateProjectSel();
+  // Show
+  var popup = document.getElementById('cl-detail-popup');
+  if (popup) popup.style.display = 'flex';
+}
+
+function closeClientDetailPopup() {
+  var popup = document.getElementById('cl-detail-popup');
+  if (popup) popup.style.display = 'none';
+  _clDetailId = null;
+}
+
+function _clDetailRenderProjects() {
+  var el = document.getElementById('cl-detail-proj-list');
+  if (!el || !_clDetailId) return;
+  var cl = (_clients || []).find(function(c){ return c.id === _clDetailId; });
+  if (!cl) return;
+  var linked = (_ptProjects || []).filter(function(p){ return p.client_name === cl.name; });
+  if (!linked.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--ink-light);padding:4px 0">No projects linked yet.</div>';
+    return;
+  }
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  el.innerHTML = linked.map(function(p) {
+    var stLabel = (p.status||'planning').replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var endLbl = p.end_date ? ' · Due ' + MON[new Date(p.end_date+'T00:00:00').getMonth()] + ' ' + new Date(p.end_date+'T00:00:00').getFullYear() : '';
+    return '<div class="cl-detail-proj-row">' +
+      '<div style="min-width:0;flex:1;cursor:pointer" onclick="closeClientDetailPopup();selectPtProject(\'' + escapeHTML(p.id) + '\')">' +
+        '<div class="cl-detail-proj-name">' + escapeHTML(p.name) + '</div>' +
+        '<div class="cl-detail-proj-meta">' + stLabel + endLbl + '</div>' +
+      '</div>' +
+      '<button class="ct-btn del" onclick="clDetailUnlinkProject(\'' + escapeHTML(p.id) + '\')" style="font-size:11px;margin-left:8px;flex-shrink:0">Unlink</button>' +
+    '</div>';
+  }).join('');
+}
+
+function _clDetailPopulateProjectSel() {
+  var sel = document.getElementById('cl-detail-proj-sel');
+  if (!sel || !_clDetailId) return;
+  var cl = (_clients || []).find(function(c){ return c.id === _clDetailId; });
+  if (!cl) return;
+  var unlinked = (_ptProjects || []).filter(function(p){ return p.client_name !== cl.name; });
+  sel.innerHTML = '<option value="">— add a project —</option>' +
+    unlinked.map(function(p){ return '<option value="' + escapeHTML(p.id) + '">' + escapeHTML(p.name) + '</option>'; }).join('');
+}
+
+async function clDetailLinkProject() {
+  var sel = document.getElementById('cl-detail-proj-sel');
+  var projId = sel && sel.value;
+  if (!projId || !_clDetailId) { showToast('Select a project first'); return; }
+  var cl = (_clients || []).find(function(c){ return c.id === _clDetailId; });
+  var proj = (_ptProjects || []).find(function(p){ return p.id === projId; });
+  if (!cl || !proj) return;
+  proj.client_name = cl.name;
+  _clDetailRenderProjects();
+  _clDetailPopulateProjectSel();
+  renderClientList();
+  showToast('✓ Project linked');
+  if (_currentUser && _supabase) {
+    var res = await _supabase.from('projects').update({ client_name: cl.name, updated_at: new Date().toISOString() }).eq('id', projId).eq('user_id', _currentUser.id);
+    if (res.error) showToast('Saved locally — sync error: ' + res.error.message);
+  }
+}
+
+async function clDetailUnlinkProject(projId) {
+  var proj = (_ptProjects || []).find(function(p){ return p.id === projId; });
+  if (!proj) return;
+  proj.client_name = null;
+  _clDetailRenderProjects();
+  _clDetailPopulateProjectSel();
+  renderClientList();
+  showToast('✓ Project unlinked');
+  if (_currentUser && _supabase) {
+    var res = await _supabase.from('projects').update({ client_name: null, updated_at: new Date().toISOString() }).eq('id', projId).eq('user_id', _currentUser.id);
+    if (res.error) showToast('Saved locally — sync error: ' + res.error.message);
+  }
+}
+
+function clDetailOpenEdit() {
+  var id = _clDetailId;
+  closeClientDetailPopup();
+  if (id) openEditClientModal(id);
+}
+
+async function clDetailDelete() {
+  if (!_clDetailId) return;
+  if (!confirm('Delete this client? This cannot be undone.')) return;
+  var id = _clDetailId;
+  closeClientDetailPopup();
+  await deleteClient(id);
 }
 
 var _clmClientId = null;
@@ -8937,37 +9180,7 @@ function selectPtProject(id) {
   if (ptPanelHdr) ptPanelHdr.style.display = 'none';
   // Populate header
   document.getElementById('pt-detail-name').textContent = proj.name;
-  // Populate overview tab
-  var fmtDate = function(d){ return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; };
-  document.getElementById('ptv-client').textContent = proj.client_name || '—';
-  var _stEl = document.getElementById('ptv-status');
-  if (_stEl) {
-    var _stVal = (proj.status || 'planning');
-    var _stLabel = _stVal.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-    _stEl.innerHTML = '<span class="pt-status pt-status-' + _stVal.replace(/ /g,'_') + '" style="font-size:14px;padding:5px 14px;border-radius:20px;font-weight:700;letter-spacing:.03em">' + _stLabel + '</span>';
-  }
-  document.getElementById('ptv-start').textContent = fmtDate(proj.start_date);
-  document.getElementById('ptv-end').textContent = fmtDate(proj.end_date);
-  document.getElementById('ptv-budget').textContent = proj.budget ? '$' + Number(proj.budget).toLocaleString() : '—';
-  document.getElementById('ptv-desc').textContent = proj.description || '—';
-  var cw = document.getElementById('ptv-contract-wrap');
-  if (proj.contract_text) {
-    document.getElementById('ptv-contract').textContent = proj.contract_text;
-    if (cw) cw.style.display = '';
-  } else { if (cw) cw.style.display = 'none'; }
-  // Show linked client details
-  var clientCard = document.getElementById('ptv-client-card');
-  var cl = proj.client_name ? (_clients || []).find(function(c){ return c.name === proj.client_name; }) : null;
-  if (cl && clientCard) {
-    var setText = function(id, val){ var e=document.getElementById(id); if(e) e.textContent = val||''; };
-    setText('ptv-cl-email', cl.email ? '✉ ' + cl.email : '');
-    setText('ptv-cl-phone', cl.phone ? '📞 ' + cl.phone : '');
-    setText('ptv-cl-company', cl.company || '');
-    setText('ptv-cl-address', cl.address || '');
-    clientCard.style.display = '';
-  } else if (clientCard) {
-    clientCard.style.display = 'none';
-  }
+  // Overview tab client/status is now rendered by renderPtOverview() after data loads
   // Reset to overview tab
   showPtTab('overview', document.querySelector('#pt-detail-view .pt-tab'));
   // Load sub-data
@@ -9034,13 +9247,15 @@ function _parseAssignees(t) {
 function renderPtOverview() {
   var ts = window._ptTasks || [];
   var hr = window._ptHours || [];
+  var me = window._ptMeetings || [];
+  var proj = (_ptProjects || []).find(function(p){ return p.id === _ptCurrentId; });
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  // Productivity Pulse — total hours logged
+  // ── Metrics strip ──────────────────────────────────────────
   var totalHrs = hr.reduce(function(s,h){ return s + (parseFloat(h.hours)||0); }, 0);
   var phEl = document.getElementById('ptv-pulse-hrs');
   if (phEl) phEl.textContent = totalHrs.toFixed(1);
 
-  // Upcoming deadlines — within 7 days, not done
   var now = new Date(); now.setHours(0,0,0,0);
   var soon = new Date(now.getTime() + 7*24*60*60*1000);
   var upcomingCount = ts.filter(function(t) {
@@ -9050,9 +9265,8 @@ function renderPtOverview() {
     return d >= now && d <= soon;
   }).length;
   var dcEl = document.getElementById('ptv-deadline-count');
-  if (dcEl) dcEl.textContent = String(upcomingCount).padStart(2, '0');
+  if (dcEl) dcEl.textContent = String(upcomingCount).padStart(2,'0');
 
-  // Task completion %
   var doneTasks = ts.filter(function(t){ return t.status === 'done'; }).length;
   var totalTasks = ts.length;
   var taskPct = totalTasks > 0 ? Math.round(doneTasks / totalTasks * 100) : 0;
@@ -9060,13 +9274,12 @@ function renderPtOverview() {
   var tdSubEl = document.getElementById('ptv-task-done-sub');
   var tdBarEl = document.getElementById('ptv-task-bar');
   if (tdPctEl) tdPctEl.textContent = totalTasks > 0 ? taskPct + '%' : '—';
-  if (tdSubEl) tdSubEl.textContent = totalTasks > 0 ? doneTasks + ' of ' + totalTasks + ' tasks done' : 'no tasks yet';
+  if (tdSubEl) tdSubEl.textContent = totalTasks > 0 ? doneTasks + ' of ' + totalTasks + ' done' : 'no tasks yet';
   if (tdBarEl) {
     setTimeout(function(){ tdBarEl.style.width = taskPct + '%'; }, 100);
-    tdBarEl.className = 'util-fill' + (taskPct >= 80 ? '' : taskPct >= 50 ? ' warn' : '');
+    tdBarEl.className = 'po-metric-bar-fill' + (taskPct >= 50 ? ' acc' : '');
   }
 
-  // Overdue tasks — count open tasks past their due date
   var overdueCount = ts.filter(function(t) {
     if (t.status === 'done') return false;
     if (!t.due_date) return false;
@@ -9074,62 +9287,173 @@ function renderPtOverview() {
     return d < now;
   }).length;
   var ovEl = document.getElementById('ptv-overdue-count');
-  var ovSubEl = document.getElementById('ptv-overdue-sub');
   var ovNoteEl = document.getElementById('ptv-overdue-note');
   if (ovEl) {
-    ovEl.textContent = String(overdueCount).padStart(2, '0');
+    ovEl.textContent = String(overdueCount).padStart(2,'0');
     ovEl.style.color = overdueCount > 0 ? '#DC2626' : 'var(--sage)';
   }
-  if (ovSubEl) ovSubEl.textContent = overdueCount === 1 ? 'overdue task' : 'overdue tasks';
   if (ovNoteEl) {
-    ovNoteEl.textContent = overdueCount === 0 ? '✓ All on schedule' : '⚠ Needs attention';
-    ovNoteEl.style.color = overdueCount === 0 ? 'var(--sage)' : '#DC2626';
+    ovNoteEl.textContent = overdueCount === 0 ? '✓ All on schedule' : overdueCount + ' need' + (overdueCount > 1 ? '' : 's') + ' attention';
+    ovNoteEl.className = 'po-metric-sub' + (overdueCount > 0 ? ' late' : '');
   }
 
-
-  // Active Timeline — all non-done tasks sorted by due date
+  // ── Project Plan (active tasks as milestone list) ──────────
   var active = ts.filter(function(t){ return t.status !== 'done'; })
     .slice().sort(function(a,b){
       var da = a.due_date ? new Date(a.due_date+'T00:00:00').getTime() : 9e15;
       var db = b.due_date ? new Date(b.due_date+'T00:00:00').getTime() : 9e15;
       return da - db;
     });
-  var tlEl = document.getElementById('ptv-timeline-list');
-  if (tlEl) {
+  var planEl = document.getElementById('ptv-plan-list');
+  if (planEl) {
     if (!active.length) {
-      tlEl.innerHTML = '<div style="font-size:13px;color:var(--ink-light);padding:10px 0">No active tasks yet.</div>';
+      planEl.innerHTML = '<li style="padding:12px 0;font-size:13px;color:var(--ink-light)">No active tasks. <button class="po-link" onclick="showPtTab(\'tasks\', document.querySelectorAll(\'#pt-detail-view .pt-tab\')[2])">Add a task →</button></li>';
     } else {
-      tlEl.innerHTML = active.map(function(t) {
-        var isOverdue = _isOverdue(t.due_date, false);
-        var isInProgress = t.status === 'in_progress';
-        var dotColor = isOverdue ? '#DC2626' : isInProgress ? '#059669' : '#94a3b8';
-        var stLabel = isOverdue ? 'Overdue' : isInProgress ? 'In Progress' : 'Scheduled';
-        var stStyle = isOverdue ? 'color:#B91C1C;background:#FEE2E2' : isInProgress ? 'color:#065F46;background:#D1FAE5' : 'color:#475569;background:#F1F5F9';
-        var assignees = _parseAssignees(t);
-        var avatars = assignees.slice(0,3).map(function(a){
-          var ini = a.trim().split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
-          return '<span class="pt-assignee" title="' + escapeHTML(a) + '">' + ini + '</span>';
-        }).join('');
-        var attachArr = []; try { attachArr = JSON.parse(t.attachments||'[]'); } catch(e){}
-        return '<div class="pt-timeline-item">' +
-          '<span class="pt-timeline-dot" style="background:' + dotColor + '"></span>' +
-          '<div class="pt-timeline-body">' +
-            '<div class="pt-timeline-top">' +
-              '<span class="pt-timeline-title">' + escapeHTML(t.title) + '</span>' +
-              '<span class="pt-timeline-status" style="' + stStyle + '">' + stLabel + '</span>' +
+      var prioStyle = { high:'background:#FEE2E2;color:#B91C1C', medium:'background:#FEF3C7;color:#92400E', low:'background:#D1FAE5;color:#065F46' };
+      var prioLabel = { high:'High', medium:'Med', low:'Low' };
+      planEl.innerHTML = active.slice(0, 8).map(function(t) {
+        var inProgress = t.status === 'in_progress';
+        var overdue = _isOverdue(t.due_date, false);
+        var rowClass = 'po-ms-row' + (inProgress ? ' active' : '');
+        var markContent = inProgress ? '<span class="po-ms-dot"></span>' : '';
+        var dateStr = t.due_date ? (MON[new Date(t.due_date+'T00:00:00').getMonth()] + ' ' + new Date(t.due_date+'T00:00:00').getDate()) : '';
+        var prio = t.priority || 'medium';
+        return '<li class="' + rowClass + '">' +
+          '<div class="po-ms-mark">' + markContent + '</div>' +
+          '<div class="po-ms-content">' +
+            '<div class="po-ms-top">' +
+              '<b>' + escapeHTML(t.title) + '</b>' +
+              (dateStr ? '<span class="po-ms-date' + (overdue ? ' late' : '') + '">' + (overdue ? '⚠ ' : '') + dateStr + '</span>' : '') +
             '</div>' +
-            '<div class="pt-timeline-meta">' +
-              (t.due_date ? '<span class="pt-timeline-date' + (isOverdue ? ' overdue' : '') + '">' + (isOverdue ? '⚠ ' : '') + t.due_date.slice(0,10) + '</span>' : '') +
-              (attachArr.length ? '<span style="font-size:11px;color:var(--ink-light)">📎 ' + attachArr.length + '</span>' : '') +
-              (avatars ? '<span class="pt-assignee-chips">' + avatars + '</span>' : '') +
-            '</div>' +
+            (t.notes ? '<div class="po-ms-sub">' + escapeHTML(t.notes.slice(0,80)) + (t.notes.length > 80 ? '…' : '') + '</div>' : '') +
           '</div>' +
+          '<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:3px;' + prioStyle[prio] + '">' + prioLabel[prio] + '</span>' +
+        '</li>';
+      }).join('');
+    }
+  }
+
+  // ── Next Up (dark sidebar card) ────────────────────────────
+  var nextTask = active[0] || null;
+  var nextCountEl = document.getElementById('ptv-next-count');
+  var nextTitleEl = document.getElementById('ptv-next-title');
+  var nextDueEl = document.getElementById('ptv-next-due');
+  var nextDoneBtnEl = document.getElementById('ptv-next-done-btn');
+  var nextAllBtnEl = document.getElementById('ptv-next-all-btn');
+  if (nextCountEl) nextCountEl.textContent = active.length;
+  if (nextTitleEl) nextTitleEl.textContent = nextTask ? nextTask.title : 'All clear — no pending tasks!';
+  if (nextDueEl) {
+    if (nextTask && nextTask.due_date) {
+      var d2 = new Date(nextTask.due_date + 'T00:00:00');
+      var isNextOverdue = d2 < now;
+      nextDueEl.textContent = (isNextOverdue ? '⚠ Overdue · ' : 'Due ') + MON[d2.getMonth()] + ' ' + d2.getDate() + ', ' + d2.getFullYear();
+    } else {
+      nextDueEl.textContent = nextTask ? 'No due date' : '';
+    }
+  }
+  window._ptNextTaskIdx = nextTask ? ts.indexOf(nextTask) : -1;
+  if (nextDoneBtnEl) nextDoneBtnEl.style.display = nextTask ? '' : 'none';
+  if (nextAllBtnEl) nextAllBtnEl.style.gridColumn = nextTask ? '' : '1/-1';
+
+  // ── Client card ────────────────────────────────────────────
+  var clientEl = document.getElementById('ptv-client-detail-content');
+  if (clientEl && proj) {
+    var cl = proj.client_name ? (_clients || []).find(function(c){ return c.name === proj.client_name; }) : null;
+    var statusVal = proj.status || 'planning';
+    var statusLabel = statusVal.replace(/_/g,' ').replace(/\b\w/g,function(c){ return c.toUpperCase(); });
+    var statusColor = { active:'#009668', completed:'var(--ink-mid)', planning:'#1967D2', in_review:'#D97706', on_hold:'#9CA3AF' }[statusVal] || '#1967D2';
+    var clientColor = getProjectColor(_ptCurrentId);
+    var fmtShort = function(d){ if (!d) return ''; var dt = new Date(d+'T00:00:00'); return MON[dt.getMonth()]+' '+dt.getFullYear(); };
+    var dateRange = [fmtShort(proj.start_date), fmtShort(proj.end_date)].filter(Boolean).join(' → ');
+    clientEl.innerHTML =
+      '<div class="po-hero-tag">' +
+        '<span class="po-hero-sw" style="background:' + clientColor + '"></span>' +
+        '<span class="po-hero-client">' + escapeHTML(proj.client_name || 'No client') + '</span>' +
+        '<span class="po-hero-sep">·</span>' +
+        '<span class="po-hero-status"><span class="po-status-dot" style="background:' + statusColor + ';box-shadow:0 0 0 3px ' + statusColor + '30"></span>' + statusLabel + '</span>' +
+      '</div>' +
+      (dateRange ? '<div class="po-hero-meta" style="margin-bottom:6px">' + escapeHTML(dateRange) + '</div>' : '') +
+      (proj.budget ? '<div style="font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1;margin-bottom:6px">$' + Number(proj.budget).toLocaleString() + '<small style="font-size:12px;font-weight:500;color:var(--ink-light);margin-left:4px">budget</small></div>' : '') +
+      (cl ?
+        '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:3px">' +
+          (cl.email ? '<div style="font-size:12px;color:var(--ink-mid)">✉ <a href="mailto:' + escapeHTML(cl.email) + '" style="color:inherit;text-decoration:none">' + escapeHTML(cl.email) + '</a></div>' : '') +
+          (cl.phone ? '<div style="font-size:12px;color:var(--ink-mid)">📞 ' + escapeHTML(cl.phone) + '</div>' : '') +
+          (cl.company ? '<div style="font-size:12px;color:var(--ink-light)">' + escapeHTML(cl.company) + '</div>' : '') +
+        '</div>'
+      : '') +
+      (proj.client_name ? '<button class="po-link" style="margin-top:8px;display:block;text-align:left;padding:4px 0;font-size:11px" onclick="openClientDetailByName(\'' + escapeHTML(proj.client_name).replace(/'/g,'&#39;') + '\')">Open in Contacts →</button>' : '') +
+      (!proj.client_name ? '<button class="po-link" style="display:block;padding:4px 0" onclick="openPtModal(\'edit-project\')">Link a client →</button>' : '');
+  }
+
+  // ── Time This Week bar chart ───────────────────────────────
+  var today = new Date(); today.setHours(0,0,0,0);
+  var dow = (today.getDay() + 6) % 7; // Monday=0
+  var weekStart = new Date(today.getTime() - dow * 86400000);
+  var weekDays = [];
+  for (var wi = 0; wi < 7; wi++) weekDays.push(new Date(weekStart.getTime() + wi * 86400000));
+  var DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var dayHours = weekDays.map(function(d) {
+    var ds = d.toISOString().slice(0,10);
+    return hr.filter(function(h){ return h.log_date && h.log_date.slice(0,10) === ds; })
+      .reduce(function(s,h){ return s + (parseFloat(h.hours)||0); }, 0);
+  });
+  var maxH = Math.max.apply(null, dayHours.concat([1]));
+  var weekTotal = dayHours.reduce(function(s,v){ return s+v; }, 0);
+  var chartEl = document.getElementById('ptv-hours-chart');
+  if (chartEl) {
+    chartEl.innerHTML = weekDays.map(function(d, i) {
+      var isToday = d.toISOString().slice(0,10) === today.toISOString().slice(0,10);
+      var barPx = dayHours[i] > 0 ? Math.max(4, Math.round(dayHours[i] / maxH * 56)) : 0;
+      return '<div class="po-hours-day">' +
+        '<div class="po-hours-bar" style="height:56px">' +
+          (barPx > 0 ? '<div class="po-hours-bar-fill' + (isToday?' today':'') + '" style="height:' + barPx + 'px" title="' + dayHours[i].toFixed(1) + ' hrs"></div>' : '') +
+        '</div>' +
+        '<div class="po-hours-d' + (isToday?' today':'') + '">' + DAY_LABELS[i] + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  var wkTotEl = document.getElementById('ptv-hours-week-total');
+  if (wkTotEl) wkTotEl.innerHTML = weekTotal.toFixed(1) + ' <small style="font-size:10px;font-weight:400;color:var(--ink-mid)">hrs</small>';
+
+  // ── Recent Activity ────────────────────────────────────────
+  var actEl = document.getElementById('ptv-activity-list');
+  if (actEl) {
+    var activities = [];
+    me.slice(0,4).forEach(function(m) {
+      activities.push({ type:'meeting', title: m.purpose || 'Meeting', date: m.meeting_date || m.created_at || '' });
+    });
+    hr.slice(0,4).forEach(function(h) {
+      var hLabel = (parseFloat(h.hours)||0).toFixed(1) + 'h logged' + (h.notes ? ' — ' + h.notes.slice(0,50) : '');
+      activities.push({ type:'time', title: hLabel, date: h.log_date || h.created_at || '' });
+    });
+    activities.sort(function(a,b){ return (b.date||'') > (a.date||'') ? 1 : -1; });
+    activities = activities.slice(0, 5);
+    var fmtRel = function(dateStr) {
+      if (!dateStr) return '';
+      var d = new Date(dateStr.includes('T') ? dateStr : dateStr+'T00:00:00');
+      var diff = Math.floor((new Date() - d) / 86400000);
+      if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday';
+      if (diff < 7) return diff+'d ago';
+      return MON[d.getMonth()] + ' ' + d.getDate();
+    };
+    if (!activities.length) {
+      actEl.innerHTML = '<div style="font-size:13px;color:var(--ink-light);padding:8px 0">No activity yet. Log time or add a meeting note to see activity here.</div>';
+    } else {
+      actEl.innerHTML = activities.map(function(a) {
+        var isMtg = a.type === 'meeting';
+        var bg = isMtg ? 'var(--amber-light)' : 'var(--surface)';
+        var fg = isMtg ? 'var(--amber)' : 'var(--ink-mid)';
+        var ini = isMtg ? 'MT' : 'TM';
+        return '<div class="po-act-row">' +
+          '<div class="po-act-av" style="background:' + bg + ';color:' + fg + '">' + ini + '</div>' +
+          '<div class="po-act-txt" title="' + escapeHTML(a.title) + '">' + escapeHTML(a.title) + '</div>' +
+          '<div class="po-act-time">' + fmtRel(a.date) + '</div>' +
         '</div>';
       }).join('');
     }
   }
 
-  // Key Documents — all attachments from tasks
+  // ── Key Documents ──────────────────────────────────────────
   var docs = [];
   ts.forEach(function(t) {
     var arr = []; try { arr = JSON.parse(t.attachments||'[]'); } catch(e){}
@@ -9138,22 +9462,34 @@ function renderPtOverview() {
   var docsEl = document.getElementById('ptv-docs-list');
   if (docsEl) {
     if (!docs.length) {
-      docsEl.innerHTML = '<div style="font-size:13px;color:var(--ink-light);padding:10px 0">No documents attached to tasks yet.</div>';
+      docsEl.innerHTML = '<div style="font-size:13px;color:var(--ink-light)">No documents attached to tasks yet.</div>';
     } else {
-      docsEl.innerHTML = '<div class="pt-docs-grid">' +
-        docs.map(function(d) {
-          var ext = (d.name.split('.').pop()||'').toUpperCase();
-          var icon = ext==='PDF'?'📄': (ext==='JPG'||ext==='JPEG'||ext==='PNG'||ext==='GIF')?'🖼':'📎';
-          return '<a class="pt-doc-chip" href="' + escapeHTML(d.url||'#') + '" target="_blank">' +
-            '<span class="pt-doc-icon">' + icon + '</span>' +
-            '<div style="min-width:0">' +
-              '<div class="pt-doc-name">' + escapeHTML(d.name) + '</div>' +
-              '<div class="pt-doc-task">' + escapeHTML(d.task) + '</div>' +
-            '</div>' +
-          '</a>';
-        }).join('') + '</div>';
+      docsEl.innerHTML = docs.slice(0,6).map(function(d) {
+        var ext = (d.name.split('.').pop()||'').toLowerCase();
+        var icCls = ext==='pdf'?'pdf':(ext==='doc'||ext==='docx')?'doc':ext==='fig'?'fig':(ext==='jpg'||ext==='jpeg'||ext==='png'||ext==='gif')?'img':'sig';
+        var icLbl = ext.toUpperCase().slice(0,3) || 'FIL';
+        return '<a class="po-doc-row" href="' + escapeHTML(d.url||'#') + '" target="_blank">' +
+          '<div class="po-doc-ic ' + icCls + '">' + icLbl + '</div>' +
+          '<div class="po-doc-info">' +
+            '<div class="po-doc-n">' + escapeHTML(d.name) + '</div>' +
+            '<div class="po-doc-meta">' + escapeHTML(d.task) + '</div>' +
+          '</div>' +
+          '<span class="po-doc-dl">↗</span>' +
+        '</a>';
+      }).join('');
     }
   }
+}
+
+function ptNextTaskDone() {
+  var idx = window._ptNextTaskIdx;
+  if (idx === undefined || idx < 0) return;
+  if (typeof togglePtTask === 'function') togglePtTask(idx);
+}
+
+function openClientDetailByName(name) {
+  var cl = (_clients || []).find(function(c){ return c.name === name; });
+  if (cl) openClientDetailPopup(cl.id);
 }
 
 function renderPtMilestones() {
@@ -11812,6 +12148,44 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 </script>
 
 <!-- Client → Project link modal -->
+<!-- Client detail popup -->
+<div class="cl-detail-popup" id="cl-detail-popup" style="display:none" onclick="if(event.target===this)closeClientDetailPopup()">
+  <div class="cl-detail-inner">
+    <div class="cl-detail-hdr">
+      <div class="cl-detail-av" id="cl-detail-av">CL</div>
+      <div class="cl-detail-hdr-info">
+        <div class="cl-detail-name" id="cl-detail-name">Client</div>
+        <div class="cl-detail-company" id="cl-detail-company"></div>
+      </div>
+      <button onclick="closeClientDetailPopup()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-light);padding:4px 6px;border-radius:6px;line-height:1;flex-shrink:0" title="Close">✕</button>
+    </div>
+    <div class="cl-detail-body">
+      <!-- Contact info -->
+      <div>
+        <div class="cl-detail-section-lbl">Contact Info</div>
+        <div class="cl-detail-info-grid" id="cl-detail-info-grid"></div>
+      </div>
+      <!-- Linked projects -->
+      <div>
+        <div class="cl-detail-section-lbl">Linked Projects</div>
+        <div id="cl-detail-proj-list"></div>
+        <!-- Link new project -->
+        <div class="cl-detail-link-row" style="margin-top:8px">
+          <select class="m-sel" id="cl-detail-proj-sel" style="flex:1;margin-bottom:0"><option value="">— add a project —</option></select>
+          <button class="btn-use" style="white-space:nowrap;padding:7px 14px" onclick="clDetailLinkProject()">Link</button>
+        </div>
+      </div>
+    </div>
+    <div class="cl-detail-ft">
+      <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border-color:#E74C3C" onclick="clDetailDelete()">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-outline" onclick="closeClientDetailPopup()">Close</button>
+        <button class="btn-use" onclick="clDetailOpenEdit()">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="client-link-modal">
   <div class="modal-box" style="max-width:460px">
     <div class="modal-hd">
