@@ -1404,9 +1404,34 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .timer-modal-btn.save{background:var(--ink);color:var(--cream)}
 .timer-modal-btn.save:hover{background:var(--amber)}
 .timer-modal-btn.cancel{background:none;border:1.5px solid var(--border);color:var(--ink)}
+/* ── INVOICE BUILDER VIEWS ── */
+.inv-view-back{font-size:13px;font-weight:600;color:var(--ink-mid);cursor:pointer;margin-bottom:20px;display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:7px 14px;transition:color .15s,border-color .15s}
+.inv-view-back:hover{color:var(--ink);border-color:var(--ink)}
+.inv-proj-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:20px}
+.inv-proj-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 18px;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.inv-proj-card:hover{box-shadow:0 2px 14px rgba(0,0,0,.09)}
+.inv-proj-card-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.inv-proj-card-client{font-size:12.5px;color:var(--ink-mid);margin-bottom:10px}
+.inv-proj-card-count{font-family:var(--font-mono);font-size:11px;color:var(--ink-light);background:var(--cream);padding:3px 8px;border-radius:20px;display:inline-block}
+.inv-proj-inv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1.5px solid var(--border)}
+.inv-proj-inv-name{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+.inv-proj-inv-meta{font-size:13px;color:var(--ink-light);margin-top:2px}
+.inv-proj-inv-table{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.inv-proj-inv-row{display:grid;grid-template-columns:1fr 1.2fr 100px 110px 80px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.inv-proj-inv-row:hover{background:var(--cream)}
+.inv-proj-inv-row:last-child{border-bottom:none}
+.inv-proj-inv-num{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ink)}
+.inv-proj-inv-client{font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-proj-inv-amount{font-size:14px;font-weight:700;color:var(--ink);text-align:right}
+.inv-proj-inv-date{font-size:12px;color:var(--ink-light);text-align:center}
+.inv-proj-inv-status{text-align:right}
+.inv-list-empty{text-align:center;padding:48px 20px;color:var(--ink-light);font-size:14px;border:1.5px dashed var(--border);border-radius:var(--radius);margin-top:12px}
+.inv-vp-head{margin-bottom:4px}
+.inv-vp-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:4px}
+.inv-vp-sub{font-size:14px;color:var(--ink-light)}
 /* ── DURATION INPUT (hrs + min boxes) ── */
 .tr-wrap{display:inline-flex;align-items:center;gap:5px}
-.tr-hrs,.tr-min{width:46px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-weight:600;text-align:center;background:var(--cream);color:var(--ink);font-family:var(--font-mono,monospace);-moz-appearance:textfield}
+.tr-hrs,.tr-min{width:58px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-weight:600;text-align:center;background:var(--cream);color:var(--ink);font-family:var(--font-mono,monospace);-moz-appearance:textfield}
 .tr-hrs::-webkit-outer-spin-button,.tr-hrs::-webkit-inner-spin-button,.tr-min::-webkit-outer-spin-button,.tr-min::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .tr-hrs:focus,.tr-min:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(0,150,104,.15)}
 .tr-sep{font-size:11px;font-weight:600;color:var(--ink-mid)}
@@ -1697,7 +1722,7 @@ input[type=number]{-moz-appearance:textfield}
 /* Modal */
 .pt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:200;align-items:center;justify-content:center}
 .pt-modal-overlay.open{display:flex}
-.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
 .pt-modal-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px}
 .pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 @media(max-width:860px){.pt-layout{grid-template-columns:1fr}}
@@ -1900,7 +1925,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:flex-start}
 .po-main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .po-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px}
-.po-card-eye{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
+.po-card-eye{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
 .po-card-hdr-tight{margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .po-card-hdr-tight .po-card-eye{margin-bottom:0}
 .po-link{font-size:12px;color:var(--ink-mid);font-weight:600;padding:2px 6px;border-radius:4px;background:none;border:none;cursor:pointer}
@@ -2010,8 +2035,8 @@ input[type=number]{-moz-appearance:textfield}
 /* key facts card */
 .po-kf-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--border)}
 .po-kf-row:last-child{border-bottom:none}
-.po-kf-lbl{font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-.po-kf-val{font-size:13px;font-weight:600;color:var(--ink)}
+.po-kf-lbl{font-family:var(--font-mono);font-size:11px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.po-kf-val{font-size:14.5px;font-weight:600;color:var(--ink)}
 /* new-project client popup */
 .ptc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1100;display:none;align-items:center;justify-content:center;padding:16px}
 .ptc-overlay.open{display:flex}
@@ -3263,12 +3288,35 @@ var RateLimiter = (function() {
 
       <!-- ─── INVOICE BUILDER ─── -->
       <div class="tmpl-panel" id="panel-invoice">
-        <div class="tv-header">
-          <div class="tv-eyebrow"><span class="tv-tag" style="background:var(--sage-light);color:var(--sage)">Invoicing & Payments</span><span class="tv-tag" style="background:var(--amber-light);color:var(--amber)">Interactive</span></div>
-          <div class="tv-title">Invoice <em>Builder</em></div>
-          <div class="tv-desc">Fill in the panel, watch the invoice update live. Add line items, set tax and discount. Download as PDF when ready.</div>
+        <!-- VIEW 1: Project Picker -->
+        <div id="inv-view-projects">
+          <div class="tv-header">
+            <div class="tv-eyebrow"><span class="tv-tag" style="background:var(--sage-light);color:var(--sage)">Invoicing &amp; Payments</span><span class="tv-tag" style="background:var(--amber-light);color:var(--amber)">Interactive</span></div>
+            <div class="tv-title">Invoice <em>Builder</em></div>
+            <div class="tv-desc">Select a project to view its invoices or create a new one.</div>
+          </div>
+          <div class="inv-vp-head">
+            <div class="inv-vp-title">Choose a project</div>
+            <div class="inv-vp-sub">Pick a project from your tracker to manage its invoices.</div>
+          </div>
+          <div id="inv-proj-cards" class="inv-proj-cards-grid"></div>
         </div>
-        <div class="inv-layout">
+        <!-- VIEW 2: Project Invoices -->
+        <div id="inv-view-invoices" style="display:none">
+          <button class="inv-view-back" onclick="showInvView('projects')">&#8592; All projects</button>
+          <div class="inv-proj-inv-hdr">
+            <div>
+              <div class="inv-proj-inv-name" id="inv-cur-proj-name"></div>
+              <div class="inv-proj-inv-meta" id="inv-cur-proj-meta"></div>
+            </div>
+            <button class="btn-primary" onclick="openInvBuilderNew()">+ New invoice</button>
+          </div>
+          <div id="inv-proj-inv-list"></div>
+        </div>
+        <!-- VIEW 3: Invoice Builder -->
+        <div id="inv-view-builder" style="display:none">
+          <button class="inv-view-back" onclick="showInvView('invoices')">&#8592; Back to invoices</button>
+          <div class="inv-layout">
           <div class="inv-panel">
             <div class="ip-head"><span style="font-size:14px">⚙️</span><span class="ip-head-title">Invoice builder</span></div>
             <div class="ip-body">
@@ -3427,14 +3475,8 @@ var RateLimiter = (function() {
               </div>
             </div>
             <div class="ip-actions">
-              <div id="inv-proj-link-wrap" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-                <label style="font-size:12px;color:var(--ink-mid);white-space:nowrap">Save to project:</label>
-                <select id="inv-proj-link" style="flex:1;min-width:140px;font-family:var(--font-body);font-size:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;background:var(--white);color:var(--ink)">
-                  <option value="">— none —</option>
-                </select>
-              </div>
-              <button class="ip-btn-p" onclick="saveInvoiceToHistory()">&#128190; Save invoice</button>
-              <button class="ip-btn-g" onclick="downloadInvoicePdf()">&#128196; Download PDF</button>
+              <button class="ip-btn-p" id="inv-save-btn" onclick="saveInvoiceToHistory()" style="width:100%;margin-bottom:8px">&#128190; Save invoice</button>
+              <button class="ip-btn-g" id="inv-dl-btn" onclick="downloadInvoicePdf()" style="width:100%;display:none">&#128196; Download PDF</button>
             </div>
           </div>
           <div class="inv-preview" id="inv-preview">
@@ -3477,6 +3519,7 @@ var RateLimiter = (function() {
             </div>
           </div>
         </div>
+        </div><!-- /inv-view-builder -->
       </div>
 
 
@@ -4584,7 +4627,7 @@ function showPanel(id,el){
   if(id==='welcome'){ if(typeof wpRefreshTemplateUI==='function') wpRefreshTemplateUI(); }
   if(id==='projects'&&!window._ptInit){window._ptInit=true;loadProjects()}
   if(id==='clients'&&!window._ptInit){window._ptInit=true;loadProjects()}
-  if(id==='invoice'){ if(typeof populateInvProjSelect==='function') populateInvProjSelect(); _syncInvProjLinkUI(); }
+  if(id==='invoice'){ if(typeof renderInvBuilderProjects==='function'){ showInvView('projects'); renderInvBuilderProjects(); } _syncInvProjLinkUI(); }
   if(id==='timesheet'){ if(typeof loadGlobalTimesheet==='function') loadGlobalTimesheet(); }
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
@@ -6582,6 +6625,117 @@ async function loadInvoiceHistory() {
   if (res.data) { _invoices = res.data; renderInvHistory(); renderFinancialOverview(); }
 }
 
+
+// ═══════════════ INVOICE BUILDER — PROJECT FLOW ═══════════════
+
+var _invActiveProjectId = null;
+
+function showInvView(view) {
+  ['projects','invoices','builder'].forEach(function(v) {
+    var el = document.getElementById('inv-view-'+v);
+    if (el) el.style.display = v === view ? '' : 'none';
+  });
+}
+
+function renderInvBuilderProjects() {
+  var el = document.getElementById('inv-proj-cards');
+  if (!el) return;
+  var projects = window._ptProjects || [];
+  if (!projects.length) {
+    el.innerHTML = '<div class="inv-list-empty" style="margin-top:12px">No projects yet. Create one in the Project Tracker first, then come back to invoice it.</div>';
+    return;
+  }
+  el.innerHTML = projects.map(function(p) {
+    var invCount = (_invoices || []).filter(function(i){ return (i.project_id && i.project_id === p.id) || (!i.project_id && i.project === p.name); }).length;
+    var color = typeof getProjectColor === 'function' ? getProjectColor(p.id) : '#D4A853';
+    return '<div class="inv-proj-card" onclick="selectInvProject(\'' + escapeHTML(p.id) + '\')" style="border-left:4px solid ' + color + '">' +
+      '<div class="inv-proj-card-name">' + escapeHTML(p.name) + '</div>' +
+      (p.client_name ? '<div class="inv-proj-card-client">' + escapeHTML(p.client_name) + '</div>' : '<div class="inv-proj-card-client" style="font-style:italic;color:var(--ink-light)">No client</div>') +
+      '<div class="inv-proj-card-count">' + invCount + ' invoice' + (invCount !== 1 ? 's' : '') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function selectInvProject(projectId) {
+  _invActiveProjectId = projectId;
+  var proj = (_ptProjects || []).find(function(p){ return p.id === projectId; });
+  var nameEl = document.getElementById('inv-cur-proj-name');
+  var metaEl = document.getElementById('inv-cur-proj-meta');
+  if (nameEl) nameEl.textContent = proj ? proj.name : '';
+  if (metaEl) metaEl.textContent = (proj && proj.client_name) ? proj.client_name : '';
+  renderInvProjectHistory(projectId);
+  showInvView('invoices');
+}
+
+function renderInvProjectHistory(projectId) {
+  var el = document.getElementById('inv-proj-inv-list');
+  if (!el) return;
+  var proj = (_ptProjects || []).find(function(p){ return p.id === projectId; });
+  var invs = (_invoices || []).filter(function(i){
+    return (i.project_id && i.project_id === projectId) ||
+           (!i.project_id && proj && i.project === proj.name);
+  });
+  if (!invs.length) {
+    el.innerHTML = '<div class="inv-list-empty">No invoices yet for this project. Click &ldquo;+ New invoice&rdquo; above to create the first one.</div>';
+    return;
+  }
+  invs = invs.slice().sort(function(a,b){ return (b.issue_date||'').localeCompare(a.issue_date||''); });
+  var fmtDate = function(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—'; };
+  var fmtAmt  = function(n){ return '$'+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  el.innerHTML = '<div class="inv-proj-inv-table">' +
+    '<div style="display:grid;grid-template-columns:1fr 1.2fr 100px 110px 80px;padding:8px 16px;font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1.5px solid var(--border)">' +
+      '<span>Invoice #</span><span>Client</span><span style="text-align:right">Amount</span><span style="text-align:center">Due</span><span style="text-align:right">Status</span>' +
+    '</div>' +
+    invs.map(function(inv) {
+      var iid = escapeHTML(inv.id);
+      return '<div class="inv-proj-inv-row" onclick="openInvBuilderEdit(\'' + iid + '\')">' +
+        '<div class="inv-proj-inv-num">' + escapeHTML(inv.invoice_number||'—') + '</div>' +
+        '<div class="inv-proj-inv-client">' + escapeHTML(inv.client_name||'—') + '</div>' +
+        '<div class="inv-proj-inv-amount">' + fmtAmt(inv.total) + '</div>' +
+        '<div class="inv-proj-inv-date">' + fmtDate(inv.due_date) + '</div>' +
+        '<div class="inv-proj-inv-status"><span class="inv-badge ' + escapeHTML(inv.status||'draft') + '">' + (inv.status||'draft').charAt(0).toUpperCase()+(inv.status||'draft').slice(1) + '</span></div>' +
+        '</div>';
+    }).join('') +
+    '</div>';
+}
+
+function openInvBuilderNew() {
+  _editingInvoiceId = null;
+  if (!window._invInit) { window._invInit = true; if(typeof initInvoice==='function') initInvoice(); }
+  var clearIds = ['i-client','i-contact','i-email','i-clientaddress'];
+  clearIds.forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  var notesEl = document.getElementById('i-notes'); if(notesEl) notesEl.value='Thank you for your business.';
+  var proj = (_ptProjects||[]).find(function(p){ return p.id===_invActiveProjectId; });
+  if (proj) {
+    var pEl = document.getElementById('i-project'); if(pEl) pEl.value = proj.name;
+    if (proj.client_name) { var cEl=document.getElementById('i-client'); if(cEl) cEl.value=proj.client_name; }
+  }
+  if (typeof lineItems !== 'undefined') lineItems = [{ desc:'', qty:1, rate:0 }];
+  if (typeof renderLineItems==='function') renderLineItems();
+  if (typeof updateInv==='function') updateInv();
+  var saveBtn = document.getElementById('inv-save-btn');
+  var dlBtn = document.getElementById('inv-dl-btn');
+  if (saveBtn) { saveBtn.innerHTML = '&#128190; Save invoice'; saveBtn.disabled = false; }
+  if (dlBtn) dlBtn.style.display = 'none';
+  showInvView('builder');
+}
+
+function openInvBuilderEdit(id) {
+  var inv = (_invoices||[]).find(function(i){ return i.id === id; });
+  if (!inv) return;
+  _editingInvoiceId = id;
+  if (!window._invInit) { window._invInit = true; if(typeof initInvoice==='function') initInvoice(); }
+  if (typeof lineItems !== 'undefined') lineItems = (inv.line_items || []).map(function(li){ return Object.assign({}, li); });
+  if (typeof _loadInvFromRecord==='function') _loadInvFromRecord(inv);
+  if (typeof renderLineItems==='function') renderLineItems();
+  if (typeof updateInv==='function') updateInv();
+  var saveBtn = document.getElementById('inv-save-btn');
+  var dlBtn = document.getElementById('inv-dl-btn');
+  if (saveBtn) { saveBtn.innerHTML = '&#128190; Save changes'; saveBtn.disabled = false; }
+  if (dlBtn) dlBtn.style.display = '';
+  showInvView('builder');
+}
+
 async function saveInvoiceToHistory() {
   if (!_currentUser) { showToast('Sign in to save invoices'); return; }
   var g = function(id){ var el=document.getElementById(id); return el?el.value||'':''; };
@@ -6611,7 +6765,8 @@ async function saveInvoiceToHistory() {
     client_contact: g('i-contact').slice(0,200),
     client_phone: _getInvPhone('i-clientphone-code','i-clientphone').slice(0,50),
     client_address: g('i-clientaddress').slice(0,300),
-    status: 'draft', updated_at: new Date().toISOString()
+    status: 'draft', updated_at: new Date().toISOString(),
+    project_id: _invActiveProjectId || null
   };
   var res;
   if (_editingInvoiceId) {
@@ -6637,9 +6792,13 @@ async function saveInvoiceToHistory() {
   }
   if (res.error) { showToast('Error saving: ' + res.error.message); return; }
   renderInvHistory();
+  // Show download button after save
+  var dlBtn = document.getElementById('inv-dl-btn');
+  var saveBtn = document.getElementById('inv-save-btn');
+  if (dlBtn) dlBtn.style.display = '';
+  if (saveBtn) { saveBtn.innerHTML = '✓ Saved!'; setTimeout(function(){ if(saveBtn) saveBtn.innerHTML = '&#128190; Save invoice'; }, 2000); }
   // Also add billing entry to linked project (only on new invoices, not when editing from billing row)
-  var projSel = document.getElementById('inv-proj-link');
-  var linkedProjId = projSel && projSel.value;
+  var linkedProjId = _invActiveProjectId;
   if (linkedProjId && _currentUser && !_editingInvoiceId && !_editingBillingRowId) {
     var billingEntry = {
       project_id: linkedProjId, user_id: _currentUser.id,
@@ -9460,10 +9619,16 @@ function renderPtOverview() {
   if (factsEl && proj) {
     var fmtDate = function(d){ if (!d) return '—'; var dt = new Date(d+'T00:00:00'); return MON[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear(); };
     var currency = proj.currency || (proj.budget ? 'USD' : null);
+    var fmtBudget = function(n, cur) {
+      var num = Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+      if (!cur || cur === 'USD') return '$' + num;
+      return cur + ' ' + num;
+    };
     var factsRows = [
       { label: 'Start', value: fmtDate(proj.start_date) },
       { label: 'Due', value: fmtDate(proj.end_date) },
     ];
+    if (proj.budget) factsRows.push({ label: 'Budget', value: fmtBudget(proj.budget, currency) });
     if (currency) factsRows.push({ label: 'Currency', value: currency });
     factsEl.innerHTML = factsRows.map(function(f){
       return '<div class="po-kf-row"><span class="po-kf-lbl">' + f.label + '</span><span class="po-kf-val">' + escapeHTML(f.value) + '</span></div>';
@@ -11732,7 +11897,8 @@ function openPtModal(mode) {
       '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-start" value="' + (p.start_date ? p.start_date.slice(0,10) : '') + '"></div>' +
       '<div class="pt-field"><label>End date</label><input class="pt-inp" type="date" id="ptm-end" value="' + (p.end_date ? p.end_date.slice(0,10) : '') + '"></div>' +
       '</div>' +
-      '<div class="pt-field"><label>Budget ($)</label><input class="pt-inp" type="number" id="ptm-budget" value="' + (p.budget || '') + '" placeholder="0"></div>' +
+      '<div class="pt-field"><label>Budget</label><input class="pt-inp" type="number" id="ptm-budget" value="' + (p.budget || '') + '" placeholder="0"></div>' +
+      '<div class="pt-field"><label>Currency</label><select class="pt-sel" id="ptm-currency"><option value="USD"' + (p.currency==\'USD\'||!p.currency?' selected':'') + '>USD — US Dollar</option><option value="EUR"' + (p.currency==\'EUR\'?' selected':'') + '>EUR — Euro</option><option value="GBP"' + (p.currency==\'GBP\'?' selected':'') + '>GBP — British Pound</option><option value="AUD"' + (p.currency==\'AUD\'?' selected':'') + '>AUD — Australian Dollar</option><option value="CAD"' + (p.currency==\'CAD\'?' selected':'') + '>CAD — Canadian Dollar</option><option value="SGD"' + (p.currency==\'SGD\'?' selected':'') + '>SGD — Singapore Dollar</option><option value="JPY"' + (p.currency==\'JPY\'?' selected':'') + '>JPY — Japanese Yen</option><option value="INR"' + (p.currency==\'INR\'?' selected':'') + '>INR — Indian Rupee</option><option value="MYR"' + (p.currency==\'MYR\'?' selected':'') + '>MYR — Malaysian Ringgit</option><option value="IDR"' + (p.currency==\'IDR\'?' selected':'') + '>IDR — Indonesian Rupiah</option><option value="PHP"' + (p.currency==\'PHP\'?' selected':'') + '>PHP — Philippine Peso</option><option value="BRL"' + (p.currency==\'BRL\'?' selected':'') + '>BRL — Brazilian Real</option></select></div>' +
       '<div class="pt-field"><label>Description</label><textarea class="pt-ta" id="ptm-desc">' + escapeHTML(p.description || '') + '</textarea></div>' +
       '<div class="pt-field"><label>Contract / scope notes</label><textarea class="pt-ta" id="ptm-contract" style="min-height:120px">' + escapeHTML(p.contract_text || '') + '</textarea></div>' +
       '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="savePtProject()">Save project</button></div>';
@@ -11740,8 +11906,8 @@ function openPtModal(mode) {
     html = '<div class="pt-modal-title">Add milestone</div>' +
       '<div class="pt-field"><label>Milestone name *</label><input class="pt-inp" id="ptm-ms-title" placeholder="e.g. First draft delivered"></div>' +
       '<div class="pt-grid2">' +
-      '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-ms-start"></div>' +
-      '<div class="pt-field"><label>Due date</label><input class="pt-inp" type="date" id="ptm-ms-date"></div>' +
+      '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-ms-start" onchange="ptMsStartChange(this.value)"></div>' +
+      '<div class="pt-field"><label>Due date</label><input class="pt-inp" type="date" id="ptm-ms-date" onchange="ptMsDueChange(this.value)"></div>' +
       '</div>' +
       '<div class="pt-field"><label>Description <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><textarea class="pt-ta" id="ptm-ms-desc" style="min-height:72px" placeholder="What does this milestone involve?"></textarea></div>' +
       '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="savePtMilestone()">Add milestone</button></div>';
@@ -11845,6 +12011,7 @@ async function savePtProject() {
     client_name: g('ptm-client'), status: g('ptm-status'),
     start_date: g('ptm-start') || null, end_date: g('ptm-end') || null,
     budget: parseFloat(g('ptm-budget')) || null,
+    currency: g('ptm-currency') || 'USD',
     description: g('ptm-desc'), contract_text: g('ptm-contract'),
     updated_at: new Date().toISOString()
   };
@@ -11904,9 +12071,23 @@ async function savePtProject() {
   closePtModal();
   renderClientList();
   renderPtList();
+  if (typeof renderInvBuilderProjects === 'function') { var _ibp = document.getElementById('inv-proj-cards'); if (_ibp) renderInvBuilderProjects(); }
   if (typeof renderGlobalGantt === 'function') renderGlobalGantt();
   if (_ptModalMode === 'edit-project' && _ptCurrentId) selectPtProject(_ptCurrentId);
   showToast('\u2713 Project saved');
+}
+
+function ptMsStartChange(v) {
+  var dueEl = document.getElementById('ptm-ms-date');
+  if (!dueEl) return;
+  if (v) dueEl.min = v;
+  if (v && dueEl.value && dueEl.value < v) { dueEl.value = v; }
+}
+function ptMsDueChange(v) {
+  var startEl = document.getElementById('ptm-ms-start');
+  if (!startEl) return;
+  if (v) startEl.max = v;
+  if (v && startEl.value && startEl.value > v) { startEl.value = v; }
 }
 
 async function savePtMilestone() {
@@ -11917,10 +12098,11 @@ async function savePtMilestone() {
   var startEl = document.getElementById('ptm-ms-start');
   var descEl = document.getElementById('ptm-ms-desc');
   var descVal = descEl ? descEl.value.trim() : '';
+  var startVal = startEl && startEl.value || null;
+  var dueVal = document.getElementById('ptm-ms-date')&&document.getElementById('ptm-ms-date').value || null;
+  if (startVal && dueVal && dueVal < startVal) { showToast('Due date cannot be earlier than start date'); _ptSaving = false; return; }
   var payload = { project_id: _ptCurrentId, user_id: _currentUser.id, title: title,
-    start_date: startEl && startEl.value || null,
-    due_date: document.getElementById('ptm-ms-date')&&document.getElementById('ptm-ms-date').value || null,
-    completed: false };
+    start_date: startVal, due_date: dueVal, completed: false };
   var res = await _supabase.from('project_milestones').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   // Store description in localStorage (avoids schema column dependency)
@@ -12074,8 +12256,8 @@ function openPtEditMilestone(i) {
   body.innerHTML = '<div class="pt-modal-title">Edit milestone</div>' +
     '<div class="pt-field"><label>Milestone name *</label><input class="pt-inp" id="ptm-ms-title" value="' + escapeHTML(m.title || '') + '"></div>' +
     '<div class="pt-grid2">' +
-    '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-ms-start" value="' + (m.start_date ? m.start_date.slice(0,10) : '') + '"></div>' +
-    '<div class="pt-field"><label>Due date</label><input class="pt-inp" type="date" id="ptm-ms-date" value="' + (m.due_date ? m.due_date.slice(0,10) : '') + '"></div>' +
+    '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-ms-start" value="' + (m.start_date ? m.start_date.slice(0,10) : '') + '" onchange="ptMsStartChange(this.value)"></div>' +
+    '<div class="pt-field"><label>Due date</label><input class="pt-inp" type="date" id="ptm-ms-date" value="' + (m.due_date ? m.due_date.slice(0,10) : '') + '" onchange="ptMsDueChange(this.value)"></div>' +
     '</div>' +
     '<div class="pt-field"><label>Description <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><textarea class="pt-ta" id="ptm-ms-desc" style="min-height:72px" placeholder="What does this milestone involve?">' + escapeHTML(m.description || (function(){ try{ return localStorage.getItem('fk_ms_desc_'+m.id)||''; }catch(e){ return ''; } })()) + '</textarea></div>' +
     '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="updatePtMilestone()">Save changes</button></div>';
@@ -12092,7 +12274,10 @@ async function updatePtMilestone() {
   var dueEl = document.getElementById('ptm-ms-date');
   var descEl = document.getElementById('ptm-ms-desc');
   var descVal = descEl ? descEl.value.trim() : '';
-  var payload = { title: title, start_date: startEl && startEl.value || null, due_date: dueEl && dueEl.value || null };
+  var startVal = startEl && startEl.value || null;
+  var dueVal = dueEl && dueEl.value || null;
+  if (startVal && dueVal && dueVal < startVal) { showToast('Due date cannot be earlier than start date'); return; }
+  var payload = { title: title, start_date: startVal, due_date: dueVal };
   var res = await _supabase.from('project_milestones').update(payload).eq('id', ms[_ptEditIdx].id).eq('user_id', _currentUser.id).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   // Store description in localStorage (avoids schema column dependency)
@@ -12110,6 +12295,7 @@ async function togglePtMilestone(i) {
   ms[i].completed = !ms[i].completed;
   await _supabase.from('project_milestones').update({completed: ms[i].completed}).eq('id', ms[i].id).eq('user_id', _currentUser.id);
   renderPtMilestones();
+  renderPtOverview();
 }
 
 async function togglePtTask(i) {
