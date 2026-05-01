@@ -6561,8 +6561,7 @@ function fillInvoiceFromClient(id) {
   set('i-contact', cl.contact_person||cl.name);
   set('i-email', cl.email);
   if (typeof updateInv==='function') updateInv();
-  showPanel('invoice', document.getElementById('nav-invoice'));
-  showToast('\u2713 Invoice pre-filled from client directory');
+  showToast('\u2713 Client details filled in');
 }
 
 // Client dropdown in invoice builder
@@ -6673,7 +6672,8 @@ function renderInvProjectHistory(projectId) {
   var proj = (_ptProjects || []).find(function(p){ return p.id === projectId; });
   var invs = (_invoices || []).filter(function(i){
     return (i.project_id && i.project_id === projectId) ||
-           (!i.project_id && proj && i.project === proj.name);
+           (i._localProjectId && i._localProjectId === projectId) ||
+           (!i.project_id && !i._localProjectId && proj && i.project === proj.name);
   });
   if (!invs.length) {
     el.innerHTML = '<div class="inv-list-empty">No invoices yet for this project. Click &ldquo;+ New invoice&rdquo; above to create the first one.</div>';
@@ -6765,8 +6765,7 @@ async function saveInvoiceToHistory() {
     client_contact: g('i-contact').slice(0,200),
     client_phone: _getInvPhone('i-clientphone-code','i-clientphone').slice(0,50),
     client_address: g('i-clientaddress').slice(0,300),
-    status: 'draft', updated_at: new Date().toISOString(),
-    project_id: _invActiveProjectId || null
+    status: 'draft', updated_at: new Date().toISOString()
   };
   var res;
   if (_editingInvoiceId) {
@@ -6782,6 +6781,7 @@ async function saveInvoiceToHistory() {
     // INSERT new invoice
     res = await _supabase.from('invoices').insert(payload).select().single();
     if (!res.error && res.data) {
+      if (_invActiveProjectId) res.data._localProjectId = _invActiveProjectId;
       _invoices.unshift(res.data);
       // If this was opened from a billing row, save the permanent billing→invoice link
       if (_editingBillingRowId) {
