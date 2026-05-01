@@ -8952,6 +8952,13 @@ async function ptLoadProjectData(projectId) {
     _supabase.from('project_timesheet').select('*').eq('project_id', projectId).order('log_date', {ascending: false})
   ]);
   window._ptMilestones = ms.data || [];
+  // Rehydrate descriptions from localStorage (stored there to avoid schema dependency)
+  window._ptMilestones.forEach(function(m) {
+    if (!m.description) {
+      var stored = ''; try { stored = localStorage.getItem('fk_ms_desc_' + m.id) || ''; } catch(e) {}
+      if (stored) m.description = stored;
+    }
+  });
   // Apply user-defined sort order if saved
   var _msOrderKey = 'fk_ms_order_' + projectId;
   var _msSavedOrder = localStorage.getItem(_msOrderKey);
@@ -11909,14 +11916,20 @@ async function savePtMilestone() {
   if (!title) { showToast('Milestone name required'); return; }
   var startEl = document.getElementById('ptm-ms-start');
   var descEl = document.getElementById('ptm-ms-desc');
+  var descVal = descEl ? descEl.value.trim() : '';
   var payload = { project_id: _ptCurrentId, user_id: _currentUser.id, title: title,
     start_date: startEl && startEl.value || null,
     due_date: document.getElementById('ptm-ms-date')&&document.getElementById('ptm-ms-date').value || null,
-    description: descEl && descEl.value.trim() || null,
     completed: false };
   var res = await _supabase.from('project_milestones').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
+  // Store description in localStorage (avoids schema column dependency)
+  if (res.data && res.data.id) {
+    try { localStorage.setItem('fk_ms_desc_' + res.data.id, descVal); } catch(e) {}
+  }
   window._ptMilestones = window._ptMilestones || [];
+  // Attach description to in-memory object so overview renders it immediately
+  if (res.data) res.data.description = descVal;
   window._ptMilestones.push(res.data);
   window._ptMilestones.sort(function(a,b){ return (a.due_date||'') < (b.due_date||'') ? -1 : 1; });
   // Re-apply user-saved order if it exists
@@ -12064,7 +12077,7 @@ function openPtEditMilestone(i) {
     '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-ms-start" value="' + (m.start_date ? m.start_date.slice(0,10) : '') + '"></div>' +
     '<div class="pt-field"><label>Due date</label><input class="pt-inp" type="date" id="ptm-ms-date" value="' + (m.due_date ? m.due_date.slice(0,10) : '') + '"></div>' +
     '</div>' +
-    '<div class="pt-field"><label>Description <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><textarea class="pt-ta" id="ptm-ms-desc" style="min-height:72px" placeholder="What does this milestone involve?">' + escapeHTML(m.description || '') + '</textarea></div>' +
+    '<div class="pt-field"><label>Description <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><textarea class="pt-ta" id="ptm-ms-desc" style="min-height:72px" placeholder="What does this milestone involve?">' + escapeHTML(m.description || (function(){ try{ return localStorage.getItem('fk_ms_desc_'+m.id)||''; }catch(e){ return ''; } })()) + '</textarea></div>' +
     '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="updatePtMilestone()">Save changes</button></div>';
   overlay.classList.add('open');
 }
@@ -12078,10 +12091,14 @@ async function updatePtMilestone() {
   var startEl = document.getElementById('ptm-ms-start');
   var dueEl = document.getElementById('ptm-ms-date');
   var descEl = document.getElementById('ptm-ms-desc');
-  var payload = { title: title, start_date: startEl && startEl.value || null, due_date: dueEl && dueEl.value || null, description: descEl && descEl.value.trim() || null };
+  var descVal = descEl ? descEl.value.trim() : '';
+  var payload = { title: title, start_date: startEl && startEl.value || null, due_date: dueEl && dueEl.value || null };
   var res = await _supabase.from('project_milestones').update(payload).eq('id', ms[_ptEditIdx].id).eq('user_id', _currentUser.id).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
-  ms[_ptEditIdx] = Object.assign(ms[_ptEditIdx], res.data);
+  // Store description in localStorage (avoids schema column dependency)
+  var msId = ms[_ptEditIdx].id;
+  try { localStorage.setItem('fk_ms_desc_' + msId, descVal); } catch(e) {}
+  ms[_ptEditIdx] = Object.assign(ms[_ptEditIdx], res.data, { description: descVal });
   ms.sort(function(a,b){ return (a.due_date||'') < (b.due_date||'') ? -1 : 1; });
   _ptEditIdx = null;
   closePtModal(); renderPtMilestones(); renderPtOverview(); showToast('\u2713 Milestone updated');
