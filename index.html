@@ -701,7 +701,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .ip-actions{padding:13px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
 .ip-btn-p{flex:1;padding:8px;background:var(--ink);color:var(--cream);border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:background .2s}
 .ip-btn-p:hover{background:var(--amber)}
-.ip-btn-g{padding:8px 12px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+.ip-btn-g{padding:8px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .2s}
 .ip-btn-g:hover{border-color:var(--ink);color:var(--ink)}
 /* Invoice preview */
 .inv-preview{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md)}
@@ -3311,11 +3311,21 @@ var RateLimiter = (function() {
             </div>
             <button class="btn-primary" onclick="openInvBuilderNew()">+ New invoice</button>
           </div>
+          <div style="display:flex;gap:8px;margin:12px 0 4px;align-items:center">
+            <input class="ip-inp" id="inv-proj-search" type="text" placeholder="Search invoices..." style="flex:1;padding:6px 10px;font-size:12px" oninput="renderInvProjectHistory(_invActiveProjectId)">
+            <select class="ip-inp" id="inv-proj-status-filter" style="width:120px;padding:6px 8px;font-size:12px" onchange="renderInvProjectHistory(_invActiveProjectId)">
+              <option value="">All statuses</option>
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
           <div id="inv-proj-inv-list"></div>
         </div>
         <!-- VIEW 3: Invoice Builder -->
         <div id="inv-view-builder" style="display:none">
-          <button class="inv-view-back" onclick="showInvView('invoices')">&#8592; Back to invoices</button>
+          <button class="inv-view-back" id="inv-builder-back-btn" onclick="handleInvBuilderBack()">&#8592; Back to invoices</button>
           <div class="inv-layout">
           <div class="inv-panel">
             <div class="ip-head"><span style="font-size:14px">⚙️</span><span class="ip-head-title">Invoice builder</span></div>
@@ -3336,7 +3346,7 @@ var RateLimiter = (function() {
               <div class="ip-field"><div class="ip-lbl">Your phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-yourphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-yourphone" type="tel" placeholder="e.g. 5550001234" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="10"></div></div>
               <div class="ip-divider"></div>
               <div class="ip-row2">
-                <div class="ip-field"><div class="ip-lbl">Invoice #</div><input class="ip-inp" id="i-num" value="INV-001" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Invoice # / Title</div><input class="ip-inp" id="i-num" value="INV-001" oninput="updateInv()"></div>
                 <div class="ip-field"><div class="ip-lbl">Issue date</div><input class="ip-inp" type="date" id="i-issued" oninput="updateInv()"></div>
               </div>
               <div class="ip-field"><div class="ip-lbl">Due date</div><input class="ip-inp" type="date" id="i-due" oninput="updateInv()"></div>
@@ -3778,6 +3788,16 @@ var RateLimiter = (function() {
             <div id="pt-bill-total" class="pt-bill-total" style="margin-bottom:16px"></div>
             <div class="pt-sec-hdr">Billing phases
               <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border)" onclick="createInvoiceFromProject()">&#129534; Create Invoice</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+              <input class="ip-inp" id="pt-billing-search" type="text" placeholder="Search invoices..." style="flex:1;padding:6px 10px;font-size:12px" oninput="renderPtBilling()">
+              <select class="ip-inp" id="pt-billing-status-filter" style="width:120px;padding:6px 8px;font-size:12px" onchange="renderPtBilling()">
+                <option value="">All statuses</option>
+                <option value="draft">Draft</option>
+                <option value="sent">Sent</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+              </select>
             </div>
             <div id="pt-billing-list"></div>
           </div>
@@ -4627,7 +4647,7 @@ function showPanel(id,el){
   if(id==='welcome'){ if(typeof wpRefreshTemplateUI==='function') wpRefreshTemplateUI(); }
   if(id==='projects'&&!window._ptInit){window._ptInit=true;loadProjects()}
   if(id==='clients'&&!window._ptInit){window._ptInit=true;loadProjects()}
-  if(id==='invoice'){ if(typeof renderInvBuilderProjects==='function'){ showInvView('projects'); renderInvBuilderProjects(); } _syncInvProjLinkUI(); }
+  if(id==='invoice'){ if(typeof renderInvBuilderProjects==='function'){ if(!_invSuppressProjectReset){ showInvView('projects'); renderInvBuilderProjects(); } _invSuppressProjectReset=false; } _syncInvProjLinkUI(); }
   if(id==='timesheet'){ if(typeof loadGlobalTimesheet==='function') loadGlobalTimesheet(); }
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
@@ -4770,8 +4790,8 @@ function renderLineItems(){
              onkeydown="blockNeg(event)" onchange="lineItems[${i}].qty=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].qty;updateLineTotal(${i});updateInv()"
              min="0" step="0.5">
       <input class="ip-inp" style="padding:5px 8px;font-size:12px;text-align:right"
-             type="number" value="${li.rate}"
-             onkeydown="blockNeg(event)" onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate;updateLineTotal(${i});updateInv()"
+             type="number" value="${li.rate || ''}" placeholder="0"
+             onkeydown="blockNeg(event)" onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate||'';;updateLineTotal(${i});updateInv()"
              min="0" step="10">
       <div class="li-total-cell" id="litot-${i}">${fmD(li.qty*li.rate)}</div>
       <button class="li-remove" onclick="lineItems.splice(${i},1);renderLineItems();updateInv()">&#215;</button>
@@ -6628,12 +6648,38 @@ async function loadInvoiceHistory() {
 // ═══════════════ INVOICE BUILDER — PROJECT FLOW ═══════════════
 
 var _invActiveProjectId = null;
+var _invBackContext = null; // 'billing' | null  (null = go back to folder)
+var _invSourceProjectId = null;
+var _invSuppressProjectReset = false;
 
 function showInvView(view) {
   ['projects','invoices','builder'].forEach(function(v) {
     var el = document.getElementById('inv-view-'+v);
     if (el) el.style.display = v === view ? '' : 'none';
   });
+}
+
+function handleInvBuilderBack() {
+  if (_invBackContext === 'billing') {
+    var srcId = _invSourceProjectId;
+    _invBackContext = null;
+    _invSourceProjectId = null;
+    // Navigate back to project tracker, billing tab
+    showPanel('projects', document.getElementById('nav-projects'));
+    setTimeout(function() {
+      if (srcId && _ptCurrentId !== srcId) {
+        selectPtProject(srcId);
+        setTimeout(function(){ showPtTab('billing', document.querySelectorAll('#pt-detail-view .pt-tab')[3]); }, 300);
+      } else {
+        showPtTab('billing', document.querySelectorAll('#pt-detail-view .pt-tab')[3]);
+      }
+    }, 50);
+  } else {
+    _invBackContext = null;
+    var backBtn = document.getElementById('inv-builder-back-btn');
+    if (backBtn) backBtn.innerHTML = '&#8592; Back to invoices';
+    showInvView('invoices');
+  }
 }
 
 function renderInvBuilderProjects() {
@@ -6675,8 +6721,13 @@ function renderInvProjectHistory(projectId) {
            (i._localProjectId && i._localProjectId === projectId) ||
            (!i.project_id && !i._localProjectId && proj && i.project === proj.name);
   });
+  var searchQ2 = (document.getElementById('inv-proj-search') || {}).value || '';
+  searchQ2 = searchQ2.trim().toLowerCase();
+  var statusF2 = (document.getElementById('inv-proj-status-filter') || {}).value || '';
+  if (statusF2) invs = invs.filter(function(i){ return i.status === statusF2; });
+  if (searchQ2) invs = invs.filter(function(i){ return ((i.invoice_number||'')+(i.client_name||'')).toLowerCase().indexOf(searchQ2) >= 0; });
   if (!invs.length) {
-    el.innerHTML = '<div class="inv-list-empty">No invoices yet for this project. Click &ldquo;+ New invoice&rdquo; above to create the first one.</div>';
+    el.innerHTML = '<div class="inv-list-empty">No invoices match your filter. Click &ldquo;+ New invoice&rdquo; to create one.</div>';
     return;
   }
   invs = invs.slice().sort(function(a,b){ return (b.issue_date||'').localeCompare(a.issue_date||''); });
@@ -6717,6 +6768,10 @@ function openInvBuilderNew() {
   var dlBtn = document.getElementById('inv-dl-btn');
   if (saveBtn) { saveBtn.innerHTML = '&#128190; Save invoice'; saveBtn.disabled = false; }
   if (dlBtn) dlBtn.style.display = 'none';
+  if (!_invBackContext) {
+    var backBtnN = document.getElementById('inv-builder-back-btn');
+    if (backBtnN) backBtnN.innerHTML = '&#8592; Back to invoices';
+  }
   showInvView('builder');
 }
 
@@ -6733,11 +6788,18 @@ function openInvBuilderEdit(id) {
   var dlBtn = document.getElementById('inv-dl-btn');
   if (saveBtn) { saveBtn.innerHTML = '&#128190; Save changes'; saveBtn.disabled = false; }
   if (dlBtn) dlBtn.style.display = '';
+  if (!_invBackContext) {
+    var backBtnE = document.getElementById('inv-builder-back-btn');
+    if (backBtnE) backBtnE.innerHTML = '&#8592; Back to invoices';
+  }
   showInvView('builder');
 }
 
 async function saveInvoiceToHistory() {
   if (!_currentUser) { showToast('Sign in to save invoices'); return; }
+  var _saveBtnEl = document.getElementById('inv-save-btn');
+  if (_saveBtnEl && _saveBtnEl.disabled) return; // prevent double-click
+  if (_saveBtnEl) { _saveBtnEl.disabled = true; _saveBtnEl.innerHTML = '&#9729; Saving…'; }
   var g = function(id){ var el=document.getElementById(id); return el?el.value||'':''; };
   // Input validation
   var clientName = g('i-client');
@@ -6790,8 +6852,9 @@ async function saveInvoiceToHistory() {
       }
     }
   }
-  if (res.error) { showToast('Error saving: ' + res.error.message); return; }
+  if (res.error) { if (_saveBtnEl) { _saveBtnEl.disabled = false; _saveBtnEl.innerHTML = '&#128190; Save invoice'; } showToast('Error saving: ' + res.error.message); return; }
   renderInvHistory();
+  if (_invActiveProjectId && typeof renderInvProjectHistory === 'function') renderInvProjectHistory(_invActiveProjectId);
   // Show download button after save
   var dlBtn = document.getElementById('inv-dl-btn');
   var saveBtn = document.getElementById('inv-save-btn');
@@ -10000,18 +10063,26 @@ function renderPtBilling() {
   var clientName = proj ? (proj.client_name || '—') : '—';
   var statusClass = {draft:'pt-bs-draft', sent:'pt-bs-sent', paid:'pt-bs-paid', overdue:'pt-bs-overdue', pending:'pt-bs-draft', invoiced:'pt-bs-sent'};
   var statusLabels = {draft:'Draft', sent:'Sent', paid:'Paid', overdue:'Overdue', pending:'Draft', invoiced:'Sent'};
-  el.innerHTML = '<div class="pt-bill-cards-grid">' + bs.map(function(b, i) {
+  // Filter: search + status
+  var searchQ = (document.getElementById('pt-billing-search') || {}).value || '';
+  searchQ = searchQ.trim().toLowerCase();
+  var statusF = (document.getElementById('pt-billing-status-filter') || {}).value || '';
+  var filtered = bs.map(function(b,i){ return {b:b,i:i}; }).filter(function(obj){
+    var b = obj.b;
+    if (statusF && b.status !== statusF) return false;
+    if (searchQ && (b.phase_name||'').toLowerCase().indexOf(searchQ) < 0) return false;
+    return true;
+  });
+  if (!filtered.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--ink-light);font-size:13px">No invoices match your filter.</div>'; return; }
+  el.innerHTML = '<div class="pt-bill-cards-grid">' + filtered.map(function(obj) {
+    var b = obj.b; var i = obj.i;
     var fmtAmt = '$' + (parseFloat(b.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-    var fmtDate = b.due_date ? b.due_date.slice(0,10) : '—';
-    var typeLabel = b.billing_type === 'per_phase' ? 'Per phase' : 'One-time';
     return '<div class="pt-bill-card" style="cursor:pointer" onclick="openPtEditBilling(' + i + ')" title="Click to edit">' +
-      '<div class="pt-bill-card-lbl" style="margin-bottom:3px">Invoice Number</div>' +
+      '<div class="pt-bill-card-lbl" style="margin-bottom:3px">Invoice # / Title</div>' +
       '<div class="pt-bill-card-name">' + escapeHTML(b.phase_name) + '</div>' +
       '<div class="pt-bill-card-amt">' + fmtAmt + '</div>' +
       '<div class="pt-bill-card-grid">' +
         '<div><div class="pt-bill-card-lbl">Billed to</div><div class="pt-bill-card-val">' + escapeHTML(clientName) + '</div></div>' +
-        '<div><div class="pt-bill-card-lbl">Due date</div><div class="pt-bill-card-val">' + fmtDate + '</div></div>' +
-        '<div><div class="pt-bill-card-lbl">Type</div><div class="pt-bill-card-val">' + typeLabel + '</div></div>' +
         '<div><div class="pt-bill-card-lbl">Status</div>' +
           '<span class="pt-bill-status ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="event.stopPropagation();cyclePtBillingStatus(' + i + ')" title="Click to change status">' + (statusLabels[b.status]||'Pending') + '</span>' +
         '</div>' +
@@ -10023,24 +10094,39 @@ function renderPtBilling() {
 function createInvoiceFromProject() {
   var proj = _ptCurrentId ? (_ptProjects || []).find(function(p){ return p.id === _ptCurrentId; }) : null;
   if (!proj) return;
+  // Set back-navigation context
+  _invBackContext = 'billing';
+  _invSourceProjectId = _ptCurrentId;
+  _invActiveProjectId = _ptCurrentId;
+  _invSuppressProjectReset = true;
+  _editingInvoiceId = null;
+  _editingBillingRowId = null;
   showPanel('invoice', document.getElementById('nav-invoice'));
   setTimeout(function() {
-    var set = function(id, val){ var el=document.getElementById(id); if(el && val) el.value=val; };
+    if (!window._invInit) { window._invInit = true; if(typeof initInvoice==='function') initInvoice(); }
+    // Clear previous state
+    ['i-contact','i-email','i-clientaddress'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    var set = function(id, val){ var el=document.getElementById(id); if(el && val != null) el.value = val; };
     set('i-client', proj.client_name);
     set('i-project', proj.name);
-    // Pre-select this project in the "save to project" dropdown
-    var sel = document.getElementById('inv-proj-link');
-    if (sel) sel.value = proj.id;
-    // Look up client details if available
-    var cl = (_clients || []).find(function(c){ return c.name === proj.client_name; });
+    var cl = proj.client_name ? (_clients || []).find(function(c){ return c.name === proj.client_name; }) : null;
     if (cl) {
       set('i-contact', cl.contact_person || cl.name);
       set('i-email', cl.email);
       _setInvPhone('i-clientphone-code','i-clientphone', cl.phone);
       set('i-clientaddress', cl.address);
     }
+    if (typeof lineItems !== 'undefined') lineItems = [{ desc:'', qty:1, rate:0 }];
+    if (typeof renderLineItems === 'function') renderLineItems();
     if (typeof updateInv === 'function') updateInv();
-    showToast('\u2713 Invoice pre-filled from project');
+    var saveBtn = document.getElementById('inv-save-btn');
+    var dlBtn = document.getElementById('inv-dl-btn');
+    if (saveBtn) { saveBtn.innerHTML = '&#128190; Save invoice'; saveBtn.disabled = false; }
+    if (dlBtn) dlBtn.style.display = 'none';
+    var backBtn = document.getElementById('inv-builder-back-btn');
+    if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
+    showInvView('builder');
+    showToast('✓ Invoice Builder ready — pre-filled from project');
   }, 150);
 }
 
@@ -12332,11 +12418,11 @@ function openPtEditBilling(i) {
   }
 
   if (existingInv) {
-    // Ensure the invoice is in the _invoices array so foOpenEditInv can find it
-    if (!(_invoices || []).find(function(i){ return i.id === existingInv.id; })) {
+    // Ensure the invoice is in the _invoices array so openInvBuilderEdit can find it
+    if (!(_invoices || []).find(function(ii){ return ii.id === existingInv.id; })) {
       (_invoices = _invoices || []).unshift(existingInv);
     }
-    // Sync billing card status FROM the invoice so both sides show the same value
+    // Sync billing card status FROM the invoice
     var invToBilling = {draft:'draft', sent:'sent', overdue:'overdue', paid:'paid'};
     var freshStatus = invToBilling[existingInv.status] || b.status;
     if (freshStatus !== b.status) {
@@ -12345,13 +12431,29 @@ function openPtEditBilling(i) {
         _supabase.from('project_billing').update({status: freshStatus}).eq('id', b.id).eq('user_id', _currentUser.id);
       }
     }
-    foOpenEditInv(existingInv.id);
-  } else {
-    // No linked invoice yet — pre-fill a new one; line items are fully editable
-    _editingInvoiceId = null;
-    _editingBillingRowId = b.id; // remember which billing row triggered this
+    // Open in builder with billing back-context
+    _invBackContext = 'billing';
+    _invSourceProjectId = _ptCurrentId;
+    _invActiveProjectId = _ptCurrentId;
+    _invSuppressProjectReset = true;
     showPanel('invoice', document.getElementById('nav-invoice'));
     setTimeout(function() {
+      openInvBuilderEdit(existingInv.id);
+      var backBtn = document.getElementById('inv-builder-back-btn');
+      if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
+    }, 150);
+  } else {
+    // No linked invoice yet — open builder pre-filled from billing row
+    _editingInvoiceId = null;
+    _editingBillingRowId = b.id;
+    _invBackContext = 'billing';
+    _invSourceProjectId = _ptCurrentId;
+    _invActiveProjectId = _ptCurrentId;
+    _invSuppressProjectReset = true;
+    showPanel('invoice', document.getElementById('nav-invoice'));
+    setTimeout(function() {
+      if (!window._invInit) { window._invInit = true; if(typeof initInvoice==='function') initInvoice(); }
+      ['i-contact','i-email','i-clientaddress'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       var set = function(id, val){ var el=document.getElementById(id); if(el && val != null) el.value = val; };
       if (proj) {
         set('i-client', proj.client_name);
@@ -12365,11 +12467,17 @@ function openPtEditBilling(i) {
         }
       }
       if (b.due_date) set('i-due', b.due_date.slice(0,10));
-      // Start with the billing phase as one editable line — user can add/edit/delete more
       lineItems = [{ desc: b.phase_name || 'Billing phase', qty: 1, rate: parseFloat(b.amount) || 0 }];
       if (typeof renderLineItems === 'function') renderLineItems();
       if (typeof updateInv === 'function') updateInv();
-      showToast('\u2713 Invoice Builder ready — add or edit line items, then save');
+      var saveBtn = document.getElementById('inv-save-btn');
+      var dlBtn = document.getElementById('inv-dl-btn');
+      if (saveBtn) { saveBtn.innerHTML = '&#128190; Save invoice'; saveBtn.disabled = false; }
+      if (dlBtn) dlBtn.style.display = 'none';
+      var backBtn = document.getElementById('inv-builder-back-btn');
+      if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
+      showInvView('builder');
+      showToast('✓ Invoice Builder ready — edit line items, then save');
     }, 150);
   }
 }
