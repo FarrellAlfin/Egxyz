@@ -3484,9 +3484,10 @@ var RateLimiter = (function() {
                 <div class="tot-row grand"><span class="tot-lbl">Total due</span><span class="tot-val" id="tot-total">$0.00</span></div>
               </div>
             </div>
-            <div class="ip-actions">
-              <button class="ip-btn-p" id="inv-save-btn" onclick="saveInvoiceToHistory()" style="width:100%;margin-bottom:8px">&#128190; Save invoice</button>
-              <button class="ip-btn-g" id="inv-dl-btn" onclick="downloadInvoicePdf()" style="width:100%;display:none">&#128196; Download PDF</button>
+            <div class="ip-actions" style="flex-direction:row;gap:6px">
+              <button class="ip-btn-p" id="inv-save-btn" onclick="saveInvoiceToHistory()" style="flex:1">&#128190; Save invoice</button>
+              <button class="ip-btn-g" id="inv-dl-btn" onclick="downloadInvoicePdf()" style="flex:1;display:none">&#128196; Download PDF</button>
+              <button class="ip-btn-g" id="inv-del-btn" onclick="deleteCurrentInvoice()" style="flex:1;display:none;border-color:#ef4444;color:#ef4444" title="Delete this invoice">&#128465; Delete</button>
             </div>
           </div>
           <div class="inv-preview" id="inv-preview">
@@ -4647,7 +4648,7 @@ function showPanel(id,el){
   if(id==='welcome'){ if(typeof wpRefreshTemplateUI==='function') wpRefreshTemplateUI(); }
   if(id==='projects'&&!window._ptInit){window._ptInit=true;loadProjects()}
   if(id==='clients'&&!window._ptInit){window._ptInit=true;loadProjects()}
-  if(id==='invoice'){ if(typeof renderInvBuilderProjects==='function'){ if(!_invSuppressProjectReset){ showInvView('projects'); renderInvBuilderProjects(); } _invSuppressProjectReset=false; } _syncInvProjLinkUI(); }
+  if(id==='invoice'){ if(!window._ptInit){ window._ptInit=true; if(typeof loadProjects==='function') loadProjects(); } if(typeof renderInvBuilderProjects==='function'){ if(!_invSuppressProjectReset){ showInvView('projects'); renderInvBuilderProjects(); } _invSuppressProjectReset=false; } _syncInvProjLinkUI(); }
   if(id==='timesheet'){ if(typeof loadGlobalTimesheet==='function') loadGlobalTimesheet(); }
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
@@ -6768,6 +6769,7 @@ function openInvBuilderNew() {
   var dlBtn = document.getElementById('inv-dl-btn');
   if (saveBtn) { saveBtn.innerHTML = '&#128190; Save invoice'; saveBtn.disabled = false; }
   if (dlBtn) dlBtn.style.display = 'none';
+  var delBtnN = document.getElementById('inv-del-btn'); if (delBtnN) delBtnN.style.display = 'none';
   if (!_invBackContext) {
     var backBtnN = document.getElementById('inv-builder-back-btn');
     if (backBtnN) backBtnN.innerHTML = '&#8592; Back to invoices';
@@ -6788,6 +6790,7 @@ function openInvBuilderEdit(id) {
   var dlBtn = document.getElementById('inv-dl-btn');
   if (saveBtn) { saveBtn.innerHTML = '&#128190; Save changes'; saveBtn.disabled = false; }
   if (dlBtn) dlBtn.style.display = '';
+  var delBtnE = document.getElementById('inv-del-btn'); if (delBtnE) delBtnE.style.display = '';
   if (!_invBackContext) {
     var backBtnE = document.getElementById('inv-builder-back-btn');
     if (backBtnE) backBtnE.innerHTML = '&#8592; Back to invoices';
@@ -6799,15 +6802,17 @@ async function saveInvoiceToHistory() {
   if (!_currentUser) { showToast('Sign in to save invoices'); return; }
   var _saveBtnEl = document.getElementById('inv-save-btn');
   if (_saveBtnEl && _saveBtnEl.disabled) return; // prevent double-click
-  if (_saveBtnEl) { _saveBtnEl.disabled = true; _saveBtnEl.innerHTML = '&#9729; Saving…'; }
   var g = function(id){ var el=document.getElementById(id); return el?el.value||'':''; };
-  // Input validation
+  // Input validation BEFORE disabling the button (so it stays clickable if invalid)
   var clientName = g('i-client');
   if (!clientName) { showToast('Please enter a client name'); return; }
   var clientEmail = g('i-email');
   if (clientEmail) { var ec = Validate.email(clientEmail); if (!ec.ok) { showToast(ec.msg); return; } }
   if (lineItems.length > 50) { showToast('Too many line items (max 50)'); return; }
   if (lineItems.some(function(li){ return (li.desc||'').length > 500; })) { showToast('Line item description too long (max 500 chars)'); return; }
+  // Disable after validation passes
+  if (_saveBtnEl) { _saveBtnEl.disabled = true; _saveBtnEl.innerHTML = '&#9729; Saving…'; }
+  var _wasEditing = !!_editingInvoiceId; // capture BEFORE any modification
   var sub = lineItems.reduce(function(s,li){ return s+li.qty*li.rate; }, 0);
   var disc = parseFloat(g('i-disc'))||0;
   var tax  = parseFloat(g('i-tax'))||0;
@@ -6836,8 +6841,8 @@ async function saveInvoiceToHistory() {
     if (!res.error && res.data) {
       var idx = _invoices.findIndex(function(i){ return i.id === _editingInvoiceId; });
       if (idx >= 0) _invoices[idx] = res.data; else _invoices.unshift(res.data);
+      // Keep _editingInvoiceId set so delete still works after save
     }
-    _editingInvoiceId = null;
     _syncInvProjLinkUI();
   } else {
     // INSERT new invoice
@@ -6845,6 +6850,7 @@ async function saveInvoiceToHistory() {
     if (!res.error && res.data) {
       if (_invActiveProjectId) res.data._localProjectId = _invActiveProjectId;
       _invoices.unshift(res.data);
+      _editingInvoiceId = res.data.id; // enable delete after insert
       // If this was opened from a billing row, save the permanent billing→invoice link
       if (_editingBillingRowId) {
         _saveBillingInvLink(_editingBillingRowId, res.data.id);
@@ -6859,10 +6865,11 @@ async function saveInvoiceToHistory() {
   var dlBtn = document.getElementById('inv-dl-btn');
   var saveBtn = document.getElementById('inv-save-btn');
   if (dlBtn) dlBtn.style.display = '';
-  if (saveBtn) { saveBtn.innerHTML = '✓ Saved!'; setTimeout(function(){ if(saveBtn) saveBtn.innerHTML = '&#128190; Save invoice'; }, 2000); }
+  var _delBtnAfter = document.getElementById('inv-del-btn'); if (_delBtnAfter) _delBtnAfter.style.display = '';
+  if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '&#10003; Saved!'; setTimeout(function(){ if(saveBtn) saveBtn.innerHTML = '&#128190; Save changes'; }, 2000); }
   // Also add billing entry to linked project (only on new invoices, not when editing from billing row)
   var linkedProjId = _invActiveProjectId;
-  if (linkedProjId && _currentUser && !_editingInvoiceId && !_editingBillingRowId) {
+  if (linkedProjId && _currentUser && !_wasEditing && !_editingBillingRowId) {
     var billingEntry = {
       project_id: linkedProjId, user_id: _currentUser.id,
       phase_name: 'Invoice ' + (payload.invoice_number || ''),
@@ -6903,6 +6910,24 @@ async function deleteInvoice(id) {
   _invoices = _invoices.filter(function(i){ return i.id !== id; });
   renderInvHistory();
   renderFinancialOverview();
+}
+
+async function deleteCurrentInvoice() {
+  if (!_editingInvoiceId) return;
+  if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  var delId = _editingInvoiceId;
+  _editingInvoiceId = null;
+  await _supabase.from('invoices').delete().eq('id', delId).eq('user_id', _currentUser.id);
+  _invoices = (_invoices || []).filter(function(i){ return i.id !== delId; });
+  renderInvHistory();
+  if (_invActiveProjectId && typeof renderInvProjectHistory === 'function') renderInvProjectHistory(_invActiveProjectId);
+  if (typeof renderFinancialOverview === 'function') renderFinancialOverview();
+  if (_invBackContext === 'billing') {
+    handleInvBuilderBack();
+  } else {
+    showInvView('invoices');
+  }
+  showToast('✓ Invoice deleted');
 }
 
 function filterInvHistory(filter, btn) {
@@ -9160,6 +9185,11 @@ async function loadProjects() {
   if (typeof renderTodos === 'function') renderTodos(); // re-render now that _ptProjects is populated
   if (typeof populateDocProjSelects === 'function') populateDocProjSelects();
   if (typeof renderClientList === 'function') renderClientList();
+  // If the invoice builder project picker is visible, refresh it now that projects are loaded
+  if (typeof renderInvBuilderProjects === 'function') {
+    var _invProjView = document.getElementById('inv-view-projects');
+    if (_invProjView && _invProjView.style.display !== 'none') renderInvBuilderProjects();
+  }
 }
 
 async function ptLoadProjectData(projectId) {
@@ -10077,9 +10107,12 @@ function renderPtBilling() {
   el.innerHTML = '<div class="pt-bill-cards-grid">' + filtered.map(function(obj) {
     var b = obj.b; var i = obj.i;
     var fmtAmt = '$' + (parseFloat(b.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    // Show invoice number from linked invoice if available, else fall back to phase name
+    var linkedInvId2 = typeof _getBillingInvLink === 'function' ? _getBillingInvLink(b.id) : null;
+    var linkedInv2 = linkedInvId2 ? (_invoices || []).find(function(inv){ return inv.id === linkedInvId2; }) : null;
+    var displayTitle = linkedInv2 ? (linkedInv2.invoice_number || b.phase_name || '—') : (b.phase_name || '—');
     return '<div class="pt-bill-card" style="cursor:pointer" onclick="openPtEditBilling(' + i + ')" title="Click to edit">' +
-      '<div class="pt-bill-card-lbl" style="margin-bottom:3px">Invoice # / Title</div>' +
-      '<div class="pt-bill-card-name">' + escapeHTML(b.phase_name) + '</div>' +
+      '<div class="pt-bill-card-name">' + escapeHTML(displayTitle) + '</div>' +
       '<div class="pt-bill-card-amt">' + fmtAmt + '</div>' +
       '<div class="pt-bill-card-grid">' +
         '<div><div class="pt-bill-card-lbl">Billed to</div><div class="pt-bill-card-val">' + escapeHTML(clientName) + '</div></div>' +
