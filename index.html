@@ -1307,6 +1307,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .todo-filter{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
 .todo-filter.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .todo-list{max-height:420px;overflow-y:auto}
+.todo-active-list .todo-item:last-child{border-bottom:none}
 .todo-item{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .todo-item:last-child{border-bottom:none}
 .todo-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -3530,7 +3531,7 @@ var RateLimiter = (function() {
               <div class="inv-dates">
                 <div><div class="inv-date-lbl">Issue date</div><div class="inv-date-val" id="p-issued">—</div></div>
                 <div><div class="inv-date-lbl">Due date</div><div class="inv-date-val" id="p-due">—</div></div>
-                <div><div class="inv-date-lbl">Status</div><div class="inv-date-val" id="p-status"><span class="inv-badge draft">Draft</span></div></div>
+                <div><div class="inv-date-lbl">Status</div><div class="inv-date-val" id="p-status" style="font-weight:700;color:var(--ink-light)">Draft</div></div>
               </div>
               <table class="inv-table"><thead><tr><th style="width:46%">Description</th><th style="width:12%">Qty</th><th style="width:18%">Rate</th><th style="width:24%">Amount</th></tr></thead><tbody id="p-lineitems"><tr><td>—</td><td>1</td><td>$0.00</td><td>$0.00</td></tr></tbody></table>
               <div class="inv-totals"><div class="inv-tot-inner"><div class="inv-tot-row"><span class="inv-tot-lbl">Subtotal</span><span class="inv-tot-val" id="p-sub">$0.00</span></div><div class="inv-tot-row" id="p-disc-row" style="display:none"><span class="inv-tot-lbl">Discount</span><span class="inv-tot-val" id="p-disc-val">—</span></div><div class="inv-tot-row" id="p-tax-row" style="display:none"><span class="inv-tot-lbl">Tax</span><span class="inv-tot-val" id="p-tax-val">—</span></div><div class="inv-tot-div"></div><div class="inv-tot-grand"><span class="inv-tot-lbl">Total due</span><span class="inv-tot-val" id="p-total">$0.00</span></div></div></div>
@@ -4974,7 +4975,8 @@ function updateInv(){
   // Status badge in preview
   const stEl=g('p-status'); const stVal=(g('i-status')?.value)||'draft';
   const stMap={draft:'Draft',sent:'Sent',paid:'Paid',overdue:'Overdue'};
-  if(stEl) stEl.innerHTML='<span class="inv-badge '+stVal+'">'+(stMap[stVal]||'Draft')+'</span>';
+  const stClr={draft:'var(--ink-light)',sent:'var(--blue)',paid:'var(--sage)',overdue:'var(--red)'};
+  if(stEl){stEl.style.fontWeight='700';stEl.style.color=stClr[stVal]||'var(--ink-light)';stEl.textContent=stMap[stVal]||'Draft';}
   // Payment details
   const ppEl=g('p-pay-details'); if(ppEl) ppEl.textContent=getInvPay();
   // SECURITY: escapeHTML() prevents XSS when user-supplied line-item
@@ -6097,7 +6099,7 @@ function _syncMyDetailsToDoc(d) {
   });
 }
 
-function applyMyDetails(d) {
+function applyMyDetails(d, force) {
   var set = function(id, val) { var el=document.getElementById(id); if(el&&val!=null) el.value=val; };
   // Split full_name into first/middle/last
   var nameParts = (d.full_name || '').trim().split(/\s+/).filter(Boolean);
@@ -6112,13 +6114,13 @@ function applyMyDetails(d) {
   set('my-channel', d.comms_channel); set('my-response', d.response_time);
   set('my-hours', d.working_hours); set('my-feedback', d.feedback_days);
   // Pre-fill invoice builder with user details
-  // Use '' fallback (not current field value) so a new user with no data
-  // never sees the previous user's data left in the field.
+  // force=true (from saveMyDetails): always update so explicit saves propagate
+  // force=false (from loadMyDetails on login): only fill if field is currently empty
   var yn = document.getElementById('i-yourname');
   var ye = document.getElementById('i-youremail');
-  if (yn && !yn.dataset.userEdited) yn.value = d.business_name || d.full_name || '';
-  if (ye && !ye.dataset.userEdited) ye.value = d.email || '';
-  if (d.tax_rate) { var t=document.getElementById('i-tax'); if(t&&!t.dataset.userEdited) t.value=d.tax_rate; }
+  if (yn && (force || !yn.value)) yn.value = d.business_name || d.full_name || '';
+  if (ye && (force || !ye.value)) ye.value = d.email || '';
+  if (d.tax_rate) { var t=document.getElementById('i-tax'); if(t&&(force||!t.value)) t.value=d.tax_rate; }
   if (d.payment_methods) { var pm=document.getElementById('i-pay'); if(pm) pm.value=d.payment_methods; }
   if (typeof updateInv==='function') updateInv();
   // Sync to welcome packet collaboration fields
@@ -6179,7 +6181,7 @@ async function saveMyDetails() {
     return;
   }
 
-  applyMyDetails(payload);
+  applyMyDetails(payload, true);
   showStatus('✓ Details saved', 'ok', 3000);
   showToast('\u2713 Details saved and applied to all templates');
 }
@@ -6885,6 +6887,15 @@ async function saveInvoiceToHistory() {
       // Keep _editingInvoiceId set so delete still works after save
     }
     _syncInvProjLinkUI();
+    // Sync amount + status back to linked billing row
+    if (typeof _getBillingInvLink === 'function') {
+      (window._ptBilling || []).forEach(function(bRow) {
+        if (_getBillingInvLink(bRow.id) === _editingInvoiceId) {
+          bRow.amount = total;
+          if (_currentUser) _supabase.from('project_billing').update({amount: total, status: payload.status === 'paid' ? 'paid' : bRow.status}).eq('id', bRow.id).eq('user_id', _currentUser.id);
+        }
+      });
+    }
     // Refresh billing card so any status/amount changes are visible immediately
     if (typeof renderPtBilling === 'function') renderPtBilling();
   } else {
@@ -8360,7 +8371,7 @@ function renderTodos() {
     return !_todoFilter || t.project_id === _todoFilter;
   });
 
-  var html = projTasks.map(function(t) {
+  var html = '<div class="todo-active-list">' + projTasks.map(function(t) {
     var color = getProjectColor(t.project_id);
     var proj = (_ptProjects || []).find(function(p){ return p.id === t.project_id; });
     var overdue = t.due_date && new Date(t.due_date + 'T00:00:00') < today;
@@ -8379,24 +8390,28 @@ function renderTodos() {
       '<div class="todo-col-date" style="color:' + (overdue ? '#DC2626' : 'var(--ink-light)') + '">' + (dueFmt || '—') + (overdue ? ' ⚠' : '') + '</div>' +
       '<button class="todo-del" style="opacity:1;font-size:11px;color:var(--ink-light)" onclick="showPanel(\'projects\')" title="Open in project tracker">↗</button>' +
     '</div>';
-  }).join('');
+  }).join('') + '</div>';
 
   // Recently completed project tasks
   var doneProjTasks = (_homeProjectTasksDone || []).filter(function(t){
     return !_todoFilter || t.project_id === _todoFilter;
   });
   if (doneProjTasks.length) {
-    html += '<div class="todo-section-lbl" style="margin-top:16px">Recently completed</div>';
+    html += '<div class="todo-section-lbl" style="display:flex;justify-content:space-between;align-items:center;margin-top:0">' +
+      '<span>Recently completed</span>' +
+      '<button onclick="clearRecentlyCompleted()" style="font-size:10px;color:var(--ink-light);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body);font-weight:400">Clear</button>' +
+    '</div>';
     html += doneProjTasks.map(function(t) {
       var color = getProjectColor(t.project_id);
       var proj = (_ptProjects || []).find(function(p){ return p.id === t.project_id; });
       var tid = t.id.replace(/['"]/g,'');
+      var doneAt = t._doneAt ? new Date(t._doneAt + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
       return '<div class="todo-item todo-proj-task" style="opacity:.55">' +
         '<div class="todo-dot" style="background:' + color + '"></div>' +
         '<input type="checkbox" class="todo-check" checked onchange="toggleHomeProjTask(\'' + tid + '\',this.checked)">' +
         '<div class="todo-text done">' + escapeHTML(t.title) + '</div>' +
         '<div class="todo-col-proj" style="color:' + color + '">' + (proj ? escapeHTML(proj.name) : '') + '</div>' +
-        '<div class="todo-col-date"></div>' +
+        '<div class="todo-col-date" style="color:var(--ink-light)">' + doneAt + '</div>' +
       '</div>';
     }).join('');
   }
@@ -8408,12 +8423,30 @@ function renderTodos() {
 function clearDoneTodos() {
   _todos = _todos.filter(function(t){ return !t.done; });
   _homeProjectTasksDone = [];
+  _saveDoneTasks();
   _saveTodos();
   renderTodos();
+}
+function clearRecentlyCompleted() {
+  _homeProjectTasksDone = [];
+  _saveDoneTasks();
+  renderTodos();
+}
+function _saveDoneTasks() {
+  try { localStorage.setItem('fk_pt_done_tasks', JSON.stringify(_homeProjectTasksDone)); } catch(e){}
+}
+function _loadDoneTasks() {
+  try {
+    var today = new Date().toISOString().slice(0,10);
+    _homeProjectTasksDone = JSON.parse(localStorage.getItem('fk_pt_done_tasks') || '[]').filter(function(t){
+      return t._doneAt && t._doneAt >= today;
+    });
+  } catch(e){ _homeProjectTasksDone = []; }
 }
 
 async function loadProjectTasksForHome() {
   _homeProjectTasks = [];
+  _loadDoneTasks(); // restore persisted done tasks, auto-expiring old ones
   if (!_currentUser || !_supabase) return;
   var res = await _supabase.from('project_tasks')
     .select('id,title,due_date,priority,project_id,status')
@@ -8431,11 +8464,18 @@ async function toggleHomeProjTask(id, checked) {
   if (_supabase && _currentUser) {
     await _supabase.from('project_tasks').update({status: newStatus}).eq('id', id).eq('user_id', _currentUser.id);
   }
+  // Also update _ptTasks so the project tracker reflects the change
+  var ptTask = (window._ptTasks || []).find(function(t){ return t.id === id; });
+  if (ptTask) {
+    ptTask.status = newStatus;
+    if (typeof renderPtTasks === 'function') renderPtTasks();
+    if (typeof renderPtOverview === 'function') renderPtOverview();
+  }
   if (checked) {
     var task = _homeProjectTasks.find(function(t){ return t.id === id; });
     if (task) {
       _homeProjectTasks = _homeProjectTasks.filter(function(t){ return t.id !== id; });
-      _homeProjectTasksDone.unshift(task);
+      _homeProjectTasksDone.unshift(Object.assign({}, task, { _doneAt: new Date().toISOString().slice(0,10) }));
     }
   } else {
     var task = _homeProjectTasksDone.find(function(t){ return t.id === id; });
@@ -8444,6 +8484,7 @@ async function toggleHomeProjTask(id, checked) {
       _homeProjectTasks.push(task);
     }
   }
+  _saveDoneTasks();
   renderTodos();
 }
 function updateTodoProjDropdowns() {
@@ -8705,9 +8746,13 @@ function calShowDay(ds) {
 }
 function _calRecentlyCompleted() {
   var todayStr = new Date().toISOString().slice(0,10);
-  // Past events: date < today, most recent first, up to 5
+  var yesterStr = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+  // Only show events from yesterday and today (not older), and respect clear flag
+  var clearedDate = '';
+  try { clearedDate = localStorage.getItem('fk_cal_rc_cleared') || ''; } catch(e){}
+  if (clearedDate === todayStr) return '';
   var past = _calEvents
-    .filter(function(e){ return e.date < todayStr; })
+    .filter(function(e){ return e.date >= yesterStr && e.date < todayStr; })
     .sort(function(a,b){ return b.date > a.date ? 1 : b.date < a.date ? -1 : 0; })
     .slice(0, 5);
   if (!past.length) return '';
@@ -8724,9 +8769,16 @@ function _calRecentlyCompleted() {
     '</div>';
   }).join('');
   return '<div style="margin-top:14px">'+
-    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:6px">Recently completed</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
+      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light)">Recently completed</div>'+
+      '<button onclick="clearCalRecentlyCompleted()" style="font-size:10px;color:var(--ink-light);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body)">Clear</button>'+
+    '</div>'+
     rows+
   '</div>';
+}
+function clearCalRecentlyCompleted() {
+  try { localStorage.setItem('fk_cal_rc_cleared', new Date().toISOString().slice(0,10)); } catch(e){}
+  if (_calSelectedDay) calShowDay(_calSelectedDay);
 }
 function calAddEvent(dateStr) {
   calShowAddForm(dateStr || new Date().toISOString().slice(0,10));
@@ -12521,10 +12573,33 @@ async function togglePtMilestone(i) {
 async function togglePtTask(i) {
   if (!_currentUser) return;
   var ts = window._ptTasks; if (!ts || !ts[i]) return;
-  ts[i].status = ts[i].status === 'done' ? 'todo' : 'done';
+  var prevStatus = ts[i].status;
+  ts[i].status = prevStatus === 'done' ? 'todo' : 'done';
+  // Sync to home dashboard recently completed
+  if (ts[i].status === 'done') {
+    var hIdx = (_homeProjectTasks || []).findIndex(function(t){ return t.id === ts[i].id; });
+    if (hIdx >= 0) {
+      _homeProjectTasksDone = _homeProjectTasksDone || [];
+      _homeProjectTasksDone.unshift(Object.assign({}, _homeProjectTasks[hIdx], { _doneAt: new Date().toISOString().slice(0,10) }));
+      _homeProjectTasks.splice(hIdx, 1);
+    } else if (!(_homeProjectTasks||[]).find(function(t){ return t.id===ts[i].id; }) && !(_homeProjectTasksDone||[]).find(function(t){ return t.id===ts[i].id; })) {
+      _homeProjectTasksDone = _homeProjectTasksDone || [];
+      _homeProjectTasksDone.unshift(Object.assign({}, ts[i], { _doneAt: new Date().toISOString().slice(0,10) }));
+    }
+    _saveDoneTasks();
+  } else {
+    var dIdx = (_homeProjectTasksDone || []).findIndex(function(t){ return t.id === ts[i].id; });
+    if (dIdx >= 0) {
+      _homeProjectTasks = _homeProjectTasks || [];
+      _homeProjectTasks.push(_homeProjectTasksDone[dIdx]);
+      _homeProjectTasksDone.splice(dIdx, 1);
+      _saveDoneTasks();
+    }
+  }
   // Optimistic update — re-render immediately, then persist
   renderPtTasks();
   renderPtOverview();
+  if (typeof renderTodos === 'function') renderTodos();
   await _supabase.from('project_tasks').update({status: ts[i].status}).eq('id', ts[i].id).eq('user_id', _currentUser.id);
 }
 
