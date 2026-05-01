@@ -3353,7 +3353,7 @@ var RateLimiter = (function() {
                 <div class="ip-field"><div class="ip-lbl">Due date</div><input class="ip-inp" type="date" id="i-due" oninput="updateInv()"></div>
                 <div class="ip-field">
                   <div class="ip-lbl">Status</div>
-                  <select class="ip-inp" id="i-status" onchange="updateInv()" style="font-size:12px;padding:6px 8px">
+                  <select class="ip-inp" id="i-status" onchange="updateInv();_syncBuilderStatusToBilling()">
                     <option value="draft">Draft</option>
                     <option value="sent">Sent</option>
                     <option value="paid">Paid</option>
@@ -3530,7 +3530,7 @@ var RateLimiter = (function() {
               <div class="inv-dates">
                 <div><div class="inv-date-lbl">Issue date</div><div class="inv-date-val" id="p-issued">—</div></div>
                 <div><div class="inv-date-lbl">Due date</div><div class="inv-date-val" id="p-due">—</div></div>
-                <div><div class="inv-date-lbl">Status</div><div class="inv-date-val" style="color:var(--amber)">Unpaid</div></div>
+                <div><div class="inv-date-lbl">Status</div><div class="inv-date-val" id="p-status"><span class="inv-badge draft">Draft</span></div></div>
               </div>
               <table class="inv-table"><thead><tr><th style="width:46%">Description</th><th style="width:12%">Qty</th><th style="width:18%">Rate</th><th style="width:24%">Amount</th></tr></thead><tbody id="p-lineitems"><tr><td>—</td><td>1</td><td>$0.00</td><td>$0.00</td></tr></tbody></table>
               <div class="inv-totals"><div class="inv-tot-inner"><div class="inv-tot-row"><span class="inv-tot-lbl">Subtotal</span><span class="inv-tot-val" id="p-sub">$0.00</span></div><div class="inv-tot-row" id="p-disc-row" style="display:none"><span class="inv-tot-lbl">Discount</span><span class="inv-tot-val" id="p-disc-val">—</span></div><div class="inv-tot-row" id="p-tax-row" style="display:none"><span class="inv-tot-lbl">Tax</span><span class="inv-tot-val" id="p-tax-val">—</span></div><div class="inv-tot-div"></div><div class="inv-tot-grand"><span class="inv-tot-lbl">Total due</span><span class="inv-tot-val" id="p-total">$0.00</span></div></div></div>
@@ -3978,15 +3978,15 @@ var RateLimiter = (function() {
               <tr><td><strong>Final delivery</strong></td><td><span class="field">[DELIVERY DATE]</span></td></tr>
               <tr><td><strong>Milestones</strong></td><td><span class="field">[First draft by X, Review by Y, Final by Z]</span></td></tr>
               <tr><td><strong>Revisions included</strong></td><td><span class="field">[NUMBER]</span> rounds</td></tr>
-              <tr><td><strong>Your contact</strong></td><td><span class="field">[YOUR NAME]</span> · <span class="field">[YOUR EMAIL]</span></td></tr>
+              <tr><td><strong>Your contact</strong></td><td><span class="field" data-auto-field="my-name">[YOUR NAME]</span> · <span class="field" data-auto-field="my-email">[YOUR EMAIL]</span></td></tr>
             </table>
             <hr style="border:none;border-top:1px solid var(--border);margin:22px 0">
             <div class="wp-h1">How I communicate</div>
-            <p style="font-size:14px;line-height:1.85;margin-bottom:12px">My preferred channel is <span class="field">[EMAIL / SLACK / OTHER]</span>. You can expect a response within <span class="field">[e.g. 24 hours]</span> on business days. I work <span class="field">[YOUR HOURS, e.g. Mon–Fri, 9am–6pm EST]</span>. Messages outside these hours will be answered the following business day.</p>
+            <p style="font-size:14px;line-height:1.85;margin-bottom:12px">My preferred channel is <span class="field" data-auto-field="my-channel">[EMAIL / SLACK / OTHER]</span>. You can expect a response within <span class="field" data-auto-field="my-response">[e.g. 24 hours]</span> on business days. I work <span class="field" data-auto-field="my-hours">[YOUR HOURS, e.g. Mon–Fri, 9am–6pm EST]</span>. Messages outside these hours will be answered the following business day.</p>
             <div class="wp-callout"><strong>Helpful tip:</strong> When sending feedback or questions, include the project name in the subject line. It helps me respond faster and keeps everything organised.</div>
             <hr style="border:none;border-top:1px solid var(--border);margin:22px 0">
             <div class="wp-h1">How feedback works</div>
-            <p style="font-size:14px;line-height:1.85;margin-bottom:10px">Please compile all feedback into <strong>one consolidated message</strong> — not multiple emails over several days. Feedback is most useful when it describes the outcome you want: "I want this to feel more premium" is more useful than "change this font." Please aim to return feedback within <span class="field">[e.g. 3 business days]</span>. This project includes <span class="field">[NUMBER]</span> revision rounds. Additional rounds are available at <span class="field">[YOUR HOURLY RATE]</span>/hr.</p>
+            <p style="font-size:14px;line-height:1.85;margin-bottom:10px">Please compile all feedback into <strong>one consolidated message</strong> — not multiple emails over several days. Feedback is most useful when it describes the outcome you want: "I want this to feel more premium" is more useful than "change this font." Please aim to return feedback within <span class="field" data-auto-field="my-feedback">[e.g. 3 business days]</span>. This project includes <span class="field">[NUMBER]</span> revision rounds. Additional rounds are available at <span class="field" data-auto-field="my-rate">[YOUR HOURLY RATE]</span>/hr.</p>
             <hr style="border:none;border-top:1px solid var(--border);margin:22px 0">
             <div class="wp-h1">What I need from you</div>
             <p style="font-size:14px;line-height:1.85;margin-bottom:8px">To get started, please send the following by <span class="field">[DATE]</span>:</p>
@@ -4006,7 +4006,7 @@ var RateLimiter = (function() {
             <hr style="border:none;border-top:1px solid var(--border);margin:22px 0">
             <div class="wp-h1">One last thing</div>
             <p style="font-size:14px;line-height:1.85;margin-bottom:12px">The best projects happen when both sides communicate early. If something isn't working — the direction, the timeline, anything — tell me early rather than late. There's almost always a solution when we have time to find it together. I'm looking forward to this.</p>
-            <p style="font-size:14px;line-height:1.85;margin-top:18px"><span class="field">[YOUR NAME]</span><br><span style="color:var(--ink-light);font-size:13px"><span class="field">[YOUR EMAIL]</span> · <span class="field">[YOUR WEBSITE]</span></span></p>
+            <p style="font-size:14px;line-height:1.85;margin-top:18px"><span class="field" data-auto-field="my-name">[YOUR NAME]</span><br><span style="color:var(--ink-light);font-size:13px"><span class="field" data-auto-field="my-email">[YOUR EMAIL]</span> · <span class="field" data-auto-field="my-website">[YOUR WEBSITE]</span></span></p>
           </div>
         </div>
       </div>
@@ -4971,6 +4971,10 @@ function updateInv(){
   const termsEl=g('p-terms'); if(termsEl) termsEl.textContent=g('i-terms-text')?.value||'Net 30';
   g('p-issued').textContent=fmtD(g('i-issued')?.value);
   g('p-due').textContent=fmtD(g('i-due')?.value);
+  // Status badge in preview
+  const stEl=g('p-status'); const stVal=(g('i-status')?.value)||'draft';
+  const stMap={draft:'Draft',sent:'Sent',paid:'Paid',overdue:'Overdue'};
+  if(stEl) stEl.innerHTML='<span class="inv-badge '+stVal+'">'+(stMap[stVal]||'Draft')+'</span>';
   // Payment details
   const ppEl=g('p-pay-details'); if(ppEl) ppEl.textContent=getInvPay();
   // SECURITY: escapeHTML() prevents XSS when user-supplied line-item
@@ -6070,6 +6074,29 @@ async function saveOnboarding() {
   showToast('✓ Details saved! Welcome to FreelanceKit');
 }
 
+function _syncMyDetailsToDoc(d) {
+  var vals = {
+    'my-name':     d.full_name || '',
+    'my-email':    d.email || '',
+    'my-website':  d.website || '',
+    'my-channel':  d.comms_channel || '',
+    'my-response': d.response_time || '',
+    'my-hours':    d.working_hours || '',
+    'my-feedback': d.feedback_days ? d.feedback_days + ' business days' : '',
+    'my-rate':     d.hourly_rate ? '$' + d.hourly_rate : ''
+  };
+  document.querySelectorAll('[data-auto-field]').forEach(function(el) {
+    var key = el.getAttribute('data-auto-field');
+    var val = vals[key];
+    if (!val) return;
+    // Only overwrite if the span still contains its original placeholder (wrapped in [ ])
+    var cur = el.textContent.trim();
+    if (cur.charAt(0) === '[' && cur.charAt(cur.length - 1) === ']') {
+      el.textContent = val;
+    }
+  });
+}
+
 function applyMyDetails(d) {
   var set = function(id, val) { var el=document.getElementById(id); if(el&&val!=null) el.value=val; };
   // Split full_name into first/middle/last
@@ -6094,6 +6121,8 @@ function applyMyDetails(d) {
   if (d.tax_rate) { var t=document.getElementById('i-tax'); if(t&&!t.dataset.userEdited) t.value=d.tax_rate; }
   if (d.payment_methods) { var pm=document.getElementById('i-pay'); if(pm) pm.value=d.payment_methods; }
   if (typeof updateInv==='function') updateInv();
+  // Sync to welcome packet collaboration fields
+  _syncMyDetailsToDoc(d);
   // Pre-fill rate calculator
   if (d.hourly_rate) { var hr=document.getElementById('rc-takehome'); }
   if (d.tax_rate) { var rt=document.getElementById('rc-tax'); if(rt) rt.value=d.tax_rate; if(typeof calcRate==='function') calcRate(); }
@@ -6856,6 +6885,8 @@ async function saveInvoiceToHistory() {
       // Keep _editingInvoiceId set so delete still works after save
     }
     _syncInvProjLinkUI();
+    // Refresh billing card so any status/amount changes are visible immediately
+    if (typeof renderPtBilling === 'function') renderPtBilling();
   } else {
     // INSERT new invoice
     res = await _supabase.from('invoices').insert(payload).select().single();
@@ -6901,6 +6932,21 @@ async function saveInvoiceToHistory() {
   }
   _recordContrib(1);
   showToast('\u2713 Invoice saved to history');
+}
+
+function _syncBuilderStatusToBilling() {
+  if (!_editingInvoiceId) return;
+  var stSel = document.getElementById('i-status');
+  if (!stSel) return;
+  var status = stSel.value;
+  // Update the in-memory invoice so renderInvHistory shows the right badge
+  var inv = (_invoices||[]).find(function(i){ return i.id===_editingInvoiceId; });
+  if (inv) inv.status = status;
+  // Push to linked billing row status
+  if (typeof _syncInvoiceStatusToBilling === 'function') _syncInvoiceStatusToBilling(_editingInvoiceId, status);
+  // Re-render billing card and invoice folder immediately
+  if (typeof renderPtBilling === 'function') renderPtBilling();
+  if (_invActiveProjectId && typeof renderInvProjectHistory === 'function') renderInvProjectHistory(_invActiveProjectId);
 }
 
 async function updateInvStatus(id, status) {
