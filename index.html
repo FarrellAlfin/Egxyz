@@ -6065,9 +6065,11 @@ async function saveOnboarding() {
     var fullName = [first, last].filter(Boolean).join(' ');
     var payload = { id: _currentUser.id, full_name: fullName, business_name: business||null, email: email||null };
     await _supabase.from('user_settings').upsert(payload, { onConflict: 'id' });
-    // Update nav avatar
-    var avEl = document.querySelector('#page-dash .nav-avatar');
+    // Update nav avatar (use id so it works regardless of which page is active)
+    var avEl = document.getElementById('nav-avatar');
     if (avEl) avEl.textContent = (first[0]+(last[0]||'')).toUpperCase();
+    // Seed cached name for future sync
+    try { localStorage.setItem('fk_my_cached_name', fullName); } catch(e){}
     var ddName = document.getElementById('profile-dd-name');
     if (ddName) ddName.textContent = fullName;
   }
@@ -6099,6 +6101,28 @@ function _syncMyDetailsToDoc(d) {
   });
 }
 
+function _syncMyNameToProjects(oldName, newName) {
+  if (!newName) return;
+  // Cache the new name so future saves can find and replace it
+  try { localStorage.setItem('fk_my_cached_name', newName); } catch(e){}
+  if (!oldName || oldName === newName) return;
+  // Update every project's people list in localStorage
+  (_ptProjects || []).forEach(function(proj) {
+    if (!proj || !proj.id) return;
+    var people = loadPtPeople(proj.id);
+    var changed = false;
+    people = people.map(function(person) {
+      if (person.name && person.name.toLowerCase() === oldName.toLowerCase()) {
+        changed = true;
+        return Object.assign({}, person, { name: newName });
+      }
+      return person;
+    });
+    if (changed) savePtPeople(people, proj.id);
+  });
+  if (typeof renderPtPeople === 'function') renderPtPeople();
+}
+
 function applyMyDetails(d, force) {
   var set = function(id, val) { var el=document.getElementById(id); if(el&&val!=null) el.value=val; };
   // Split full_name into first/middle/last
@@ -6125,6 +6149,26 @@ function applyMyDetails(d, force) {
   if (typeof updateInv==='function') updateInv();
   // Sync to welcome packet collaboration fields
   _syncMyDetailsToDoc(d);
+  // Update nav-avatar initials from first + last name
+  (function() {
+    var _np = (d.full_name || '').trim().split(/\s+/).filter(Boolean);
+    var _ini = ((_np[0]||'')[0]||'') + ((_np.length>1?_np[_np.length-1]:_np[1]||'')[0]||'');
+    if (_ini) {
+      var _av = document.getElementById('nav-avatar');
+      if (_av) _av.textContent = _ini.toUpperCase();
+    }
+    if (d.full_name) {
+      var _dn = document.getElementById('profile-dd-name');
+      if (_dn) _dn.textContent = d.full_name;
+    }
+  })();
+  // If force-save, sync updated name to all project people lists
+  if (force) {
+    var _oldCachedName = '';
+    try { _oldCachedName = localStorage.getItem('fk_my_cached_name') || ''; } catch(e){}
+    var _newMyName = d.full_name || '';
+    if (_newMyName) _syncMyNameToProjects(_oldCachedName, _newMyName);
+  }
   // Pre-fill rate calculator
   if (d.hourly_rate) { var hr=document.getElementById('rc-takehome'); }
   if (d.tax_rate) { var rt=document.getElementById('rc-tax'); if(rt) rt.value=d.tax_rate; if(typeof calcRate==='function') calcRate(); }
@@ -8747,15 +8791,25 @@ function calShowDay(ds) {
 function _calRecentlyCompleted() {
   var todayStr = new Date().toISOString().slice(0,10);
   var yesterStr = new Date(Date.now() - 86400000).toISOString().slice(0,10);
-  // Only show events from yesterday and today (not older), and respect clear flag
   var clearedDate = '';
   try { clearedDate = localStorage.getItem('fk_cal_rc_cleared') || ''; } catch(e){}
-  if (clearedDate === todayStr) return '';
   var past = _calEvents
     .filter(function(e){ return e.date >= yesterStr && e.date < todayStr; })
     .sort(function(a,b){ return b.date > a.date ? 1 : b.date < a.date ? -1 : 0; })
     .slice(0, 5);
   if (!past.length) return '';
+  if (clearedDate === todayStr) {
+    // Show collapsed "Cleared · Undo" row so user can restore
+    return '<div style="margin-top:14px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center">'+
+        '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light)">Recently completed</div>'+
+        '<div style="display:flex;gap:8px;align-items:center">'+
+          '<span style="font-size:10px;color:var(--ink-light);font-style:italic">Cleared</span>'+
+          '<button onclick="undoCalRecentlyCompleted()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body)">Undo</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
   var rows = past.map(function(e){
     var d = new Date(e.date+'T12:00:00');
     var dlbl = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -8771,13 +8825,20 @@ function _calRecentlyCompleted() {
   return '<div style="margin-top:14px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
       '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light)">Recently completed</div>'+
-      '<button onclick="clearCalRecentlyCompleted()" style="font-size:10px;color:var(--ink-light);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body)">Clear</button>'+
+      '<div style="display:flex;gap:8px">'+
+        '<button onclick="clearCalRecentlyCompleted()" style="font-size:10px;color:var(--ink-light);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body)">Clear</button>'+
+        '<button onclick="undoCalRecentlyCompleted()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-body);display:none" id="cal-rc-undo-btn">Undo</button>'+
+      '</div>'+
     '</div>'+
     rows+
   '</div>';
 }
 function clearCalRecentlyCompleted() {
   try { localStorage.setItem('fk_cal_rc_cleared', new Date().toISOString().slice(0,10)); } catch(e){}
+  if (_calSelectedDay) calShowDay(_calSelectedDay);
+}
+function undoCalRecentlyCompleted() {
+  try { localStorage.removeItem('fk_cal_rc_cleared'); } catch(e){}
   if (_calSelectedDay) calShowDay(_calSelectedDay);
 }
 function calAddEvent(dateStr) {
@@ -9639,6 +9700,8 @@ function selectPtProject(id) {
     var myLast  = (document.getElementById('my-lastname')  || {}).value || '';
     var myName  = [myFirst, myLast].filter(Boolean).join(' ') || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
     if (myName) {
+      // Seed the cached name for future sync if not already set
+      try { if (!localStorage.getItem('fk_my_cached_name')) localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
       var existingPeople = loadPtPeople(id);
       var alreadyAdded = existingPeople.some(function(p){ return p.name && p.name.toLowerCase() === myName.toLowerCase(); });
       if (!alreadyAdded) {
@@ -9647,6 +9710,25 @@ function selectPtProject(id) {
     }
   })();
   renderPtPeople();
+  // Show Delete (owner) or Leave (collaborator) button
+  var _ptDelBtn = document.querySelector('#pt-detail-view .pt-add-btn[title="Delete project"]');
+  if (_ptDelBtn) {
+    if (proj._shared) {
+      _ptDelBtn.textContent = 'Leave';
+      _ptDelBtn.setAttribute('onclick', 'leaveProject()');
+      _ptDelBtn.setAttribute('title', 'Leave this project');
+      _ptDelBtn.style.background = 'var(--white)';
+      _ptDelBtn.style.color = 'var(--red)';
+      _ptDelBtn.style.borderColor = 'var(--red)';
+    } else {
+      _ptDelBtn.textContent = 'Delete';
+      _ptDelBtn.setAttribute('onclick', 'deletePtProject()');
+      _ptDelBtn.setAttribute('title', 'Delete project');
+      _ptDelBtn.style.background = '#E74C3C';
+      _ptDelBtn.style.color = '#fff';
+      _ptDelBtn.style.borderColor = '#E74C3C';
+    }
+  }
   // Highlight in list
   renderPtList();
 }
@@ -12802,6 +12884,19 @@ async function deletePtItem(table, i) {
     if (typeof renderContribGrid === 'function') renderContribGrid();
     if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
   }
+}
+
+async function leaveProject() {
+  if (!_currentUser || !_ptCurrentId) return;
+  var proj = (_ptProjects || []).find(function(p){ return p.id === _ptCurrentId; });
+  if (!proj || !proj._shared) { showToast('You own this project and cannot leave it'); return; }
+  if (!confirm('Leave this project? You will lose access to it.')) return;
+  var email = (_currentUser.email || '').toLowerCase();
+  var res = await _supabase.from('project_shares').delete().eq('project_id', _ptCurrentId).eq('shared_email', email);
+  if (res.error) { showToast('Error: ' + res.error.message); return; }
+  _ptProjects = (_ptProjects || []).filter(function(p){ return p.id !== _ptCurrentId; });
+  ptBackToList();
+  showToast('✓ You have left the project');
 }
 
 async function deletePtProject() {
