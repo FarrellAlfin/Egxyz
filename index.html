@@ -942,6 +942,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .m-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);margin-bottom:4px}
 .m-row2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
 .m-sel{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--cream);cursor:pointer}
+.btn-primary{background:var(--ink);color:var(--cream);border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-body)}
+.btn-primary:hover{opacity:.85}
 .m-sel:focus{outline:none;border-color:var(--amber)}
 .modal-ft{padding:13px 22px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end}
 
@@ -1392,7 +1394,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .timer-modal-overlay.open{display:flex}
 .timer-modal{background:var(--white);border-radius:var(--radius);padding:28px 28px 24px;width:400px;max-width:calc(100vw - 32px);box-shadow:0 16px 48px rgba(0,0,0,.18)}
 .timer-modal-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
-.timer-modal-sub{font-size:12px;color:var(--ink-mid);margin-bottom:20px}
+.timer-modal-sub{font-size:22px;font-weight:800;font-family:var(--font-display);letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
 .timer-modal-field{margin-bottom:14px}
 .timer-modal-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mid);margin-bottom:5px}
 .timer-modal-input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--white);resize:vertical;box-sizing:border-box}
@@ -1904,14 +1906,16 @@ input[type=number]{-moz-appearance:textfield}
 .po-link{font-size:12px;color:var(--ink-mid);font-weight:600;padding:2px 6px;border-radius:4px;background:none;border:none;cursor:pointer}
 .po-link:hover{background:var(--surface);color:var(--ink)}
 /* milestone rows */
-.po-ms{list-style:none;display:flex;flex-direction:column;gap:0;position:relative;padding:4px 0 0;margin:0}
-.po-ms::before{content:'';position:absolute;left:13px;top:20px;bottom:20px;width:2px;background:var(--surface);border-radius:2px}
+.po-ms{list-style:none;display:flex;flex-direction:column;gap:0;position:relative;padding:0;margin:0}
+.po-ms::before{content:'';position:absolute;left:13px;top:28px;bottom:28px;width:2px;background:var(--border);border-radius:2px}
 .po-ms-row{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border);position:relative}
 .po-ms-row:last-child{border-bottom:none}
 .po-ms-mark{width:28px;height:28px;border-radius:50%;background:var(--white);border:2px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--ink-light);position:relative;z-index:1;flex-shrink:0}
 .po-ms-row.done .po-ms-mark{background:var(--sage);border-color:var(--sage);color:#fff;font-size:13px}
 .po-ms-row.active .po-ms-mark{background:var(--white);border-color:var(--ink);box-shadow:0 0 0 4px rgba(25,28,30,.06)}
 .po-ms-dot{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.po-ms-pulse{width:10px;height:10px;border-radius:50%;background:var(--ink);animation:po-pulse 1.4s ease-in-out infinite}
+@keyframes po-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
 .po-ms-content{min-width:0}
 .po-ms-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:2px}
 .po-ms-top b{font-family:var(--font-display);font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em;line-height:1.35}
@@ -3037,12 +3041,6 @@ var RateLimiter = (function() {
         <div class="timer-modal-lbl">Description</div>
         <textarea class="timer-modal-input" id="timer-modal-desc" rows="3" placeholder="What did you work on?"></textarea>
       </div>
-      <div class="timer-modal-field">
-        <div class="timer-modal-lbl">Add to project timesheet</div>
-        <select class="timer-modal-input" id="timer-modal-project" style="resize:none;height:auto;padding:9px 12px">
-          <option value="">— Don't add to a project —</option>
-        </select>
-      </div>
       <div class="timer-modal-actions">
         <button class="timer-modal-btn cancel" onclick="closeTimerModal()">Discard</button>
         <button class="timer-modal-btn save" onclick="timerLogSave()">Save time log</button>
@@ -3287,7 +3285,7 @@ var RateLimiter = (function() {
               </div>
               <div class="ip-field"><div class="ip-lbl">Your name / business</div><input class="ip-inp" id="i-yourname" value="" placeholder="Your name or business" oninput="updateInv()"></div>
               <div class="ip-field"><div class="ip-lbl">Your email</div><input class="ip-inp" id="i-youremail" value="" placeholder="hello@yourbusiness.com" oninput="updateInv()"></div>
-              <div class="ip-field"><div class="ip-lbl">Your phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-yourphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-yourphone" type="tel" placeholder="(555) 000 0000" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="14"></div></div>
+              <div class="ip-field"><div class="ip-lbl">Your phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-yourphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-yourphone" type="tel" placeholder="e.g. 5550001234" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="10"></div></div>
               <div class="ip-divider"></div>
               <div class="ip-row2">
                 <div class="ip-field"><div class="ip-lbl">Invoice #</div><input class="ip-inp" id="i-num" value="INV-001" oninput="updateInv()"></div>
@@ -3306,7 +3304,7 @@ var RateLimiter = (function() {
               <div class="ip-field"><div class="ip-lbl">Contact person</div><input class="ip-inp" id="i-contact" value="" placeholder="Contact name" oninput="updateInv()"></div>
               <div class="ip-row2">
                 <div class="ip-field"><div class="ip-lbl">Client email</div><input class="ip-inp" id="i-email" value="" placeholder="client@example.com" oninput="updateInv()"></div>
-                <div class="ip-field"><div class="ip-lbl">Client phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-clientphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-clientphone" type="tel" placeholder="(555) 000 0000" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="14"></div></div>
+                <div class="ip-field"><div class="ip-lbl">Client phone <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><div style="display:flex;gap:4px"><select class="ip-inp" id="i-clientphone-code" style="width:88px;flex-shrink:0;padding:6px 4px;font-size:12px" onchange="updateInv()"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+47">NO +47</option><option value="+45">DK +45</option><option value="+358">FI +358</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+20">EG +20</option><option value="+234">NG +234</option><option value="+254">KE +254</option><option value="+971">AE +971</option><option value="+966">SA +966</option><option value="+other">Other</option></select><input class="ip-inp" id="i-clientphone" type="tel" placeholder="e.g. 5550001234" style="margin:0;flex:1" oninput="fmtPhoneInput(this);updateInv()" maxlength="10"></div></div>
               </div>
               <div class="ip-field"><div class="ip-lbl">Client address <span style="font-size:11px;color:var(--ink-light);font-weight:400">(optional)</span></div><input class="ip-inp" id="i-clientaddress" placeholder="123 Street, City, Country" oninput="updateInv()"></div>
               <div class="ip-field"><div class="ip-lbl">Project</div><input class="ip-inp" id="i-project" value="" placeholder="Project name" oninput="updateInv()"></div>
@@ -3651,8 +3649,11 @@ var RateLimiter = (function() {
               <div class="po-main">
                 <!-- Project Plan (from milestones) -->
                 <div class="po-card">
-                  <div class="po-card-hdr-tight">
-                    <div class="po-card-eye">Project Plan</div>
+                  <div class="po-card-hdr-tight" style="margin-bottom:4px">
+                    <div>
+                      <div class="po-card-eye">Milestones</div>
+                      <div style="font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.2;margin-top:2px">Project plan</div>
+                    </div>
                     <button class="po-link" onclick="showPtTab('milestones', document.querySelectorAll('#pt-detail-view .pt-tab')[1])">View all →</button>
                   </div>
                   <ul class="po-ms" id="ptv-plan-list"></ul>
@@ -3746,7 +3747,7 @@ var RateLimiter = (function() {
           <div class="pt-tab-content" id="pt-tab-hours" style="display:none">
             <div id="pt-hours-total" class="pt-time-total" style="margin-bottom:16px"></div>
             <div id="pt-collab-chart"></div>
-            <div class="pt-sec-hdr">Time log <button class="pt-add-btn" onclick="openPtModal('add-time')">+ Log time</button></div>
+            <div class="pt-sec-hdr">Time log <button class="pt-add-btn" id="pt-log-time-btn" onclick="ptOpenLogTimeModal()">+ Log time</button></div>
             <div id="pt-hours-list"></div>
           </div>
           <!-- Contract tab -->
@@ -4331,15 +4332,10 @@ function _setInvPhone(codeId, numId, fullPhone) {
   }
   if (numEl) numEl.value = fullPhone;
 }
-// Phone input masking: (xxx) xxx xxxx
+// Phone input masking: plain digits only
 function fmtPhoneInput(el){
-  var digits=el.value.replace(/\D/g,'').slice(0,10);
-  var fmt='';
-  if(digits.length===0)fmt='';
-  else if(digits.length<=3)fmt='('+digits;
-  else if(digits.length<=6)fmt='('+digits.slice(0,3)+') '+digits.slice(3);
-  else fmt='('+digits.slice(0,3)+') '+digits.slice(3,6)+' '+digits.slice(6);
-  el.value=fmt;
+  var digits = el.value.replace(/\D/g,'').slice(0,10);
+  el.value = digits;
 }
 // Block negative / non-numeric on number inputs
 function blockNeg(e){
@@ -5959,7 +5955,44 @@ async function loadMyDetails() {
   var res = await _supabase.from('user_settings').select('*').eq('id', uid).single();
   // Guard: discard the result if the signed-in user changed while we waited.
   if (!_currentUser || _currentUser.id !== uid) return;
-  if (res.data) applyMyDetails(res.data);
+  if (res.data) {
+    applyMyDetails(res.data);
+  } else if (!res.error) {
+    // New user — no settings row yet
+    showOnboardingModal();
+  }
+}
+
+function showOnboardingModal() {
+  var el = document.getElementById('onboarding-modal');
+  if (el) el.classList.add('open');
+  setTimeout(function(){ var f=document.getElementById('ob-firstname'); if(f) f.focus(); }, 80);
+}
+async function saveOnboarding() {
+  var first = (document.getElementById('ob-firstname')||{}).value.trim();
+  var last = (document.getElementById('ob-lastname')||{}).value.trim();
+  if (!first) { showToast('First name is required'); return; }
+  if (!last) { showToast('Last name is required'); return; }
+  var business = (document.getElementById('ob-business')||{}).value.trim();
+  var email = (document.getElementById('ob-email')||{}).value.trim();
+  // Save to my-details fields
+  var set = function(id,v){ var e=document.getElementById(id); if(e) e.value=v||''; };
+  set('my-firstname', first); set('my-lastname', last);
+  set('my-business', business); set('my-email', email);
+  // Save to Supabase
+  if (_currentUser) {
+    var fullName = [first, last].filter(Boolean).join(' ');
+    var payload = { id: _currentUser.id, full_name: fullName, business_name: business||null, email: email||null };
+    await _supabase.from('user_settings').upsert(payload, { onConflict: 'id' });
+    // Update nav avatar
+    var avEl = document.querySelector('#page-dash .nav-avatar');
+    if (avEl) avEl.textContent = (first[0]+(last[0]||'')).toUpperCase();
+    var ddName = document.getElementById('profile-dd-name');
+    if (ddName) ddName.textContent = fullName;
+  }
+  var el = document.getElementById('onboarding-modal');
+  if (el) el.classList.remove('open');
+  showToast('✓ Details saved! Welcome to FreelanceKit');
 }
 
 function applyMyDetails(d) {
@@ -7682,21 +7715,9 @@ function openTimerModal(hours, preselectProjId) {
   var overlay = document.getElementById('timer-modal-overlay');
   var sub = document.getElementById('timer-modal-sub');
   var desc = document.getElementById('timer-modal-desc');
-  var sel = document.getElementById('timer-modal-project');
   if (!overlay) return;
-  if (sub) sub.textContent = hours.toFixed(2) + ' hours tracked';
+  if (sub) sub.innerHTML = '<span style="font-family:var(--font-display);font-size:32px;font-weight:800;letter-spacing:-.04em;color:var(--ink)">' + hours.toFixed(2) + '</span> <span style="font-size:14px;font-weight:600;color:var(--ink-mid)">hours tracked</span>';
   if (desc) desc.value = '';
-  // Populate project dropdown
-  if (sel) {
-    sel.innerHTML = '<option value="">— Don\'t add to a project —</option>';
-    (_ptProjects || []).forEach(function(p) {
-      var opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name + (p.client_name ? ' (' + p.client_name + ')' : '');
-      sel.appendChild(opt);
-    });
-    if (preselectProjId) sel.value = preselectProjId;
-  }
   overlay.classList.add('open');
   if (desc) setTimeout(function(){ desc.focus(); }, 100);
 }
@@ -7738,7 +7759,7 @@ function closeTimerModal() {
 async function timerLogSave() {
   if (!_currentUser) { showToast('Please sign in'); return; }
   var desc = (document.getElementById('timer-modal-desc') || {}).value || '';
-  var projId = (document.getElementById('timer-modal-project') || {}).value || '';
+  var projId = (document.getElementById('tp-project-sel') || {}).value || '';
   var hours = _timerLoggedHours;
   if (!hours) { closeTimerModal(); return; }
   var myName = getMyFullName()
@@ -7769,6 +7790,16 @@ async function timerLogSave() {
   if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
   closeTimerModal();
   showToast('\u2713 Time logged' + (projId ? ' to project' : ''));
+}
+
+function ptOpenLogTimeModal() {
+  var tpSel = document.getElementById('tp-project-sel');
+  var timerProjId = tpSel ? tpSel.value : '';
+  if (_timerRunning && timerProjId && timerProjId === _ptCurrentId) {
+    showToast('Stop the live timer before manually logging time for this project');
+    return;
+  }
+  openPtModal('add-time');
 }
 
 // ─── CONTRIBUTION GRID ────────────────────────────────────────────────────────
@@ -9325,22 +9356,41 @@ function renderPtOverview() {
   var planEl = document.getElementById('ptv-plan-list');
   if (planEl) {
     if (!sortedMs.length) {
-      planEl.innerHTML = '<li style="padding:12px 0;font-size:13px;color:var(--ink-light)">No milestones yet. <button class="po-link" onclick="showPtTab(\'milestones\', document.querySelectorAll(\'#pt-detail-view .pt-tab\')[1])">Add a milestone →</button></li>';
+      planEl.innerHTML = '<li style="padding:16px 0;font-size:13px;color:var(--ink-light)">No milestones yet. <button class="po-link" onclick="showPtTab(\'milestones\', document.querySelectorAll(\'#pt-detail-view .pt-tab\')[1])">Add a milestone →</button></li>';
     } else {
-      planEl.innerHTML = sortedMs.slice(0, 8).map(function(m, i) {
+      // Find the first non-completed milestone (active)
+      var firstActiveIdx = -1;
+      for (var fi = 0; fi < sortedMs.length; fi++) { if (!sortedMs[fi].completed) { firstActiveIdx = fi; break; } }
+      var fmtMsDate = function(d) { if (!d) return ''; var dt=new Date(d+'T00:00:00'); return MON[dt.getMonth()]+' '+(dt.getDate()<10?'0':'')+dt.getDate(); };
+      planEl.innerHTML = sortedMs.slice(0,8).map(function(m, i) {
         var isDone = m.completed;
+        var isActive = i === firstActiveIdx;
         var overdue = !isDone && m.due_date && new Date(m.due_date+'T00:00:00') < now;
-        var rowClass = 'po-ms-row' + (isDone ? ' done' : '');
-        var markContent = isDone ? '✓' : '';
-        var dateStr = m.due_date ? (MON[new Date(m.due_date+'T00:00:00').getMonth()] + ' ' + new Date(m.due_date+'T00:00:00').getDate()) : '';
-        return '<li class="' + rowClass + '">' +
-          '<div class="po-ms-mark">' + markContent + '</div>' +
-          '<div class="po-ms-content">' +
-            '<div class="po-ms-top">' +
-              '<b>' + escapeHTML(m.title) + '</b>' +
-              (dateStr ? '<span class="po-ms-date' + (overdue ? ' late' : '') + '">' + (overdue ? '⚠ ' : '') + dateStr + '</span>' : '') +
+        var dateRange = '';
+        if (m.start_date && m.due_date) dateRange = fmtMsDate(m.start_date) + ' — ' + fmtMsDate(m.due_date);
+        else if (m.due_date) dateRange = fmtMsDate(m.due_date);
+        else if (m.start_date) dateRange = fmtMsDate(m.start_date);
+        var circleStyle, circleInner;
+        if (isDone) {
+          circleStyle = 'width:28px;height:28px;border-radius:50%;background:#16A34A;border:2px solid #16A34A;display:grid;place-items:center;flex-shrink:0;position:relative;z-index:1';
+          circleInner = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        } else if (isActive) {
+          circleStyle = 'width:28px;height:28px;border-radius:50%;background:var(--white);border:2.5px solid var(--ink);display:grid;place-items:center;flex-shrink:0;position:relative;z-index:1';
+          circleInner = '<div class="po-ms-pulse"></div>';
+        } else {
+          circleStyle = 'width:28px;height:28px;border-radius:50%;background:var(--white);border:2px solid #D1D5DB;display:grid;place-items:center;flex-shrink:0;position:relative;z-index:1';
+          circleInner = '';
+        }
+        return '<li style="display:flex;align-items:flex-start;gap:14px;padding:14px 0;list-style:none;position:relative">' +
+          '<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">' +
+            '<div style="' + circleStyle + '">' + circleInner + '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0;padding-bottom:4px">' +
+            '<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px">' +
+              '<span style="font-size:15px;font-weight:700;color:' + (isDone?'var(--ink-light)':'var(--ink)') + ';letter-spacing:-.01em' + (isDone?';text-decoration:line-through':'') + '">' + escapeHTML(m.title) + '</span>' +
+              (dateRange ? '<span style="font-family:var(--font-mono);font-size:11.5px;font-weight:600;color:' + (overdue?'var(--red)':'var(--ink-light)') + '">' + (overdue?'⚠ ':'') + dateRange + '</span>' : '') +
             '</div>' +
-            (m.description ? '<div class="po-ms-sub">' + escapeHTML(m.description.slice(0,100)) + (m.description.length > 100 ? '…' : '') + '</div>' : '') +
+            (m.description ? '<div style="font-size:12.5px;color:var(--ink-mid);line-height:1.5;margin-top:2px">' + escapeHTML(m.description.slice(0,120)) + (m.description.length>120?'…':'') + '</div>' : '') +
           '</div>' +
         '</li>';
       }).join('');
@@ -9443,7 +9493,10 @@ function renderPtOverview() {
         var isMtg = a.type === 'meeting';
         var bg = isMtg ? 'var(--amber-light)' : 'var(--surface)';
         var fg = isMtg ? 'var(--amber)' : 'var(--ink-mid)';
-        var ini = isMtg ? 'MT' : 'TM';
+        var myName = getMyFullName() || '';
+        var nameParts = myName.trim().split(/\s+/).filter(Boolean);
+        var userIni = nameParts.length >= 2 ? (nameParts[0][0] + nameParts[nameParts.length-1][0]).toUpperCase() : (nameParts[0] ? nameParts[0].slice(0,2).toUpperCase() : '??');
+        var ini = isMtg ? userIni : userIni;
         return '<div class="po-act-row">' +
           '<div class="po-act-av" style="background:' + bg + ';color:' + fg + '">' + ini + '</div>' +
           '<div class="po-act-txt" title="' + escapeHTML(a.title) + '">' + escapeHTML(a.title) + '</div>' +
@@ -12244,6 +12297,21 @@ async function deletePtProject() {
 document.getElementById('pt-modal') && document.getElementById('pt-modal').addEventListener('click', function(e){ if (e.target === this) closePtModal(); });
 </script>
 
+<!-- New user onboarding modal -->
+<div class="modal-overlay" id="onboarding-modal" style="z-index:2200">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-title" style="font-size:20px;margin-bottom:6px">Welcome to FreelanceKit! 👋</div>
+    <div style="font-size:13px;color:var(--ink-mid);margin-bottom:20px">Fill in your details to get started. First and last name are required.</div>
+    <div class="m-field"><label>First name <span style="color:var(--red)">*</span></label><input class="m-inp" id="ob-firstname" placeholder="Jane" autocomplete="given-name"></div>
+    <div class="m-field"><label>Last name <span style="color:var(--red)">*</span></label><input class="m-inp" id="ob-lastname" placeholder="Smith" autocomplete="family-name"></div>
+    <div class="m-field"><label>Business / studio name <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><input class="m-inp" id="ob-business" placeholder="e.g. Jane Smith Design" autocomplete="organization"></div>
+    <div class="m-field"><label>Email <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><input class="m-inp" type="email" id="ob-email" placeholder="jane@example.com"></div>
+    <div class="m-modal-ft" style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primary" onclick="saveOnboarding()">Get started →</button>
+    </div>
+  </div>
+</div>
+
 <!-- New-project client popup -->
 <div class="ptc-overlay" id="ptc-client-popup" onclick="if(event.target===this)closePtClientPopup()">
   <div class="ptc-inner">
@@ -12254,7 +12322,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <div class="pt-field"><label>Phone <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label>
       <div style="display:flex;gap:4px">
         <select class="pt-sel" id="ptc-phone-code" style="width:96px;flex-shrink:0;font-size:12px"><option value="+1">US +1</option><option value="+1-CA">CA +1</option><option value="+44">UK +44</option><option value="+61">AU +61</option><option value="+64">NZ +64</option><option value="+65">SG +65</option><option value="+60">MY +60</option><option value="+62">ID +62</option><option value="+63">PH +63</option><option value="+66">TH +66</option><option value="+84">VN +84</option><option value="+91">IN +91</option><option value="+86">CN +86</option><option value="+81">JP +81</option><option value="+82">KR +82</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+34">ES +34</option><option value="+39">IT +39</option><option value="+31">NL +31</option><option value="+46">SE +46</option><option value="+55">BR +55</option><option value="+52">MX +52</option><option value="+27">ZA +27</option><option value="+971">AE +971</option><option value="+other">Other</option></select>
-        <input class="pt-inp" id="ptc-phone" type="tel" placeholder="(555) 000 0000" style="margin:0;flex:1">
+        <input class="pt-inp" id="ptc-phone" type="tel" placeholder="e.g. 5550001234" style="margin:0;flex:1">
       </div>
     </div>
     <div class="pt-field"><label>Address <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label><input class="pt-inp" id="ptc-address" placeholder="123 Main St, City, Country"></div>
@@ -12371,7 +12439,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
               <option value="+966">SA +966</option>
               <option value="+other">Other</option>
             </select>
-            <input class="m-inp" id="cm-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="14">
+            <input class="m-inp" id="cm-phone" type="tel" placeholder="e.g. 5550001234" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="10">
           </div>
         </div>
       </div>
@@ -12439,7 +12507,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
               <option value="+966">SA +966</option>
               <option value="+other">Other</option>
             </select>
-            <input class="m-inp" id="cem-phone" type="tel" placeholder="(555) 000 0000" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="14">
+            <input class="m-inp" id="cem-phone" type="tel" placeholder="e.g. 5550001234" style="margin-bottom:0;flex:1" oninput="fmtPhoneInput(this)" maxlength="10">
           </div>
         </div>
       </div>
