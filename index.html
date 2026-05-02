@@ -4148,9 +4148,9 @@ var RateLimiter = (function() {
         <div class="settings-save-bar">
           <div class="ssb-info"><strong>Auto-fill is active</strong> — these details populate every template the moment you open it.</div>
           <div style="display:flex;align-items:center;gap:10px">
-            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:11px;opacity:.85">0%</span></button>
+            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:13px;opacity:.85">0%</span></button>
             <span class="save-status" id="save-details-status"></span>
-            <button class="btn-save-settings" id="btn-save-details" onclick="saveMyDetails()">Save details</button>
+            <button class="btn-save-settings" id="btn-save-details" onclick="saveMyDetails()" style="font-size:12px;padding:8px 14px;opacity:.7">Save</button>
           </div>
         </div>
         <div class="settings-grid">
@@ -4158,28 +4158,25 @@ var RateLimiter = (function() {
             <div class="sc-header"><span>&#128100;</span><span class="sc-title">Personal & Business</span></div>
             <div class="sc-body">
               <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px">
-                <div class="sf"><label>First name</label><input id="my-firstname" placeholder="First name"></div>
-                <div class="sf"><label>Middle <span style="font-weight:400;font-size:11px;color:var(--ink-light)">(optional)</span></label><input id="my-middlename" placeholder=""></div>
-                <div class="sf"><label>Last name</label><input id="my-lastname" placeholder="Last name"></div>
+                <div class="sf"><label>First name</label><input id="my-firstname" placeholder="First name" oninput="debouncedSaveDetails()"></div>
+                <div class="sf"><label>Middle <span style="font-weight:400;font-size:11px;color:var(--ink-light)">(optional)</span></label><input id="my-middlename" placeholder="" oninput="debouncedSaveDetails()"></div>
+                <div class="sf"><label>Last name</label><input id="my-lastname" placeholder="Last name" oninput="debouncedSaveDetails()"></div>
               </div>
-              <div class="sf"><label>Business name</label><input id="my-business" placeholder="Your business or trading name"></div>
-              <div class="sf"><label>Email address</label><input id="my-email" type="email" placeholder="hello@yourbusiness.com"></div>
-              <div class="sf"><label>Website</label><input id="my-website" placeholder="https://yourbusiness.com"></div>
-              <div class="sf"><label>Address / City, Country</label><input id="my-address" placeholder="City, State, Country"></div>
+              <div class="sf"><label>Business name</label><input id="my-business" placeholder="Your business or trading name" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Email address</label><input id="my-email" type="email" placeholder="hello@yourbusiness.com" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Website</label><input id="my-website" placeholder="https://yourbusiness.com" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Address / City, Country</label><input id="my-address" placeholder="City, State, Country" oninput="debouncedSaveDetails()"></div>
             </div>
           </div>
           <div class="settings-card">
             <div class="sc-header"><span>&#128176;</span><span class="sc-title">Rates & Payment</span></div>
             <div class="sc-body">
-              <div class="sf"><label>Default hourly rate ($)</label><input id="my-rate" type="number" placeholder="150" min="0"></div>
-              <div class="sf"><label>Late fee per month (%)</label><input id="my-latefee" type="number" placeholder="1.5" min="0" step="0.5"></div>
-              <div class="sf"><label>Default tax rate (%)</label><input id="my-taxrate" type="number" placeholder="28" min="0"></div>
+              <div class="sf"><label>Default hourly rate ($)</label><input id="my-rate" type="number" placeholder="150" min="0" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Late fee per month (%)</label><input id="my-latefee" type="number" placeholder="1.5" min="0" step="0.5" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Default tax rate (%)</label><input id="my-taxrate" type="number" placeholder="28" min="0" oninput="debouncedSaveDetails()"></div>
               <div class="sf" style="grid-column:1/-1">
                 <label>Accepted payment methods</label>
-                <div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                  <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="openPaymentPopup()">⚙ Manage payment methods</button>
-                  <span id="my-payment-summary" style="font-size:12px;color:var(--ink-mid)"></span>
-                </div>
+                <div id="my-payment-display" style="margin-top:8px;min-height:28px"></div>
                 <!-- Hidden inputs used by save/render logic -->
                 <input type="hidden" id="my-payment">
                 <input type="hidden" id="mpm-bank">
@@ -4199,10 +4196,10 @@ var RateLimiter = (function() {
           <div class="settings-card" style="grid-column:1/-1">
             <div class="sc-header"><span>&#128338;</span><span class="sc-title">Default working hours</span></div>
             <div class="sc-body" style="flex-direction:row;flex-wrap:wrap;gap:14px">
-              <div class="sf" style="flex:1;min-width:180px"><label>Communication channel</label><input id="my-channel" placeholder="e.g. Email, Slack"></div>
-              <div class="sf" style="flex:1;min-width:180px"><label>Response time</label><input id="my-response" placeholder="e.g. within 24 hours"></div>
-              <div class="sf" style="flex:1;min-width:180px"><label>Working hours</label><input id="my-hours" placeholder="e.g. Mon–Fri, 9am–6pm EST"></div>
-              <div class="sf" style="flex:1;min-width:180px"><label>Feedback turnaround (days)</label><input id="my-feedback" type="number" placeholder="3" min="1"></div>
+              <div class="sf" style="flex:1;min-width:180px"><label>Communication channel</label><input id="my-channel" placeholder="e.g. Email, Slack" oninput="debouncedSaveDetails()"></div>
+              <div class="sf" style="flex:1;min-width:180px"><label>Response time</label><input id="my-response" placeholder="e.g. within 24 hours" oninput="debouncedSaveDetails()"></div>
+              <div class="sf" style="flex:1;min-width:180px"><label>Working hours</label><input id="my-hours" placeholder="e.g. Mon–Fri, 9am–6pm EST" oninput="debouncedSaveDetails()"></div>
+              <div class="sf" style="flex:1;min-width:180px"><label>Feedback turnaround (days)</label><input id="my-feedback" type="number" placeholder="3" min="1" oninput="debouncedSaveDetails()"></div>
             </div>
           </div>
         </div>
@@ -6412,7 +6409,15 @@ function applyMyDetails(d, force) {
   if (d.tax_rate) { var rt=document.getElementById('rc-tax'); if(rt) rt.value=d.tax_rate; if(typeof calcRate==='function') calcRate(); }
 }
 
-async function saveMyDetails() {
+var _detailsSaveTimer = null;
+function debouncedSaveDetails() {
+  clearTimeout(_detailsSaveTimer);
+  var status = document.getElementById('save-details-status');
+  if (status) { status.textContent = 'Saving…'; status.className = 'save-status show'; }
+  _detailsSaveTimer = setTimeout(function() { saveMyDetails(true); }, 1400);
+}
+
+async function saveMyDetails(silent) {
   var btn    = document.getElementById('btn-save-details');
   var status = document.getElementById('save-details-status');
 
@@ -6471,8 +6476,11 @@ async function saveMyDetails() {
   }
 
   applyMyDetails(payload, true);
-  showStatus('✓ Details saved', 'ok', 3000);
-  showToast('\u2713 Details saved and applied to all templates');
+  showStatus('✓ Saved', 'ok', 2500);
+  if (!silent) showToast('✓ Details saved and applied to all templates');
+  // Mark profile checklist done when user saves My Details
+  if (typeof _markChecklistDone === 'function') _markChecklistDone('profile');
+  if (typeof renderGetStarted === 'function') renderGetStarted();
 }
 
 // ═══════════════ CLIENT DIRECTORY ═══════════════
@@ -9292,11 +9300,7 @@ function _saveChecklist(state) {
 function _autoCheckChecklist() {
   // Auto-detect completion based on data already loaded
   var state = _loadChecklist();
-  // Profile: check if my-details has been saved (first_name exists in user_settings via DOM)
-  if (!state.profile) {
-    var fn = document.getElementById('my-firstname');
-    if (fn && fn.value && fn.value.trim()) state.profile = true;
-  }
+  // Profile: only mark done when user explicitly saves My Details (via saveMyDetails)
   // Project: check _ptProjects
   if (!state.project && _ptProjects && _ptProjects.length) state.project = true;
   // Client: check _clients
@@ -9522,8 +9526,26 @@ function renderPmDetails() {
       var val = saved[f[0]] || '';
       return '<input class="ip-inp" id="' + f[0] + '" placeholder="' + escapeHTML(f[1]) + '" value="' + escapeHTML(val) + '" style="margin-bottom:8px;display:block;width:100%;box-sizing:border-box" oninput="_pmDetailInput(this)">';
     }).join('') + '</div>' : '';
-  // Re-render checklist badges
-  _renderPmPopup();
+  // Update preferred badges inline (no full re-render — avoids infinite recursion)
+  var listEl = document.getElementById('pm-checklist-items');
+  if (listEl) {
+    var allItems = listEl.querySelectorAll('.pm-check-item');
+    _PM_OPTIONS.forEach(function(pm, i) {
+      var item = allItems[i];
+      if (!item) return;
+      var existing = item.querySelector('.pm-check-badge');
+      if (pm.id === method && item.classList.contains('checked')) {
+        if (!existing) {
+          var b = document.createElement('span');
+          b.className = 'pm-check-badge';
+          b.textContent = 'Preferred';
+          item.appendChild(b);
+        }
+      } else {
+        if (existing) existing.remove();
+      }
+    });
+  }
 }
 
 function _pmDetailInput(el) {
@@ -9562,16 +9584,52 @@ function savePaymentPopup() {
   closePaymentPopup();
 }
 
+var _PM_COLORS = {
+  bank: '#2563EB', paypal: '#003087', venmo: '#3D95CE',
+  zelle: '#6D1ED4', cashapp: '#00A550', stripe: '#635BFF',
+  wise: '#009068', wire: '#6B7280', custom: '#F59E0B'
+};
+
 function _updatePaymentSummary() {
-  var summaryEl = document.getElementById('my-payment-summary');
-  if (!summaryEl) return;
-  if (!_pmState.methods.length) { summaryEl.textContent = 'None set'; return; }
-  var labels = _pmState.methods.map(function(id) {
-    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
-    return pm ? pm.label : id;
-  });
+  var display = document.getElementById('my-payment-display');
+  if (!display) return;
+  // No methods set — show just the manage button
+  if (!_pmState.methods.length) {
+    display.innerHTML = '<button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="openPaymentPopup()">⚙ Manage payment methods</button>';
+    return;
+  }
+  // Pills row
+  var pillsHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">' +
+    _pmState.methods.map(function(id) {
+      var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+      var label = pm ? pm.label : id;
+      var color = _PM_COLORS[id] || '#6B7280';
+      var isPref = id === _pmState.preferred;
+      var style = isPref
+        ? 'display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:2px solid #E74C3C;background:#fff3f3;color:#E74C3C;cursor:default'
+        : 'display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:2px solid ' + color + ';background:' + color + '18;color:' + color + ';cursor:default';
+      return '<span style="' + style + '">' + escapeHTML(label) + (isPref ? ' ★' : '') + '</span>';
+    }).join('') + '</div>';
+  // Preferred method details block
   var prefPm = _PM_OPTIONS.find(function(p){ return p.id === _pmState.preferred; });
-  summaryEl.textContent = labels.join(', ') + (prefPm ? ' · Preferred: ' + prefPm.label : '');
+  var prefDetails = '';
+  if (prefPm) {
+    var fields = _PM_FIELD_MAP[_pmState.preferred] || [];
+    var details = _pmState.details || {};
+    var detailLines = fields.map(function(f) {
+      var val = details[f[0]];
+      return val ? '<span style="color:var(--ink-mid)">' + escapeHTML(f[1].split('(')[0].trim()) + ':</span> <strong>' + escapeHTML(val) + '</strong>' : '';
+    }).filter(Boolean);
+    if (detailLines.length) {
+      prefDetails = '<div style="margin-bottom:10px;padding:8px 12px;background:#f8f8f8;border-radius:8px;border:1px solid var(--border)">' +
+        '<div style="font-size:12px;font-weight:700;margin-bottom:4px">' + escapeHTML(prefPm.label) + '</div>' +
+        '<div style="font-size:12px;line-height:1.8">' + detailLines.join('<br>') + '</div>' +
+        '</div>';
+    }
+  }
+  // Manage button (solid FK green, bold)
+  var manageBtn = '<button style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#009668;color:#fff;font-family:var(--font-body);transition:background .2s" onclick="openPaymentPopup()">⚙ Manage payment methods</button>';
+  display.innerHTML = pillsHtml + prefDetails + manageBtn;
 }
 
 function _collectMyPaymentData() {
