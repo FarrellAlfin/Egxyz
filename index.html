@@ -2249,6 +2249,44 @@ input[type=number]{-moz-appearance:textfield}
   h1{font-size:34px}
   .lp-hero-inner{grid-template-columns:1fr 1fr}
 }
+
+/* ── WELCOME PAGE ── */
+#page-welcome.active{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}
+.welcome-wrap{width:100%;max-width:480px;animation:slideUp .4s ease both}
+.welcome-logo{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--on-surface);letter-spacing:-.5px;margin-bottom:32px}
+.welcome-logo span{color:var(--primary)}
+.welcome-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px}
+.welcome-title{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--on-surface);line-height:1.1;margin-bottom:8px}
+.welcome-title em{font-style:normal;color:var(--primary)}
+.welcome-sub{font-size:14px;color:var(--ink-mid);margin-bottom:28px;line-height:1.6}
+.welcome-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.welcome-fields .wf-full{grid-column:1/-1}
+.wf-label{font-size:11px;font-weight:600;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.wf-input{width:100%;padding:10px 12px;border:1.5px solid var(--outline-variant);border-radius:8px;font-size:14px;font-family:inherit;color:var(--on-surface);background:var(--surface-white);box-sizing:border-box;transition:border-color .15s}
+.wf-input:focus{outline:none;border-color:var(--primary)}
+.welcome-cta{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .15s}
+.welcome-cta:hover{opacity:.9}
+.welcome-skip{text-align:center;margin-top:14px;font-size:12px;color:var(--ink-light)}
+.welcome-skip a{color:var(--primary);cursor:pointer;text-decoration:none}
+.welcome-error{font-size:12px;color:var(--red);min-height:18px;margin-bottom:4px}
+
+/* ── STARTER CHECKLIST ── */
+.starter-checklist{background:var(--surface-white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;animation:slideUp .35s ease both}
+.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sc-title{font-size:13px;font-weight:700;color:var(--on-surface)}
+.sc-pct{font-size:11px;font-weight:600;color:var(--ink-mid);background:var(--bg);border-radius:20px;padding:2px 9px}
+.sc-items{display:flex;flex-direction:column;gap:6px}
+.sc-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:background .12s,border-color .12s;background:var(--surface-white)}
+.sc-item:hover{background:var(--bg);border-color:var(--outline-variant)}
+.sc-item.done{background:var(--bg);border-color:var(--border)}
+.sc-item.done .sc-item-label{text-decoration:line-through;color:var(--ink-light)}
+.sc-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sc-item.done .sc-check{background:var(--primary);border-color:var(--primary)}
+.sc-check-tick{display:none;color:#fff;font-size:10px;font-weight:800}
+.sc-item.done .sc-check-tick{display:block}
+.sc-item-label{font-size:13px;color:var(--on-surface);font-weight:500;flex:1}
+.sc-item-arrow{font-size:13px;color:var(--ink-light)}
+.sc-item.done .sc-item-arrow{display:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -2828,10 +2866,6 @@ var RateLimiter = (function() {
             </div>
 
             <div class="auth-field">
-              <div class="auth-field-lbl">Full name</div>
-              <input class="auth-input" type="text" placeholder="Your name" id="su-name">
-            </div>
-            <div class="auth-field">
               <div class="auth-field-lbl">Email address</div>
               <input class="auth-input" type="email" placeholder="you@example.com" id="su-email" onkeydown="if(event.key==='Enter')handleSignUp()">
             </div>
@@ -2839,26 +2873,13 @@ var RateLimiter = (function() {
               <div class="auth-field-lbl">Password</div>
               <input class="auth-input" type="password" placeholder="At least 8 characters" id="su-pass" onkeydown="if(event.key==='Enter')handleSignUp()">
             </div>
-
-            <div style="margin-bottom:6px">
-              <div class="auth-field-lbl" style="margin-bottom:10px">Choose your plan</div>
-              <div class="auth-plan-grid" id="plan-grid">
-                <div class="auth-plan" id="plan-free" onclick="selectPlan('free')">
-                  <div class="auth-plan-name">Free</div>
-                  <div class="auth-plan-price">$0</div>
-                  <div class="auth-plan-note">Contracts &amp; My Business</div>
-                </div>
-                <div class="auth-plan selected" id="plan-pro" onclick="selectPlan('pro')">
-                  <div class="auth-plan-badge">Free in beta</div>
-                  <div class="auth-plan-name">Pro</div>
-                  <div class="auth-plan-price">$0</div>
-                  <div class="auth-plan-note">Full access · during beta</div>
-                </div>
-              </div>
+            <div class="auth-field">
+              <div class="auth-field-lbl">Confirm password</div>
+              <input class="auth-input" type="password" placeholder="Repeat your password" id="su-pass-confirm" onkeydown="if(event.key==='Enter')handleSignUp()">
             </div>
 
             <div class="auth-error" id="su-error"></div>
-            <button class="auth-cta" onclick="handleSignUp()" id="signup-cta">Start free trial →</button>
+            <button class="auth-cta" onclick="handleSignUp()" id="signup-cta">Create account →</button>
 
             <div class="auth-switch">Already have an account? <span onclick="switchAuthTab('signin')">Sign in</span></div>
 
@@ -3184,6 +3205,15 @@ var RateLimiter = (function() {
           </div>
         </div>
 
+        <!-- Starter checklist -->
+        <div id="starter-checklist" class="starter-checklist" style="display:none">
+          <div class="sc-head">
+            <div class="sc-title">Get started with FreelanceKit</div>
+            <div class="sc-pct" id="sc-pct-label">0 / 4</div>
+          </div>
+          <div class="sc-items" id="sc-items"></div>
+        </div>
+
         <!-- Recently visited -->
         <div class="home-section-label">Recently visited</div>
         <div class="home-recent-row" id="home-recent-row">
@@ -3299,6 +3329,9 @@ var RateLimiter = (function() {
           <div class="inv-vp-head">
             <div class="inv-vp-title">Choose a project</div>
             <div class="inv-vp-sub">Pick a project from your tracker to manage its invoices.</div>
+          </div>
+          <div style="display:flex;gap:8px;margin:0 0 12px;align-items:center">
+            <input class="ip-inp" id="inv-folder-search" type="text" placeholder="Search projects or clients…" style="flex:1;padding:7px 10px;font-size:13px" oninput="renderInvBuilderProjects()">
           </div>
           <div id="inv-proj-cards" class="inv-proj-cards-grid"></div>
         </div>
@@ -4498,6 +4531,49 @@ function showLanding(){
   document.body.scrollTop=0;
   setTimeout(initLandingAnimations, 80);
 }
+
+// ─── WELCOME PAGE ─────────────────────────────────────────────────────────────
+function showWelcomePage() {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var wp = document.getElementById('page-welcome');
+  if (wp) wp.classList.add('active');
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+async function saveWelcomePage() {
+  var first    = (document.getElementById('wl-firstname') || {}).value || '';
+  var last     = (document.getElementById('wl-lastname')  || {}).value || '';
+  var business = (document.getElementById('wl-business')  || {}).value || '';
+  var errEl    = document.getElementById('wl-error');
+  first = first.trim(); last = last.trim(); business = business.trim();
+  if (!first) { if (errEl) errEl.textContent = 'Please enter your first name.'; return; }
+  if (!last)  { if (errEl) errEl.textContent = 'Please enter your last name.';  return; }
+  if (errEl) errEl.textContent = '';
+  if (_currentUser) {
+    try {
+      // Upsert into user_settings
+      await _supabase.from('user_settings').upsert({
+        id: _currentUser.id,
+        first_name: first,
+        last_name: last,
+        business_name: business || null
+      });
+      // Also update auth metadata so the nav avatar shows the correct name
+      await _supabase.auth.updateUser({ data: { full_name: first + ' ' + last } });
+    } catch(e) { console.warn('saveWelcomePage:', e); }
+  }
+  showDash();
+  // Trigger checklist render after navigation
+  setTimeout(function() {
+    if (typeof renderStarterChecklist === 'function') renderStarterChecklist();
+  }, 400);
+}
+
+function skipWelcomePage() {
+  showDash();
+}
+// ─────────────────────────────────────────────────────────────────────────────
 function initLandingAnimations(){
   // Build timesheet heatmap in bento card
   var hmEl=document.getElementById('lp-ts-heatmap');
@@ -5963,7 +6039,30 @@ var BETA_MODE = true;
 var _userPlan = BETA_MODE ? 'pro' : 'free';
 var FREE_PANELS = ['home','mydetails','clients','invhistory'];
 
+// ─── DATA ISOLATION: wipe all fk_ localStorage when a different user logs in ──
+function _handleUserSwitch(newUserId) {
+  var prevUid = null;
+  try { prevUid = localStorage.getItem('fk_session_uid'); } catch(e) {}
+  if (prevUid && prevUid !== newUserId) {
+    // Different user — clear all fk_ keys to prevent cross-user data leakage
+    var keysToRemove = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('fk_') === 0) keysToRemove.push(k);
+    }
+    keysToRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+    // Reset in-memory arrays that were loaded from localStorage before auth
+    _foManualIncome = [];
+    _calEvents = [];
+    _todos = [];
+    _invoices = [];
+  }
+  try { localStorage.setItem('fk_session_uid', newUserId); } catch(e) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function setLoggedInUser(user) {
+  _handleUserSwitch(user.id);
   _currentUser = user;
   // During beta, grant everyone full pro access regardless of their stored plan.
   // When BETA_MODE is false, read from user metadata (set at sign-up).
@@ -6774,8 +6873,15 @@ function renderInvBuilderProjects() {
   var el = document.getElementById('inv-proj-cards');
   if (!el) return;
   var projects = window._ptProjects || [];
+  var q = ((document.getElementById('inv-folder-search') || {}).value || '').trim().toLowerCase();
+  if (q) {
+    projects = projects.filter(function(p) {
+      return (p.name || '').toLowerCase().indexOf(q) >= 0 ||
+             (p.client_name || '').toLowerCase().indexOf(q) >= 0;
+    });
+  }
   if (!projects.length) {
-    el.innerHTML = '<div class="inv-list-empty" style="margin-top:12px">No projects yet. Create one in the Project Tracker first, then come back to invoice it.</div>';
+    el.innerHTML = '<div class="inv-list-empty" style="margin-top:12px">' + (q ? 'No projects match your search.' : 'No projects yet. Create one in the Project Tracker first, then come back to invoice it.') + '</div>';
     return;
   }
   el.innerHTML = projects.map(function(p) {
@@ -9014,6 +9120,91 @@ function calDeleteFromModal() {
   } : null);
 }
 
+// ─── STARTER CHECKLIST ───────────────────────────────────────────────────────
+var _CHECKLIST_ITEMS = [
+  { id: 'profile',  label: 'Set up your profile',      panel: 'mydetails'  },
+  { id: 'project',  label: 'Create your first project', panel: 'projects'   },
+  { id: 'client',   label: 'Add a client',              panel: 'clients'    },
+  { id: 'invoice',  label: 'Build an invoice',          panel: 'invoice'    }
+];
+
+function _checklistKey() {
+  return _currentUser ? 'fk_checklist_' + _currentUser.id : null;
+}
+
+function _loadChecklist() {
+  var key = _checklistKey();
+  if (!key) return {};
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { return {}; }
+}
+
+function _saveChecklist(state) {
+  var key = _checklistKey();
+  if (!key) return;
+  try { localStorage.setItem(key, JSON.stringify(state)); } catch(e) {}
+}
+
+function _autoCheckChecklist() {
+  // Auto-detect completion based on data already loaded
+  var state = _loadChecklist();
+  // Profile: check if my-details has been saved (first_name exists in user_settings via DOM)
+  if (!state.profile) {
+    var fn = document.getElementById('my-firstname');
+    if (fn && fn.value && fn.value.trim()) state.profile = true;
+  }
+  // Project: check _ptProjects
+  if (!state.project && _ptProjects && _ptProjects.length) state.project = true;
+  // Client: check _clients
+  if (!state.client && typeof _clients !== 'undefined' && _clients && _clients.length) state.client = true;
+  // Invoice: check _invoices
+  if (!state.invoice && _invoices && _invoices.length) state.invoice = true;
+  _saveChecklist(state);
+  return state;
+}
+
+function _markChecklistDone(itemId) {
+  var state = _loadChecklist();
+  state[itemId] = true;
+  _saveChecklist(state);
+  renderStarterChecklist();
+}
+
+function renderStarterChecklist() {
+  var wrap = document.getElementById('starter-checklist');
+  var itemsEl = document.getElementById('sc-items');
+  var pctEl = document.getElementById('sc-pct-label');
+  if (!wrap || !itemsEl) return;
+  var state = _autoCheckChecklist();
+  var doneCount = _CHECKLIST_ITEMS.filter(function(it){ return state[it.id]; }).length;
+  var total = _CHECKLIST_ITEMS.length;
+  // All done — hide with animation
+  if (doneCount >= total) {
+    wrap.style.transition = 'opacity .5s, transform .5s';
+    wrap.style.opacity = '0';
+    wrap.style.transform = 'translateY(-10px)';
+    setTimeout(function(){ wrap.style.display = 'none'; }, 520);
+    return;
+  }
+  wrap.style.display = '';
+  wrap.style.opacity = '';
+  wrap.style.transform = '';
+  if (pctEl) pctEl.textContent = doneCount + ' / ' + total;
+  itemsEl.innerHTML = _CHECKLIST_ITEMS.map(function(it) {
+    var done = !!state[it.id];
+    return '<div class="sc-item' + (done ? ' done' : '') + '" onclick="' + (done ? '' : '_handleChecklistClick(\'' + it.id + '\',\'' + it.panel + '\')') + '">' +
+      '<div class="sc-check"><span class="sc-check-tick">✓</span></div>' +
+      '<div class="sc-item-label">' + escapeHTML(it.label) + '</div>' +
+      (done ? '' : '<div class="sc-item-arrow">→</div>') +
+      '</div>';
+  }).join('');
+}
+
+function _handleChecklistClick(itemId, panel) {
+  _markChecklistDone(itemId);
+  if (typeof showPanel === 'function') showPanel(panel);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ─── HOME INIT ────────────────────────────────────────────────────────────────
 function initHomeDashboard() {
   renderRecentPanels();
@@ -9028,6 +9219,7 @@ function initHomeDashboard() {
   })();
   renderContribGrid();
   renderHomeGoalBar();
+  renderStarterChecklist();
   // Load projects for todo filter and upcoming deadlines (even if Projects panel not yet visited)
   if (!window._ptInit) {
     window._ptInit = true;
@@ -9181,16 +9373,11 @@ function setAuthLoading(btnId, loading, defaultText) {
 }
 
 async function handleSignUp() {
-  var name  = document.getElementById('su-name').value.trim();
-  var email = document.getElementById('su-email').value.trim();
-  var pass  = document.getElementById('su-pass').value;
-  var plan  = document.querySelector('.auth-plan.selected');
-  var planId = plan ? plan.id.replace('plan-','') : 'pro';
+  var email   = document.getElementById('su-email').value.trim();
+  var pass    = document.getElementById('su-pass').value;
+  var confirm = document.getElementById('su-pass-confirm').value;
 
-  // ── Schema-based input validation ─────────────────────────────
-  var nameCheck = Validate.text(name, 'Name', 1, 100);
-  if (!nameCheck.ok) { showAuthError('su-error', nameCheck.msg); return; }
-
+  // ── Validation ────────────────────────────────────────────────
   var emailCheck = Validate.email(email);
   if (!emailCheck.ok) { showAuthError('su-error', emailCheck.msg); return; }
 
@@ -9198,9 +9385,7 @@ async function handleSignUp() {
   var passCheck = Validate.text(pass, 'Password', 8, 72);
   if (!passCheck.ok) { showAuthError('su-error', passCheck.msg); return; }
 
-  // Reject unexpected plan values (prevent mass-assignment)
-  var allowedPlans = ['free', 'pro'];
-  if (allowedPlans.indexOf(planId) === -1) { planId = 'pro'; }
+  if (pass !== confirm) { showAuthError('su-error', 'Passwords do not match.'); return; }
 
   var ctaText = document.getElementById('signup-cta').textContent;
   setAuthLoading('signup-cta', true, ctaText);
@@ -9208,7 +9393,7 @@ async function handleSignUp() {
   var result = await _supabase.auth.signUp({
     email: email,
     password: pass,
-    options: { data: { full_name: name, plan: planId } }
+    options: { data: { plan: 'pro' } }
   });
 
   setAuthLoading('signup-cta', false, ctaText);
@@ -9221,7 +9406,7 @@ async function handleSignUp() {
   // If email confirmation is off, user is signed in immediately
   if (result.data.session) {
     setLoggedInUser(result.data.user);
-    showDash();
+    showWelcomePage();
   } else {
     // Email confirmation is on — tell the user to check their inbox
     showAuthError('su-error', 'Account created! Check your email to confirm before signing in.');
@@ -9337,6 +9522,25 @@ function _clearUserState() {
   _ptProjects = []; _ptCurrentId = null;
   window._ptMilestones = []; window._ptTasks = []; window._ptBilling = [];
   window._ptMeetings = []; window._ptHours = [];
+
+  // Clear sensitive in-memory data arrays (loaded from localStorage before auth)
+  _foManualIncome = [];
+  _calEvents = [];
+  _todos = [];
+  _invoices = [];
+  _homeProjectTasks = [];
+  _homeProjectTasksDone = [];
+
+  // Wipe per-user sensitive localStorage keys so next sign-in starts clean
+  ['fk_manual_income','fk_cal_events','fk_todos','fk_rate_inputs',
+   'fk_checklist_','fk_session_uid'].forEach(function(prefix) {
+    var keysToRemove = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(prefix) === 0) keysToRemove.push(k);
+    }
+    keysToRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+  });
 }
 
 async function handleSignOut() {
@@ -13253,6 +13457,33 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
       <button class="btn-outline" onclick="foCloseEditIncome()">Cancel</button>
       <button class="btn-use" onclick="foSaveEditIncome()">Save changes</button>
     </div>
+  </div>
+</div>
+
+<!-- ─── WELCOME PAGE ─── -->
+<div id="page-welcome" class="page">
+  <div class="welcome-wrap">
+    <div class="welcome-logo">Freelance<span>Kit</span></div>
+    <div class="welcome-eyebrow">You're in!</div>
+    <div class="welcome-title">Let's set up your<br><em>profile.</em></div>
+    <p class="welcome-sub">Tell us a little about yourself — this helps personalise your invoices and dashboard.</p>
+    <div class="welcome-fields">
+      <div>
+        <div class="wf-label">First name <span style="color:var(--red)">*</span></div>
+        <input class="wf-input" id="wl-firstname" type="text" placeholder="Jane" autocomplete="given-name">
+      </div>
+      <div>
+        <div class="wf-label">Last name <span style="color:var(--red)">*</span></div>
+        <input class="wf-input" id="wl-lastname" type="text" placeholder="Smith" autocomplete="family-name">
+      </div>
+      <div class="wf-full">
+        <div class="wf-label">Business / studio name <span style="font-weight:400;color:var(--ink-light)">(optional)</span></div>
+        <input class="wf-input" id="wl-business" type="text" placeholder="e.g. Jane Smith Design" autocomplete="organization">
+      </div>
+    </div>
+    <div class="welcome-error" id="wl-error"></div>
+    <button class="welcome-cta" onclick="saveWelcomePage()">Get started →</button>
+    <div class="welcome-skip"><a onclick="skipWelcomePage()">Skip for now</a></div>
   </div>
 </div>
 
