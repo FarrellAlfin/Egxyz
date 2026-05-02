@@ -2295,7 +2295,7 @@ input[type=number]{-moz-appearance:textfield}
 .pm-check-item.checked .pm-check-item-label{color:#007d57;font-weight:600}
 .pm-check-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:800;color:#fff;transition:all .15s}
 .pm-check-item.checked .pm-check-dot{background:#009668;border-color:#009668}
-.pm-check-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#009668;background:#e8f7f0;border-radius:4px;padding:2px 7px}
+.pm-check-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#E74C3C;background:#fff0ee;border:1.5px solid #E74C3C;border-radius:20px;padding:2px 8px}
 .pm-section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-light);margin-bottom:8px}
 .pm-popup-ft{padding:14px 24px 20px;border-top:1.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 
@@ -4147,10 +4147,9 @@ var RateLimiter = (function() {
         </div>
         <div class="settings-save-bar">
           <div class="ssb-info"><strong>Auto-fill is active</strong> — these details populate every template the moment you open it.</div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:13px;opacity:.85">0%</span></button>
+          <div style="display:flex;align-items:center;gap:8px">
             <span class="save-status" id="save-details-status"></span>
-            <button class="btn-save-settings" id="btn-save-details" onclick="saveMyDetails()" style="font-size:12px;padding:8px 14px;opacity:.7">Save</button>
+            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:13px;opacity:.85">0%</span></button>
           </div>
         </div>
         <div class="settings-grid">
@@ -4857,6 +4856,11 @@ function showPanel(id,el){
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
   if(id==='getstarted'){ if(typeof renderGetStarted==='function') renderGetStarted(); }
+  if(id==='mydetails'){
+    // Visiting My Details counts as "Set up your profile" being done
+    if(typeof _markChecklistDone==='function') _markChecklistDone('profile');
+    if(typeof renderGetStarted==='function') renderGetStarted();
+  }
   if(typeof _trackRecentPanel==='function') _trackRecentPanel(id);
 }
 
@@ -9411,7 +9415,8 @@ function renderGetStarted() {
 }
 
 function _gsItemClick(itemId, panel) {
-  _markChecklistDone(itemId);
+  // Profile is only marked done when user actually visits My Details (not just on click)
+  if (itemId !== 'profile') _markChecklistDone(itemId);
   showPanel(panel);
 }
 
@@ -9498,8 +9503,6 @@ function _renderPmPopup() {
     }
     renderPmDetails();
   }
-  var applyEl = document.getElementById('pm-apply-future');
-  if (applyEl) applyEl.checked = _pmState.applyToFuture;
 }
 
 function _pmToggle(id) {
@@ -9564,7 +9567,7 @@ function savePaymentPopup() {
   });
   _pmState.preferred = method;
   _pmState.details = details;
-  _pmState.applyToFuture = !!(document.getElementById('pm-apply-future') || {}).checked;
+  // applyToFuture is controlled by the toggle in the payment display card (not in popup)
 
   // Persist to hidden input
   var hiddenEl = document.getElementById('my-payment');
@@ -9590,46 +9593,64 @@ var _PM_COLORS = {
   wise: '#009068', wire: '#6B7280', custom: '#F59E0B'
 };
 
+// Green "Manage" button HTML — identical before and after first setup
+var _PM_MANAGE_BTN = '<button style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#009668;color:#fff;font-family:var(--font-body);transition:background .2s" onclick="openPaymentPopup()">⚙ Manage payment methods</button>';
+
 function _updatePaymentSummary() {
   var display = document.getElementById('my-payment-display');
   if (!display) return;
-  // No methods set — show just the manage button
+  // No methods set — green Manage button only
   if (!_pmState.methods.length) {
-    display.innerHTML = '<button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="openPaymentPopup()">⚙ Manage payment methods</button>';
+    display.innerHTML = _PM_MANAGE_BTN;
     return;
   }
-  // Pills row
-  var pillsHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">' +
-    _pmState.methods.map(function(id) {
-      var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
-      var label = pm ? pm.label : id;
-      var color = _PM_COLORS[id] || '#6B7280';
-      var isPref = id === _pmState.preferred;
-      var style = isPref
-        ? 'display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:2px solid #E74C3C;background:#fff3f3;color:#E74C3C;cursor:default'
-        : 'display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:2px solid ' + color + ';background:' + color + '18;color:' + color + ';cursor:default';
-      return '<span style="' + style + '">' + escapeHTML(label) + (isPref ? ' ★' : '') + '</span>';
-    }).join('') + '</div>';
-  // Preferred method details block
+
+  // ── Preferred method card ──
   var prefPm = _PM_OPTIONS.find(function(p){ return p.id === _pmState.preferred; });
-  var prefDetails = '';
+  var prefCardHtml = '';
   if (prefPm) {
     var fields = _PM_FIELD_MAP[_pmState.preferred] || [];
     var details = _pmState.details || {};
     var detailLines = fields.map(function(f) {
       var val = details[f[0]];
-      return val ? '<span style="color:var(--ink-mid)">' + escapeHTML(f[1].split('(')[0].trim()) + ':</span> <strong>' + escapeHTML(val) + '</strong>' : '';
-    }).filter(Boolean);
-    if (detailLines.length) {
-      prefDetails = '<div style="margin-bottom:10px;padding:8px 12px;background:#f8f8f8;border-radius:8px;border:1px solid var(--border)">' +
-        '<div style="font-size:12px;font-weight:700;margin-bottom:4px">' + escapeHTML(prefPm.label) + '</div>' +
-        '<div style="font-size:12px;line-height:1.8">' + detailLines.join('<br>') + '</div>' +
-        '</div>';
-    }
+      return val ? '<div style="font-size:13px;line-height:1.8"><span style="color:var(--ink-mid)">' + escapeHTML(f[1].split('(')[0].trim()) + ':</span> <strong>' + escapeHTML(val) + '</strong></div>' : '';
+    }).filter(Boolean).join('');
+    var toggleChecked = _pmState.applyToFuture ? 'checked' : '';
+    prefCardHtml = '<div style="margin-bottom:12px;padding:12px 16px;background:#f8fffe;border:2px solid #009668;border-radius:10px">' +
+      '<div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:' + (detailLines ? '8px' : '10px') + '">Preferred payment method: <span style="color:#009668">' + escapeHTML(prefPm.label) + '</span></div>' +
+      (detailLines ? '<div style="margin-bottom:10px">' + detailLines + '</div>' : '') +
+      '<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-mid);cursor:pointer;margin-top:4px">' +
+        '<input type="checkbox" id="pm-apply-display" ' + toggleChecked + ' onchange="_toggleApplyFuture(this)" style="width:15px;height:15px;cursor:pointer">' +
+        'Apply to all new invoices automatically' +
+      '</label>' +
+    '</div>';
   }
-  // Manage button (solid FK green, bold)
-  var manageBtn = '<button style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#009668;color:#fff;font-family:var(--font-body);transition:background .2s" onclick="openPaymentPopup()">⚙ Manage payment methods</button>';
-  display.innerHTML = pillsHtml + prefDetails + manageBtn;
+
+  // ── Other methods (non-preferred) as small pills ──
+  var otherMethods = _pmState.methods.filter(function(id){ return id !== _pmState.preferred; });
+  var otherPillsHtml = '';
+  if (otherMethods.length) {
+    otherPillsHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center">' +
+      '<span style="font-size:11px;font-weight:600;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em">Also accepts:</span>' +
+      otherMethods.map(function(id) {
+        var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+        var label = pm ? pm.label : id;
+        var color = _PM_COLORS[id] || '#6B7280';
+        return '<span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid ' + color + ';background:' + color + '18;color:' + color + '">' + escapeHTML(label) + '</span>';
+      }).join('') +
+    '</div>';
+  }
+
+  display.innerHTML = prefCardHtml + otherPillsHtml + _PM_MANAGE_BTN;
+}
+
+function _toggleApplyFuture(el) {
+  _pmState.applyToFuture = el.checked;
+  var hiddenEl = document.getElementById('my-payment');
+  if (hiddenEl && _pmState.methods.length) {
+    hiddenEl.value = JSON.stringify({ methods: _pmState.methods, preferred: _pmState.preferred, details: _pmState.details, applyToFuture: _pmState.applyToFuture });
+  }
+  debouncedSaveDetails();
 }
 
 function _collectMyPaymentData() {
@@ -13933,12 +13954,6 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
         <div class="pm-section-lbl">Preferred method</div>
         <select class="ip-inp" id="pm-preferred-sel" style="width:100%;margin-bottom:14px;font-size:13px" onchange="renderPmDetails()"></select>
         <div id="pm-details-wrap"></div>
-        <div style="margin-top:12px">
-          <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-mid);cursor:pointer;line-height:1.5">
-            <input type="checkbox" id="pm-apply-future" style="margin-top:2px">
-            Apply preferred payment method to all <strong>&nbsp;new&nbsp;</strong> invoices automatically
-          </label>
-        </div>
       </div>
     </div>
     <div class="pm-popup-ft">
