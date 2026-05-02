@@ -6040,22 +6040,33 @@ var _userPlan = BETA_MODE ? 'pro' : 'free';
 var FREE_PANELS = ['home','mydetails','clients','invhistory'];
 
 // ─── DATA ISOLATION: wipe all fk_ localStorage when a different user logs in ──
-function _handleUserSwitch(newUserId) {
-  var prevUid = null;
-  try { prevUid = localStorage.getItem('fk_session_uid'); } catch(e) {}
-  if (prevUid && prevUid !== newUserId) {
-    // Different user — clear all fk_ keys to prevent cross-user data leakage
-    var keysToRemove = [];
+// ─── Helper: wipe every fk_ key from localStorage ────────────────────────────
+function _wipeAllFkStorage() {
+  var keysToRemove = [];
+  try {
     for (var i = 0; i < localStorage.length; i++) {
       var k = localStorage.key(i);
       if (k && k.indexOf('fk_') === 0) keysToRemove.push(k);
     }
     keysToRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
-    // Reset in-memory arrays that were loaded from localStorage before auth
+  } catch(e) {}
+}
+
+function _handleUserSwitch(newUserId) {
+  var prevUid = null;
+  try { prevUid = localStorage.getItem('fk_session_uid'); } catch(e) {}
+  // Wipe ALL fk_ storage whenever a DIFFERENT user logs in, or when there was
+  // no previous session (prevUid === null) — catches stale data from old code.
+  if (prevUid !== newUserId) {
+    _wipeAllFkStorage();
+    // Reset every in-memory array that is sourced from localStorage at module load
     _foManualIncome = [];
     _calEvents = [];
     _todos = [];
     _invoices = [];
+    _homeProjectTasks = [];
+    _homeProjectTasksDone = [];
+    _ptProjects = [];
   }
   try { localStorage.setItem('fk_session_uid', newUserId); } catch(e) {}
 }
@@ -9523,7 +9534,7 @@ function _clearUserState() {
   window._ptMilestones = []; window._ptTasks = []; window._ptBilling = [];
   window._ptMeetings = []; window._ptHours = [];
 
-  // Clear sensitive in-memory data arrays (loaded from localStorage before auth)
+  // Clear every in-memory data array
   _foManualIncome = [];
   _calEvents = [];
   _todos = [];
@@ -9531,16 +9542,9 @@ function _clearUserState() {
   _homeProjectTasks = [];
   _homeProjectTasksDone = [];
 
-  // Wipe per-user sensitive localStorage keys so next sign-in starts clean
-  ['fk_manual_income','fk_cal_events','fk_todos','fk_rate_inputs',
-   'fk_checklist_','fk_session_uid'].forEach(function(prefix) {
-    var keysToRemove = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      if (k && k.indexOf(prefix) === 0) keysToRemove.push(k);
-    }
-    keysToRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
-  });
+  // Wipe ALL fk_ localStorage keys — every key is user-specific and must not
+  // bleed through to the next session. _wipeAllFkStorage is defined above.
+  _wipeAllFkStorage();
 }
 
 async function handleSignOut() {
