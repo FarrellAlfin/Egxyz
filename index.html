@@ -1338,7 +1338,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .recent-chip:hover{border-color:var(--amber);background:var(--amber-light)}
 .recent-chip-icon{font-size:12px}
 /* ── LIVE TIMER BUTTON ── */
-.nav-timer-btn{display:flex;align-items:center;gap:8px;background:var(--surface-low);border:1.5px solid var(--border);border-radius:20px;padding:8px 16px;cursor:pointer;transition:border-color .2s,background .2s;font-family:var(--font-body);max-width:320px;font-size:13px;font-weight:500}
+.nav-timer-btn{display:flex;align-items:center;gap:8px;background:#f0faf4;border:2px solid #009668;border-radius:20px;padding:8px 16px;cursor:pointer;transition:border-color .2s,background .2s;font-family:var(--font-body);max-width:320px;font-size:13px;font-weight:600;color:#007d57}
 .nav-timer-btn:hover{border-color:var(--sage)}
 .nav-timer-btn.running{border-color:var(--sage);background:#f0faf4}
 .nav-timer-btn.paused{border-color:#E74C3C;background:#fef2f2}
@@ -1628,8 +1628,8 @@ input[type=number]{-moz-appearance:textfield}
 .pt-empty{text-align:center;padding:60px 20px;color:var(--ink-light);font-size:14px}
 .pt-empty-icon{font-size:32px;margin-bottom:12px}
 .pt-detail-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.pt-back-btn{background:var(--primary);border:1.5px solid var(--primary);border-radius:var(--radius-sm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}
-.pt-back-btn:hover{opacity:.88}
+.pt-back-btn{background:#009668;border:1.5px solid #009668;border-radius:var(--radius-sm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}
+.pt-back-btn:hover{background:#007d57;border-color:#007d57}
 .pt-detail-name{font-size:22px;font-weight:800;color:var(--ink);flex:1;letter-spacing:-.01em}
 .pt-tabs{display:flex;gap:2px;border-bottom:1.5px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
 .pt-tab{background:none;border:none;padding:8px 14px;font-size:13px;font-weight:500;color:var(--ink-light);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all .15s;font-family:var(--font-body)}
@@ -2277,6 +2277,32 @@ input[type=number]{-moz-appearance:textfield}
 .welcome-hint kbd{display:inline-flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;padding:1px 6px;font-size:11px;font-family:var(--font-mono);color:var(--ink-mid)}
 .welcome-error{font-size:12px;color:var(--red);min-height:18px;margin-bottom:4px}
 
+/* ── PAYMENT METHODS POPUP ── */
+.pm-popup-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:2100;align-items:center;justify-content:center}
+.pm-popup-overlay.open{display:flex}
+.pm-popup{background:#fff;border-radius:14px;width:100%;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.pm-popup-hdr{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.pm-popup-title{font-size:16px;font-weight:700;color:var(--on-surface)}
+.pm-popup-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-light);padding:4px 6px;border-radius:6px;line-height:1}
+.pm-popup-close:hover{background:var(--bg)}
+.pm-popup-body{padding:16px 24px}
+.pm-checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.pm-check-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:border-color .12s,background .12s;background:var(--surface-white)}
+.pm-check-item:hover{border-color:var(--outline-variant);background:var(--bg)}
+.pm-check-item.checked{border-color:#009668;background:#f0faf4}
+.pm-check-item-left{display:flex;align-items:center;gap:10px}
+.pm-check-item-label{font-size:13px;font-weight:500;color:var(--on-surface)}
+.pm-check-item.checked .pm-check-item-label{color:#007d57;font-weight:600}
+.pm-check-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:800;color:#fff;transition:all .15s}
+.pm-check-item.checked .pm-check-dot{background:#009668;border-color:#009668}
+.pm-check-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#009668;background:#e8f7f0;border-radius:4px;padding:2px 7px}
+.pm-section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-light);margin-bottom:8px}
+.pm-popup-ft{padding:14px 24px 20px;border-top:1.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* ── ASSIGNEE POPUP (reuses pm-popup styles) ── */
+.assignee-trigger-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface-white);cursor:pointer;font-size:12px;font-weight:500;color:var(--ink-mid);font-family:var(--font-body);transition:border-color .15s}
+.assignee-trigger-btn:hover{border-color:var(--outline-variant);color:var(--on-surface)}
+
 /* ── GET STARTED PANEL ── */
 .gs-wrap{max-width:760px;margin:0 auto}
 .gs-heading{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--on-surface);margin-bottom:6px}
@@ -2301,7 +2327,7 @@ input[type=number]{-moz-appearance:textfield}
 .gs-item-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .gs-item-label{font-size:13.5px;font-weight:700;color:var(--on-surface)}
 .gs-item.done .gs-item-label{text-decoration:line-through;color:var(--ink-light)}
-.gs-item-time{font-size:10px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;background:var(--primary-container);border-radius:4px;padding:2px 6px}
+.gs-item-time{font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;background:#009668;border-radius:4px;padding:2px 7px}
 .gs-item-desc{font-size:12px;color:var(--ink-mid);line-height:1.5}
 .gs-item.done .gs-item-desc{color:var(--ink-light)}
 .gs-item-arrow{font-size:14px;color:var(--ink-light);margin-left:auto;flex-shrink:0;align-self:center}
@@ -3268,15 +3294,6 @@ var RateLimiter = (function() {
           </div>
         </div>
 
-        <!-- Starter checklist -->
-        <div id="starter-checklist" class="starter-checklist" style="display:none">
-          <div class="sc-head">
-            <div class="sc-title">Get started with FreelanceKit</div>
-            <div class="sc-pct" id="sc-pct-label">0 / 4</div>
-          </div>
-          <div class="sc-items" id="sc-items"></div>
-        </div>
-
         <!-- Recently visited -->
         <div class="home-section-label">Recently visited</div>
         <div class="home-recent-row" id="home-recent-row">
@@ -4131,7 +4148,7 @@ var RateLimiter = (function() {
         <div class="settings-save-bar">
           <div class="ssb-info"><strong>Auto-fill is active</strong> — these details populate every template the moment you open it.</div>
           <div style="display:flex;align-items:center;gap:10px">
-            <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="showPanel('getstarted')">✓ Getting started</button>
+            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:11px;opacity:.85">0%</span></button>
             <span class="save-status" id="save-details-status"></span>
             <button class="btn-save-settings" id="btn-save-details" onclick="saveMyDetails()">Save details</button>
           </div>
@@ -4159,32 +4176,23 @@ var RateLimiter = (function() {
               <div class="sf"><label>Default tax rate (%)</label><input id="my-taxrate" type="number" placeholder="28" min="0"></div>
               <div class="sf" style="grid-column:1/-1">
                 <label>Accepted payment methods</label>
-                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px" id="my-payment-checkboxes">
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-bank" onchange="renderMyPaymentPreferred()"> Bank Transfer</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-paypal" onchange="renderMyPaymentPreferred()"> PayPal</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-venmo" onchange="renderMyPaymentPreferred()"> Venmo</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-zelle" onchange="renderMyPaymentPreferred()"> Zelle</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-cashapp" onchange="renderMyPaymentPreferred()"> Cash App</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-stripe" onchange="renderMyPaymentPreferred()"> Stripe</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-wise" onchange="renderMyPaymentPreferred()"> Wise</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-wire" onchange="renderMyPaymentPreferred()"> Wire Transfer</label>
-                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-custom" onchange="renderMyPaymentPreferred()"> Custom</label>
+                <div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="openPaymentPopup()">⚙ Manage payment methods</button>
+                  <span id="my-payment-summary" style="font-size:12px;color:var(--ink-mid)"></span>
                 </div>
-                <div id="my-payment-preferred-wrap" style="margin-top:12px;display:none">
-                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                    <div style="font-size:11px;font-weight:700;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Preferred:</div>
-                    <select class="ip-inp" id="my-payment-preferred" style="flex:1;min-width:140px;max-width:220px;font-size:12px;padding:6px 8px" onchange="renderMyPaymentDetails()"></select>
-                  </div>
-                  <div id="my-payment-details-wrap" style="margin-top:10px"></div>
-                  <div id="my-payment-apply-wrap" style="margin-top:10px;display:none">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-mid);cursor:pointer">
-                      <input type="checkbox" id="my-payment-apply-future">
-                      Apply preferred payment method to all <strong>new</strong> invoices automatically
-                    </label>
-                  </div>
-                </div>
-                <!-- hidden input keeps backward-compat with existing save/load logic -->
+                <!-- Hidden inputs used by save/render logic -->
                 <input type="hidden" id="my-payment">
+                <input type="hidden" id="mpm-bank">
+                <input type="hidden" id="mpm-paypal">
+                <input type="hidden" id="mpm-venmo">
+                <input type="hidden" id="mpm-zelle">
+                <input type="hidden" id="mpm-cashapp">
+                <input type="hidden" id="mpm-stripe">
+                <input type="hidden" id="mpm-wise">
+                <input type="hidden" id="mpm-wire">
+                <input type="hidden" id="mpm-custom">
+                <input type="hidden" id="my-payment-preferred">
+                <input type="hidden" id="my-payment-apply-future">
               </div>
             </div>
           </div>
@@ -4638,12 +4646,25 @@ async function saveWelcomePage() {
   var nickname = (document.getElementById('wl-nickname')  || {}).value || '';
   var errEl    = document.getElementById('wl-error');
   fullname = fullname.trim(); nickname = nickname.trim();
-  if (!fullname) { if (errEl) errEl.textContent = 'Please enter your name.'; return; }
+  if (!fullname) {
+    if (errEl) { errEl.textContent = 'Please enter your name to continue.'; }
+    document.getElementById('wl-fullname') && document.getElementById('wl-fullname').focus();
+    return;
+  }
   if (errEl) errEl.textContent = '';
   // Split full name into first / last
   var parts = fullname.split(/\s+/);
   var first = parts[0] || '';
   var last  = parts.slice(1).join(' ') || '';
+  // Mark welcome as done so refreshing doesn't loop back here
+  if (_currentUser) {
+    try { localStorage.setItem('fk_welcome_done_' + _currentUser.id, '1'); } catch(e) {}
+  }
+  // Pre-populate My Details fields immediately
+  var fnEl = document.getElementById('my-firstname');
+  var lnEl = document.getElementById('my-lastname');
+  if (fnEl) fnEl.value = first;
+  if (lnEl) lnEl.value = last;
   if (_currentUser) {
     try {
       await _supabase.from('user_settings').upsert({
@@ -4655,16 +4676,12 @@ async function saveWelcomePage() {
       await _supabase.auth.updateUser({ data: { full_name: fullname, nickname: nickname || null } });
     } catch(e) { console.warn('saveWelcomePage:', e); }
   }
-  // Show get-started panel inside dashboard
+  // Navigate to get-started panel
   showDash();
   setTimeout(function() {
     showPanel('getstarted');
     renderGetStarted();
   }, 100);
-}
-
-function skipWelcomePage() {
-  showDash();
 }
 
 function updateWelcomePreview() {
@@ -6094,7 +6111,13 @@ _supabase.auth.getSession().then(function(result) {
   var session = result.data.session;
   if (session && session.user) {
     setLoggedInUser(session.user);
-    showDash();
+    // If user never completed the welcome page, send them back to it
+    var welcomeKey = 'fk_welcome_done_' + session.user.id;
+    if (!localStorage.getItem(welcomeKey)) {
+      showWelcomePage();
+    } else {
+      showDash();
+    }
   }
   // If no session, stay on landing (default .page.active state)
 });
@@ -6421,16 +6444,13 @@ async function saveMyDetails() {
     hourly_rate: parseFloat(g('my-rate'))||null,
     late_fee_pct: parseFloat(g('my-latefee'))||1.5,
     tax_rate: parseFloat(g('my-taxrate'))||28,
-    payment_methods: (function(){ var pd = _collectMyPaymentData(); return pd.summary || g('my-payment'); })(),
-    payment_methods_list: (function(){ var pd = _collectMyPaymentData(); return JSON.stringify(pd.methods); })(),
-    preferred_payment: (document.getElementById('my-payment-preferred') || {}).value || null,
-    preferred_payment_details: (function(){
-      var wrap = document.getElementById('my-payment-details-wrap');
-      if (!wrap) return null;
-      var inputs = wrap.querySelectorAll('input');
-      var obj = {};
-      inputs.forEach(function(el){ if (el.id && el.value.trim()) obj[el.id] = el.value.trim(); });
-      return Object.keys(obj).length ? JSON.stringify(obj) : null;
+    payment_methods: (function(){
+      var pd = _collectMyPaymentData();
+      // Store full payment config as JSON; falls back to plain summary string
+      if (pd.methods.length) {
+        try { return JSON.stringify({ methods: pd.methods, preferred: pd.preferred, details: pd.details, applyToFuture: pd.applyToFuture }); } catch(e) {}
+      }
+      return pd.summary || g('my-payment');
     })(),
     comms_channel: g('my-channel'), response_time: g('my-response'),
     working_hours: g('my-hours'), feedback_days: parseInt(g('my-feedback'))||3,
@@ -9362,6 +9382,11 @@ function renderGetStarted() {
   if (progNum) progNum.textContent = done + '/' + total;
   if (progSub) progSub.textContent = 'You\'re ' + pct + '% set up — ' + progMessages[msgIdx];
   if (progFill) progFill.style.width = pct + '%';
+  // Update the Getting Started button in My Details header
+  var gsBtn = document.getElementById('btn-getting-started');
+  var gsPct = document.getElementById('gs-btn-pct');
+  if (gsPct) gsPct.textContent = pct + '%';
+  if (gsBtn) gsBtn.style.background = pct >= 100 ? '#009668' : '#E74C3C';
   // Items grid
   var grid = document.getElementById('gs-items-grid');
   if (!grid) return;
@@ -9391,7 +9416,7 @@ function skipGetStarted() {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ─── MY DETAILS PAYMENT METHODS ───────────────────────────────────────────────
+// ─── MY DETAILS PAYMENT METHODS POPUP ────────────────────────────────────────
 var _PM_OPTIONS = [
   { id: 'bank',    label: 'Bank Transfer' },
   { id: 'paypal',  label: 'PayPal' },
@@ -9404,101 +9429,182 @@ var _PM_OPTIONS = [
   { id: 'custom',  label: 'Custom' }
 ];
 
-function _getCheckedPaymentMethods() {
-  return _PM_OPTIONS.filter(function(pm) {
-    var cb = document.getElementById('mpm-' + pm.id);
-    return cb && cb.checked;
-  }).map(function(pm){ return pm.id; });
+var _PM_FIELD_MAP = {
+  bank:    [['pm-bank-name','Bank name (e.g. Chase)'],['pm-routing','Routing number'],['pm-account','Account number'],['pm-holder','Account holder name']],
+  paypal:  [['pm-paypal','PayPal email']],
+  venmo:   [['pm-venmo','Venmo @username or phone']],
+  zelle:   [['pm-zelle','Zelle email or phone']],
+  cashapp: [['pm-cashapp','Cash App $cashtag']],
+  stripe:  [['pm-stripe','Stripe payment link (https://…)']],
+  wise:    [['pm-wise','Wise email']],
+  wire:    [['pm-wire-bank','Bank name'],['pm-wire-swift','SWIFT/BIC code'],['pm-wire-iban','IBAN / Account number']],
+  custom:  [['pm-custom','Payment details']]
+};
+
+// In-memory state while popup is open
+var _pmState = { methods: [], preferred: '', details: {}, applyToFuture: false };
+
+function openPaymentPopup() {
+  // Populate state from saved data
+  var raw = (document.getElementById('my-payment') || {}).value || '';
+  try {
+    var parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.methods)) {
+      _pmState = { methods: parsed.methods, preferred: parsed.preferred || '', details: parsed.details || {}, applyToFuture: !!parsed.applyToFuture };
+    }
+  } catch(e) { _pmState = { methods: [], preferred: '', details: {}, applyToFuture: false }; }
+  _renderPmPopup();
+  var overlay = document.getElementById('pm-popup-overlay');
+  if (overlay) overlay.classList.add('open');
 }
 
-function renderMyPaymentPreferred() {
-  var checked = _getCheckedPaymentMethods();
-  var wrap = document.getElementById('my-payment-preferred-wrap');
-  var sel = document.getElementById('my-payment-preferred');
-  if (!wrap || !sel) return;
-  if (!checked.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = '';
-  var cur = sel.value;
-  sel.innerHTML = checked.map(function(id) {
-    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
-    var lbl = pm ? pm.label : id;
-    return '<option value="' + id + '"' + (id === cur ? ' selected' : '') + '>' + lbl + '</option>';
-  }).join('');
-  if (!checked.includes(cur)) sel.value = checked[0];
-  renderMyPaymentDetails();
+function closePaymentPopup() {
+  var overlay = document.getElementById('pm-popup-overlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
-function renderMyPaymentDetails() {
-  var method = (document.getElementById('my-payment-preferred') || {}).value || '';
-  var wrap = document.getElementById('my-payment-details-wrap');
-  var applyWrap = document.getElementById('my-payment-apply-wrap');
+function _renderPmPopup() {
+  var list = document.getElementById('pm-checklist-items');
+  if (list) {
+    list.innerHTML = _PM_OPTIONS.map(function(pm) {
+      var isChecked = _pmState.methods.indexOf(pm.id) >= 0;
+      var isPref = _pmState.preferred === pm.id;
+      return '<div class="pm-check-item' + (isChecked ? ' checked' : '') + '" onclick="_pmToggle(\'' + pm.id + '\')">' +
+        '<div class="pm-check-item-left">' +
+          '<div class="pm-check-dot">' + (isChecked ? '✓' : '') + '</div>' +
+          '<span class="pm-check-item-label">' + escapeHTML(pm.label) + '</span>' +
+        '</div>' +
+        (isChecked && isPref ? '<span class="pm-check-badge">Preferred</span>' : '') +
+      '</div>';
+    }).join('');
+  }
+  // Preferred section
+  var prefSec = document.getElementById('pm-preferred-section');
+  var prefSel = document.getElementById('pm-preferred-sel');
+  if (prefSec) prefSec.style.display = _pmState.methods.length ? '' : 'none';
+  if (prefSel && _pmState.methods.length) {
+    var cur = _pmState.preferred;
+    prefSel.innerHTML = _pmState.methods.map(function(id) {
+      var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+      return '<option value="' + id + '"' + (id === cur ? ' selected' : '') + '>' + (pm ? pm.label : id) + '</option>';
+    }).join('');
+    if (!_pmState.preferred || _pmState.methods.indexOf(_pmState.preferred) < 0) {
+      _pmState.preferred = _pmState.methods[0];
+      prefSel.value = _pmState.preferred;
+    }
+    renderPmDetails();
+  }
+  var applyEl = document.getElementById('pm-apply-future');
+  if (applyEl) applyEl.checked = _pmState.applyToFuture;
+}
+
+function _pmToggle(id) {
+  var idx = _pmState.methods.indexOf(id);
+  if (idx >= 0) {
+    _pmState.methods.splice(idx, 1);
+    if (_pmState.preferred === id) _pmState.preferred = _pmState.methods[0] || '';
+  } else {
+    _pmState.methods.push(id);
+    if (!_pmState.preferred) _pmState.preferred = id;
+  }
+  _renderPmPopup();
+}
+
+function renderPmDetails() {
+  var method = (document.getElementById('pm-preferred-sel') || {}).value || '';
+  _pmState.preferred = method;
+  var wrap = document.getElementById('pm-details-wrap');
   if (!wrap) return;
-  if (applyWrap) applyWrap.style.display = method ? '' : 'none';
-  var fieldMap = {
-    bank:    [['my-pm-bank-name','Bank name (e.g. Chase)'],['my-pm-routing','Routing number'],['my-pm-account','Account number'],['my-pm-holder','Account holder name']],
-    paypal:  [['my-pm-paypal','PayPal email']],
-    venmo:   [['my-pm-venmo','Venmo @username or phone']],
-    zelle:   [['my-pm-zelle','Zelle email or phone']],
-    cashapp: [['my-pm-cashapp','Cash App $cashtag']],
-    stripe:  [['my-pm-stripe','Stripe payment link']],
-    wise:    [['my-pm-wise','Wise email']],
-    wire:    [['my-pm-wire-bank','Bank name'],['my-pm-wire-swift','SWIFT/BIC'],['my-pm-wire-iban','IBAN / Account number']],
-    custom:  [['my-pm-custom','Payment details']]
-  };
-  var fields = fieldMap[method] || [];
-  wrap.innerHTML = fields.map(function(f) {
-    var existing = (document.getElementById(f[0]) || {}).value || '';
-    return '<input class="ip-inp" id="' + f[0] + '" placeholder="' + f[1] + '" value="' + escapeHTML(existing) + '" style="margin-bottom:8px;display:block;width:100%;box-sizing:border-box">';
-  }).join('');
+  var fields = _PM_FIELD_MAP[method] || [];
+  var saved = _pmState.details || {};
+  wrap.innerHTML = fields.length ? '<div style="margin-bottom:8px"><div class="pm-section-lbl" style="margin-bottom:6px">Details for ' + escapeHTML((_PM_OPTIONS.find(function(p){return p.id===method;})||{}).label||method) + '</div>' +
+    fields.map(function(f) {
+      var val = saved[f[0]] || '';
+      return '<input class="ip-inp" id="' + f[0] + '" placeholder="' + escapeHTML(f[1]) + '" value="' + escapeHTML(val) + '" style="margin-bottom:8px;display:block;width:100%;box-sizing:border-box" oninput="_pmDetailInput(this)">';
+    }).join('') + '</div>' : '';
+  // Re-render checklist badges
+  _renderPmPopup();
+}
+
+function _pmDetailInput(el) {
+  if (!_pmState.details) _pmState.details = {};
+  _pmState.details[el.id] = el.value;
+}
+
+function savePaymentPopup() {
+  // Collect details from popup fields
+  var method = (document.getElementById('pm-preferred-sel') || {}).value || '';
+  var fields = _PM_FIELD_MAP[method] || [];
+  var details = {};
+  fields.forEach(function(f) {
+    var el = document.getElementById(f[0]);
+    if (el && el.value.trim()) details[f[0]] = el.value.trim();
+  });
+  _pmState.preferred = method;
+  _pmState.details = details;
+  _pmState.applyToFuture = !!(document.getElementById('pm-apply-future') || {}).checked;
+
+  // Persist to hidden input
+  var hiddenEl = document.getElementById('my-payment');
+  if (hiddenEl) {
+    hiddenEl.value = _pmState.methods.length
+      ? JSON.stringify({ methods: _pmState.methods, preferred: _pmState.preferred, details: _pmState.details, applyToFuture: _pmState.applyToFuture })
+      : '';
+  }
+  // Update hidden method checkboxes (for _collectMyPaymentData compat)
+  var prefEl = document.getElementById('my-payment-preferred');
+  if (prefEl) prefEl.value = _pmState.preferred;
+  var applyEl = document.getElementById('my-payment-apply-future');
+  if (applyEl) applyEl.checked = _pmState.applyToFuture;
+
+  // Update summary label
+  _updatePaymentSummary();
+  closePaymentPopup();
+}
+
+function _updatePaymentSummary() {
+  var summaryEl = document.getElementById('my-payment-summary');
+  if (!summaryEl) return;
+  if (!_pmState.methods.length) { summaryEl.textContent = 'None set'; return; }
+  var labels = _pmState.methods.map(function(id) {
+    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+    return pm ? pm.label : id;
+  });
+  var prefPm = _PM_OPTIONS.find(function(p){ return p.id === _pmState.preferred; });
+  summaryEl.textContent = labels.join(', ') + (prefPm ? ' · Preferred: ' + prefPm.label : '');
 }
 
 function _collectMyPaymentData() {
-  var methods = _getCheckedPaymentMethods();
-  var preferred = (document.getElementById('my-payment-preferred') || {}).value || '';
-  var detailsWrap = document.getElementById('my-payment-details-wrap');
-  var detailInputs = detailsWrap ? detailsWrap.querySelectorAll('input') : [];
-  var details = [];
-  detailInputs.forEach(function(el){ if (el.value.trim()) details.push(el.value.trim()); });
-  // Build a summary string for the hidden input (used by existing save logic)
+  var raw = (document.getElementById('my-payment') || {}).value || '';
+  var methods = _pmState.methods || [];
+  var preferred = _pmState.preferred || '';
+  var details = _pmState.details || {};
+  var applyToFuture = _pmState.applyToFuture || false;
   var summary = methods.map(function(id) {
     var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
     return pm ? pm.label : id;
   }).join(', ');
-  var hiddenEl = document.getElementById('my-payment');
-  if (hiddenEl) hiddenEl.value = summary;
-  return { methods: methods, preferred: preferred, details: details, summary: summary, applyToFuture: !!(document.getElementById('my-payment-apply-future') || {}).checked };
+  return { methods: methods, preferred: preferred, details: details, summary: summary, applyToFuture: applyToFuture };
 }
 
 function _loadMyPaymentData(d) {
-  // d is the user_settings record
-  var methods = [];
-  try { methods = JSON.parse(d.payment_methods_list || '[]'); } catch(e) {}
-  var preferred = d.preferred_payment || '';
-  var details = d.preferred_payment_details || {};
-  if (typeof details === 'string') { try { details = JSON.parse(details); } catch(e){ details = {}; } }
-  _PM_OPTIONS.forEach(function(pm) {
-    var cb = document.getElementById('mpm-' + pm.id);
-    if (cb) cb.checked = methods.indexOf(pm.id) >= 0;
-  });
-  renderMyPaymentPreferred();
-  if (preferred) {
-    var sel = document.getElementById('my-payment-preferred');
-    if (sel) sel.value = preferred;
-    renderMyPaymentDetails();
-    // Fill in detail fields
-    var fieldKeys = Object.keys(details);
-    fieldKeys.forEach(function(k) {
-      var el = document.getElementById(k);
-      if (el) el.value = details[k] || '';
-    });
-  }
-  // Set hidden input
-  var summary = methods.map(function(id) {
-    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
-    return pm ? pm.label : id;
-  }).join(', ');
+  var raw = d.payment_methods || '';
+  _pmState = { methods: [], preferred: '', details: {}, applyToFuture: false };
+  try {
+    var parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.methods)) {
+      _pmState = { methods: parsed.methods, preferred: parsed.preferred || '', details: parsed.details || {}, applyToFuture: !!parsed.applyToFuture };
+    }
+  } catch(e) { /* legacy plain string — nothing to restore */ }
+  // Update hidden inputs
   var hiddenEl = document.getElementById('my-payment');
-  if (hiddenEl) hiddenEl.value = d.payment_methods || summary || '';
+  if (hiddenEl) hiddenEl.value = raw;
+  var prefEl = document.getElementById('my-payment-preferred');
+  if (prefEl) prefEl.value = _pmState.preferred;
+  var applyEl = document.getElementById('my-payment-apply-future');
+  if (applyEl) applyEl.checked = _pmState.applyToFuture;
+  // Update summary label in My Details
+  _updatePaymentSummary();
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -12857,10 +12963,14 @@ function openPtModal(mode) {
     var selOpt = function(val, opt) { return val === opt ? ' selected' : ''; };
     var curAssignees = _parseAssignees(et);
     var ppl = loadPtPeople(_ptCurrentId);
+    // Build assignee list using popup-style checklist UI
     var assigneeHtml = ppl.length
-      ? '<div class="pt-assignee-cb-list">' + ppl.map(function(p){
-          var chk = curAssignees.indexOf(p.name) >= 0 ? ' checked' : '';
-          return '<label class="pt-assignee-cb-label"><input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + chk + '><span style="font-weight:500">' + escapeHTML(p.name) + '</span></label>';
+      ? '<div style="display:flex;flex-direction:column;gap:5px">' + ppl.map(function(p){
+          var chk = curAssignees.indexOf(p.name) >= 0;
+          return '<div class="pm-check-item' + (chk ? ' checked' : '') + '" style="padding:8px 12px" onclick="this.classList.toggle(\'checked\');var cb=this.querySelector(\'input\');cb.checked=!cb.checked;this.querySelector(\'.pm-check-dot\').textContent=cb.checked?\'✓\':\'\'">' +
+            '<div class="pm-check-item-left"><div class="pm-check-dot">' + (chk ? '✓' : '') + '</div><span class="pm-check-item-label">' + escapeHTML(p.name) + '</span></div>' +
+            '<input type="checkbox" name="ptm-assignee-cb" value="' + escapeHTML(p.name) + '"' + (chk ? ' checked' : '') + ' style="display:none">' +
+          '</div>';
         }).join('') + '</div>'
       : '<div style="font-size:12px;color:var(--ink-light);padding:6px 0">Add people in the Overview tab first</div>';
     html = '<div class="pt-modal-title">' + (mode === 'edit-task' ? 'Edit task' : 'Add task') + '</div>' +
@@ -13750,6 +13860,36 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
   </div>
 </div>
 
+<!-- ─── PAYMENT METHODS POPUP ─── -->
+<div class="pm-popup-overlay" id="pm-popup-overlay" onclick="if(event.target===this)closePaymentPopup()">
+  <div class="pm-popup">
+    <div class="pm-popup-hdr">
+      <div class="pm-popup-title">Payment Methods</div>
+      <button class="pm-popup-close" onclick="closePaymentPopup()">✕</button>
+    </div>
+    <div class="pm-popup-body">
+      <div class="pm-section-lbl">Select the methods you accept</div>
+      <div class="pm-checklist" id="pm-checklist-items"></div>
+
+      <div id="pm-preferred-section" style="display:none">
+        <div class="pm-section-lbl">Preferred method</div>
+        <select class="ip-inp" id="pm-preferred-sel" style="width:100%;margin-bottom:14px;font-size:13px" onchange="renderPmDetails()"></select>
+        <div id="pm-details-wrap"></div>
+        <div style="margin-top:12px">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-mid);cursor:pointer;line-height:1.5">
+            <input type="checkbox" id="pm-apply-future" style="margin-top:2px">
+            Apply preferred payment method to all <strong>&nbsp;new&nbsp;</strong> invoices automatically
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="pm-popup-ft">
+      <button class="btn-outline" onclick="closePaymentPopup()">Cancel</button>
+      <button class="btn-save-settings" onclick="savePaymentPopup()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ─── WELCOME PAGE ─── -->
 <div id="page-welcome" class="page">
   <div class="welcome-card">
@@ -13757,7 +13897,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
       <div class="welcome-logo">Freelance<span>Kit</span></div>
     </div>
     <span class="welcome-emoji">👋</span>
-    <div class="welcome-eyebrow">Hey there, future legend</div>
+    <div class="welcome-eyebrow">Hey there, Freelancer!</div>
     <div class="welcome-title">Let's get you <em>set up.</em></div>
     <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. We just need a name to put on the door before we hand you the keys.</p>
 
@@ -13773,7 +13913,6 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 
     <div class="welcome-error" id="wl-error"></div>
     <button class="welcome-cta" onclick="saveWelcomePage()">Take me in →</button>
-    <div class="welcome-skip"><a onclick="skipWelcomePage()">Just exploring? Skip and look around</a></div>
     <hr class="welcome-divider">
     <div class="welcome-hint">Press <kbd>↵</kbd> to continue</div>
   </div>
