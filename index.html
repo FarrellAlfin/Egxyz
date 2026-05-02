@@ -1338,7 +1338,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .recent-chip:hover{border-color:var(--amber);background:var(--amber-light)}
 .recent-chip-icon{font-size:12px}
 /* ── LIVE TIMER BUTTON ── */
-.nav-timer-btn{display:flex;align-items:center;gap:6px;background:var(--surface-low);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;transition:border-color .2s,background .2s;font-family:var(--font-body);max-width:280px}
+.nav-timer-btn{display:flex;align-items:center;gap:8px;background:var(--surface-low);border:1.5px solid var(--border);border-radius:20px;padding:8px 16px;cursor:pointer;transition:border-color .2s,background .2s;font-family:var(--font-body);max-width:320px;font-size:13px;font-weight:500}
 .nav-timer-btn:hover{border-color:var(--sage)}
 .nav-timer-btn.running{border-color:var(--sage);background:#f0faf4}
 .nav-timer-btn.paused{border-color:#E74C3C;background:#fef2f2}
@@ -1628,8 +1628,8 @@ input[type=number]{-moz-appearance:textfield}
 .pt-empty{text-align:center;padding:60px 20px;color:var(--ink-light);font-size:14px}
 .pt-empty-icon{font-size:32px;margin-bottom:12px}
 .pt-detail-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.pt-back-btn{background:none;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;cursor:pointer;color:var(--ink-mid);flex-shrink:0}
-.pt-back-btn:hover{border-color:var(--ink);color:var(--ink)}
+.pt-back-btn{background:var(--primary);border:1.5px solid var(--primary);border-radius:var(--radius-sm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}
+.pt-back-btn:hover{opacity:.88}
 .pt-detail-name{font-size:22px;font-weight:800;color:var(--ink);flex:1;letter-spacing:-.01em}
 .pt-tabs{display:flex;gap:2px;border-bottom:1.5px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
 .pt-tab{background:none;border:none;padding:8px 14px;font-size:13px;font-weight:500;color:var(--ink-light);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all .15s;font-family:var(--font-body)}
@@ -1723,9 +1723,9 @@ input[type=number]{-moz-appearance:textfield}
 /* Modal */
 .pt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:200;align-items:center;justify-content:center}
 .pt-modal-overlay.open{display:flex}
-.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
+.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
 .pt-modal-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px}
-.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;position:sticky;bottom:0;background:var(--white);padding-top:14px;border-top:1.5px solid var(--border)}
 @media(max-width:860px){.pt-layout{grid-template-columns:1fr}}
 /* ── Project Tracker extras ──────────────────────────────────────── */
 /* Global gantt */
@@ -2251,24 +2251,64 @@ input[type=number]{-moz-appearance:textfield}
 }
 
 /* ── WELCOME PAGE ── */
-#page-welcome.active{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}
-.welcome-wrap{width:100%;max-width:480px;animation:slideUp .4s ease both}
-.welcome-logo{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--on-surface);letter-spacing:-.5px;margin-bottom:32px}
+#page-welcome.active{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#e8f5f0 0%,#f8f5ee 60%,#fef3e8 100%);padding:24px}
+.welcome-card{width:100%;max-width:520px;background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:36px 40px 28px;animation:slideUp .4s ease both;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.welcome-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.welcome-logo{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--on-surface);letter-spacing:-.5px}
 .welcome-logo span{color:var(--primary)}
-.welcome-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:10px}
-.welcome-title{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--on-surface);line-height:1.1;margin-bottom:8px}
+.welcome-emoji{font-size:40px;margin-bottom:12px;display:block}
+.welcome-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);margin-bottom:8px}
+.welcome-title{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--on-surface);line-height:1.15;margin-bottom:8px}
 .welcome-title em{font-style:normal;color:var(--primary)}
-.welcome-sub{font-size:14px;color:var(--ink-mid);margin-bottom:28px;line-height:1.6}
-.welcome-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.welcome-fields .wf-full{grid-column:1/-1}
-.wf-label{font-size:11px;font-weight:600;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
-.wf-input{width:100%;padding:10px 12px;border:1.5px solid var(--outline-variant);border-radius:8px;font-size:14px;font-family:inherit;color:var(--on-surface);background:var(--surface-white);box-sizing:border-box;transition:border-color .15s}
+.welcome-sub{font-size:13.5px;color:var(--ink-mid);margin-bottom:24px;line-height:1.65}
+.wf-group{margin-bottom:16px}
+.wf-label{font-size:10px;font-weight:700;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;justify-content:space-between}
+.wf-label span{font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--ink-light)}
+.wf-input{width:100%;padding:11px 14px;border:1.5px solid var(--outline-variant);border-radius:9px;font-size:15px;font-family:inherit;color:var(--on-surface);background:var(--surface-white);box-sizing:border-box;transition:border-color .15s}
 .wf-input:focus{outline:none;border-color:var(--primary)}
-.welcome-cta{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .15s}
-.welcome-cta:hover{opacity:.9}
-.welcome-skip{text-align:center;margin-top:14px;font-size:12px;color:var(--ink-light)}
-.welcome-skip a{color:var(--primary);cursor:pointer;text-decoration:none}
+.welcome-preview{font-size:12px;color:var(--ink-mid);margin-top:6px;font-style:italic}
+.welcome-preview strong{font-style:normal;color:var(--on-surface)}
+.welcome-cta{width:100%;padding:14px;background:#1d2733;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:opacity .15s;letter-spacing:.01em}
+.welcome-cta:hover{opacity:.88}
+.welcome-skip{text-align:center;margin-top:12px;font-size:12.5px;color:var(--ink-mid)}
+.welcome-skip a{color:var(--primary);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.welcome-divider{border:none;border-top:1.5px dashed var(--border);margin:18px 0 12px}
+.welcome-hint{text-align:center;font-size:12px;color:var(--ink-light)}
+.welcome-hint kbd{display:inline-flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;padding:1px 6px;font-size:11px;font-family:var(--font-mono);color:var(--ink-mid)}
 .welcome-error{font-size:12px;color:var(--red);min-height:18px;margin-bottom:4px}
+
+/* ── GET STARTED PANEL ── */
+.gs-wrap{max-width:760px;margin:0 auto}
+.gs-heading{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--on-surface);margin-bottom:6px}
+.gs-heading em{font-style:normal;color:var(--primary)}
+.gs-sub{font-size:14px;color:var(--ink-mid);line-height:1.6;margin-bottom:24px;max-width:540px}
+.gs-progress-card{background:var(--surface-white);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px}
+.gs-prog-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.gs-prog-num{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--primary);white-space:nowrap}
+.gs-prog-sub{font-size:13px;font-weight:600;color:var(--on-surface)}
+.gs-prog-sub2{font-size:12px;color:var(--ink-mid)}
+.gs-prog-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
+.gs-prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease}
+.gs-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+@media(max-width:600px){.gs-items-grid{grid-template-columns:1fr}}
+.gs-item{background:var(--surface-white);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .12s;display:flex;align-items:flex-start;gap:12px}
+.gs-item:hover{border-color:var(--primary);background:#f8fffe}
+.gs-item.done{background:var(--bg);cursor:default}
+.gs-item.done:hover{border-color:var(--border);background:var(--bg)}
+.gs-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.gs-item.done .gs-item-check{background:var(--primary);border-color:var(--primary);color:#fff;font-size:11px;font-weight:800}
+.gs-item-body{flex:1}
+.gs-item-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.gs-item-label{font-size:13.5px;font-weight:700;color:var(--on-surface)}
+.gs-item.done .gs-item-label{text-decoration:line-through;color:var(--ink-light)}
+.gs-item-time{font-size:10px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;background:var(--primary-container);border-radius:4px;padding:2px 6px}
+.gs-item-desc{font-size:12px;color:var(--ink-mid);line-height:1.5}
+.gs-item.done .gs-item-desc{color:var(--ink-light)}
+.gs-item-arrow{font-size:14px;color:var(--ink-light);margin-left:auto;flex-shrink:0;align-self:center}
+.gs-item.done .gs-item-arrow{display:none}
+.gs-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1.5px solid var(--border);font-size:12px;color:var(--ink-light)}
+.gs-skip-btn{font-size:12px;font-weight:600;color:var(--ink-mid);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;text-decoration:underline;text-underline-offset:2px}
+.gs-skip-btn:hover{color:var(--primary)}
 
 /* ── STARTER CHECKLIST ── */
 .starter-checklist{background:var(--surface-white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;animation:slideUp .35s ease both}
@@ -3184,10 +3224,33 @@ var RateLimiter = (function() {
     <main class="dash-main">
 
       <!-- ─── HOME ─── -->
+      <!-- ─── GET STARTED PANEL ─── -->
+      <div class="tmpl-panel" id="panel-getstarted">
+        <div class="gs-wrap">
+          <div class="gs-heading" id="gs-heading">Hey there 👋 ready to roll?</div>
+          <p class="gs-sub">Here's a quick starter list to get FreelanceKit working for you. Nothing's required — but folks who finish this list invoice 3× faster in their first week.</p>
+          <div class="gs-progress-card">
+            <div class="gs-prog-row">
+              <div class="gs-prog-num" id="gs-prog-num">0/4</div>
+              <div>
+                <div class="gs-prog-sub" id="gs-prog-sub">You're 0% set up — let's go!</div>
+                <div class="gs-prog-sub2">Tackle one a day, or smash it all in one sitting. We won't tell.</div>
+              </div>
+            </div>
+            <div class="gs-prog-bar"><div class="gs-prog-fill" id="gs-prog-fill" style="width:0%"></div></div>
+          </div>
+          <div class="gs-items-grid" id="gs-items-grid"></div>
+          <div class="gs-footer">
+            <span>You can access this anytime from the <strong>Getting started</strong> button in My Details.</span>
+            <button class="gs-skip-btn" onclick="skipGetStarted()">Skip the tour →</button>
+          </div>
+        </div>
+      </div>
+
       <div class="tmpl-panel active" id="panel-home">
         <!-- Hero -->
         <div class="home-hero">
-          <div class="home-hero-eyebrow">Welcome back</div>
+          <div class="home-hero-eyebrow">Hello</div>
           <h2 class="home-hero-name" id="home-user-name">—</h2>
           <p class="home-hero-sub">Everything you need to run your freelance business, in one place.</p>
         </div>
@@ -4068,6 +4131,7 @@ var RateLimiter = (function() {
         <div class="settings-save-bar">
           <div class="ssb-info"><strong>Auto-fill is active</strong> — these details populate every template the moment you open it.</div>
           <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="showPanel('getstarted')">✓ Getting started</button>
             <span class="save-status" id="save-details-status"></span>
             <button class="btn-save-settings" id="btn-save-details" onclick="saveMyDetails()">Save details</button>
           </div>
@@ -4093,7 +4157,35 @@ var RateLimiter = (function() {
               <div class="sf"><label>Default hourly rate ($)</label><input id="my-rate" type="number" placeholder="150" min="0"></div>
               <div class="sf"><label>Late fee per month (%)</label><input id="my-latefee" type="number" placeholder="1.5" min="0" step="0.5"></div>
               <div class="sf"><label>Default tax rate (%)</label><input id="my-taxrate" type="number" placeholder="28" min="0"></div>
-              <div class="sf"><label>Accepted payment methods</label><input id="my-payment" placeholder="e.g. Bank transfer, Stripe, Wise"></div>
+              <div class="sf" style="grid-column:1/-1">
+                <label>Accepted payment methods</label>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px" id="my-payment-checkboxes">
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-bank" onchange="renderMyPaymentPreferred()"> Bank Transfer</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-paypal" onchange="renderMyPaymentPreferred()"> PayPal</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-venmo" onchange="renderMyPaymentPreferred()"> Venmo</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-zelle" onchange="renderMyPaymentPreferred()"> Zelle</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-cashapp" onchange="renderMyPaymentPreferred()"> Cash App</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-stripe" onchange="renderMyPaymentPreferred()"> Stripe</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-wise" onchange="renderMyPaymentPreferred()"> Wise</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-wire" onchange="renderMyPaymentPreferred()"> Wire Transfer</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer"><input type="checkbox" id="mpm-custom" onchange="renderMyPaymentPreferred()"> Custom</label>
+                </div>
+                <div id="my-payment-preferred-wrap" style="margin-top:12px;display:none">
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <div style="font-size:11px;font-weight:700;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Preferred:</div>
+                    <select class="ip-inp" id="my-payment-preferred" style="flex:1;min-width:140px;max-width:220px;font-size:12px;padding:6px 8px" onchange="renderMyPaymentDetails()"></select>
+                  </div>
+                  <div id="my-payment-details-wrap" style="margin-top:10px"></div>
+                  <div id="my-payment-apply-wrap" style="margin-top:10px;display:none">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-mid);cursor:pointer">
+                      <input type="checkbox" id="my-payment-apply-future">
+                      Apply preferred payment method to all <strong>new</strong> invoices automatically
+                    </label>
+                  </div>
+                </div>
+                <!-- hidden input keeps backward-compat with existing save/load logic -->
+                <input type="hidden" id="my-payment">
+              </div>
             </div>
           </div>
           <div class="settings-card" style="grid-column:1/-1">
@@ -4542,36 +4634,45 @@ function showWelcomePage() {
 }
 
 async function saveWelcomePage() {
-  var first    = (document.getElementById('wl-firstname') || {}).value || '';
-  var last     = (document.getElementById('wl-lastname')  || {}).value || '';
-  var business = (document.getElementById('wl-business')  || {}).value || '';
+  var fullname = (document.getElementById('wl-fullname')  || {}).value || '';
+  var nickname = (document.getElementById('wl-nickname')  || {}).value || '';
   var errEl    = document.getElementById('wl-error');
-  first = first.trim(); last = last.trim(); business = business.trim();
-  if (!first) { if (errEl) errEl.textContent = 'Please enter your first name.'; return; }
-  if (!last)  { if (errEl) errEl.textContent = 'Please enter your last name.';  return; }
+  fullname = fullname.trim(); nickname = nickname.trim();
+  if (!fullname) { if (errEl) errEl.textContent = 'Please enter your name.'; return; }
   if (errEl) errEl.textContent = '';
+  // Split full name into first / last
+  var parts = fullname.split(/\s+/);
+  var first = parts[0] || '';
+  var last  = parts.slice(1).join(' ') || '';
   if (_currentUser) {
     try {
-      // Upsert into user_settings
       await _supabase.from('user_settings').upsert({
         id: _currentUser.id,
         first_name: first,
         last_name: last,
-        business_name: business || null
+        nickname: nickname || null
       });
-      // Also update auth metadata so the nav avatar shows the correct name
-      await _supabase.auth.updateUser({ data: { full_name: first + ' ' + last } });
+      await _supabase.auth.updateUser({ data: { full_name: fullname, nickname: nickname || null } });
     } catch(e) { console.warn('saveWelcomePage:', e); }
   }
+  // Show get-started panel inside dashboard
   showDash();
-  // Trigger checklist render after navigation
   setTimeout(function() {
-    if (typeof renderStarterChecklist === 'function') renderStarterChecklist();
-  }, 400);
+    showPanel('getstarted');
+    renderGetStarted();
+  }, 100);
 }
 
 function skipWelcomePage() {
   showDash();
+}
+
+function updateWelcomePreview() {
+  var nickname = ((document.getElementById('wl-nickname') || {}).value || '').trim();
+  var fullname = ((document.getElementById('wl-fullname') || {}).value || '').trim();
+  var name = nickname || (fullname ? fullname.split(/\s+/)[0] : '') || 'friend';
+  var el = document.getElementById('wl-preview');
+  if (el) el.innerHTML = 'We\'ll greet you with — <strong>"Hello, ' + escapeHTML(name) + '"</strong>';
 }
 // ─────────────────────────────────────────────────────────────────────────────
 function initLandingAnimations(){
@@ -4741,6 +4842,7 @@ function showPanel(id,el){
   if(id==='timesheet'){ if(typeof loadGlobalTimesheet==='function') loadGlobalTimesheet(); }
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
+  if(id==='getstarted'){ if(typeof renderGetStarted==='function') renderGetStarted(); }
   if(typeof _trackRecentPanel==='function') _trackRecentPanel(id);
 }
 
@@ -6037,7 +6139,7 @@ var BETA_MODE = true;
 // Plan gating: 'free' users get access to FREE_PANELS only; 'pro' users get everything
 // In BETA_MODE everyone gets pro — including unauthenticated visitors
 var _userPlan = BETA_MODE ? 'pro' : 'free';
-var FREE_PANELS = ['home','mydetails','clients','invhistory'];
+var FREE_PANELS = ['home','mydetails','clients','invhistory','getstarted'];
 
 // ─── DATA ISOLATION: wipe all fk_ localStorage when a different user logs in ──
 // ─── Helper: wipe every fk_ key from localStorage ────────────────────────────
@@ -6094,7 +6196,7 @@ function setLoggedInUser(user) {
   if (ddName) ddName.textContent = name;
   if (ddEmail) ddEmail.textContent = user.email || '';
   var wbEl = document.querySelector('.wb-text h3');
-  if (wbEl) wbEl.textContent = 'Welcome back, ' + name.split(' ')[0] + '!';
+  if (wbEl) wbEl.textContent = 'Hello, ' + name.split(' ')[0] + '!';
   // Start inactivity timer now that a real user is logged in
   _startInactivityTimer();
   // Load all user data in background — errors here must never block login
@@ -6246,6 +6348,8 @@ function applyMyDetails(d, force) {
   set('my-address', d.address); set('my-rate', d.hourly_rate);
   set('my-latefee', d.late_fee_pct); set('my-taxrate', d.tax_rate);
   set('my-payment', d.payment_methods);
+  // Load structured payment methods
+  try { _loadMyPaymentData(d); } catch(e) {}
   set('my-channel', d.comms_channel); set('my-response', d.response_time);
   set('my-hours', d.working_hours); set('my-feedback', d.feedback_days);
   // Pre-fill invoice builder with user details
@@ -6317,7 +6421,17 @@ async function saveMyDetails() {
     hourly_rate: parseFloat(g('my-rate'))||null,
     late_fee_pct: parseFloat(g('my-latefee'))||1.5,
     tax_rate: parseFloat(g('my-taxrate'))||28,
-    payment_methods: g('my-payment'),
+    payment_methods: (function(){ var pd = _collectMyPaymentData(); return pd.summary || g('my-payment'); })(),
+    payment_methods_list: (function(){ var pd = _collectMyPaymentData(); return JSON.stringify(pd.methods); })(),
+    preferred_payment: (document.getElementById('my-payment-preferred') || {}).value || null,
+    preferred_payment_details: (function(){
+      var wrap = document.getElementById('my-payment-details-wrap');
+      if (!wrap) return null;
+      var inputs = wrap.querySelectorAll('input');
+      var obj = {};
+      inputs.forEach(function(el){ if (el.id && el.value.trim()) obj[el.id] = el.value.trim(); });
+      return Object.keys(obj).length ? JSON.stringify(obj) : null;
+    })(),
     comms_channel: g('my-channel'), response_time: g('my-response'),
     working_hours: g('my-hours'), feedback_days: parseInt(g('my-feedback'))||3,
     updated_at: new Date().toISOString()
@@ -9213,6 +9327,178 @@ function renderStarterChecklist() {
 function _handleChecklistClick(itemId, panel) {
   _markChecklistDone(itemId);
   if (typeof showPanel === 'function') showPanel(panel);
+}
+
+// ─── GET STARTED FULL-PAGE PANEL ──────────────────────────────────────────────
+var _GS_ITEMS = [
+  { id: 'profile',  label: 'Set up your profile',      time: '30 sec', desc: 'Name, nickname, business. The basics.',             panel: 'mydetails' },
+  { id: 'client',   label: 'Add your first client',     time: '1 min',  desc: 'Drop in a name and an email — that\'s it.',          panel: 'clients'   },
+  { id: 'project',  label: 'Create your first project', time: '2 min',  desc: 'Title, scope, a couple of milestones — done.',       panel: 'projects'  },
+  { id: 'invoice',  label: 'Build an invoice',           time: '3 min',  desc: 'Pick a project and create your first invoice.',     panel: 'invoice'   }
+];
+
+function renderGetStarted() {
+  var state  = _autoCheckChecklist();
+  var done   = _GS_ITEMS.filter(function(it){ return state[it.id]; }).length;
+  var total  = _GS_ITEMS.length;
+  var pct    = Math.round(done / total * 100);
+  // Update heading with user first name
+  var headEl = document.getElementById('gs-heading');
+  if (headEl) {
+    var fn = '';
+    if (_currentUser) {
+      fn = (_currentUser.user_metadata && (_currentUser.user_metadata.nickname || _currentUser.user_metadata.full_name))
+        ? (_currentUser.user_metadata.nickname || _currentUser.user_metadata.full_name.split(' ')[0])
+        : (_currentUser.email ? _currentUser.email.split('@')[0] : '');
+    }
+    headEl.innerHTML = 'Hey ' + (fn ? '<em>' + escapeHTML(fn) + '</em> ' : '') + '👋 ready to roll?';
+  }
+  // Progress
+  var progMessages = ['Let\'s go!','Nice start!','Getting there!','Almost done!','All done! 🎉'];
+  var msgIdx = Math.min(Math.round(pct / 25), 4);
+  var progNum = document.getElementById('gs-prog-num');
+  var progSub = document.getElementById('gs-prog-sub');
+  var progFill = document.getElementById('gs-prog-fill');
+  if (progNum) progNum.textContent = done + '/' + total;
+  if (progSub) progSub.textContent = 'You\'re ' + pct + '% set up — ' + progMessages[msgIdx];
+  if (progFill) progFill.style.width = pct + '%';
+  // Items grid
+  var grid = document.getElementById('gs-items-grid');
+  if (!grid) return;
+  grid.innerHTML = _GS_ITEMS.map(function(it) {
+    var isDone = !!state[it.id];
+    return '<div class="gs-item' + (isDone ? ' done' : '') + '" onclick="' + (isDone ? '' : '_gsItemClick(\'' + it.id + '\',\'' + it.panel + '\')') + '">' +
+      '<div class="gs-item-check">' + (isDone ? '✓' : '') + '</div>' +
+      '<div class="gs-item-body">' +
+        '<div class="gs-item-hdr">' +
+          '<span class="gs-item-label">' + escapeHTML(it.label) + '</span>' +
+          '<span class="gs-item-time">' + escapeHTML(it.time) + '</span>' +
+        '</div>' +
+        '<div class="gs-item-desc">' + escapeHTML(it.desc) + '</div>' +
+      '</div>' +
+      (isDone ? '' : '<div class="gs-item-arrow">→</div>') +
+    '</div>';
+  }).join('');
+}
+
+function _gsItemClick(itemId, panel) {
+  _markChecklistDone(itemId);
+  showPanel(panel);
+}
+
+function skipGetStarted() {
+  showPanel('home');
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── MY DETAILS PAYMENT METHODS ───────────────────────────────────────────────
+var _PM_OPTIONS = [
+  { id: 'bank',    label: 'Bank Transfer' },
+  { id: 'paypal',  label: 'PayPal' },
+  { id: 'venmo',   label: 'Venmo' },
+  { id: 'zelle',   label: 'Zelle' },
+  { id: 'cashapp', label: 'Cash App' },
+  { id: 'stripe',  label: 'Stripe' },
+  { id: 'wise',    label: 'Wise' },
+  { id: 'wire',    label: 'Wire Transfer' },
+  { id: 'custom',  label: 'Custom' }
+];
+
+function _getCheckedPaymentMethods() {
+  return _PM_OPTIONS.filter(function(pm) {
+    var cb = document.getElementById('mpm-' + pm.id);
+    return cb && cb.checked;
+  }).map(function(pm){ return pm.id; });
+}
+
+function renderMyPaymentPreferred() {
+  var checked = _getCheckedPaymentMethods();
+  var wrap = document.getElementById('my-payment-preferred-wrap');
+  var sel = document.getElementById('my-payment-preferred');
+  if (!wrap || !sel) return;
+  if (!checked.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  var cur = sel.value;
+  sel.innerHTML = checked.map(function(id) {
+    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+    var lbl = pm ? pm.label : id;
+    return '<option value="' + id + '"' + (id === cur ? ' selected' : '') + '>' + lbl + '</option>';
+  }).join('');
+  if (!checked.includes(cur)) sel.value = checked[0];
+  renderMyPaymentDetails();
+}
+
+function renderMyPaymentDetails() {
+  var method = (document.getElementById('my-payment-preferred') || {}).value || '';
+  var wrap = document.getElementById('my-payment-details-wrap');
+  var applyWrap = document.getElementById('my-payment-apply-wrap');
+  if (!wrap) return;
+  if (applyWrap) applyWrap.style.display = method ? '' : 'none';
+  var fieldMap = {
+    bank:    [['my-pm-bank-name','Bank name (e.g. Chase)'],['my-pm-routing','Routing number'],['my-pm-account','Account number'],['my-pm-holder','Account holder name']],
+    paypal:  [['my-pm-paypal','PayPal email']],
+    venmo:   [['my-pm-venmo','Venmo @username or phone']],
+    zelle:   [['my-pm-zelle','Zelle email or phone']],
+    cashapp: [['my-pm-cashapp','Cash App $cashtag']],
+    stripe:  [['my-pm-stripe','Stripe payment link']],
+    wise:    [['my-pm-wise','Wise email']],
+    wire:    [['my-pm-wire-bank','Bank name'],['my-pm-wire-swift','SWIFT/BIC'],['my-pm-wire-iban','IBAN / Account number']],
+    custom:  [['my-pm-custom','Payment details']]
+  };
+  var fields = fieldMap[method] || [];
+  wrap.innerHTML = fields.map(function(f) {
+    var existing = (document.getElementById(f[0]) || {}).value || '';
+    return '<input class="ip-inp" id="' + f[0] + '" placeholder="' + f[1] + '" value="' + escapeHTML(existing) + '" style="margin-bottom:8px;display:block;width:100%;box-sizing:border-box">';
+  }).join('');
+}
+
+function _collectMyPaymentData() {
+  var methods = _getCheckedPaymentMethods();
+  var preferred = (document.getElementById('my-payment-preferred') || {}).value || '';
+  var detailsWrap = document.getElementById('my-payment-details-wrap');
+  var detailInputs = detailsWrap ? detailsWrap.querySelectorAll('input') : [];
+  var details = [];
+  detailInputs.forEach(function(el){ if (el.value.trim()) details.push(el.value.trim()); });
+  // Build a summary string for the hidden input (used by existing save logic)
+  var summary = methods.map(function(id) {
+    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+    return pm ? pm.label : id;
+  }).join(', ');
+  var hiddenEl = document.getElementById('my-payment');
+  if (hiddenEl) hiddenEl.value = summary;
+  return { methods: methods, preferred: preferred, details: details, summary: summary, applyToFuture: !!(document.getElementById('my-payment-apply-future') || {}).checked };
+}
+
+function _loadMyPaymentData(d) {
+  // d is the user_settings record
+  var methods = [];
+  try { methods = JSON.parse(d.payment_methods_list || '[]'); } catch(e) {}
+  var preferred = d.preferred_payment || '';
+  var details = d.preferred_payment_details || {};
+  if (typeof details === 'string') { try { details = JSON.parse(details); } catch(e){ details = {}; } }
+  _PM_OPTIONS.forEach(function(pm) {
+    var cb = document.getElementById('mpm-' + pm.id);
+    if (cb) cb.checked = methods.indexOf(pm.id) >= 0;
+  });
+  renderMyPaymentPreferred();
+  if (preferred) {
+    var sel = document.getElementById('my-payment-preferred');
+    if (sel) sel.value = preferred;
+    renderMyPaymentDetails();
+    // Fill in detail fields
+    var fieldKeys = Object.keys(details);
+    fieldKeys.forEach(function(k) {
+      var el = document.getElementById(k);
+      if (el) el.value = details[k] || '';
+    });
+  }
+  // Set hidden input
+  var summary = methods.map(function(id) {
+    var pm = _PM_OPTIONS.find(function(p){ return p.id === id; });
+    return pm ? pm.label : id;
+  }).join(', ');
+  var hiddenEl = document.getElementById('my-payment');
+  if (hiddenEl) hiddenEl.value = d.payment_methods || summary || '';
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -13466,28 +13752,30 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
 
 <!-- ─── WELCOME PAGE ─── -->
 <div id="page-welcome" class="page">
-  <div class="welcome-wrap">
-    <div class="welcome-logo">Freelance<span>Kit</span></div>
-    <div class="welcome-eyebrow">You're in!</div>
-    <div class="welcome-title">Let's set up your<br><em>profile.</em></div>
-    <p class="welcome-sub">Tell us a little about yourself — this helps personalise your invoices and dashboard.</p>
-    <div class="welcome-fields">
-      <div>
-        <div class="wf-label">First name <span style="color:var(--red)">*</span></div>
-        <input class="wf-input" id="wl-firstname" type="text" placeholder="Jane" autocomplete="given-name">
-      </div>
-      <div>
-        <div class="wf-label">Last name <span style="color:var(--red)">*</span></div>
-        <input class="wf-input" id="wl-lastname" type="text" placeholder="Smith" autocomplete="family-name">
-      </div>
-      <div class="wf-full">
-        <div class="wf-label">Business / studio name <span style="font-weight:400;color:var(--ink-light)">(optional)</span></div>
-        <input class="wf-input" id="wl-business" type="text" placeholder="e.g. Jane Smith Design" autocomplete="organization">
-      </div>
+  <div class="welcome-card">
+    <div class="welcome-card-hdr">
+      <div class="welcome-logo">Freelance<span>Kit</span></div>
     </div>
+    <span class="welcome-emoji">👋</span>
+    <div class="welcome-eyebrow">Hey there, future legend</div>
+    <div class="welcome-title">Let's get you <em>set up.</em></div>
+    <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. We just need a name to put on the door before we hand you the keys.</p>
+
+    <div class="wf-group">
+      <div class="wf-label">Your name <span style="color:var(--red)">*</span></div>
+      <input class="wf-input" id="wl-fullname" type="text" placeholder="e.g. Alex Chen" autocomplete="name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+    </div>
+    <div class="wf-group">
+      <div class="wf-label">What should we call you? <span>optional</span></div>
+      <input class="wf-input" id="wl-nickname" type="text" placeholder="e.g. Alex, A.C., Boss" autocomplete="nickname" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+      <div class="welcome-preview" id="wl-preview">We'll greet you with — <strong>"Hello, friend"</strong></div>
+    </div>
+
     <div class="welcome-error" id="wl-error"></div>
-    <button class="welcome-cta" onclick="saveWelcomePage()">Get started →</button>
-    <div class="welcome-skip"><a onclick="skipWelcomePage()">Skip for now</a></div>
+    <button class="welcome-cta" onclick="saveWelcomePage()">Take me in →</button>
+    <div class="welcome-skip"><a onclick="skipWelcomePage()">Just exploring? Skip and look around</a></div>
+    <hr class="welcome-divider">
+    <div class="welcome-hint">Press <kbd>↵</kbd> to continue</div>
   </div>
 </div>
 
