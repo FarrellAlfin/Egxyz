@@ -2256,7 +2256,8 @@ input[type=number]{-moz-appearance:textfield}
 .welcome-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .welcome-logo{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--on-surface);letter-spacing:-.5px}
 .welcome-logo span{color:var(--primary)}
-.welcome-emoji{font-size:40px;margin-bottom:12px;display:block}
+@keyframes wave-hand{0%,100%{transform:rotate(0deg)}20%{transform:rotate(25deg)}40%{transform:rotate(-10deg)}60%{transform:rotate(20deg)}80%{transform:rotate(-5deg)}}
+.welcome-emoji{font-size:40px;margin-bottom:12px;display:inline-block;animation:wave-hand 2s ease-in-out infinite;transform-origin:70% 70%;cursor:default;user-select:none}
 .welcome-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);margin-bottom:8px}
 .welcome-title{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--on-surface);line-height:1.15;margin-bottom:8px}
 .welcome-title em{font-style:normal;color:var(--primary)}
@@ -2317,9 +2318,9 @@ input[type=number]{-moz-appearance:textfield}
 .gs-sub{font-size:14px;color:var(--ink-mid);line-height:1.6;margin-bottom:24px;max-width:540px}
 .gs-progress-card{background:var(--surface-white);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px}
 .gs-prog-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.gs-prog-num{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--primary);white-space:nowrap}
-.gs-prog-sub{font-size:13px;font-weight:600;color:var(--on-surface)}
-.gs-prog-sub2{font-size:12px;color:var(--ink-mid)}
+.gs-prog-num{font-family:var(--font-display);font-size:52px;font-weight:800;color:var(--primary);white-space:nowrap;line-height:1}
+.gs-prog-sub{font-size:16px;font-weight:700;color:var(--on-surface)}
+.gs-prog-sub2{font-size:13px;color:var(--ink-mid)}
 .gs-prog-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
 .gs-prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease}
 .gs-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
@@ -4645,29 +4646,26 @@ function showWelcomePage() {
 }
 
 async function saveWelcomePage() {
-  var fullname = (document.getElementById('wl-fullname')  || {}).value || '';
-  var nickname = (document.getElementById('wl-nickname')  || {}).value || '';
+  var first    = ((document.getElementById('wl-firstname')  || {}).value || '').trim();
+  var middle   = ((document.getElementById('wl-middlename') || {}).value || '').trim();
+  var last     = ((document.getElementById('wl-lastname')   || {}).value || '').trim();
+  var nickname = ((document.getElementById('wl-nickname')   || {}).value || '').trim();
+  var fullname = [first, middle, last].filter(Boolean).join(' ');
   var errEl    = document.getElementById('wl-error');
-  fullname = fullname.trim(); nickname = nickname.trim();
-  if (!fullname) {
-    if (errEl) { errEl.textContent = 'Please enter your name to continue.'; }
-    document.getElementById('wl-fullname') && document.getElementById('wl-fullname').focus();
+  if (!first) {
+    if (errEl) { errEl.textContent = 'Please enter your first name to continue.'; }
+    var fnEl = document.getElementById('wl-firstname');
+    if (fnEl) fnEl.focus();
     return;
   }
   if (errEl) errEl.textContent = '';
-  // Split full name into first / last
-  var parts = fullname.split(/\s+/);
-  var first = parts[0] || '';
-  var last  = parts.slice(1).join(' ') || '';
   // Mark welcome as done so refreshing doesn't loop back here
   if (_currentUser) {
     try { localStorage.setItem('fk_welcome_done_' + _currentUser.id, '1'); } catch(e) {}
   }
   // Pre-populate My Details fields immediately
-  var fnEl = document.getElementById('my-firstname');
-  var lnEl = document.getElementById('my-lastname');
-  if (fnEl) fnEl.value = first;
-  if (lnEl) lnEl.value = last;
+  var set = function(id,v){ var e=document.getElementById(id); if(e) e.value=v||''; };
+  set('my-firstname', first); set('my-middlename', middle); set('my-lastname', last);
   if (_currentUser) {
     try {
       await _supabase.from('user_settings').upsert({
@@ -4686,7 +4684,7 @@ async function saveWelcomePage() {
   var avEl = document.getElementById('nav-avatar');
   if (avEl) avEl.textContent = initials.toUpperCase() || '?';
   var ddName = document.getElementById('profile-dd-name');
-  if (ddName) ddName.textContent = [first, last].filter(Boolean).join(' ') || fullname;
+  if (ddName) ddName.textContent = fullname || [first, last].filter(Boolean).join(' ');
   // Navigate to get-started panel
   showDash();
   setTimeout(function() {
@@ -4696,9 +4694,9 @@ async function saveWelcomePage() {
 }
 
 function updateWelcomePreview() {
-  var nickname = ((document.getElementById('wl-nickname') || {}).value || '').trim();
-  var fullname = ((document.getElementById('wl-fullname') || {}).value || '').trim();
-  var name = nickname || (fullname ? fullname.split(/\s+/)[0] : '') || 'friend';
+  var nickname = ((document.getElementById('wl-nickname')  || {}).value || '').trim();
+  var first    = ((document.getElementById('wl-firstname') || {}).value || '').trim();
+  var name = nickname || first || 'friend';
   var el = document.getElementById('wl-preview');
   if (el) el.innerHTML = 'We\'ll greet you with — <strong>"Hello, ' + escapeHTML(name) + '"</strong>';
 }
@@ -4875,6 +4873,11 @@ function showPanel(id,el){
     // Visiting My Details counts as "Set up your profile" being done
     if(typeof _markChecklistDone==='function') _markChecklistDone('profile');
     if(typeof renderGetStarted==='function') renderGetStarted();
+    // Refresh payment display in case _pmState changed while panel was hidden
+    if(typeof _updatePaymentSummary==='function') _updatePaymentSummary();
+    // Ensure email is always locked to auth account
+    var _meEl = document.getElementById('my-email');
+    if (_meEl && _currentUser && _currentUser.email) _meEl.value = _currentUser.email;
   }
   if(typeof _trackRecentPanel==='function') _trackRecentPanel(id);
 }
@@ -9407,9 +9410,12 @@ function renderGetStarted() {
   if (headEl) {
     var fn = '';
     if (_currentUser) {
-      fn = (_currentUser.user_metadata && (_currentUser.user_metadata.nickname || _currentUser.user_metadata.full_name))
-        ? (_currentUser.user_metadata.nickname || _currentUser.user_metadata.full_name.split(' ')[0])
-        : (_currentUser.email ? _currentUser.email.split('@')[0] : '');
+      var _meta = _currentUser.user_metadata || {};
+      // Prefer: nickname → My Details first name → full_name first word → email handle
+      fn = _meta.nickname
+        || (document.getElementById('my-firstname') || {}).value
+        || (_meta.full_name ? _meta.full_name.split(' ')[0] : '')
+        || (_currentUser.email ? _currentUser.email.split('@')[0] : '');
     }
     headEl.innerHTML = 'Hey ' + (fn ? '<em>' + escapeHTML(fn) + '</em> ' : '') + '👋 ready to roll?';
   }
@@ -9651,9 +9657,11 @@ function savePaymentPopup() {
   var applyEl = document.getElementById('my-payment-apply-future');
   if (applyEl) applyEl.checked = _pmState.applyToFuture;
 
-  // Update summary label
+  // Update summary display
   _updatePaymentSummary();
   closePaymentPopup();
+  // Immediately persist to Supabase so refreshing doesn't lose payment data
+  saveMyDetails(true);
 }
 
 var _PM_COLORS = {
@@ -9682,7 +9690,7 @@ function _updatePaymentSummary() {
     var details = _pmState.details || {};
     var detailLines = fields.map(function(f) {
       var val = details[f[0]];
-      return val ? '<div style="font-size:13px;line-height:1.8"><span style="color:var(--ink-mid)">' + escapeHTML(f[1].split('(')[0].trim()) + ':</span> <strong>' + escapeHTML(val) + '</strong></div>' : '';
+      return val ? '<div style="font-size:11px;line-height:1.7"><span style="color:var(--ink-mid)">' + escapeHTML(f[1].split('(')[0].trim()) + ':</span> <strong>' + escapeHTML(val) + '</strong></div>' : '';
     }).filter(Boolean).join('');
     var toggleChecked = _pmState.applyToFuture ? 'checked' : '';
     prefCardHtml = '<div style="margin-bottom:12px;padding:12px 16px;background:#f8fffe;border:2px solid #009668;border-radius:10px">' +
@@ -9690,7 +9698,7 @@ function _updatePaymentSummary() {
       (detailLines ? '<div style="margin-bottom:8px">' + detailLines.replace(/font-size:13px/g, 'font-size:12px') + '</div>' : '') +
       '<label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink);cursor:pointer;margin-top:6px;font-weight:700;text-transform:none;letter-spacing:0">' +
         '<span class="pm-apply-switch"><input type="checkbox" id="pm-apply-display" ' + toggleChecked + ' onchange="_toggleApplyFuture(this)"><span class="pm-apply-slider"></span></span>' +
-        'apply to all new invoices automatically' +
+        'Apply to all new invoices automatically' +
       '</label>' +
     '</div>';
   }
@@ -11266,7 +11274,18 @@ function savePtPeople(people, projectId) {
 function renderPtPeople() {
   var wrap = document.getElementById('ptv-people-wrap');
   if (!wrap) return;
+  // Always use the current My Details first+last name for the user's own entry
+  var _myFirst = (document.getElementById('my-firstname') || {}).value || '';
+  var _myLast  = (document.getElementById('my-lastname')  || {}).value || '';
+  var _myCurrentName = [_myFirst, _myLast].filter(Boolean).join(' ');
   var people = loadPtPeople();
+  // Update the user's own (non-auto) freelancer entry to match current My Details
+  if (_myCurrentName) {
+    var selfIdx = people.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
+    if (selfIdx >= 0) {
+      people[selfIdx] = Object.assign({}, people[selfIdx], { name: _myCurrentName });
+    }
+  }
   // Pull unique assignees from tasks as "auto" members
   var taskAssignees = [];
   (window._ptTasks || []).forEach(function(t){ _parseAssignees(t).forEach(function(a){ if (taskAssignees.indexOf(a) < 0) taskAssignees.push(a); }); });
@@ -12011,8 +12030,13 @@ function renderGlobalGantt() {
     if (p.start_date) allDates.push(p.start_date.slice(0,10));
     if (p.end_date)   allDates.push(p.end_date.slice(0,10));
   });
-  if (!allDates.length) { el.innerHTML = '<div style="padding:20px;color:var(--ink-light);font-size:13px">Add start/end dates to projects to view the global Gantt.</div>'; return; }
+  // If no project has dates yet, build a default 6-month range centred on today
   var todayStr = new Date().toISOString().slice(0,10);
+  if (!allDates.length) {
+    var _d0 = new Date(); _d0.setMonth(_d0.getMonth() - 2);
+    var _d1 = new Date(); _d1.setMonth(_d1.getMonth() + 4);
+    allDates.push(_d0.toISOString().slice(0,10), _d1.toISOString().slice(0,10));
+  }
   allDates.push(todayStr);
   allDates.sort();
 
@@ -12051,7 +12075,7 @@ function renderGlobalGantt() {
       (p.client_name ? '<div style="font-size:11px;color:var(--ink-light);margin-top:2px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHTML(p.client_name) + '</div>' : '') +
       '</td>';
     if (!pStart) {
-      return '<tr>' + nameCell + '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light)">No dates set</td></tr>';
+      return '<tr>' + nameCell + '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light);font-style:italic">No dates set yet</td></tr>';
     }
     if (pStart > pEnd) pEnd = pStart;
     var barStart = Math.max(0, (pStart - rangeStart) / 86400000);
@@ -14037,13 +14061,22 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
       <div class="welcome-logo">Freelance<span>Kit</span></div>
     </div>
     <span class="welcome-emoji">👋</span>
-    <div class="welcome-eyebrow">Hey there, Freelancer!</div>
     <div class="welcome-title">Let's get you <em>set up.</em></div>
     <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. We just need a name to put on the door before we hand you the keys.</p>
 
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="wf-group" style="margin-bottom:0">
+        <div class="wf-label">First name <span style="color:var(--red)">*</span></div>
+        <input class="wf-input" id="wl-firstname" type="text" placeholder="Alex" autocomplete="given-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+      </div>
+      <div class="wf-group" style="margin-bottom:0">
+        <div class="wf-label">Last name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
+        <input class="wf-input" id="wl-lastname" type="text" placeholder="Chen" autocomplete="family-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+      </div>
+    </div>
     <div class="wf-group">
-      <div class="wf-label">Your name <span style="color:var(--red)">*</span></div>
-      <input class="wf-input" id="wl-fullname" type="text" placeholder="e.g. Alex Chen" autocomplete="name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+      <div class="wf-label">Middle name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
+      <input class="wf-input" id="wl-middlename" type="text" placeholder="Jordan" autocomplete="additional-name" onkeydown="if(event.key==='Enter')saveWelcomePage()">
     </div>
     <div class="wf-group">
       <div class="wf-label">What should we call you? <span>optional</span></div>
@@ -14052,8 +14085,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     </div>
 
     <div class="welcome-error" id="wl-error"></div>
-    <button class="welcome-cta" onclick="saveWelcomePage()">Take me in →</button>
-    <hr class="welcome-divider">
+    <button class="welcome-cta" onclick="saveWelcomePage()">Take me in</button>
   </div>
 </div>
 
