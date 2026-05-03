@@ -6567,7 +6567,6 @@ function _renderClientListSync() {
       '<div class="ct-cell">' + escapeHTML(cl.company||'—') + '</div>' +
       '<div class="ct-cell" style="font-size:12px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHTML(cl.address||'—') + '</div>' +
       '<div class="ct-cell" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' + projHtml +
-        '<button class="ct-btn" data-client-id="' + escapeHTML(cl.id) + '" data-client-name="' + escapeHTML(cl.name||'') + '" onclick="event.stopPropagation();openClientLinkModal(this.dataset.clientId, this.dataset.clientName)" style="font-size:10px;padding:2px 7px;margin-left:4px" title="Link / unlink projects">🔗</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -6685,9 +6684,6 @@ function openEditClientModal(id) {
   } else {
     set('cem-phone', phone);
   }
-  // Populate project dropdown and pre-select linked project
-  var linkedProj = (_ptProjects||[]).find(function(p){ return p.client_name === cl.name; });
-  _populateClientProjectDropdown('cem-project', linkedProj ? linkedProj.id : '');
   document.getElementById('edit-client-modal').classList.add('open');
 }
 function closeEditClientModal() {
@@ -6716,14 +6712,6 @@ async function saveEditClient() {
   var idx = _clients.findIndex(function(c){ return c.id === id; });
   if (idx !== -1) _clients[idx] = Object.assign({}, _clients[idx], res.data);
   _clients.sort(function(a,b){ return a.name.localeCompare(b.name); });
-  // Update linked project if one was selected
-  var cemProjSel = document.getElementById('cem-project');
-  var cemProjId = cemProjSel ? cemProjSel.value : '';
-  if (cemProjId) {
-    await _supabase.from('projects').update({ client_name: name }).eq('id', cemProjId).eq('user_id', _currentUser.id);
-    var proj = (_ptProjects||[]).find(function(p){ return p.id === cemProjId; });
-    if (proj) proj.client_name = name;
-  }
   renderClientList();
   closeEditClientModal();
   showToast('✓ Client updated');
@@ -9665,7 +9653,7 @@ function _updatePaymentSummary() {
     prefCardHtml = '<div style="margin-bottom:12px;padding:12px 16px;background:#f8fffe;border:2px solid #009668;border-radius:10px">' +
       '<div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:' + (detailLines ? '6px' : '8px') + '">Preferred payment method: <span style="color:#009668">' + escapeHTML(prefPm.label) + '</span></div>' +
       (detailLines ? '<div style="margin-bottom:8px">' + detailLines.replace(/font-size:13px/g, 'font-size:12px') + '</div>' : '') +
-      '<label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-mid);cursor:pointer;margin-top:6px;font-weight:400">' +
+      '<label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink);cursor:pointer;margin-top:6px;font-weight:700">' +
         '<span class="pm-apply-switch"><input type="checkbox" id="pm-apply-display" ' + toggleChecked + ' onchange="_toggleApplyFuture(this)"><span class="pm-apply-slider"></span></span>' +
         'apply to all new invoices automatically' +
       '</label>' +
@@ -13948,14 +13936,8 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           </div>
         </div>
       </div>
-      <div class="m-row2" style="margin-top:12px">
-        <div><div class="m-lbl">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country" style="margin-bottom:0"></div>
-        <div>
-          <div class="m-lbl">Connected Project</div>
-          <select class="m-inp" id="cem-project" style="margin-bottom:0">
-            <option value="">— None —</option>
-          </select>
-        </div>
+      <div style="margin-top:12px">
+        <div class="m-lbl">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country" style="margin-bottom:0">
       </div>
     </div>
     <div class="modal-ft">
