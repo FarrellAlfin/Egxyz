@@ -3469,10 +3469,10 @@ var RateLimiter = (function() {
               <div class="ip-divider"></div>
               <div class="ip-row2">
                 <div class="ip-field"><div class="ip-lbl">Invoice # / Title</div><input class="ip-inp" id="i-num" value="INV-001" oninput="updateInv()"></div>
-                <div class="ip-field"><div class="ip-lbl">Issue date</div><input class="ip-inp" type="date" id="i-issued" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Issue date</div><input class="ip-inp" type="date" id="i-issued" oninput="updateInv()" onchange="invIssuedChange(this.value)"></div>
               </div>
               <div class="ip-row2">
-                <div class="ip-field"><div class="ip-lbl">Due date</div><input class="ip-inp" type="date" id="i-due" oninput="updateInv()"></div>
+                <div class="ip-field"><div class="ip-lbl">Due date</div><input class="ip-inp" type="date" id="i-due" oninput="updateInv()" onchange="invDueChange(this.value)"></div>
                 <div class="ip-field">
                   <div class="ip-lbl">Status</div>
                   <select class="ip-inp" id="i-status" onchange="updateInv();_syncBuilderStatusToBilling()">
@@ -9501,6 +9501,18 @@ var _PM_TO_INV_FIELDS = {
 // Pre-fill invoice payment fields from My Details preferred method (new invoices only)
 // force=true: always apply (e.g. from billing context); force=false/omitted: only if applyToFuture toggle is on
 function _prefillInvPayment(force) {
+  // Defensive fallback: if _pmState is empty, try to re-hydrate from hidden input
+  if (!_pmState.methods.length) {
+    var _raw = (document.getElementById('my-payment') || {}).value || '';
+    if (_raw) {
+      try {
+        var _p = JSON.parse(_raw);
+        if (_p && Array.isArray(_p.methods) && _p.methods.length) {
+          _pmState = { methods: _p.methods, preferred: _p.preferred || '', details: _p.details || {}, applyToFuture: !!_p.applyToFuture };
+        }
+      } catch(e) {}
+    }
+  }
   if (!_pmState.preferred || !_pmState.methods.length) return;
   if (!force && !_pmState.applyToFuture) return;
   var paySelEl = document.getElementById('i-pay');
@@ -13116,8 +13128,8 @@ function openPtModal(mode) {
         '<input type="hidden" id="ptm-client" value="' + escapeHTML(p.client_name || '') + '">' +
       '</div>' +
       '<div class="pt-field"><label>Status</label><select class="pt-sel" id="ptm-status"><option value="planning"' + (p.status==='planning'?' selected':'') + '>Planning</option><option value="active"' + (p.status==='active'?' selected':'') + '>Active</option><option value="on_hold"' + (p.status==='on_hold'?' selected':'') + '>On hold</option><option value="completed"' + (p.status==='completed'?' selected':'') + '>Completed</option></select></div>' +
-      '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-start" value="' + (p.start_date ? p.start_date.slice(0,10) : '') + '"></div>' +
-      '<div class="pt-field"><label>End date</label><input class="pt-inp" type="date" id="ptm-end" value="' + (p.end_date ? p.end_date.slice(0,10) : '') + '"></div>' +
+      '<div class="pt-field"><label>Start date</label><input class="pt-inp" type="date" id="ptm-start" value="' + (p.start_date ? p.start_date.slice(0,10) : '') + '"' + (p.end_date ? ' max="' + p.end_date.slice(0,10) + '"' : '') + ' onchange="ptProjStartChange(this.value)"></div>' +
+      '<div class="pt-field"><label>End date</label><input class="pt-inp" type="date" id="ptm-end" value="' + (p.end_date ? p.end_date.slice(0,10) : '') + '"' + (p.start_date ? ' min="' + p.start_date.slice(0,10) + '"' : '') + ' onchange="ptProjEndChange(this.value)"></div>' +
       '</div>' +
       '<div class="pt-field"><label>Budget</label><input class="pt-inp" type="number" id="ptm-budget" value="' + (p.budget || '') + '" placeholder="0"></div>' +
       '<div class="pt-field"><label>Currency</label><select class="pt-sel" id="ptm-currency"><option value="USD"' + (p.currency=="USD"||!p.currency?' selected':'') + '>USD — US Dollar</option><option value="EUR"' + (p.currency=="EUR"?' selected':'') + '>EUR — Euro</option><option value="GBP"' + (p.currency=="GBP"?' selected':'') + '>GBP — British Pound</option><option value="AUD"' + (p.currency=="AUD"?' selected':'') + '>AUD — Australian Dollar</option><option value="CAD"' + (p.currency=="CAD"?' selected':'') + '>CAD — Canadian Dollar</option><option value="SGD"' + (p.currency=="SGD"?' selected':'') + '>SGD — Singapore Dollar</option><option value="JPY"' + (p.currency=="JPY"?' selected':'') + '>JPY — Japanese Yen</option><option value="INR"' + (p.currency=="INR"?' selected':'') + '>INR — Indian Rupee</option><option value="MYR"' + (p.currency=="MYR"?' selected':'') + '>MYR — Malaysian Ringgit</option><option value="IDR"' + (p.currency=="IDR"?' selected':'') + '>IDR — Indonesian Rupiah</option><option value="PHP"' + (p.currency=="PHP"?' selected':'') + '>PHP — Philippine Peso</option><option value="BRL"' + (p.currency=="BRL"?' selected':'') + '>BRL — Brazilian Real</option></select></div>' +
@@ -13231,11 +13243,13 @@ async function savePtProject() {
   if (!_currentUser) return;
   if (_ptSaving) return; _ptSaving = true;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
-  var name = g('ptm-name'); if (!name) { showToast('Project name is required'); return; }
+  var name = g('ptm-name'); if (!name) { showToast('Project name is required'); _ptSaving = false; return; }
+  var _sd = g('ptm-start'), _ed = g('ptm-end');
+  if (_sd && _ed && _ed < _sd) { showToast('End date must be after the start date'); _ptSaving = false; return; }
   var payload = {
     user_id: _currentUser.id, name: name,
     client_name: g('ptm-client'), status: g('ptm-status'),
-    start_date: g('ptm-start') || null, end_date: g('ptm-end') || null,
+    start_date: _sd || null, end_date: _ed || null,
     budget: parseFloat(g('ptm-budget')) || null,
     currency: g('ptm-currency') || 'USD',
     description: g('ptm-desc'), contract_text: g('ptm-contract'),
@@ -13314,6 +13328,33 @@ function ptMsDueChange(v) {
   if (!startEl) return;
   if (v) startEl.max = v;
   if (v && startEl.value && startEl.value > v) { startEl.value = v; }
+}
+// Project form start/end date cross-validation
+function ptProjStartChange(v) {
+  var endEl = document.getElementById('ptm-end');
+  if (!endEl) return;
+  if (v) endEl.min = v;
+  if (v && endEl.value && endEl.value < v) endEl.value = v;
+}
+function ptProjEndChange(v) {
+  var startEl = document.getElementById('ptm-start');
+  if (!startEl) return;
+  if (v) startEl.max = v;
+  if (v && startEl.value && startEl.value > v) startEl.value = v;
+}
+// Invoice issue/due date cross-validation
+function invIssuedChange(v) {
+  var dueEl = document.getElementById('i-due');
+  if (!dueEl) return;
+  if (v) dueEl.min = v;
+  if (v && dueEl.value && dueEl.value < v) { dueEl.value = v; if(typeof updateInv==='function') updateInv(); }
+}
+function invDueChange(v) {
+  var issuedEl = document.getElementById('i-issued');
+  if (!issuedEl) return;
+  if (v) issuedEl.max = v;
+  if (v && issuedEl.value && issuedEl.value > v) { issuedEl.value = v; }
+  if (typeof updateInv === 'function') updateInv();
 }
 
 async function savePtMilestone() {
@@ -14065,19 +14106,19 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <div class="welcome-title">Let's get you <em>set up.</em></div>
     <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. We just need a name to put on the door before we hand you the keys.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
       <div class="wf-group" style="margin-bottom:0">
         <div class="wf-label">First name <span style="color:var(--red)">*</span></div>
         <input class="wf-input" id="wl-firstname" type="text" placeholder="Alex" autocomplete="given-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
       </div>
       <div class="wf-group" style="margin-bottom:0">
+        <div class="wf-label">Middle name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
+        <input class="wf-input" id="wl-middlename" type="text" placeholder="Jordan" autocomplete="additional-name" onkeydown="if(event.key==='Enter')saveWelcomePage()">
+      </div>
+      <div class="wf-group" style="margin-bottom:0">
         <div class="wf-label">Last name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
         <input class="wf-input" id="wl-lastname" type="text" placeholder="Chen" autocomplete="family-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
       </div>
-    </div>
-    <div class="wf-group">
-      <div class="wf-label">Middle name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
-      <input class="wf-input" id="wl-middlename" type="text" placeholder="Jordan" autocomplete="additional-name" onkeydown="if(event.key==='Enter')saveWelcomePage()">
     </div>
     <div class="wf-group">
       <div class="wf-label">What should we call you? <span>optional</span></div>
