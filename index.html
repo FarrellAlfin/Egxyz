@@ -6426,7 +6426,6 @@ function applyMyDetails(d, force) {
   if (yn && (force || !yn.value)) yn.value = d.business_name || d.full_name || '';
   if (ye && (force || !ye.value)) ye.value = d.email || '';
   if (d.tax_rate) { var t=document.getElementById('i-tax'); if(t&&(force||!t.value)) t.value=d.tax_rate; }
-  if (d.payment_methods) { var pm=document.getElementById('i-pay'); if(pm) pm.value=d.payment_methods; }
   if (typeof updateInv==='function') updateInv();
   // Sync to welcome packet collaboration fields
   _syncMyDetailsToDoc(d);
@@ -9500,8 +9499,10 @@ var _PM_TO_INV_FIELDS = {
 };
 
 // Pre-fill invoice payment fields from My Details preferred method (new invoices only)
-function _prefillInvPayment() {
-  if (!_pmState.applyToFuture || !_pmState.preferred || !_pmState.methods.length) return;
+// force=true: always apply (e.g. from billing context); force=false/omitted: only if applyToFuture toggle is on
+function _prefillInvPayment(force) {
+  if (!_pmState.preferred || !_pmState.methods.length) return;
+  if (!force && !_pmState.applyToFuture) return;
   var paySelEl = document.getElementById('i-pay');
   if (!paySelEl) return;
   paySelEl.value = _pmState.preferred;
@@ -10479,12 +10480,10 @@ function renderPtGallery() {
         '<div class="pg-stats">' +
           '<div class="pg-stat"><div class="pg-stat-l">Tasks</div><div class="pg-stat-v">'+taskLbl+'</div></div>' +
           '<div class="pg-stat"><div class="pg-stat-l">Hours</div><div class="pg-stat-v">'+hoursLbl+'</div></div>' +
-          '<div class="pg-stat"><div class="pg-stat-l">Deadline</div><div class="pg-stat-v '+(isLate?'acc':'')+'">'+escapeHTML(dlbl)+'</div></div>' +
         '</div>' +
       '</div>' +
       '<div class="pg-ft">' +
         '<div class="pg-avatars">'+(avatarHtml||'<span style="font-size:11px;color:var(--ink-light)">No team</span>')+'</div>' +
-        '<div class="pg-ft-right">'+ringSvg+'<span class="pg-ft-date'+(isLate?' late':'')+'">'+escapeHTML(dlbl)+'</span></div>' +
       '</div>' +
     '</div>';
   }).join('') + '</div>';
@@ -12075,7 +12074,7 @@ function renderGlobalGantt() {
       (p.client_name ? '<div style="font-size:11px;color:var(--ink-light);margin-top:2px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHTML(p.client_name) + '</div>' : '') +
       '</td>';
     if (!pStart) {
-      return '<tr>' + nameCell + '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light);font-style:italic">No dates set yet</td></tr>';
+      return '<tr onclick="selectPtProject(\'' + p.id + '\')" style="cursor:pointer">' + nameCell + '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:4px 8px;font-size:11px;color:var(--ink-light);font-style:italic">No dates set yet</td></tr>';
     }
     if (pStart > pEnd) pEnd = pStart;
     var barStart = Math.max(0, (pStart - rangeStart) / 86400000);
@@ -12085,7 +12084,7 @@ function renderGlobalGantt() {
     var startLbl = p.start_date ? p.start_date.slice(5,10) : '';
     var endLbl   = p.end_date   ? p.end_date.slice(5,10)   : '';
     var barLabel = startLbl && endLbl && startLbl !== endLbl ? startLbl + ' → ' + endLbl : (endLbl || startLbl);
-    return '<tr>' + nameCell +
+    return '<tr onclick="selectPtProject(\'' + p.id + '\')" style="cursor:pointer">' + nameCell +
       '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:5px 0;position:relative">' +
       todayLine +
       '<div style="position:relative;height:28px;background:#F0EDE8;border-radius:6px">' +
@@ -13640,6 +13639,8 @@ function openPtEditBilling(i) {
       if (dlBtn) dlBtn.style.display = 'none';
       var backBtn = document.getElementById('inv-builder-back-btn');
       if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
+      // Always pre-fill preferred payment method from My Details when creating from billing
+      if (typeof _prefillInvPayment === 'function') _prefillInvPayment(true);
       showInvView('builder');
       showToast('✓ Invoice Builder ready — edit line items, then save');
     }, 150);
