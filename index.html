@@ -8490,12 +8490,14 @@ function closeTimerModal() {
   if (overlay) overlay.classList.remove('open');
 }
 
+var _timerLogSaving = false;
 async function timerLogSave() {
   if (!_currentUser) { showToast('Please sign in'); return; }
+  if (_timerLogSaving) return; _timerLogSaving = true;
   var desc = (document.getElementById('timer-modal-desc') || {}).value || '';
   var projId = (document.getElementById('tp-project-sel') || {}).value || '';
   var hours = _timerLoggedHours;
-  if (!hours) { closeTimerModal(); return; }
+  if (!hours) { _timerLogSaving = false; closeTimerModal(); return; }
   var myName = getMyFullName()
     || (_currentUser.user_metadata && (_currentUser.user_metadata.full_name || _currentUser.user_metadata.name))
     || (_currentUser.email ? _currentUser.email.split('@')[0] : null);
@@ -8510,7 +8512,7 @@ async function timerLogSave() {
       person_name: myName || null
     };
     var res = await _supabase.from('project_timesheet').insert(payload).select().single();
-    if (res.error) { showToast('Error: ' + res.error.message); return; }
+    if (res.error) { _timerLogSaving = false; showToast('Error: ' + res.error.message); return; }
     // Update local cache if this project is open
     if (_ptCurrentId === projId) {
       window._ptHours = window._ptHours || [];
@@ -8522,6 +8524,7 @@ async function timerLogSave() {
   // Sync both contribution grids immediately
   if (typeof renderContribGrid === 'function') renderContribGrid();
   if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
+  _timerLogSaving = false;
   closeTimerModal();
   showToast('\u2713 Time logged' + (projId ? ' to project' : ''));
 }
@@ -13576,8 +13579,9 @@ async function savePtMeeting() {
 
 async function savePtTime() {
   if (!_currentUser || !_ptCurrentId) return;
+  if (_ptSaving) return; _ptSaving = true;
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
-  var hrs = trGetHours('ptm-time-roll'); if (!hrs || hrs <= 0) { showToast('Hours required'); return; }
+  var hrs = trGetHours('ptm-time-roll'); if (!hrs || hrs <= 0) { showToast('Hours required'); _ptSaving = false; return; }
   var myName = getMyFullName()
     || (_currentUser.user_metadata && (_currentUser.user_metadata.full_name || _currentUser.user_metadata.name))
     || (_currentUser.email ? _currentUser.email.split('@')[0] : null);
@@ -13585,7 +13589,7 @@ async function savePtTime() {
     log_date: g('ptm-time-date') || null, hours: hrs, description: g('ptm-time-desc'),
     person_name: myName || null };
   var res = await _supabase.from('project_timesheet').insert(payload).select().single();
-  if (res.error) { showToast('Error: ' + res.error.message); return; }
+  if (res.error) { _ptSaving = false; showToast('Error: ' + res.error.message); return; }
   window._ptHours = window._ptHours || []; window._ptHours.unshift(res.data);
   _recordContrib(1);
   closePtModal(); renderPtHours(); showToast('\u2713 Time logged');
