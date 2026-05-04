@@ -2025,7 +2025,12 @@ input[type=number]{-moz-appearance:textfield}
 .po-tasks-item:last-child{border-bottom:none}
 .po-task-cb{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;padding:0;flex-shrink:0;display:grid;place-items:center;transition:border-color .15s}
 .po-task-cb:hover{border-color:var(--ink)}
-.po-tasks-item-t{font-size:12.5px;color:var(--ink);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-tasks-item-t{font-size:14px;color:var(--ink);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-tasks-item.done-item .po-tasks-item-t{color:var(--ink-light);text-decoration:line-through;font-size:13px}
+.po-tasks-item.done-item .po-tasks-item-d{color:var(--ink-light)}
+.po-tasks-done-sep{list-style:none;padding:10px 0 6px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.po-tasks-done-sep-line{flex:1;height:1px;background:var(--border)}
+.po-tasks-done-sep-lbl{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
 .po-task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;justify-self:center}
 .po-tasks-item-d{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-light);white-space:nowrap;font-weight:600;flex-shrink:0}
 /* simplified client card in overview */
@@ -10806,29 +10811,60 @@ function renderPtOverview() {
   if (nextCountEl) nextCountEl.textContent = activeTasks.length;
   var tasksListEl = document.getElementById('ptv-tasks-list');
   if (tasksListEl) {
+    // ── Open tasks ────────────────────────────────────────────
+    var openHtml = '';
     if (!activeTasks.length) {
-      tasksListEl.innerHTML = '<li style="padding:12px 0;font-size:13px;color:var(--ink-light)">All tasks done! 🎉</li>';
+      openHtml = '<li style="padding:12px 0;font-size:13px;color:var(--ink-light)">All tasks done! 🎉</li>';
     } else {
-      tasksListEl.innerHTML = activeTasks.map(function(t, i) {
+      openHtml = activeTasks.map(function(t) {
         var overdue = !!(t.due_date && new Date(t.due_date+'T00:00:00') < now);
         var soon    = !overdue && !!(t.due_date && new Date(t.due_date+'T00:00:00') <= new Date(now.getTime()+7*24*60*60*1000));
-        var dotColor = overdue ? '#DC2626' : soon ? '#D97706' : '#D1D5DB';
+        var dotColor  = overdue ? '#DC2626' : soon ? '#D97706' : '#D1D5DB';
         var dateColor = overdue ? '#DC2626' : soon ? '#D97706' : 'var(--ink-light)';
         var dateStr = '';
         if (t.due_date) {
           var dd = new Date(t.due_date+'T00:00:00');
           dateStr = MON[dd.getMonth()] + ' ' + dd.getDate();
         }
-        // Find real task index in _ptTasks for toggling
         var realIdx = (window._ptTasks || []).indexOf(t);
         return '<li class="po-tasks-item">' +
-          '<button class="po-task-cb" onclick="if(typeof togglePtTask===\'function\')togglePtTask(' + realIdx + ')" title="Mark done" style="position:relative;z-index:1"></button>' +
+          '<button class="po-task-cb" onclick="if(typeof togglePtTask===\'function\')togglePtTask(' + realIdx + ')" title="Mark done"></button>' +
           '<div class="po-tasks-item-t" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</div>' +
           '<span class="po-task-dot" style="background:' + dotColor + '"></span>' +
           (dateStr ? '<div class="po-tasks-item-d" style="color:' + dateColor + '">' + dateStr + '</div>' : '<div></div>') +
         '</li>';
       }).join('');
     }
+
+    // ── Recently completed ────────────────────────────────────
+    var doneTasks = ts.filter(function(t){ return t.status === 'done'; });
+    var doneHtml = '';
+    if (doneTasks.length) {
+      doneHtml = '<li class="po-tasks-done-sep">' +
+        '<span class="po-tasks-done-sep-line"></span>' +
+        '<span class="po-tasks-done-sep-lbl">Recently completed</span>' +
+        '<span class="po-tasks-done-sep-line"></span>' +
+      '</li>' +
+      doneTasks.slice(0, 8).map(function(t) {
+        var realIdx = (window._ptTasks || []).indexOf(t);
+        var dateStr = '';
+        if (t.due_date) {
+          var dd = new Date(t.due_date+'T00:00:00');
+          dateStr = MON[dd.getMonth()] + ' ' + dd.getDate();
+        }
+        // ✓ filled green checkbox
+        var cbHtml = '<button class="po-task-cb" onclick="if(typeof togglePtTask===\'function\')togglePtTask(' + realIdx + ')" title="Mark as open" ' +
+          'style="background:#16A34A;border-color:#16A34A;color:#fff;font-size:11px;line-height:1">✓</button>';
+        return '<li class="po-tasks-item done-item">' +
+          cbHtml +
+          '<div class="po-tasks-item-t" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</div>' +
+          '<span class="po-task-dot" style="background:#D1D5DB"></span>' +
+          (dateStr ? '<div class="po-tasks-item-d">' + dateStr + '</div>' : '<div></div>') +
+        '</li>';
+      }).join('');
+    }
+
+    tasksListEl.innerHTML = openHtml + doneHtml;
   }
 
   // ── Client card (simplified: name, company, email, phone, address) ──
