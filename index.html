@@ -4687,8 +4687,8 @@ async function saveWelcomePage() {
   var ddName = document.getElementById('profile-dd-name');
   if (ddName) ddName.textContent = fullname || [first, last].filter(Boolean).join(' ');
   // Update dashboard greeting: nickname wins, otherwise full name
-  var _wbEl0 = document.querySelector('.wb-text h3');
-  if (_wbEl0) _wbEl0.textContent = 'Hello, ' + (nickname || fullname || first) + '!';
+  var _hnEl0b = document.getElementById('home-user-name');
+  if (_hnEl0b) _hnEl0b.textContent = (nickname || fullname || first) + '!';
   // Pre-fill my-nickname field in My Details
   set('my-nickname', nickname);
   // Navigate to get-started panel
@@ -4992,12 +4992,19 @@ function initHomeGrid(){
 function updateHomeHero(){
   var el=document.getElementById('home-user-name');
   if(!el)return;
-  var name='there';
+  // Prefer: nickname > My Details full name > user_metadata > email handle
+  var nick  = (document.getElementById('my-nickname')   || {}).value || '';
+  var first = (document.getElementById('my-firstname')  || {}).value || '';
+  var mid   = (document.getElementById('my-middlename') || {}).value || '';
+  var last  = (document.getElementById('my-lastname')   || {}).value || '';
+  var detailsName = [first, mid, last].filter(Boolean).join(' ');
+  var metaName = '';
   if(_currentUser){
     var m=_currentUser.user_metadata;
-    name=(m&&(m.full_name||m.name))||(_currentUser.email?_currentUser.email.split('@')[0]:'')||'there';
+    metaName=(m&&(m.full_name||m.name))||(_currentUser.email?_currentUser.email.split('@')[0]:'')||'there';
   }
-  el.textContent=name.charAt(0).toUpperCase()+name.slice(1)+'!';
+  var name = nick || detailsName || metaName || 'there';
+  el.textContent = name.charAt(0).toUpperCase() + name.slice(1) + '!';
 }
 initHomeGrid();
 
@@ -6268,8 +6275,8 @@ function setLoggedInUser(user) {
   var name = fullName || (user.email ? user.email.split('@')[0] : 'there');
   // Greeting: nickname wins; otherwise show full name (first + middle + last)
   var _greetName0 = _nick0 || name;
-  var wbEl = document.querySelector('.wb-text h3');
-  if (wbEl) wbEl.textContent = 'Hello, ' + _greetName0 + '!';
+  var _hnEl0 = document.getElementById('home-user-name');
+  if (_hnEl0) _hnEl0.textContent = _greetName0 + '!';
   // Start inactivity timer now that a real user is logged in
   _startInactivityTimer();
   // Load all user data in background — errors here must never block login
@@ -6458,8 +6465,8 @@ function applyMyDetails(d, force) {
     var _nick = (document.getElementById('my-nickname') || {}).value || (d && d.nickname) || '';
     var _greetName = _nick || _fullDisplay || _fn || '';
     if (_greetName) {
-      var _wbEl = document.querySelector('.wb-text h3');
-      if (_wbEl) _wbEl.textContent = 'Hello, ' + _greetName + '!';
+      var _hnEl = document.getElementById('home-user-name');
+      if (_hnEl) _hnEl.textContent = _greetName + '!';
     }
   })();
   // If force-save, sync updated name to all project people lists
@@ -6481,8 +6488,8 @@ function _updateDashGreeting() {
   var last  = (document.getElementById('my-lastname')    || {}).value || '';
   var fullName  = [first, mid, last].filter(Boolean).join(' ');
   var greetName = nick || fullName || '';
-  var wbEl = document.querySelector('.wb-text h3');
-  if (wbEl && greetName) wbEl.textContent = 'Hello, ' + greetName + '!';
+  var el = document.getElementById('home-user-name');
+  if (el && greetName) el.textContent = greetName + '!';
 }
 
 var _detailsSaveTimer = null;
@@ -10585,23 +10592,26 @@ function selectPtProject(id) {
   ptLoadProjectData(id);
   // Load shares + people
   if (typeof loadPtShares === 'function') loadPtShares(id);
-  // Auto-add current user to people involved if not already present, or update existing entry
+  // Auto-add / update / deduplicate the current user's entry in people involved
   (function() {
     var myName = getMyFullName() || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
-    if (myName) {
-      // Seed the cached name for future sync if not already set
-      try { if (!localStorage.getItem('fk_my_cached_name')) localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
-      var existingPeople = loadPtPeople(id);
-      // Find the user's own entry by role flags (not by name, to avoid stale-name mismatches)
-      var selfIdx = existingPeople.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
-      if (selfIdx >= 0) {
-        // Update name in case it changed (e.g. middle name added)
-        existingPeople[selfIdx] = Object.assign({}, existingPeople[selfIdx], { name: myName });
-        savePtPeople(existingPeople, id);
-      } else {
-        savePtPeople(existingPeople.concat([{ name: myName, role: 'Freelancer', side: 'freelancer' }]), id);
-      }
+    if (!myName) return;
+    try { localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
+    var existingPeople = loadPtPeople(id);
+    // Identify ALL self-candidate entries: isSelf flag OR role='Freelancer' (the auto-seed marker)
+    // These are entries that represent the current user from any past session
+    var isSelfEntry = function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer' && (p.isSelf || p.role === 'Freelancer'); };
+    var selfCandidates = existingPeople.filter(isSelfEntry);
+    if (selfCandidates.length === 0) {
+      // No self entry yet — add one
+      existingPeople.push({ name: myName, role: 'Freelancer', side: 'freelancer', isSelf: true });
+    } else {
+      // Collapse all self candidates into one clean entry (deduplicate old names)
+      var selfEntry = Object.assign({}, selfCandidates[0], { name: myName, isSelf: true });
+      existingPeople = existingPeople.filter(function(p){ return !isSelfEntry(p); });
+      existingPeople.unshift(selfEntry); // Current user always first
     }
+    savePtPeople(existingPeople, id);
   })();
   renderPtPeople();
   // Show Delete (owner) or Leave (collaborator) button
@@ -11322,12 +11332,20 @@ function renderPtPeople() {
   // Always use the current My Details full name (first + middle + last) for the user's own entry
   var _myCurrentName = getMyFullName();
   var people = loadPtPeople();
-  // Update the user's own (non-auto) freelancer entry to match current My Details
+  // Update the user's own entry to match current My Details; collapse duplicates if any slipped through
   if (_myCurrentName) {
-    var selfIdx = people.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
-    if (selfIdx >= 0 && people[selfIdx].name !== _myCurrentName) {
-      people[selfIdx] = Object.assign({}, people[selfIdx], { name: _myCurrentName });
-      savePtPeople(people); // Persist the updated name immediately
+    var _isSelf = function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer' && (p.isSelf || p.role === 'Freelancer'); };
+    var selfCandidates = people.filter(_isSelf);
+    if (selfCandidates.length > 1) {
+      // Collapse duplicates: keep one updated entry, remove the rest, then save
+      var selfEntry = Object.assign({}, selfCandidates[0], { name: _myCurrentName, isSelf: true });
+      people = people.filter(function(p){ return !_isSelf(p); });
+      people.unshift(selfEntry);
+      savePtPeople(people);
+    } else if (selfCandidates.length === 1 && selfCandidates[0].name !== _myCurrentName) {
+      var idx = people.indexOf(selfCandidates[0]);
+      people[idx] = Object.assign({}, people[idx], { name: _myCurrentName, isSelf: true });
+      savePtPeople(people);
     }
   }
   // Pull unique assignees from tasks as "auto" members
@@ -13328,13 +13346,16 @@ async function savePtProject() {
       var myName = getMyFullName() || (_currentUser.email ? _currentUser.email.split('@')[0] : '');
       if (myName) {
         var existingPeople = loadPtPeople(res.data.id);
-        var selfIdx = existingPeople.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
-        if (selfIdx >= 0) {
-          existingPeople[selfIdx] = Object.assign({}, existingPeople[selfIdx], { name: myName });
-          savePtPeople(existingPeople, res.data.id);
+        var _isSelfNew = function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer' && (p.isSelf || p.role === 'Freelancer'); };
+        var existingSelf = existingPeople.filter(_isSelfNew);
+        if (existingSelf.length > 0) {
+          var selfEntry = Object.assign({}, existingSelf[0], { name: myName, isSelf: true });
+          existingPeople = existingPeople.filter(function(p){ return !_isSelfNew(p); });
+          existingPeople.unshift(selfEntry);
         } else {
-          savePtPeople(existingPeople.concat([{ name: myName, role: 'Freelancer', side: 'freelancer' }]), res.data.id);
+          existingPeople.unshift({ name: myName, role: 'Freelancer', side: 'freelancer', isSelf: true });
         }
+        savePtPeople(existingPeople, res.data.id);
       }
     }
   }
