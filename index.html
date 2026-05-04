@@ -8518,6 +8518,7 @@ async function timerLogSave() {
       window._ptHours = window._ptHours || [];
       window._ptHours.unshift(res.data);
       renderPtHours();
+      if (typeof renderPtOverview === 'function') renderPtOverview();
     }
   }
   _recordContrib(1);
@@ -13592,7 +13593,7 @@ async function savePtTime() {
   if (res.error) { _ptSaving = false; showToast('Error: ' + res.error.message); return; }
   window._ptHours = window._ptHours || []; window._ptHours.unshift(res.data);
   _recordContrib(1);
-  closePtModal(); renderPtHours(); showToast('\u2713 Time logged');
+  closePtModal(); renderPtHours(); if (typeof renderPtOverview === 'function') renderPtOverview(); showToast('\u2713 Time logged');
 }
 
 function openPtEditTime(i) {
