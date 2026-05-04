@@ -4165,11 +4165,11 @@ var RateLimiter = (function() {
             <div class="sc-header"><span>&#128100;</span><span class="sc-title">Personal & Business</span></div>
             <div class="sc-body">
               <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px">
-                <div class="sf"><label>First name</label><input id="my-firstname" placeholder="First name" oninput="debouncedSaveDetails()"></div>
-                <div class="sf"><label>Middle <span style="font-weight:400;font-size:11px;color:var(--ink-light)">(optional)</span></label><input id="my-middlename" placeholder="" oninput="debouncedSaveDetails()"></div>
-                <div class="sf"><label>Last name</label><input id="my-lastname" placeholder="Last name" oninput="debouncedSaveDetails()"></div>
+                <div class="sf"><label>First name</label><input id="my-firstname" placeholder="First name" oninput="_updateDashGreeting();debouncedSaveDetails()"></div>
+                <div class="sf"><label>Middle <span style="font-weight:400;font-size:11px;color:var(--ink-light)">(optional)</span></label><input id="my-middlename" placeholder="" oninput="_updateDashGreeting();debouncedSaveDetails()"></div>
+                <div class="sf"><label>Last name</label><input id="my-lastname" placeholder="Last name" oninput="_updateDashGreeting();debouncedSaveDetails()"></div>
               </div>
-              <div class="sf"><label>What would you like to be called? <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional — overrides name in greetings</span></label><input id="my-nickname" placeholder="e.g. Alex, A.C., Boss" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>What would you like to be called? <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional — overrides name in greetings</span></label><input id="my-nickname" placeholder="e.g. Alex, A.C., Boss" oninput="_updateDashGreeting();debouncedSaveDetails()"></div>
               <div class="sf"><label>Business name</label><input id="my-business" placeholder="Your business or trading name" oninput="debouncedSaveDetails()"></div>
               <div class="sf"><label>Email address</label><input id="my-email" type="email" readonly style="background:var(--cream-dark);color:var(--ink-mid);cursor:not-allowed;opacity:.8" title="Email is tied to your login and cannot be changed here"></div>
               <div class="sf"><label>Website</label><input id="my-website" placeholder="https://yourbusiness.com" oninput="debouncedSaveDetails()"></div>
@@ -6472,6 +6472,17 @@ function applyMyDetails(d, force) {
   // Pre-fill rate calculator
   if (d.hourly_rate) { var hr=document.getElementById('rc-takehome'); }
   if (d.tax_rate) { var rt=document.getElementById('rc-tax'); if(rt) rt.value=d.tax_rate; if(typeof calcRate==='function') calcRate(); }
+}
+
+function _updateDashGreeting() {
+  var nick  = (document.getElementById('my-nickname')    || {}).value || '';
+  var first = (document.getElementById('my-firstname')   || {}).value || '';
+  var mid   = (document.getElementById('my-middlename')  || {}).value || '';
+  var last  = (document.getElementById('my-lastname')    || {}).value || '';
+  var fullName  = [first, mid, last].filter(Boolean).join(' ');
+  var greetName = nick || fullName || '';
+  var wbEl = document.querySelector('.wb-text h3');
+  if (wbEl && greetName) wbEl.textContent = 'Hello, ' + greetName + '!';
 }
 
 var _detailsSaveTimer = null;
@@ -10574,17 +10585,20 @@ function selectPtProject(id) {
   ptLoadProjectData(id);
   // Load shares + people
   if (typeof loadPtShares === 'function') loadPtShares(id);
-  // Auto-add current user to people involved if not already present
+  // Auto-add current user to people involved if not already present, or update existing entry
   (function() {
-    var myFirst = (document.getElementById('my-firstname') || {}).value || '';
-    var myLast  = (document.getElementById('my-lastname')  || {}).value || '';
-    var myName  = [myFirst, myLast].filter(Boolean).join(' ') || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
+    var myName = getMyFullName() || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
     if (myName) {
       // Seed the cached name for future sync if not already set
       try { if (!localStorage.getItem('fk_my_cached_name')) localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
       var existingPeople = loadPtPeople(id);
-      var alreadyAdded = existingPeople.some(function(p){ return p.name && p.name.toLowerCase() === myName.toLowerCase(); });
-      if (!alreadyAdded) {
+      // Find the user's own entry by role flags (not by name, to avoid stale-name mismatches)
+      var selfIdx = existingPeople.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
+      if (selfIdx >= 0) {
+        // Update name in case it changed (e.g. middle name added)
+        existingPeople[selfIdx] = Object.assign({}, existingPeople[selfIdx], { name: myName });
+        savePtPeople(existingPeople, id);
+      } else {
         savePtPeople(existingPeople.concat([{ name: myName, role: 'Freelancer', side: 'freelancer' }]), id);
       }
     }
@@ -11305,16 +11319,15 @@ function savePtPeople(people, projectId) {
 function renderPtPeople() {
   var wrap = document.getElementById('ptv-people-wrap');
   if (!wrap) return;
-  // Always use the current My Details first+last name for the user's own entry
-  var _myFirst = (document.getElementById('my-firstname') || {}).value || '';
-  var _myLast  = (document.getElementById('my-lastname')  || {}).value || '';
-  var _myCurrentName = [_myFirst, _myLast].filter(Boolean).join(' ');
+  // Always use the current My Details full name (first + middle + last) for the user's own entry
+  var _myCurrentName = getMyFullName();
   var people = loadPtPeople();
   // Update the user's own (non-auto) freelancer entry to match current My Details
   if (_myCurrentName) {
     var selfIdx = people.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
-    if (selfIdx >= 0) {
+    if (selfIdx >= 0 && people[selfIdx].name !== _myCurrentName) {
       people[selfIdx] = Object.assign({}, people[selfIdx], { name: _myCurrentName });
+      savePtPeople(people); // Persist the updated name immediately
     }
   }
   // Pull unique assignees from tasks as "auto" members
@@ -13311,16 +13324,15 @@ async function savePtProject() {
     if (!res.error && res.data) {
       _ptProjects.unshift(res.data);
       _ptAssignColorToProject(res.data.id);
-      // Auto-add the current user (first + last name only) as a person on the new project
-      var myFirst = (document.getElementById('my-firstname') || {}).value || '';
-      var myLast  = (document.getElementById('my-lastname')  || {}).value || '';
-      var myName  = [myFirst, myLast].filter(Boolean).join(' ') || (_currentUser.email ? _currentUser.email.split('@')[0] : '');
+      // Auto-add the current user's full name as a person on the new project
+      var myName = getMyFullName() || (_currentUser.email ? _currentUser.email.split('@')[0] : '');
       if (myName) {
         var existingPeople = loadPtPeople(res.data.id);
-        var alreadyAdded = existingPeople.some(function(p){
-          return p.name && p.name.toLowerCase() === myName.toLowerCase();
-        });
-        if (!alreadyAdded) {
+        var selfIdx = existingPeople.findIndex(function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer'; });
+        if (selfIdx >= 0) {
+          existingPeople[selfIdx] = Object.assign({}, existingPeople[selfIdx], { name: myName });
+          savePtPeople(existingPeople, res.data.id);
+        } else {
           savePtPeople(existingPeople.concat([{ name: myName, role: 'Freelancer', side: 'freelancer' }]), res.data.id);
         }
       }
