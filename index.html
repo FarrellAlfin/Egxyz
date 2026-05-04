@@ -6476,6 +6476,9 @@ function applyMyDetails(d, force) {
     var _newMyName = d.full_name || '';
     if (_newMyName) _syncMyNameToProjects(_oldCachedName, _newMyName);
   }
+  // After name fields are populated, re-render people list if a project is open
+  // so any email-handle placeholder seeded before details loaded gets replaced with the real name
+  if (_ptCurrentId && typeof renderPtPeople === 'function') renderPtPeople();
   // Pre-fill rate calculator
   if (d.hourly_rate) { var hr=document.getElementById('rc-takehome'); }
   if (d.tax_rate) { var rt=document.getElementById('rc-tax'); if(rt) rt.value=d.tax_rate; if(typeof calcRate==='function') calcRate(); }
@@ -10594,22 +10597,32 @@ function selectPtProject(id) {
   if (typeof loadPtShares === 'function') loadPtShares(id);
   // Auto-add / update / deduplicate the current user's entry in people involved
   (function() {
-    var myName = getMyFullName() || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '');
-    if (!myName) return;
-    try { localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
+    var myName = getMyFullName(); // Only use real name — never fall back to email handle here
     var existingPeople = loadPtPeople(id);
-    // Identify ALL self-candidate entries: isSelf flag OR role='Freelancer' (the auto-seed marker)
-    // These are entries that represent the current user from any past session
     var isSelfEntry = function(p){ return !p.auto && !p.collaborator && p.side === 'freelancer' && (p.isSelf || p.role === 'Freelancer'); };
     var selfCandidates = existingPeople.filter(isSelfEntry);
+
+    if (!myName) {
+      // My Details not loaded yet — only seed a placeholder if there is NO existing isSelf entry.
+      // Never overwrite an existing real name with the email handle.
+      if (selfCandidates.length === 0) {
+        var emailFallback = _currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : '';
+        if (emailFallback) {
+          existingPeople.unshift({ name: emailFallback, role: 'Freelancer', side: 'freelancer', isSelf: true });
+          savePtPeople(existingPeople, id);
+        }
+      }
+      return; // applyMyDetails will call renderPtPeople once name fields are ready
+    }
+
+    // We have a real name — update cache and collapse all self-candidates to one entry
+    try { localStorage.setItem('fk_my_cached_name', myName); } catch(e){}
     if (selfCandidates.length === 0) {
-      // No self entry yet — add one
-      existingPeople.push({ name: myName, role: 'Freelancer', side: 'freelancer', isSelf: true });
+      existingPeople.unshift({ name: myName, role: 'Freelancer', side: 'freelancer', isSelf: true });
     } else {
-      // Collapse all self candidates into one clean entry (deduplicate old names)
       var selfEntry = Object.assign({}, selfCandidates[0], { name: myName, isSelf: true });
       existingPeople = existingPeople.filter(function(p){ return !isSelfEntry(p); });
-      existingPeople.unshift(selfEntry); // Current user always first
+      existingPeople.unshift(selfEntry);
     }
     savePtPeople(existingPeople, id);
   })();
