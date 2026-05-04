@@ -1923,7 +1923,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-metric-bar{height:5px;background:var(--surface);border-radius:100px;overflow:hidden;margin-top:6px}
 .po-metric-bar-fill{height:100%;background:var(--ink);border-radius:100px;transition:width .4s ease}
 .po-metric-bar-fill.acc{background:var(--sage)}
-.po-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:flex-start}
+.po-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:stretch}
 .po-main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .po-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px}
 .po-card-eye{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
@@ -1950,15 +1950,17 @@ input[type=number]{-moz-appearance:textfield}
 .po-ms-date.late{color:var(--red);font-weight:700}
 .po-ms-sub{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:2px}
 /* activity feed */
-.po-act{display:flex;flex-direction:column;gap:0}
-.po-act-row{display:grid;grid-template-columns:32px 1fr auto;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.po-act{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto;min-height:0}
+.po-act-row{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
 .po-act-row:last-child{border-bottom:none}
-.po-act-av{width:28px;height:28px;border-radius:50%;background:var(--surface);color:var(--ink-mid);font-family:var(--font-mono);font-size:10px;font-weight:700;display:grid;place-items:center;margin-top:2px;flex-shrink:0}
-.po-act-txt{font-size:13px;color:var(--ink);line-height:1.5;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.po-act-time{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-light);font-weight:600;white-space:nowrap;margin-top:3px}
+.po-act-av{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+.po-act-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.po-act-txt{font-size:13px;color:var(--ink);line-height:1.4;min-width:0}
+.po-act-txt strong{font-weight:700}
+.po-act-when{font-size:11.5px;color:var(--ink-light);font-weight:500}
 /* sidebar */
 .po-side{display:flex;flex-direction:column;gap:16px}
-.po-next{background:var(--ink);color:#fff;border-radius:12px;padding:18px 20px;border:1.5px solid var(--ink);position:relative;overflow:hidden}
+.po-next{background:var(--ink);color:#fff;border-radius:12px;padding:18px 20px;border:1.5px solid var(--ink);position:relative;overflow:hidden;display:flex;flex-direction:column}
 .po-next::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(111,251,190,.18) 0,transparent 70%);pointer-events:none}
 .po-next-lbl{font-family:var(--font-mono);font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
 .po-next-count{font-family:var(--font-mono);background:rgba(255,255,255,.1);padding:1px 7px;border-radius:100px;color:#fff;font-weight:600;letter-spacing:0;text-transform:none}
@@ -2021,13 +2023,17 @@ input[type=number]{-moz-appearance:textfield}
 .cl-detail-ft{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:space-between;flex-shrink:0;align-items:center}
 .cl-detail-link-row{display:flex;gap:8px;align-items:center}
 /* two-column side-by-side for tasks + activity */
-.po-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:flex-start}
+.po-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;flex:1}
+.po-two-col>.po-card{display:flex;flex-direction:column;overflow:hidden}
 /* Open tasks list inside dark card */
-.po-tasks-list{margin:8px 0 10px;padding:0;list-style:none;max-height:220px;overflow-y:auto;display:flex;flex-direction:column}
-.po-tasks-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.po-tasks-list{flex:1;overflow-y:auto;min-height:0;padding:0;list-style:none;display:flex;flex-direction:column;margin:0 0 10px}
+.po-tasks-item{display:grid;grid-template-columns:20px 1fr 10px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.12);position:relative;z-index:1}
 .po-tasks-item:last-child{border-bottom:none}
-.po-tasks-item-t{flex:1;font-size:12.5px;color:#fff;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.po-tasks-item-d{font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.55);white-space:nowrap;padding-top:2px;flex-shrink:0}
+.po-task-cb{width:18px;height:18px;border:1.5px solid rgba(255,255,255,.35);border-radius:4px;background:transparent;cursor:pointer;padding:0;flex-shrink:0;display:grid;place-items:center;transition:border-color .15s}
+.po-task-cb:hover{border-color:rgba(255,255,255,.7)}
+.po-tasks-item-t{font-size:12.5px;color:#fff;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;justify-self:center}
+.po-tasks-item-d{font-family:var(--font-mono);font-size:10.5px;color:rgba(255,255,255,.55);white-space:nowrap;font-weight:600;flex-shrink:0}
 /* simplified client card in overview */
 .po-cl-name{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.2;margin-bottom:4px}
 .po-cl-co{font-size:13px;color:var(--ink-mid);font-weight:600;margin-bottom:10px}
@@ -3849,15 +3855,18 @@ var RateLimiter = (function() {
                 <div class="po-two-col">
                   <!-- Open Tasks dark card -->
                   <div class="po-next">
-                    <div class="po-next-lbl">Open Tasks <span class="po-next-count" id="ptv-next-count">0</span></div>
-                    <ul class="po-tasks-list" id="ptv-tasks-list"></ul>
-                    <div style="position:relative;z-index:1">
-                      <button class="po-next-btn ghost" style="width:100%" onclick="showPtTab('tasks', document.querySelectorAll('#pt-detail-view .pt-tab')[2])">View all tasks</button>
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;position:relative;z-index:1">
+                      <div>
+                        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">All open tasks</div>
+                        <div style="font-family:var(--font-display);font-size:17px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.1">Up next <span class="po-next-count" id="ptv-next-count">0</span></div>
+                      </div>
+                      <button class="po-next-btn ghost" style="font-size:12px;padding:6px 12px;flex-shrink:0" onclick="showPtTab('tasks', document.querySelectorAll('#pt-detail-view .pt-tab')[2])">+ Task</button>
                     </div>
+                    <ul class="po-tasks-list" id="ptv-tasks-list"></ul>
                   </div>
                   <!-- Recent Activity -->
-                  <div class="po-card">
-                    <div class="po-card-hdr-tight">
+                  <div class="po-card" style="display:flex;flex-direction:column;overflow:hidden">
+                    <div class="po-card-hdr-tight" style="flex-shrink:0">
                       <div class="po-card-eye">Recent Activity</div>
                     </div>
                     <div class="po-act" id="ptv-activity-list"></div>
@@ -10805,18 +10814,25 @@ function renderPtOverview() {
   var tasksListEl = document.getElementById('ptv-tasks-list');
   if (tasksListEl) {
     if (!activeTasks.length) {
-      tasksListEl.innerHTML = '<li style="padding:10px 0;font-size:13px;color:rgba(255,255,255,.6);position:relative;z-index:1">All tasks done! 🎉</li>';
+      tasksListEl.innerHTML = '<li style="padding:12px 0;font-size:13px;color:rgba(255,255,255,.6);position:relative;z-index:1">All tasks done! 🎉</li>';
     } else {
-      tasksListEl.innerHTML = activeTasks.map(function(t) {
-        var overdue = _isOverdue(t.due_date, false);
+      tasksListEl.innerHTML = activeTasks.map(function(t, i) {
+        var overdue = !!(t.due_date && new Date(t.due_date+'T00:00:00') < now);
+        var soon    = !overdue && !!(t.due_date && new Date(t.due_date+'T00:00:00') <= new Date(now.getTime()+7*24*60*60*1000));
+        var dotColor = overdue ? '#f87171' : soon ? '#FBBF24' : 'rgba(255,255,255,.28)';
+        var dateColor = overdue ? '#f87171' : soon ? '#FBBF24' : 'rgba(255,255,255,.45)';
         var dateStr = '';
         if (t.due_date) {
           var dd = new Date(t.due_date+'T00:00:00');
-          dateStr = (overdue ? '⚠ ' : '') + MON[dd.getMonth()] + ' ' + dd.getDate();
+          dateStr = MON[dd.getMonth()] + ' ' + dd.getDate();
         }
+        // Find real task index in _ptTasks for toggling
+        var realIdx = (window._ptTasks || []).indexOf(t);
         return '<li class="po-tasks-item">' +
+          '<button class="po-task-cb" onclick="if(typeof togglePtTask===\'function\')togglePtTask(' + realIdx + ')" title="Mark done" style="position:relative;z-index:1"></button>' +
           '<div class="po-tasks-item-t" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</div>' +
-          (dateStr ? '<div class="po-tasks-item-d" style="' + (overdue ? 'color:#f87171' : '') + '">' + dateStr + '</div>' : '') +
+          '<span class="po-task-dot" style="background:' + dotColor + '"></span>' +
+          (dateStr ? '<div class="po-tasks-item-d" style="color:' + dateColor + '">' + dateStr + '</div>' : '<div></div>') +
         '</li>';
       }).join('');
     }
@@ -10871,38 +10887,43 @@ function renderPtOverview() {
   var actEl = document.getElementById('ptv-activity-list');
   if (actEl) {
     var activities = [];
-    me.slice(0,4).forEach(function(m) {
-      activities.push({ type:'meeting', title: m.purpose || 'Meeting', date: m.meeting_date || m.created_at || '' });
+    var _myFullNm = getMyFullName() || (_currentUser && _currentUser.email ? _currentUser.email.split('@')[0] : 'You');
+    me.slice(0,6).forEach(function(m) {
+      var who = m.person_name || _myFullNm;
+      activities.push({ type:'meeting', name: who, action: 'logged a meeting' + (m.purpose ? ': ' + m.purpose.slice(0,40) : ''), date: m.meeting_date || m.created_at || '' });
     });
-    hr.slice(0,4).forEach(function(h) {
-      var hLabel = (parseFloat(h.hours)||0).toFixed(1) + 'h logged' + (h.notes ? ' — ' + h.notes.slice(0,50) : '');
-      activities.push({ type:'time', title: hLabel, date: h.log_date || h.created_at || '' });
+    hr.slice(0,6).forEach(function(h) {
+      var who = h.person_name || _myFullNm;
+      var hrs = (parseFloat(h.hours)||0).toFixed(1) + 'h';
+      var ctx = h.notes ? ' on ' + h.notes.slice(0,40) : '';
+      activities.push({ type:'time', name: who, action: 'logged ' + hrs + ctx, date: h.log_date || h.created_at || '' });
     });
     activities.sort(function(a,b){ return (b.date||'') > (a.date||'') ? 1 : -1; });
-    activities = activities.slice(0, 6);
+    activities = activities.slice(0, 8);
     var fmtRel = function(dateStr) {
       if (!dateStr) return '';
       var d = new Date(dateStr.includes('T') ? dateStr : dateStr+'T00:00:00');
       var diff = Math.floor((new Date() - d) / 86400000);
       if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday';
-      if (diff < 7) return diff+'d ago';
+      if (diff < 7) return diff + 'd ago';
       return MON[d.getMonth()] + ' ' + d.getDate();
+    };
+    var mkIni = function(name) {
+      var parts = (name || '').trim().split(/\s+/).filter(Boolean);
+      return parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : (parts[0] ? parts[0].slice(0,2).toUpperCase() : '?');
     };
     if (!activities.length) {
       actEl.innerHTML = '<div style="font-size:13px;color:var(--ink-light);padding:8px 0">No activity yet. Log time or add a meeting note.</div>';
     } else {
       actEl.innerHTML = activities.map(function(a) {
-        var isMtg = a.type === 'meeting';
-        var bg = isMtg ? 'var(--amber-light)' : 'var(--surface)';
-        var fg = isMtg ? 'var(--amber)' : 'var(--ink-mid)';
-        var myName = getMyFullName() || '';
-        var nameParts = myName.trim().split(/\s+/).filter(Boolean);
-        var userIni = nameParts.length >= 2 ? (nameParts[0][0] + nameParts[nameParts.length-1][0]).toUpperCase() : (nameParts[0] ? nameParts[0].slice(0,2).toUpperCase() : '??');
-        var ini = isMtg ? userIni : userIni;
+        var ini = mkIni(a.name);
+        var firstName = (a.name || '').trim().split(/\s+/)[0] || a.name;
         return '<div class="po-act-row">' +
-          '<div class="po-act-av" style="background:' + bg + ';color:' + fg + '">' + ini + '</div>' +
-          '<div class="po-act-txt" title="' + escapeHTML(a.title) + '">' + escapeHTML(a.title) + '</div>' +
-          '<div class="po-act-time">' + fmtRel(a.date) + '</div>' +
+          '<div class="po-act-av">' + escapeHTML(ini) + '</div>' +
+          '<div class="po-act-body">' +
+            '<div class="po-act-txt"><strong>' + escapeHTML(firstName) + '</strong> ' + escapeHTML(a.action) + '</div>' +
+            '<div class="po-act-when">' + fmtRel(a.date) + '</div>' +
+          '</div>' +
         '</div>';
       }).join('');
     }
