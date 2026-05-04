@@ -4169,6 +4169,7 @@ var RateLimiter = (function() {
                 <div class="sf"><label>Middle <span style="font-weight:400;font-size:11px;color:var(--ink-light)">(optional)</span></label><input id="my-middlename" placeholder="" oninput="debouncedSaveDetails()"></div>
                 <div class="sf"><label>Last name</label><input id="my-lastname" placeholder="Last name" oninput="debouncedSaveDetails()"></div>
               </div>
+              <div class="sf"><label>What would you like to be called? <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional — overrides name in greetings</span></label><input id="my-nickname" placeholder="e.g. Alex, A.C., Boss" oninput="debouncedSaveDetails()"></div>
               <div class="sf"><label>Business name</label><input id="my-business" placeholder="Your business or trading name" oninput="debouncedSaveDetails()"></div>
               <div class="sf"><label>Email address</label><input id="my-email" type="email" readonly style="background:var(--cream-dark);color:var(--ink-mid);cursor:not-allowed;opacity:.8" title="Email is tied to your login and cannot be changed here"></div>
               <div class="sf"><label>Website</label><input id="my-website" placeholder="https://yourbusiness.com" oninput="debouncedSaveDetails()"></div>
@@ -4685,6 +4686,11 @@ async function saveWelcomePage() {
   if (avEl) avEl.textContent = initials.toUpperCase() || '?';
   var ddName = document.getElementById('profile-dd-name');
   if (ddName) ddName.textContent = fullname || [first, last].filter(Boolean).join(' ');
+  // Update dashboard greeting: nickname wins, otherwise full name
+  var _wbEl0 = document.querySelector('.wb-text h3');
+  if (_wbEl0) _wbEl0.textContent = 'Hello, ' + (nickname || fullname || first) + '!';
+  // Pre-fill my-nickname field in My Details
+  set('my-nickname', nickname);
   // Navigate to get-started panel
   showDash();
   setTimeout(function() {
@@ -6258,9 +6264,12 @@ function setLoggedInUser(user) {
   // Seed My Details email field with auth email (locked)
   var myEmailEl = document.getElementById('my-email');
   if (myEmailEl) myEmailEl.value = user.email || '';
+  var _nick0 = (user.user_metadata && user.user_metadata.nickname) || '';
   var name = fullName || (user.email ? user.email.split('@')[0] : 'there');
+  // Greeting: nickname wins; otherwise show full name (first + middle + last)
+  var _greetName0 = _nick0 || name;
   var wbEl = document.querySelector('.wb-text h3');
-  if (wbEl) wbEl.textContent = 'Hello, ' + name.split(' ')[0] + '!';
+  if (wbEl) wbEl.textContent = 'Hello, ' + _greetName0 + '!';
   // Start inactivity timer now that a real user is logged in
   _startInactivityTimer();
   // Load all user data in background — errors here must never block login
@@ -6407,6 +6416,7 @@ function applyMyDetails(d, force) {
   set('my-firstname', nameParts[0] || '');
   set('my-lastname', nameParts.length > 1 ? nameParts[nameParts.length - 1] : '');
   set('my-middlename', nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : '');
+  set('my-nickname', d.nickname || '');
   set('my-business', d.business_name);
   // Email is always the auth email — locked to the login account
   var authEmail = (_currentUser && _currentUser.email) || d.email || '';
@@ -6443,6 +6453,13 @@ function applyMyDetails(d, force) {
     if (_fullDisplay) {
       var _dn = document.getElementById('profile-dd-name');
       if (_dn) _dn.textContent = _fullDisplay;
+    }
+    // Update dashboard greeting: nickname takes priority, else full name, else first name
+    var _nick = (document.getElementById('my-nickname') || {}).value || (d && d.nickname) || '';
+    var _greetName = _nick || _fullDisplay || _fn || '';
+    if (_greetName) {
+      var _wbEl = document.querySelector('.wb-text h3');
+      if (_wbEl) _wbEl.textContent = 'Hello, ' + _greetName + '!';
     }
   })();
   // If force-save, sync updated name to all project people lists
@@ -6492,7 +6509,8 @@ async function saveMyDetails(silent) {
   var g = function(id){ var el=document.getElementById(id); return el?el.value:null; };
   var payload = {
     id: _currentUser.id,
-    full_name: [g('my-firstname'), g('my-middlename'), g('my-lastname')].filter(Boolean).join(' '), business_name: g('my-business'),
+    full_name: [g('my-firstname'), g('my-middlename'), g('my-lastname')].filter(Boolean).join(' '),
+    nickname: g('my-nickname') || null, business_name: g('my-business'),
     email: (_currentUser.email || g('my-email')), website: g('my-website'), address: g('my-address'),
     hourly_rate: parseFloat(g('my-rate'))||null,
     late_fee_pct: parseFloat(g('my-latefee'))||1.5,
@@ -11255,6 +11273,8 @@ function createInvoiceFromProject() {
     if (dlBtn) dlBtn.style.display = 'none';
     var backBtn = document.getElementById('inv-builder-back-btn');
     if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
+    // Pre-fill preferred payment method from My Details
+    if (typeof _prefillInvPayment === 'function') _prefillInvPayment(true);
     showInvView('builder');
     showToast('✓ Invoice Builder ready — pre-filled from project');
   }, 150);
