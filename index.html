@@ -10282,6 +10282,9 @@ async function loadProjects() {
     email ? _supabase.from('project_shares').select('projects(*)').eq('shared_email', email).eq('status', 'accepted') : Promise.resolve({data:[]})
   ]);
   if (!_currentUser || _currentUser.id !== uid) return;
+  // Surface any Supabase errors so they're visible in the browser console
+  if (ownedRes.error) { console.error('[FreelanceKit] loadProjects owned query error:', ownedRes.error); }
+  if (sharedRes.error) { console.error('[FreelanceKit] loadProjects shared query error:', sharedRes.error); }
   var projects = ownedRes.data || [];
   // Merge in shared projects not already in the owned list
   if (sharedRes.data) {
@@ -13056,23 +13059,30 @@ var _ptRealtimeDebounce = null;  // debounce timer so rapid multi-table changes 
 function _subscribeProjectRealtime(projectId) {
   if (_ptRealtimeChannel) { try { _supabase.removeChannel(_ptRealtimeChannel); } catch(e){} _ptRealtimeChannel = null; }
   if (!_supabase || !projectId) return;
-  function _trigger() {
-    clearTimeout(_ptRealtimeDebounce);
-    _ptRealtimeDebounce = setTimeout(function() {
-      if (_ptCurrentId === projectId) ptLoadProjectData(projectId);
-    }, 350);
+  try {
+    function _trigger() {
+      clearTimeout(_ptRealtimeDebounce);
+      _ptRealtimeDebounce = setTimeout(function() {
+        if (_ptCurrentId === projectId) ptLoadProjectData(projectId);
+      }, 350);
+    }
+    _ptRealtimeChannel = _supabase
+      .channel('pt-live-' + projectId)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_tasks',      filter: 'project_id=eq.' + projectId }, _trigger)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_milestones', filter: 'project_id=eq.' + projectId }, _trigger)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_billing',    filter: 'project_id=eq.' + projectId }, _trigger)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_meetings',   filter: 'project_id=eq.' + projectId }, _trigger)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_timesheet',  filter: 'project_id=eq.' + projectId }, _trigger)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_shares',     filter: 'project_id=eq.' + projectId }, function() {
+        if (_ptCurrentId === projectId) loadPtShares(projectId);
+      })
+      .subscribe(function(status, err) {
+        if (err) console.warn('[FreelanceKit] realtime subscription error:', err);
+      });
+  } catch(e) {
+    console.warn('[FreelanceKit] realtime setup failed (non-fatal):', e);
+    _ptRealtimeChannel = null;
   }
-  _ptRealtimeChannel = _supabase
-    .channel('pt-live-' + projectId)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_tasks',      filter: 'project_id=eq.' + projectId }, _trigger)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_milestones', filter: 'project_id=eq.' + projectId }, _trigger)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_billing',    filter: 'project_id=eq.' + projectId }, _trigger)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_meetings',   filter: 'project_id=eq.' + projectId }, _trigger)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_timesheet',  filter: 'project_id=eq.' + projectId }, _trigger)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_shares',     filter: 'project_id=eq.' + projectId }, function() {
-      if (_ptCurrentId === projectId) loadPtShares(projectId);
-    })
-    .subscribe();
 }
 
 // ─── NOTIFICATIONS ───
