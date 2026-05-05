@@ -10314,11 +10314,23 @@ async function ptLoadProjectData(projectId) {
   // Load all sub-data for the selected project in parallel
   var uid = _currentUser && _currentUser.id;
   if (!uid) return;
+  // For shared (collaborative) projects, load all items regardless of user_id so
+  // every collaborator can see the owner's tasks, milestones, billing, and notes.
+  var proj = (_ptProjects || []).find(function(p){ return p.id === projectId; });
+  var isShared = proj && proj._shared;
   var [ms, ts, bs, me, hr] = await Promise.all([
-    _supabase.from('project_milestones').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
-    _supabase.from('project_tasks').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
-    _supabase.from('project_billing').select('*').eq('project_id', projectId).eq('user_id', uid).order('created_at'),
-    _supabase.from('project_meetings').select('*').eq('project_id', projectId).eq('user_id', uid).order('meeting_date', {ascending: false}),
+    isShared
+      ? _supabase.from('project_milestones').select('*').eq('project_id', projectId).order('due_date')
+      : _supabase.from('project_milestones').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
+    isShared
+      ? _supabase.from('project_tasks').select('*').eq('project_id', projectId).order('due_date')
+      : _supabase.from('project_tasks').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
+    isShared
+      ? _supabase.from('project_billing').select('*').eq('project_id', projectId).order('created_at')
+      : _supabase.from('project_billing').select('*').eq('project_id', projectId).eq('user_id', uid).order('created_at'),
+    isShared
+      ? _supabase.from('project_meetings').select('*').eq('project_id', projectId).order('meeting_date', {ascending: false})
+      : _supabase.from('project_meetings').select('*').eq('project_id', projectId).eq('user_id', uid).order('meeting_date', {ascending: false}),
     _supabase.from('project_timesheet').select('*').eq('project_id', projectId).order('log_date', {ascending: false})
   ]);
   window._ptMilestones = ms.data || [];
@@ -11445,12 +11457,28 @@ function renderPtPeople() {
       people.push({name: name, role: '', side: 'freelancer', auto: true});
     }
   });
-  // Add all collaborators (accepted + pending) from project_shares
+  // Add project owner and accepted collaborators from project_shares
+  var _seenOwner = false;
   (_ptShares || []).forEach(function(s) {
-    var displayName = s.status === 'accepted' ? (s.accepted_user_name || s.shared_email || '') : (s.shared_email || '');
-    if (!displayName) return;
-    if (!people.find(function(p){ return p.name === displayName || (p.role && p.role === s.shared_email); })) {
-      people.push({ name: displayName, role: s.shared_email || '', side: 'freelancer', auto: true, collaborator: true, pending: s.status !== 'accepted' });
+    // Always show the project owner (sharer) — skip only if they ARE the current user (isSelf already covers that)
+    if (!_seenOwner && s.owner_name) {
+      _seenOwner = true;
+      var ownerName = s.owner_name;
+      var _ownerIsMe = _myCurrentName && ownerName === _myCurrentName;
+      if (!_ownerIsMe && !people.find(function(p){ return p.name === ownerName; })) {
+        // Insert owner right after the self entry (position 1)
+        people.splice(1, 0, { name: ownerName, role: 'Freelancer', side: 'freelancer', auto: true, isOwner: true });
+      }
+    }
+    // Only add accepted collaborators (skip pending, skip self)
+    if (s.status !== 'accepted') return;
+    var colName = s.accepted_user_name || s.shared_email || '';
+    if (!colName) return;
+    // Skip if this accepted user is the current user
+    if (_currentUser && s.accepted_user_id && s.accepted_user_id === _currentUser.id) return;
+    if (_myCurrentName && colName === _myCurrentName) return;
+    if (!people.find(function(p){ return p.name === colName || (p.role && p.role === s.shared_email); })) {
+      people.push({ name: colName, role: s.shared_email || '', side: 'freelancer', auto: true, collaborator: true });
     }
   });
   var chips = people.map(function(p, i) {
@@ -11462,9 +11490,9 @@ function renderPtPeople() {
       'title="' + escapeHTML(p.name) + (p.role ? ' · ' + escapeHTML(p.role) : '') + (p.side === 'client' ? ' (client)' : '') + '">' +
       '<div class="pt-person-avatar" style="background:' + color + '">' + initials + '</div>' +
       '<span>' + escapeHTML(p.name) + '</span>' +
-      (p.collaborator && !p.pending ? '<span style="font-size:10px;color:var(--sage);background:var(--sage-light);padding:1px 5px;border-radius:10px;flex-shrink:0">collab</span>' : '') +
-      (p.pending ? '<span style="font-size:10px;color:var(--amber);background:#FEF3C7;padding:1px 5px;border-radius:10px;flex-shrink:0">pending</span>' : '') +
-      (p.side === 'client' && !p.collaborator ? '<span style="font-size:10px;color:var(--ink-light);background:#F3F4F6;padding:1px 5px;border-radius:10px">client</span>' : '') +
+      (p.isOwner ? '<span style="font-size:10px;color:var(--ink-light);background:#F3F4F6;padding:1px 5px;border-radius:10px;flex-shrink:0">owner</span>' : '') +
+      (p.collaborator ? '<span style="font-size:10px;color:var(--sage);background:var(--sage-light);padding:1px 5px;border-radius:10px;flex-shrink:0">collab</span>' : '') +
+      (p.side === 'client' && !p.collaborator && !p.isOwner ? '<span style="font-size:10px;color:var(--ink-light);background:#F3F4F6;padding:1px 5px;border-radius:10px">client</span>' : '') +
       (!p.auto && !p.isSelf ? '<span style="font-size:11px;color:var(--ink-light);cursor:pointer;padding:0 2px" onclick="removePtPerson(' + i + ')">✕</span>' : '') +
       '</div>';
   }).join('');
@@ -13243,39 +13271,11 @@ async function loadPtShares(projectId) {
   var res = await _supabase.from('project_shares').select('*').eq('project_id', projectId || _ptCurrentId);
   if (res.error) return;
   _ptShares = res.data || [];
+  // Keep shares-wrap always hidden — collaborators are shown in People Involved instead
   var wrap = document.getElementById('ptv-shares-wrap');
-  var list = document.getElementById('ptv-shares-list');
-  if (!wrap || !list) return;
-  if (!_ptShares.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = '';
-  var accepted = _ptShares.filter(function(s){ return s.status === 'accepted'; });
-  var pending  = _ptShares.filter(function(s){ return s.status !== 'accepted'; });
-  var html = '';
-  if (accepted.length) {
-    html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);margin-bottom:6px">Active collaborators</div>' +
-      accepted.map(function(s){
-        return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0">' +
-          '<div style="width:26px;height:26px;border-radius:50%;background:var(--sage-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--sage);flex-shrink:0">' +
-            escapeHTML(s.shared_email.slice(0,2).toUpperCase()) +
-          '</div>' +
-          '<span style="font-size:13px;color:var(--ink)">' + escapeHTML(s.shared_email) + '</span>' +
-          '<span class="share-status accepted" style="margin-left:auto">Joined</span>' +
-        '</div>';
-      }).join('');
-  }
-  if (pending.length) {
-    html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);margin-top:' + (accepted.length?'12px':'0') + ';margin-bottom:6px">Pending invitation</div>' +
-      pending.map(function(s){
-        return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0">' +
-          '<div style="width:26px;height:26px;border-radius:50%;background:var(--amber-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--amber);flex-shrink:0">' +
-            escapeHTML(s.shared_email.slice(0,2).toUpperCase()) +
-          '</div>' +
-          '<span style="font-size:13px;color:var(--ink-mid)">' + escapeHTML(s.shared_email) + '</span>' +
-          '<span class="share-status pending" style="margin-left:auto">Pending</span>' +
-        '</div>';
-      }).join('');
-  }
-  list.innerHTML = html;
+  if (wrap) wrap.style.display = 'none';
+  // Re-render People Involved now that share data (owner names, collaborators) is loaded
+  if (typeof renderPtPeople === 'function') renderPtPeople();
 }
 
 // ─── MODAL ───
