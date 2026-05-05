@@ -97,7 +97,7 @@ body{font-family:var(--font-body);background:var(--surface);color:var(--on-surfa
 .notif-decline-btn{padding:5px 14px;background:none;border:1.5px solid var(--border);color:var(--ink-mid);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
 .notif-decline-btn:hover{background:var(--surface)}
 .share-status{font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
-.share-status.pending{background:var(--amber-light);color:var(--amber)}
+.share-status.pending{background:#FEF3C7;color:#92400E}
 .share-status.accepted{background:#F0FFF4;color:#166634}
 
 /* ════════════════════════════════════
@@ -13187,7 +13187,7 @@ function _renderShareList() {
   el.innerHTML = '<div style="font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:6px">Current access:</div>' +
     _ptShares.map(function(s) {
       var status = s.status || 'pending';
-      return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">' +
+      return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0">' +
         '<span style="font-size:13px;color:var(--ink);flex:1">' + escapeHTML(s.shared_email) + '</span>' +
         '<span class="share-status ' + status + '">' + (status === 'accepted' ? 'Joined' : 'Pending') + '</span>' +
         '<button class="pt-note-del" style="font-size:11px" onclick="removePtShare(\'' + s.id + '\')">Remove</button>' +
