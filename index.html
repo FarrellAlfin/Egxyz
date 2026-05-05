@@ -1306,7 +1306,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .todo-filter-row{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
 .todo-filter{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
 .todo-filter.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
-.todo-list{max-height:340px;overflow-y:auto}
+.todo-list{max-height:340px;overflow-y:auto;padding-right:10px}
 .todo-active-list .todo-item:last-child{border-bottom:none}
 .todo-item{display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .todo-item:last-child{border-bottom:none}
@@ -1950,7 +1950,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-ms-date.late{color:var(--red);font-weight:700}
 .po-ms-sub{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:2px}
 /* activity feed */
-.po-act{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto;min-height:0}
+.po-act{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto;min-height:0;padding-right:10px}
 .po-act-row{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
 .po-act-row:last-child{border-bottom:none}
 .po-act-av{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
@@ -2020,7 +2020,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-two-col{display:grid;grid-template-columns:3fr 2fr;gap:16px;align-items:flex-start}
 .po-two-col>.po-card{display:flex;flex-direction:column;height:420px;overflow:hidden}
 /* Open tasks list inside dark card */
-.po-tasks-list{flex:1;overflow-y:auto;min-height:0;padding:0;list-style:none;display:flex;flex-direction:column;margin:0}
+.po-tasks-list{flex:1;overflow-y:auto;min-height:0;padding:0 10px 0 0;list-style:none;display:flex;flex-direction:column;margin:0}
 .po-tasks-item{display:grid;grid-template-columns:20px 1fr 10px auto;gap:8px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border);position:relative;z-index:1}
 .po-tasks-item:last-child{border-bottom:none}
 .po-task-cb{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;padding:0;flex-shrink:0;display:grid;place-items:center;transition:border-color .15s;margin-top:2px}
@@ -2064,7 +2064,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-share-chip{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
 .pt-share-chip:last-child{border-bottom:none}
 /* People involved */
-.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center}
+.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center;max-height:370px;overflow-y:auto;padding-right:4px}
 .pt-person-chip{display:flex;align-items:center;gap:7px;padding:6px 10px 6px 6px;background:var(--white);border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--ink);cursor:grab;user-select:none;transition:all .15s}
 .pt-person-chip:hover{border-color:var(--amber);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .pt-person-chip.dragging{opacity:.5;cursor:grabbing}
