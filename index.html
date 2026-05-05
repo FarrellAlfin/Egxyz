@@ -2064,7 +2064,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-share-chip{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
 .pt-share-chip:last-child{border-bottom:none}
 /* People involved */
-.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center;max-height:110px;overflow-y:auto;padding-right:4px}
+.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:flex-start;max-height:200px;overflow-y:auto;padding-right:4px}
 .pt-person-chip{display:flex;align-items:center;gap:7px;padding:6px 10px 6px 6px;background:var(--white);border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--ink);cursor:grab;user-select:none;transition:all .15s}
 .pt-person-chip:hover{border-color:var(--amber);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .pt-person-chip.dragging{opacity:.5;cursor:grabbing}
@@ -3198,7 +3198,7 @@ var RateLimiter = (function() {
   <!-- Notification panel -->
   <div class="notif-panel" id="notif-panel">
     <div class="notif-panel-hdr">
-      <span class="notif-panel-title" style="display:flex;align-items:center;gap:6px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 5 7 12V17L5 19H19L17 17V12C17 5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 17H17" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/></svg>Notifications</span>
+      <span class="notif-panel-title" style="display:flex;align-items:center;gap:6px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 5.5 5.5 5.5 12V17L3.5 19H20.5L18.5 17V12C18.5 5.5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.4" stroke-linejoin="round"/><path d="M5.5 17H18.5" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/><path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/></svg>Notifications</span>
       <button onclick="closeNotificationPanel()" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--ink-light);padding:2px 6px">✕</button>
     </div>
     <div class="notif-list" id="notif-list">
@@ -11393,6 +11393,16 @@ function savePtPeople(people, projectId) {
   try { localStorage.setItem(_getPeopleKey(pid), JSON.stringify(people)); } catch(e){}
 }
 
+function _getRemovedPeopleKey(pid) { return 'fk_removed_people_' + (pid || _ptCurrentId); }
+function loadRemovedPeople(projectId) {
+  var pid = projectId || _ptCurrentId;
+  try { return JSON.parse(localStorage.getItem(_getRemovedPeopleKey(pid)) || '[]'); } catch(e) { return []; }
+}
+function saveRemovedPeople(list, projectId) {
+  var pid = projectId || _ptCurrentId;
+  try { localStorage.setItem(_getRemovedPeopleKey(pid), JSON.stringify(list)); } catch(e){}
+}
+
 function renderPtPeople() {
   var wrap = document.getElementById('ptv-people-wrap');
   if (!wrap) return;
@@ -11415,10 +11425,12 @@ function renderPtPeople() {
       savePtPeople(people);
     }
   }
-  // Pull unique assignees from tasks as "auto" members
+  // Pull unique assignees from tasks as "auto" members — skip anyone explicitly removed
+  var _removedPeople = loadRemovedPeople();
   var taskAssignees = [];
   (window._ptTasks || []).forEach(function(t){ _parseAssignees(t).forEach(function(a){ if (taskAssignees.indexOf(a) < 0) taskAssignees.push(a); }); });
   taskAssignees.forEach(function(name) {
+    if (_removedPeople.indexOf(name) >= 0) return; // skip explicitly removed people
     if (!people.find(function(p){ return p.name === name; })) {
       people.push({name: name, role: '', side: 'freelancer', auto: true});
     }
@@ -11461,10 +11473,15 @@ function closeAddPersonModal() {
 function savePersonToProject() {
   var name = (document.getElementById('pm-name')||{}).value;
   if (!name || !name.trim()) { showToast('Name is required'); return; }
+  var trimmed = name.trim();
   var people = loadPtPeople();
-  if (people.find(function(p){ return p.name === name.trim(); })) { showToast('Already added'); return; }
-  people.push({ name: name.trim(), role: (document.getElementById('pm-role')||{}).value || '', side: (document.getElementById('pm-side')||{}).value || 'freelancer' });
+  if (people.find(function(p){ return p.name === trimmed; })) { showToast('Already added'); return; }
+  people.push({ name: trimmed, role: (document.getElementById('pm-role')||{}).value || '', side: (document.getElementById('pm-side')||{}).value || 'freelancer' });
   savePtPeople(people);
+  // Clear from removed list so they can be re-added cleanly
+  var removedList = loadRemovedPeople();
+  var newRemovedList = removedList.filter(function(n){ return n !== trimmed; });
+  if (newRemovedList.length !== removedList.length) saveRemovedPeople(newRemovedList);
   closeAddPersonModal();
   renderPtPeople();
 }
@@ -11475,7 +11492,15 @@ async function removePtPerson(idx) {
   var removedName = removed.name;
   people.splice(idx, 1);
   savePtPeople(people);
-  // Remove this person from any task assignees (in memory + Supabase)
+  // Record in the removed list so they don't get auto-added back from task assignees
+  if (removedName) {
+    var removedList = loadRemovedPeople();
+    if (removedList.indexOf(removedName) < 0) {
+      removedList.push(removedName);
+      saveRemovedPeople(removedList);
+    }
+  }
+  // Remove this person from any task assignees (in memory + Supabase, awaited)
   if (removedName && _supabase && _currentUser) {
     var tasks = window._ptTasks || [];
     for (var i = 0; i < tasks.length; i++) {
@@ -11487,7 +11512,7 @@ async function removePtPerson(idx) {
         var newVal = JSON.stringify(assignees);
         t.assignee = newVal; // update in-memory immediately
         if (t.id) {
-          _supabase.from('project_tasks').update({assignee: newVal}).eq('id', t.id);
+          await _supabase.from('project_tasks').update({assignee: newVal}).eq('id', t.id);
         }
       }
     }
