@@ -1310,7 +1310,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .todo-filter-row{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
 .todo-filter{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body);transition:all .15s}
 .todo-filter.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
-.todo-list{max-height:340px;overflow-y:auto;padding-right:10px}
+.todo-list{max-height:340px;overflow-y:auto;padding-right:10px;margin-right:-10px}
 .todo-active-list .todo-item:last-child{border-bottom:none}
 .todo-item{display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .todo-item:last-child{border-bottom:none}
@@ -1954,7 +1954,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-ms-date.late{color:var(--red);font-weight:700}
 .po-ms-sub{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:2px}
 /* activity feed */
-.po-act{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto;min-height:0;padding-right:10px}
+.po-act{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto;min-height:0;padding-right:10px;margin-right:-10px}
 .po-act-row{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
 .po-act-row:last-child{border-bottom:none}
 .po-act-av{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
@@ -2024,7 +2024,7 @@ input[type=number]{-moz-appearance:textfield}
 .po-two-col{display:grid;grid-template-columns:3fr 2fr;gap:16px;align-items:flex-start}
 .po-two-col>.po-card{display:flex;flex-direction:column;height:420px;overflow:hidden}
 /* Open tasks list inside dark card */
-.po-tasks-list{flex:1;overflow-y:auto;min-height:0;padding:0 10px 0 0;list-style:none;display:flex;flex-direction:column;margin:0}
+.po-tasks-list{flex:1;overflow-y:auto;min-height:0;padding:0 10px 0 0;list-style:none;display:flex;flex-direction:column;margin:0 -10px 0 0}
 .po-tasks-item{display:grid;grid-template-columns:20px 1fr 10px auto;gap:8px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border);position:relative;z-index:1}
 .po-tasks-item:last-child{border-bottom:none}
 .po-task-cb{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;padding:0;flex-shrink:0;display:grid;place-items:center;transition:border-color .15s;margin-top:2px}
@@ -3141,7 +3141,7 @@ var RateLimiter = (function() {
         <span class="nav-timer-proj" id="nav-timer-proj"></span>
       </button>
       <button class="notif-bell" id="notif-bell-btn" onclick="toggleNotificationPanel()" title="Notifications" style="display:none">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12 2C12 2 5.5 5.5 5.5 12V17L3.5 19H20.5L18.5 17V12C18.5 5.5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.4" stroke-linejoin="round"/>
           <path d="M5.5 17H18.5" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/>
           <path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"/>
@@ -3202,7 +3202,7 @@ var RateLimiter = (function() {
   <!-- Notification panel -->
   <div class="notif-panel" id="notif-panel">
     <div class="notif-panel-hdr">
-      <span class="notif-panel-title" style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 5 7 12V17L5 19H19L17 17V12C17 5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 17H17" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/></svg>Notifications</span>
+      <span class="notif-panel-title" style="display:flex;align-items:center;gap:6px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 5 7 12V17L5 19H19L17 17V12C17 5 12 2 12 2Z" fill="var(--amber)" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 17H17" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><path d="M10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/></svg>Notifications</span>
       <button onclick="closeNotificationPanel()" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--ink-light);padding:2px 6px">✕</button>
     </div>
     <div class="notif-list" id="notif-list">
