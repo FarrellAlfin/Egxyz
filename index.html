@@ -11408,6 +11408,37 @@ function getMyFullName() {
   return [first, middle, last].filter(Boolean).join(' ') || '';
 }
 
+// Returns the full merged people list for a project: saved entries from
+// localStorage PLUS the project owner and all accepted collaborators from
+// _ptShares — so the task assignee picker always reflects everyone involved.
+function _getFullPtPeople(projectId) {
+  var pid = projectId || _ptCurrentId;
+  var people = loadPtPeople(pid).slice(); // shallow copy — don't mutate localStorage
+  var myName = getMyFullName();
+  var _seenOwner = false;
+  (_ptShares || []).forEach(function(s) {
+    // Add the project owner (once) if not already in the list
+    if (!_seenOwner && s.owner_name) {
+      _seenOwner = true;
+      var oName = s.owner_name;
+      if ((!myName || oName !== myName) && !people.find(function(p){ return p.name === oName; })) {
+        people.splice(1, 0, { name: oName, role: 'Freelancer', side: 'freelancer', auto: true, isOwner: true });
+      }
+    }
+    // Add each accepted collaborator
+    if (s.status === 'accepted') {
+      var colName = s.accepted_user_name || s.shared_email || '';
+      if (!colName) return;
+      if (_currentUser && s.accepted_user_id && s.accepted_user_id === _currentUser.id) return;
+      if (myName && colName === myName) return;
+      if (!people.find(function(p){ return p.name === colName; })) {
+        people.push({ name: colName, role: s.shared_email || '', side: 'freelancer', auto: true, collaborator: true });
+      }
+    }
+  });
+  return people;
+}
+
 function loadPtPeople(projectId) {
   var pid = projectId || _ptCurrentId;
   try { return JSON.parse(localStorage.getItem(_getPeopleKey(pid)) || '[]'); } catch(e) { return []; }
@@ -13372,7 +13403,7 @@ function openPtModal(mode) {
     var et = (mode === 'edit-task' && window._ptEditTaskIdx !== undefined) ? (window._ptTasks[window._ptEditTaskIdx] || {}) : {};
     var selOpt = function(val, opt) { return val === opt ? ' selected' : ''; };
     var curAssignees = _parseAssignees(et);
-    var ppl = loadPtPeople(_ptCurrentId);
+    var ppl = _getFullPtPeople(_ptCurrentId);
     // Build assignee list using popup-style checklist UI
     var assigneeHtml = ppl.length
       ? '<div style="display:flex;flex-direction:column;gap:5px">' + ppl.map(function(p){
