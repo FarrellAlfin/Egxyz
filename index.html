@@ -2040,6 +2040,9 @@ input[type=number]{-moz-appearance:textfield}
 .po-cl-row{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-mid);padding:3px 0}
 .po-cl-ic{width:16px;text-align:center;font-size:13px;flex-shrink:0;margin-top:1px}
 /* key facts card */
+#ptv-docs-card{display:flex;flex-direction:column;max-height:260px;overflow:hidden}
+#ptv-docs-list{flex:1;overflow-y:auto;min-height:0;padding-right:4px}
+#ptv-people-card{display:flex;flex-direction:column}
 .po-kf-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--border)}
 .po-kf-row:last-child{border-bottom:none}
 .po-kf-lbl{font-family:var(--font-mono);font-size:11px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
@@ -3871,6 +3874,13 @@ var RateLimiter = (function() {
                     <div class="po-act" id="ptv-activity-list"></div>
                   </div>
                 </div>
+                <!-- People Involved — full-width strip below the two-col -->
+                <div class="po-card" id="ptv-people-card">
+                  <div class="po-card-eye" style="flex-shrink:0">People Involved</div>
+                  <div class="pt-people-wrap" id="ptv-people-wrap">
+                    <button class="pt-person-add" onclick="openAddPersonModal()">+ Add person</button>
+                  </div>
+                </div>
               </div>
               <!-- Right: sidebar -->
               <div class="po-side">
@@ -3882,7 +3892,7 @@ var RateLimiter = (function() {
                   </div>
                 </div>
                 <!-- Key Documents -->
-                <div class="po-card">
+                <div class="po-card" id="ptv-docs-card">
                   <div class="po-card-eye">Key Documents</div>
                   <div id="ptv-docs-list"></div>
                 </div>
@@ -3890,13 +3900,6 @@ var RateLimiter = (function() {
                 <div class="po-card">
                   <div class="po-card-eye">Key Facts</div>
                   <div id="ptv-facts-list"></div>
-                </div>
-                <!-- People Involved -->
-                <div class="po-card" id="ptv-people-card">
-                  <div class="po-card-eye" style="flex-shrink:0">People Involved</div>
-                  <div class="pt-people-wrap" id="ptv-people-wrap">
-                    <button class="pt-person-add" onclick="openAddPersonModal()">+ Add person</button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -6501,6 +6504,8 @@ function _updateDashGreeting() {
   var greetName = nick || fullName || '';
   var el = document.getElementById('home-user-name');
   if (el && greetName) el.textContent = greetName + '!';
+  // Instantly sync name change into People Involved without waiting for debounced save
+  if (_ptCurrentId && typeof renderPtPeople === 'function') renderPtPeople();
 }
 
 var _detailsSaveTimer = null;
@@ -12986,10 +12991,10 @@ async function handlePtAttach(input) {
       var path = _currentUser.id + '/' + _ptCurrentId + '/' + Date.now() + '_' + file.name;
       var res = await _supabase.storage.from('pt-attachments').upload(path, file, {upsert: true});
       if (res.error) {
-        var msg = res.error.message && res.error.message.toLowerCase().includes('bucket')
-          ? 'Storage not set up — create a public bucket named "pt-attachments" in Supabase Storage'
-          : 'Upload failed: ' + res.error.message;
-        showToast(msg);
+        // Fall back to a local object URL so the file still shows in this session
+        var fallbackUrl = URL.createObjectURL(file);
+        _ptPendingAttachments.push({name: file.name, url: fallbackUrl, size: file.size});
+        if (listEl) listEl.innerHTML += '<div class="task-attach-item"><a href="' + escapeHTML(fallbackUrl) + '" target="_blank">' + escapeHTML(file.name) + '</a> <span style="font-size:10px;color:var(--ink-light)">(local)</span></div>';
         continue;
       }
       var pub = _supabase.storage.from('pt-attachments').getPublicUrl(path);
@@ -13334,7 +13339,7 @@ function openPtModal(mode) {
       '<div class="pt-field"><label>Notes</label><textarea class="pt-ta" id="ptm-task-notes" style="min-height:60px" placeholder="Notes, links, context…">' + escapeHTML(et.notes || '') + '</textarea></div>' +
       '<div class="pt-field"><label>Attachments <span style="font-weight:400;color:var(--ink-light)">(images, PDF, Word)</span></label>' +
       '<div class="task-attach-wrap">' +
-      '<label class="task-attach-btn"><input type="file" id="ptm-task-file" accept="image/*,.pdf,.doc,.docx" multiple onchange="handlePtAttach(this)" style="display:none">📎 Add file</label>' +
+      '<label class="task-attach-btn"><input type="file" id="ptm-task-file" accept=".png,.jpg,.jpeg,.gif,.webp,image/*,.pdf,.doc,.docx" multiple onchange="handlePtAttach(this)" style="display:none">📎 Add file</label>' +
       '<div class="task-attach-list" id="ptm-attach-list">' +
       (function(){ var arr=[]; try{arr=JSON.parse(et.attachments||'[]');}catch(e){} return arr.map(function(a){ return '<div class="task-attach-item"><a href="' + escapeHTML(a.url) + '" target="_blank">' + escapeHTML(a.name) + '</a></div>'; }).join(''); })() +
       '</div></div></div>' +
