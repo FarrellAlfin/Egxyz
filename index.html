@@ -10317,23 +10317,14 @@ async function ptLoadProjectData(projectId) {
   // Load all sub-data for the selected project in parallel
   var uid = _currentUser && _currentUser.id;
   if (!uid) return;
-  // For shared (collaborative) projects, load all items regardless of user_id so
-  // every collaborator can see the owner's tasks, milestones, billing, and notes.
-  var proj = (_ptProjects || []).find(function(p){ return p.id === projectId; });
-  var isShared = proj && proj._shared;
+  // Always load ALL items for the project by project_id only — no user_id filter.
+  // This lets the project owner see items created by collaborators (and vice versa).
+  // Access control is handled entirely by Supabase RLS policies.
   var [ms, ts, bs, me, hr] = await Promise.all([
-    isShared
-      ? _supabase.from('project_milestones').select('*').eq('project_id', projectId).order('due_date')
-      : _supabase.from('project_milestones').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
-    isShared
-      ? _supabase.from('project_tasks').select('*').eq('project_id', projectId).order('due_date')
-      : _supabase.from('project_tasks').select('*').eq('project_id', projectId).eq('user_id', uid).order('due_date'),
-    isShared
-      ? _supabase.from('project_billing').select('*').eq('project_id', projectId).order('created_at')
-      : _supabase.from('project_billing').select('*').eq('project_id', projectId).eq('user_id', uid).order('created_at'),
-    isShared
-      ? _supabase.from('project_meetings').select('*').eq('project_id', projectId).order('meeting_date', {ascending: false})
-      : _supabase.from('project_meetings').select('*').eq('project_id', projectId).eq('user_id', uid).order('meeting_date', {ascending: false}),
+    _supabase.from('project_milestones').select('*').eq('project_id', projectId).order('due_date'),
+    _supabase.from('project_tasks').select('*').eq('project_id', projectId).order('due_date'),
+    _supabase.from('project_billing').select('*').eq('project_id', projectId).order('created_at'),
+    _supabase.from('project_meetings').select('*').eq('project_id', projectId).order('meeting_date', {ascending: false}),
     _supabase.from('project_timesheet').select('*').eq('project_id', projectId).order('log_date', {ascending: false})
   ]);
   window._ptMilestones = ms.data || [];
@@ -11389,10 +11380,27 @@ function createInvoiceFromProject() {
     if (dlBtn) dlBtn.style.display = 'none';
     var backBtn = document.getElementById('inv-builder-back-btn');
     if (backBtn) backBtn.innerHTML = '&#8592; Back to billing';
-    // Pre-fill preferred payment method from My Details
-    if (typeof _prefillInvPayment === 'function') _prefillInvPayment(true);
+    // For shared (collaborative) projects the invoice belongs to the project owner,
+    // not the collaborator — clear all sender fields so the collaborator's personal
+    // details don't appear on the invoice.
+    var _isSharedProj = proj && proj._shared;
+    if (_isSharedProj) {
+      ['i-yourname','i-youremail','i-yourphone'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      // Reset phone country code to default
+      var pcEl = document.getElementById('i-yourphone-code'); if (pcEl) pcEl.value = '+1';
+      // Clear all payment detail fields
+      var paySelEl = document.getElementById('i-pay'); if (paySelEl) { paySelEl.value = 'none'; paySelEl.dispatchEvent(new Event('change')); }
+      ['i-bank-name','i-bank-routing','i-bank-account','i-bank-holder',
+       'i-paypal-email','i-venmo-handle','i-zelle-contact','i-cashapp-tag',
+       'i-stripe-link','i-wise-email','i-wire-bank','i-wire-swift','i-wire-iban',
+       'i-pay-custom-text'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      if (typeof updateInv === 'function') updateInv();
+      showToast('✓ Invoice ready — sender fields left blank (shared project)');
+    } else {
+      if (typeof _prefillInvPayment === 'function') _prefillInvPayment(true);
+      showToast('✓ Invoice Builder ready — pre-filled from project');
+    }
     showInvView('builder');
-    showToast('✓ Invoice Builder ready — pre-filled from project');
   }, 150);
 }
 
