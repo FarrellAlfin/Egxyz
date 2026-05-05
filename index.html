@@ -11562,6 +11562,7 @@ function _attachPersonDropToTasks() {
       }
       renderPtTasks();
       renderPtOverview();
+      renderPtPeople();
       showToast('✓ Assigned ' + pname);
     });
   });
@@ -13592,6 +13593,7 @@ async function savePtTask() {
   window._ptTasks = window._ptTasks || []; window._ptTasks.push(res.data);
   _ptSaving = false; closePtModal(); renderPtTasks();
   if (typeof renderPtOverview === 'function') renderPtOverview();
+  if (typeof renderPtPeople === 'function') renderPtPeople();
   showToast('\u2713 Task added');
 }
 
@@ -13933,7 +13935,7 @@ async function updatePtTask() {
   if (res.error) { showToast('Error: ' + res.error.message); return; }
   if (res.data && res.data[0]) ts[window._ptEditTaskIdx] = res.data[0];
   window._ptEditTaskIdx = null;
-  closePtModal(); renderPtTasks(); renderPtOverview(); showToast('\u2713 Task updated');
+  closePtModal(); renderPtTasks(); renderPtOverview(); renderPtPeople(); showToast('\u2713 Task updated');
 }
 
 async function cyclePtBillingStatus(i) {
@@ -13972,6 +13974,8 @@ async function deletePtItem(table, i) {
   col.splice(i, 1);
   var renders = {milestones:renderPtMilestones,tasks:renderPtTasks,billing:renderPtBilling,meetings:renderPtMeetings,timesheet:renderPtHours};
   if (renders[table]) renders[table]();
+  // Re-sync People Involved when tasks change (assignees may have changed)
+  if (table === 'tasks' && typeof renderPtPeople === 'function') renderPtPeople();
   // Recalculate heatmap grids after timesheet delete
   if (table === 'timesheet') {
     if (typeof renderContribGrid === 'function') renderContribGrid();
