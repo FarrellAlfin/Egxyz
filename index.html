@@ -10623,6 +10623,8 @@ function selectPtProject(id) {
   ptLoadProjectData(id);
   // Load shares + people
   if (typeof loadPtShares === 'function') loadPtShares(id);
+  // Subscribe to real-time changes so all open sessions stay in sync
+  _subscribeProjectRealtime(id);
   // Auto-add / update / deduplicate the current user's entry in people involved
   (function() {
     var myName = getMyFullName(); // Only use real name — never fall back to email handle here
@@ -10681,6 +10683,9 @@ function selectPtProject(id) {
 function ptBackToList() {
   _ptCurrentId = null;
   _ptDocRenderedFor = {}; // reset so doc tabs re-render for next project
+  // Tear down the realtime channel for the project we just left
+  if (_ptRealtimeChannel) { try { _supabase.removeChannel(_ptRealtimeChannel); } catch(e){} _ptRealtimeChannel = null; }
+  clearTimeout(_ptRealtimeDebounce);
   localStorage.removeItem('fk_pt_project');
   document.getElementById('pt-list-view').style.display = '';
   document.getElementById('pt-detail-view').style.display = 'none';
@@ -13043,6 +13048,32 @@ async function handlePtAttach(input) {
 // ─── PROJECT SHARING ───
 
 var _ptShares = [];
+var _ptRealtimeChannel = null;   // active Supabase realtime channel for the open project
+var _ptRealtimeDebounce = null;  // debounce timer so rapid multi-table changes fire one reload
+
+// Subscribe to live changes on all project tables so every open session stays in sync.
+// Called when a project is opened; cleaned up when the user navigates back.
+function _subscribeProjectRealtime(projectId) {
+  if (_ptRealtimeChannel) { try { _supabase.removeChannel(_ptRealtimeChannel); } catch(e){} _ptRealtimeChannel = null; }
+  if (!_supabase || !projectId) return;
+  function _trigger() {
+    clearTimeout(_ptRealtimeDebounce);
+    _ptRealtimeDebounce = setTimeout(function() {
+      if (_ptCurrentId === projectId) ptLoadProjectData(projectId);
+    }, 350);
+  }
+  _ptRealtimeChannel = _supabase
+    .channel('pt-live-' + projectId)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_tasks',      filter: 'project_id=eq.' + projectId }, _trigger)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_milestones', filter: 'project_id=eq.' + projectId }, _trigger)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_billing',    filter: 'project_id=eq.' + projectId }, _trigger)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_meetings',   filter: 'project_id=eq.' + projectId }, _trigger)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_timesheet',  filter: 'project_id=eq.' + projectId }, _trigger)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_shares',     filter: 'project_id=eq.' + projectId }, function() {
+      if (_ptCurrentId === projectId) loadPtShares(projectId);
+    })
+    .subscribe();
+}
 
 // ─── NOTIFICATIONS ───
 
@@ -13184,13 +13215,16 @@ function _renderShareList() {
   var el = document.getElementById('ptm-shares-current');
   if (!el) return;
   if (!_ptShares.length) { el.innerHTML = '<div style="font-size:12px;color:var(--ink-light)">No one else has access yet.</div>'; return; }
+  var myEmail = (_currentUser && _currentUser.email || '').toLowerCase();
   el.innerHTML = '<div style="font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:6px">Current access:</div>' +
     _ptShares.map(function(s) {
       var status = s.status || 'pending';
+      // Collaborators cannot remove themselves — hide the Remove button for their own row
+      var isSelf = s.shared_email.toLowerCase() === myEmail;
       return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0">' +
         '<span style="font-size:13px;color:var(--ink);flex:1">' + escapeHTML(s.shared_email) + '</span>' +
         '<span class="share-status ' + status + '">' + (status === 'accepted' ? 'Joined' : 'Pending') + '</span>' +
-        '<button class="pt-note-del" style="font-size:11px" onclick="removePtShare(\'' + s.id + '\')">Remove</button>' +
+        (!isSelf ? '<button class="pt-note-del" style="font-size:11px" onclick="removePtShare(\'' + s.id + '\')">Remove</button>' : '') +
         '</div>';
     }).join('');
 }
@@ -13204,6 +13238,11 @@ async function savePtShare() {
   if (!email || !email.includes('@')) { showToast('Enter a valid email'); return; }
   if (!_currentUser || !_ptCurrentId) return;
   if (!_supabase) { showToast('Database not connected'); return; }
+
+  // Prevent sending a second invite to the same email on the same project
+  if (_ptShares.find(function(s){ return (s.shared_email || '').toLowerCase() === email; })) {
+    showToast('This email has already been invited to this project'); return;
+  }
 
   // If the inviter already saw the "not found" warning and clicked "Send anyway",
   // skip the account check and go straight to sending.
