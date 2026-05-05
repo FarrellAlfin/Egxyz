@@ -1293,6 +1293,10 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .home-widgets{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 @media(max-width:860px){.home-widgets{grid-template-columns:1fr}}
 .hw-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.hw-act-card{padding:0;overflow:hidden}
+.hw-act-card .hw-title{padding:18px 18px 0}
+.hw-act-card .contrib-subtitle{padding:0 18px;margin-bottom:8px}
+.hw-act-card .cg-outer{padding:0;margin-top:4px}
 .hw-title{font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
 .hw-title-action{font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-light);cursor:pointer;padding:3px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;font-family:var(--font-body)}
 .hw-title-action:hover{border-color:var(--ink);color:var(--ink)}
@@ -2064,7 +2068,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-share-chip{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
 .pt-share-chip:last-child{border-bottom:none}
 /* People involved */
-.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center;max-height:370px;overflow-y:auto;padding-right:4px}
+.pt-people-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center;max-height:110px;overflow-y:auto;padding-right:4px}
 .pt-person-chip{display:flex;align-items:center;gap:7px;padding:6px 10px 6px 6px;background:var(--white);border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--ink);cursor:grab;user-select:none;transition:all .15s}
 .pt-person-chip:hover{border-color:var(--amber);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .pt-person-chip.dragging{opacity:.5;cursor:grabbing}
@@ -3320,7 +3324,6 @@ var RateLimiter = (function() {
           <div class="hw-card">
             <div class="hw-title">
               <span>To-do list</span>
-              <button class="hw-title-action" onclick="clearDoneTodos()">Clear done</button>
             </div>
             <div class="todo-filter-row" id="todo-filter-row">
               <button class="todo-filter active" data-proj-id="" onclick="setTodoFilter('')">All</button>
@@ -3331,7 +3334,7 @@ var RateLimiter = (function() {
           </div>
 
           <!-- Activity Grid -->
-          <div class="hw-card">
+          <div class="hw-card hw-act-card">
             <div class="hw-title" style="margin-bottom:4px">
               <div style="display:flex;align-items:center;gap:6px;position:relative">
                 <span>Activity</span>
@@ -11469,10 +11472,30 @@ function savePersonToProject() {
   closeAddPersonModal();
   renderPtPeople();
 }
-function removePtPerson(idx) {
+async function removePtPerson(idx) {
   var people = loadPtPeople();
+  var removed = people[idx];
+  if (!removed) return;
+  var removedName = removed.name;
   people.splice(idx, 1);
   savePtPeople(people);
+  // Remove this person from any task assignees (in memory + Supabase)
+  if (removedName && _supabase && _currentUser) {
+    var tasks = window._ptTasks || [];
+    for (var i = 0; i < tasks.length; i++) {
+      var t = tasks[i];
+      var assignees = _parseAssignees(t);
+      var aIdx = assignees.indexOf(removedName);
+      if (aIdx >= 0) {
+        assignees.splice(aIdx, 1);
+        var newVal = JSON.stringify(assignees);
+        t.assignee = newVal; // update in-memory immediately
+        if (t.id) {
+          _supabase.from('project_tasks').update({assignee: newVal}).eq('id', t.id);
+        }
+      }
+    }
+  }
   renderPtPeople();
 }
 
