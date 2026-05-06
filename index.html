@@ -704,8 +704,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .ip-btn-g{padding:8px 12px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .ip-btn-g:hover{border-color:var(--ink);color:var(--ink)}
 /* Invoice preview */
-.inv-preview{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md)}
-.inv-paper{padding:40px 48px;--inv-font:var(--font-display);--inv-accent:#D4A853}
+.inv-preview{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);position:sticky;top:24px;align-self:start;overflow-y:auto;max-height:calc(100vh - 80px)}
+.inv-paper{padding:40px 48px;--inv-font:var(--font-display);--inv-accent:#D4A853;zoom:0.75}
 .inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px}
 .inv-brand-name{font-family:var(--inv-font,var(--font-display));font-size:20px;font-weight:400;color:var(--ink);margin-bottom:3px}
 .inv-brand-detail{font-size:11px;color:var(--ink-light);line-height:1.7}
@@ -1149,6 +1149,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
   .print-target .inv-table th,
   .print-target .inv-table td { border-bottom: 0.5px solid #E2DAD0; }
   @page { margin: 20mm; size: A4; }
+  .print-target.inv-preview { position: static !important; max-height: none !important; overflow: visible !important; }
+  .print-target .inv-paper { zoom: 1 !important; }
 }
 
 /* ── MY DETAILS / SETTINGS ── */
@@ -3490,6 +3492,23 @@ var RateLimiter = (function() {
                   </select>
                 </div>
               </div>
+              <div class="ip-field" style="margin-top:10px">
+                <div class="ip-lbl">Currency</div>
+                <select class="ip-inp" id="i-currency" onchange="updateInv()">
+                  <option value="USD">🇺🇸 USD — US Dollar ($)</option>
+                  <option value="EUR">🇪🇺 EUR — Euro (€)</option>
+                  <option value="GBP">🇬🇧 GBP — British Pound (£)</option>
+                  <option value="AUD">🇦🇺 AUD — Australian Dollar (A$)</option>
+                  <option value="CAD">🇨🇦 CAD — Canadian Dollar (CA$)</option>
+                  <option value="SGD">🇸🇬 SGD — Singapore Dollar (S$)</option>
+                  <option value="JPY">🇯🇵 JPY — Japanese Yen (¥)</option>
+                  <option value="INR">🇮🇳 INR — Indian Rupee (₹)</option>
+                  <option value="MYR">🇲🇾 MYR — Malaysian Ringgit (RM)</option>
+                  <option value="IDR">🇮🇩 IDR — Indonesian Rupiah (Rp)</option>
+                  <option value="PHP">🇵🇭 PHP — Philippine Peso (₱)</option>
+                  <option value="BRL">🇧🇷 BRL — Brazilian Real (R$)</option>
+                </select>
+              </div>
               <input type="hidden" id="i-terms-text" value="">
               <div class="ip-divider"></div>
               <div class="ip-field">
@@ -4235,9 +4254,9 @@ var RateLimiter = (function() {
           <span style="font-size:13px;color:var(--ink-mid)" id="client-count">0 clients</span>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <input type="file" id="ct-import-file" accept=".vcf,.csv" style="display:none" onchange="handleClientImportFile(this)">
-            <button class="btn-outline" onclick="document.getElementById('ct-import-file').click()" title="Import from .vcf (vCard) or .csv file">⬆ Import</button>
-            <button class="btn-outline" onclick="exportAllClientsVcf()" title="Export all clients as vCard (.vcf)">⬇ Export .vcf</button>
-            <button class="btn-outline" onclick="exportAllClientsCsv()" title="Export all clients as spreadsheet (.csv)">⬇ Export .csv</button>
+            <button class="btn-use" style="background:var(--ink-mid)" onclick="document.getElementById('ct-import-file').click()" title="Import from .vcf (vCard) or .csv file">Import</button>
+            <button class="btn-use" style="background:var(--ink-mid)" onclick="exportAllClientsVcf()" title="Export all clients as vCard (.vcf)">Export .vcf</button>
+            <button class="btn-use" style="background:var(--ink-mid)" onclick="exportAllClientsCsv()" title="Export all clients as spreadsheet (.csv)">Export .csv</button>
             <button class="btn-use" onclick="openClientModal()">+ Add client</button>
           </div>
         </div>
@@ -5230,6 +5249,10 @@ function getInvPay() {
 function updateInv(){
   const g=id=>document.getElementById(id);
   const fmtD=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
+  // Per-invoice currency symbol
+  const _iCurr=(g('i-currency')||{}).value||(window._homeCurrency||'USD');
+  const _iSym=(_CURRENCY_SYM_MAP&&_CURRENCY_SYM_MAP[_iCurr])||getHomeCurrencySym();
+  const fmI=n=>_iSym+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
   // Your details
   [['yourname','p-yourname'],['num','p-invnum'],['client','p-client'],['contact','p-contact'],['email','p-cemail'],['project','p-project'],['notes','p-notes']].forEach(([src,dst])=>{const e=g(dst);if(e)e.textContent=g('i-'+src)?.value||'—'});
   // Your email
@@ -5256,16 +5279,16 @@ function updateInv(){
   const ppEl=g('p-pay-details'); if(ppEl) ppEl.textContent=getInvPay();
   // SECURITY: escapeHTML() prevents XSS when user-supplied line-item
   // descriptions are rendered into the invoice preview via innerHTML.
-  const tb=g('p-lineitems');if(tb)tb.innerHTML=lineItems.map(li=>`<tr><td>${escapeHTML(li.desc)||'—'}</td><td>${escapeHTML(String(li.qty))}</td><td>${fmD(li.rate)}</td><td>${fmD(li.qty*li.rate)}</td></tr>`).join('');
+  const tb=g('p-lineitems');if(tb)tb.innerHTML=lineItems.map(li=>`<tr><td>${escapeHTML(li.desc)||'—'}</td><td>${escapeHTML(String(li.qty))}</td><td>${fmI(li.rate)}</td><td>${fmI(li.qty*li.rate)}</td></tr>`).join('');
   const sub=lineItems.reduce((s,li)=>s+li.qty*li.rate,0);
   const disc=parseFloat(g('i-disc')?.value)||0,tax=parseFloat(g('i-tax')?.value)||0;
   const da=sub*disc/100,ta=(sub-da)*tax/100,tot=sub-da+ta;
-  g('tot-sub').textContent=fmD(sub);g('tot-disc').textContent='−'+fmD(da);g('tot-tax').textContent='+'+fmD(ta);g('tot-total').textContent=fmD(tot);
-  g('p-sub').textContent=fmD(sub);
+  g('tot-sub').textContent=fmI(sub);g('tot-disc').textContent='−'+fmI(da);g('tot-tax').textContent='+'+fmI(ta);g('tot-total').textContent=fmI(tot);
+  g('p-sub').textContent=fmI(sub);
   const dr=g('p-disc-row'),tr=g('p-tax-row');
-  if(dr)dr.style.display=disc>0?'':'none';if(g('p-disc-val'))g('p-disc-val').textContent='−'+fmD(da)+' ('+disc+'%)';
-  if(tr)tr.style.display=tax>0?'':'none';if(g('p-tax-val'))g('p-tax-val').textContent='+'+fmD(ta)+' ('+tax+'%)';
-  g('p-total').textContent=fmD(tot);
+  if(dr)dr.style.display=disc>0?'':'none';if(g('p-disc-val'))g('p-disc-val').textContent='−'+fmI(da)+' ('+disc+'%)';
+  if(tr)tr.style.display=tax>0?'':'none';if(g('p-tax-val'))g('p-tax-val').textContent='+'+fmI(ta)+' ('+tax+'%)';
+  g('p-total').textContent=fmI(tot);
 }
 
 function printDocPanel(panelId, title) {
@@ -7541,6 +7564,8 @@ function openInvBuilderNew() {
     var pEl = document.getElementById('i-project'); if(pEl) pEl.value = proj.name;
     if (proj.client_name) { var cEl=document.getElementById('i-client'); if(cEl) cEl.value=proj.client_name; }
   }
+  var newInvCurrSel = document.getElementById('i-currency');
+  if (newInvCurrSel) newInvCurrSel.value = (proj && proj.currency) ? proj.currency : (window._homeCurrency || 'USD');
   if (typeof lineItems !== 'undefined') lineItems = [{ desc:'', qty:1, rate:0 }];
   var statusSelNew = document.getElementById('i-status'); if (statusSelNew) statusSelNew.value = 'draft';
   if (typeof renderLineItems==='function') renderLineItems();
@@ -7614,7 +7639,8 @@ async function saveInvoiceToHistory() {
     client_contact: g('i-contact').slice(0,200),
     client_phone: _getInvPhone('i-clientphone-code','i-clientphone').slice(0,50),
     client_address: g('i-clientaddress').slice(0,300),
-    status: g('i-status') || 'draft', updated_at: new Date().toISOString()
+    status: g('i-status') || 'draft', updated_at: new Date().toISOString(),
+    currency: g('i-currency') || window._homeCurrency || 'USD'
   };
   var res;
   if (_editingInvoiceId) {
@@ -8158,6 +8184,8 @@ function _loadInvFromRecord(inv) {
   var statusSelLoad = document.getElementById('i-status'); if(statusSelLoad) statusSelLoad.value = inv.status || 'draft';
   set('i-tax', inv.tax_pct); set('i-disc', inv.discount_pct);
   set('i-notes', inv.notes);
+  var currSelLoad = document.getElementById('i-currency');
+  if (currSelLoad) currSelLoad.value = inv.currency || window._homeCurrency || 'USD';
 }
 
 function downloadInvoicePDFFromHistory(id) {
