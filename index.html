@@ -1149,7 +1149,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
   .print-target .inv-table th,
   .print-target .inv-table td { border-bottom: 0.5px solid #E2DAD0; }
   @page { margin: 20mm; size: A4; }
-  .print-target.inv-preview { position: static !important; max-height: none !important; overflow: visible !important; }
+  .print-target.inv-preview { max-height: none !important; overflow: visible !important; }
   .print-target .inv-paper { zoom: 1 !important; }
 }
 
@@ -5083,6 +5083,12 @@ function initInvoice(){
   renderLineItems();updateInv();
   initInvoiceStyle();
 }
+function _getInvFmtSym(){
+  var sel=document.getElementById('i-currency');
+  var code=sel?sel.value:(window._homeCurrency||'USD');
+  return (_CURRENCY_SYM_MAP&&_CURRENCY_SYM_MAP[code])||getHomeCurrencySym();
+}
+function _fmDI(n){var s=_getInvFmtSym();return s+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function renderLineItems(){
   // SECURITY: escapeHTML() prevents attribute injection — a description
   // containing `"` would otherwise break out of the value="..." attribute.
@@ -5100,13 +5106,13 @@ function renderLineItems(){
              type="number" value="${li.rate || ''}" placeholder="0"
              onkeydown="blockNeg(event)" onchange="lineItems[${i}].rate=Math.max(0,parseFloat(this.value)||0);this.value=lineItems[${i}].rate||'';;updateLineTotal(${i});updateInv()"
              min="0" step="10">
-      <div class="li-total-cell" id="litot-${i}">${fmD(li.qty*li.rate)}</div>
+      <div class="li-total-cell" id="litot-${i}">${_fmDI(li.qty*li.rate)}</div>
       <button class="li-remove" onclick="lineItems.splice(${i},1);renderLineItems();updateInv()">&#215;</button>
     </div>`).join('');
 }
 function updateLineTotal(i){
   var el=document.getElementById('litot-'+i);
-  if(el)el.textContent=fmD(lineItems[i].qty*lineItems[i].rate);
+  if(el)el.textContent=_fmDI(lineItems[i].qty*lineItems[i].rate);
 }
 function addLineItem(){lineItems.push({desc:'',qty:1,rate:0});renderLineItems();updateInv()}
 // Invoice style customisation
@@ -5620,7 +5626,7 @@ async function generateInvoiceDocx() {
   var disc = sub*discPct/100;
   var tax = (sub-disc)*taxPct/100;
   var total = sub-disc+tax;
-  var fmt = function(n){ var s=getHomeCurrencySym(); return s+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  var fmt = function(n){ var s=_getInvFmtSym(); return s+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
 
   var border = { style: D.BorderStyle.SINGLE, size: 1, color: 'E2DAD0' };
   var borders = { top: border, bottom: border, left: border, right: border };
@@ -5790,10 +5796,20 @@ function copyInvoice(){const el=document.getElementById('inv-paper');navigator.c
 
 function downloadInvoicePdf(){
   var el=document.getElementById('inv-preview');
+  var paper=document.getElementById('inv-paper');
   if(!el){showToast('Invoice preview not found');return;}
+  // Reset sticky + zoom so print starts at page 1 at full size
+  if(paper){ paper.style.zoom='1'; paper.style.transform='none'; }
+  el.style.position='static';
+  el.style.maxHeight='none';
+  el.style.overflow='visible';
   el.classList.add('print-target');
   window.addEventListener('afterprint',function cleanup(){
     el.classList.remove('print-target');
+    el.style.position='';
+    el.style.maxHeight='';
+    el.style.overflow='';
+    if(paper){ paper.style.zoom=''; paper.style.transform=''; }
     window.removeEventListener('afterprint',cleanup);
   });
   window.print();
@@ -6901,7 +6917,7 @@ function openClientDetailPopup(clientId) {
   if (infoEl) {
     var items = [];
     if (cl.job_title) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1;font-weight:600;color:var(--ink-mid)">🏷 ' + escapeHTML(cl.job_title) + '</div>');
-    if (cl.email) items.push('<div class="cl-detail-info-item">✉ <a href="mailto:' + escapeHTML(cl.email) + '" style="color:inherit;text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.email) + '</a></div>');
+    if (cl.email) items.push('<div class="cl-detail-info-item"><span style="font-size:20px;line-height:1">✉</span> <a href="mailto:' + escapeHTML(cl.email) + '" style="color:inherit;text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.email) + '</a></div>');
     if (cl.phone) items.push('<div class="cl-detail-info-item">📞 ' + escapeHTML(cl.phone) + '</div>');
     if (cl.website) items.push('<div class="cl-detail-info-item">🌐 <a href="' + escapeHTML(cl.website) + '" target="_blank" rel="noopener noreferrer" style="color:var(--sage);text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.website.replace(/^https?:\/\//,'')) + '</a></div>');
     if (cl.address) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1">📍 ' + escapeHTML(cl.address) + '</div>');
@@ -14579,7 +14595,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <div class="cl-detail-ft">
       <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border-color:#E74C3C" onclick="clDetailDelete()">Delete</button>
       <div style="display:flex;gap:8px">
-        <button class="btn-outline" id="cl-detail-vcf-btn" title="Download contact as vCard (.vcf)">⬇ .vcf</button>
+        <button class="btn-use" style="background:var(--ink-mid)" id="cl-detail-vcf-btn" title="Export contact as vCard (.vcf)">Export .vcf</button>
         <button class="btn-outline" onclick="closeClientDetailPopup()">Close</button>
         <button class="btn-use" onclick="clDetailOpenEdit()">Edit</button>
       </div>
