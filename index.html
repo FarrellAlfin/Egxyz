@@ -3686,7 +3686,7 @@ var RateLimiter = (function() {
           <div>
             <div class="calc-card"><div class="cc-header"><span class="cc-icon">🎯</span><span class="cc-title">Income target</span></div><div class="cc-body">
               <div class="cf"><div class="cf-lbl">Target annual take-home <span class="cf-hint">after tax, in your pocket</span></div><div class="cf-wrap"><span class="cf-prefix" id="rc-pfx-takehome">$</span><input class="cf-inp cf-inp-prefix" type="number" id="rc-takehome" value="" placeholder="60000" oninput="calcRate()"></div></div>
-              <div class="cf"><div class="cf-lbl">Currency</div><select class="cf-sel" id="rc-currency" onchange="calcRate()"><option value="$">🇺🇸 USD</option><option value="CA$">🇨🇦 CAD</option><option value="£">🇬🇧 GBP</option><option value="€">🇪🇺 EUR</option><option value="A$">🇦🇺 AUD</option><option value="Rp">🇮🇩 IDR</option></select></div>
+              <div class="cf"><div class="cf-lbl">Currency</div><span id="rc-currency-display" style="font-size:13px;color:var(--ink)">USD</span><select id="rc-currency" style="display:none" onchange="calcRate()"><option value="$">$</option><option value="CA$">CA$</option><option value="£">£</option><option value="€">€</option><option value="A$">A$</option><option value="S$">S$</option><option value="¥">¥</option><option value="₹">₹</option><option value="RM">RM</option><option value="Rp">Rp</option><option value="₱">₱</option><option value="R$">R$</option></select></div>
             </div></div>
             <div class="calc-card"><div class="cc-header"><span class="cc-icon">🏛️</span><span class="cc-title">Tax & expenses</span></div><div class="cc-body">
               <div class="cf"><div class="cf-lbl">Self-employment tax rate <span class="cf-hint">combined</span></div><div class="cf-wrap"><input class="cf-inp" type="number" id="rc-tax" value="30" min="5" max="60" oninput="calcRate()" style="padding-right:28px"><span class="cf-suffix">%</span></div></div>
@@ -4047,7 +4047,7 @@ var RateLimiter = (function() {
           <div class="tv-title">Quarterly Tax<br><em>Tracker</em></div>
           <div class="tv-desc">Log income and expenses by quarter. The estimated tax owed updates automatically. Switch quarters using the tabs and mark each one paid when you've filed.</div>
         </div>
-        <div class="tax-rate-bar"><div class="trb-label"><strong>Your estimated tax rate:</strong> Combined income + self-employment tax. Use 25–30% if unsure.</div><input class="trb-inp" type="number" id="tr-rate" value="28" min="0" max="60" oninput="recalcTax()"><span class="trb-pct">%</span><div class="trb-sep"></div><div class="trb-currency-wrap"><span class="trb-currency-lbl">Currency</span><select class="trb-currency-sel" id="tax-currency" onchange="recalcTax()"><option value="$">🇺🇸 USD ($)</option><option value="CA$">🇨🇦 CAD</option><option value="£">🇬🇧 GBP (£)</option><option value="€">🇪🇺 EUR (€)</option><option value="A$">🇦🇺 AUD</option><option value="Rp">🇮🇩 IDR (Rp)</option></select></div></div>
+        <div class="tax-rate-bar"><div class="trb-label"><strong>Your estimated tax rate:</strong> Combined income + self-employment tax. Use 25–30% if unsure.</div><input class="trb-inp" type="number" id="tr-rate" value="28" min="0" max="60" oninput="recalcTax()"><span class="trb-pct">%</span><div class="trb-sep"></div><div class="trb-currency-wrap"><span class="trb-currency-lbl">Currency</span><span id="tax-currency-display" style="font-size:12px;color:var(--ink);font-weight:600">USD</span><select id="tax-currency" style="display:none" onchange="recalcTax()"><option value="$">$</option><option value="CA$">CA$</option><option value="£">£</option><option value="€">€</option><option value="A$">A$</option><option value="S$">S$</option><option value="¥">¥</option><option value="₹">₹</option><option value="RM">RM</option><option value="Rp">Rp</option><option value="₱">₱</option><option value="R$">R$</option></select></div></div>
         <div class="q-tabs">
           <button class="q-tab paid" id="q-tab-1" onclick="switchTaxQ(1,this)">Q1 ✓</button>
           <button class="q-tab active" id="q-tab-2" onclick="switchTaxQ(2,this)">Q2</button>
@@ -4189,7 +4189,8 @@ var RateLimiter = (function() {
           <div class="settings-card">
             <div class="sc-header"><span>&#128176;</span><span class="sc-title">Rates & Payment</span></div>
             <div class="sc-body">
-              <div class="sf"><label>Default hourly rate ($)</label><input id="my-rate" type="number" placeholder="150" min="0" oninput="debouncedSaveDetails()"></div>
+              <div class="sf"><label>Home currency</label><select id="my-home-currency" onchange="debouncedSaveDetails();_applyHomeCurrencyGlobal(this.value)"><option value="USD">🇺🇸 USD — US Dollar</option><option value="EUR">🇪🇺 EUR — Euro</option><option value="GBP">🇬🇧 GBP — British Pound</option><option value="AUD">🇦🇺 AUD — Australian Dollar</option><option value="CAD">🇨🇦 CAD — Canadian Dollar</option><option value="SGD">🇸🇬 SGD — Singapore Dollar</option><option value="JPY">🇯🇵 JPY — Japanese Yen</option><option value="INR">🇮🇳 INR — Indian Rupee</option><option value="MYR">🇲🇾 MYR — Malaysian Ringgit</option><option value="IDR">🇮🇩 IDR — Indonesian Rupiah</option><option value="PHP">🇵🇭 PHP — Philippine Peso</option><option value="BRL">🇧🇷 BRL — Brazilian Real</option></select><div style="font-size:11px;color:var(--ink-light);margin-top:4px">Used across the entire platform — financial overview, pipeline, rate calculator, tax, and project budgets.</div></div>
+              <div class="sf"><label>Default hourly rate</label><input id="my-rate" type="number" placeholder="150" min="0" oninput="debouncedSaveDetails()"></div>
               <div class="sf"><label>Late fee per month (%)</label><input id="my-latefee" type="number" placeholder="1.5" min="0" step="0.5" oninput="debouncedSaveDetails()"></div>
               <div class="sf"><label>Default tax rate (%)</label><input id="my-taxrate" type="number" placeholder="28" min="0" oninput="debouncedSaveDetails()"></div>
               <div class="sf" style="grid-column:1/-1">
@@ -4531,8 +4532,38 @@ var RateLimiter = (function() {
 function showToast(msg,undoCb){const t=document.getElementById('toast');showToast._undo=undoCb||null;t.innerHTML='<span>'+escapeHTML(msg)+'</span>'+(undoCb?'<button class="toast-undo-btn" onclick="showToast._doUndo()">Undo</button>':'');t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>{t.classList.remove('show');showToast._undo=null;},undoCb?4500:3200);}
 showToast._doUndo=function(){if(showToast._undo){showToast._undo();showToast._undo=null;const t=document.getElementById('toast');t.classList.remove('show');clearTimeout(showToast._t);}}
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
-function fm(n,sym='$'){return sym+Math.round(n).toLocaleString()}
-function fmD(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+// ─── HOME CURRENCY ───────────────────────────────────────────────────────────
+var _CURRENCY_SYM_MAP = {
+  USD:'$', EUR:'€', GBP:'£', AUD:'A$', CAD:'CA$',
+  SGD:'S$', JPY:'¥', INR:'₹', MYR:'RM', IDR:'Rp', PHP:'₱', BRL:'R$'
+};
+window._homeCurrency = 'USD';
+function getHomeCurrencySym() { return _CURRENCY_SYM_MAP[window._homeCurrency || 'USD'] || '$'; }
+function _applyHomeCurrencyGlobal(code) {
+  if (!code) return;
+  window._homeCurrency = code;
+  var sym = getHomeCurrencySym();
+  // Sync the hidden per-tool currency selectors so their calculations use the right symbol
+  var rcSel = document.getElementById('rc-currency');
+  if (rcSel) rcSel.value = sym;
+  var rcDisp = document.getElementById('rc-currency-display');
+  if (rcDisp) rcDisp.textContent = code + ' (' + sym + ')';
+  var taxSel = document.getElementById('tax-currency');
+  if (taxSel) taxSel.value = sym;
+  var taxDisp = document.getElementById('tax-currency-display');
+  if (taxDisp) taxDisp.textContent = code + ' (' + sym + ')';
+  // Re-render all sections that display currency amounts
+  if (typeof renderFinancialOverview === 'function') renderFinancialOverview();
+  if (typeof renderInvHistory === 'function') renderInvHistory();
+  if (typeof renderInvBuilderProjects === 'function') renderInvBuilderProjects();
+  if (typeof renderPtList === 'function') renderPtList();
+  if (typeof renderPipelineBoard === 'function') renderPipelineBoard();
+  if (typeof recalcTax === 'function') recalcTax();
+  if (typeof calcRate === 'function') calcRate();
+}
+
+function fm(n,sym){sym=sym||getHomeCurrencySym();return sym+Math.round(n).toLocaleString()}
+function fmD(n){var sym=getHomeCurrencySym();return sym+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 
 // Invoice phone helpers: combine code+number / parse combined back
 var _invPhoneCodes = ['+1-CA','+44','+61','+64','+65','+60','+62','+63','+66','+84','+91','+86','+81','+82','+49','+33','+34','+39','+31','+46','+47','+45','+358','+55','+52','+27','+20','+234','+254','+971','+966','+1'];
@@ -5560,7 +5591,7 @@ async function generateInvoiceDocx() {
   var disc = sub*discPct/100;
   var tax = (sub-disc)*taxPct/100;
   var total = sub-disc+tax;
-  var fmt = function(n){ return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  var fmt = function(n){ var s=getHomeCurrencySym(); return s+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
 
   var border = { style: D.BorderStyle.SINGLE, size: 1, color: 'E2DAD0' };
   var borders = { top: border, bottom: border, left: border, right: border };
@@ -6445,6 +6476,12 @@ function applyMyDetails(d, force) {
   try { _loadMyPaymentData(d); } catch(e) {}
   set('my-channel', d.comms_channel); set('my-response', d.response_time);
   set('my-hours', d.working_hours); set('my-feedback', d.feedback_days);
+  // Apply home currency globally
+  if (d.home_currency) {
+    var hcEl = document.getElementById('my-home-currency');
+    if (hcEl) hcEl.value = d.home_currency;
+    _applyHomeCurrencyGlobal(d.home_currency);
+  }
   // Pre-fill invoice builder with user details
   // force=true (from saveMyDetails): always update so explicit saves propagate
   // force=false (from loadMyDetails on login): only fill if field is currently empty
@@ -6545,6 +6582,7 @@ async function saveMyDetails(silent) {
     full_name: [g('my-firstname'), g('my-middlename'), g('my-lastname')].filter(Boolean).join(' '),
     nickname: g('my-nickname') || null, business_name: g('my-business'),
     email: (_currentUser.email || g('my-email')), website: g('my-website'), address: g('my-address'),
+    home_currency: g('my-home-currency') || 'USD',
     hourly_rate: parseFloat(g('my-rate'))||null,
     late_fee_pct: parseFloat(g('my-latefee'))||1.5,
     tax_rate: parseFloat(g('my-taxrate'))||28,
@@ -7191,7 +7229,7 @@ function renderInvProjectHistory(projectId) {
   }
   invs = invs.slice().sort(function(a,b){ return (b.issue_date||'').localeCompare(a.issue_date||''); });
   var fmtDate = function(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—'; };
-  var fmtAmt  = function(n){ return '$'+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  var fmtAmt  = function(n){ var s=getHomeCurrencySym(); return s+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
   el.innerHTML = '<div class="inv-proj-inv-table">' +
     '<div style="display:grid;grid-template-columns:1fr 1.2fr 100px 110px 80px;padding:8px 16px;font-family:var(--font-mono);font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1.5px solid var(--border)">' +
       '<span>Invoice #</span><span>Client</span><span style="text-align:right">Amount</span><span style="text-align:center">Due</span><span style="text-align:right">Status</span>' +
@@ -7540,7 +7578,7 @@ function renderFinancialOverview() {
   if (effRateEl) {
     if (gtsHours > 0 && totalEarned > 0) {
       var effRate = totalEarned / gtsHours;
-      effRateEl.textContent = '$' + effRate.toFixed(0) + '/hr';
+      effRateEl.textContent = getHomeCurrencySym() + effRate.toFixed(0) + '/hr';
       // Compare to calculated minimum rate if available
       var minRate = parseFloat((document.getElementById('res-rate')||{}).textContent)||0;
       if (effBadgeEl && minRate > 0) {
@@ -7808,7 +7846,7 @@ function renderInvHistory() {
     return;
   }
   var fmtDate = function(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—'; };
-  var fmtAmt  = function(n){ return '$'+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  var fmtAmt  = function(n){ var s=getHomeCurrencySym(); return s+(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
   body.innerHTML = list.map(function(inv) {
     var iid = escapeHTML(inv.id);
     return '<div class="iht-row" onclick="foOpenEditInv(\'' + iid + '\')" title="Click to edit">' +
@@ -9905,7 +9943,7 @@ function renderHomeGoalBar() {
   var goalLblEl = document.getElementById('hgb-goal-lbl');
   if (pctEl) pctEl.textContent = pct + '%';
   if (fillEl) { fillEl.style.background = pct >= 100 ? 'var(--sage)' : 'var(--amber)'; setTimeout(function(){ fillEl.style.width = pct + '%'; }, 80); }
-  if (earnedEl) earnedEl.textContent = '$' + Math.round(earned).toLocaleString() + ' earned this year';
+  if (earnedEl) earnedEl.textContent = getHomeCurrencySym() + Math.round(earned).toLocaleString() + ' earned this year';
   if (goalLblEl) goalLblEl.textContent = 'Goal: $' + Math.round(goal).toLocaleString();
 }
 
@@ -9918,7 +9956,7 @@ function updateGoalBar() {
   var nums   = document.getElementById('goal-nums');
   var ytd    = document.getElementById('goal-ytd');
   var tLbl   = document.getElementById('goal-target-lbl');
-  var fmt    = function(n){ return '$'+Math.round(n).toLocaleString(); };
+  var fmt    = function(n){ return getHomeCurrencySym()+Math.round(n).toLocaleString(); };
   if (fill) fill.style.width = pct + '%';
   if (fill) fill.style.background = pct >= 100 ? 'var(--sage)' : 'var(--amber)';
   if (nums) nums.textContent = fmt(earned) + ' / ' + fmt(goal) + ' (' + pct + '%)';
@@ -10442,7 +10480,7 @@ function renderPtKpis() {
   upcoming.sort(function(a,b){ return a.end_date < b.end_date ? -1 : 1; });
   var nxt = upcoming[0];
   var daysLeft = nxt ? Math.round((new Date(nxt.end_date+'T00:00:00') - today) / 86400000) : null;
-  var fmtK = function(n){ return n >= 1000 ? '$' + (n/1000).toFixed(n%1000===0?0:1) + 'k' : ('$'+n); };
+  var fmtK = function(n){ var s=getHomeCurrencySym(); return n >= 1000 ? s + (n/1000).toFixed(n%1000===0?0:1) + 'k' : (s+n); };
   el.innerHTML =
     '<div class="pt-kpi">' +
       '<div class="pt-kpi-lbl">Projects <span class="pt-kpi-trend">' + active.length + ' active</span></div>' +
@@ -10451,7 +10489,7 @@ function renderPtKpis() {
     '</div>' +
     '<div class="pt-kpi accent">' +
       '<div class="pt-kpi-lbl">Total pipeline <span class="pt-kpi-trend">budget</span></div>' +
-      '<div class="pt-kpi-v">' + (totalBudget >= 1000 ? '$' + (totalBudget/1000).toFixed(1) + '<small>k</small>' : (totalBudget ? '$'+totalBudget : '—')) + '</div>' +
+      '<div class="pt-kpi-v">' + (totalBudget >= 1000 ? getHomeCurrencySym() + (totalBudget/1000).toFixed(1) + '<small>k</small>' : (totalBudget ? getHomeCurrencySym()+totalBudget : '—')) + '</div>' +
       '<div class="pt-kpi-sub">Across ' + projects.length + ' project' + (projects.length!==1?'s':'') + '</div>' +
     '</div>' +
     '<div class="pt-kpi">' +
@@ -10616,7 +10654,7 @@ function renderPtListTable() {
         '</div>' +
         '<div class="pt-tbl-client">'+escapeHTML(p.client_name||'—')+'</div>' +
         '<div><span class="pt-tbl-status '+sk+'">'+escapeHTML(sl)+'</span></div>' +
-        '<div class="pt-tbl-budget">'+(p.budget?'$'+Number(p.budget).toLocaleString():'—')+'</div>' +
+        '<div class="pt-tbl-budget">'+(p.budget?getHomeCurrencySym()+Number(p.budget).toLocaleString():'—')+'</div>' +
         '<div class="pt-tbl-dates'+(isLate?' late':'')+'">'+escapeHTML(dlbl)+'</div>' +
       '</div>';
     }).join('') +
@@ -11367,7 +11405,7 @@ function renderPtBilling() {
   if (!filtered.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--ink-light);font-size:13px">No invoices match your filter.</div>'; return; }
   el.innerHTML = '<div class="pt-bill-cards-grid">' + filtered.map(function(obj) {
     var b = obj.b; var i = obj.i;
-    var fmtAmt = '$' + (parseFloat(b.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    var fmtAmt = getHomeCurrencySym() + (parseFloat(b.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
     // Show invoice number from linked invoice if available, else fall back to phase name
     var linkedInvId2 = typeof _getBillingInvLink === 'function' ? _getBillingInvLink(b.id) : null;
     var linkedInv2 = linkedInvId2 ? (_invoices || []).find(function(inv){ return inv.id === linkedInvId2; }) : null;
