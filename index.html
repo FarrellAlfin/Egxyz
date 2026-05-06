@@ -4233,7 +4233,13 @@ var RateLimiter = (function() {
         </div>
         <div class="client-dir-header">
           <span style="font-size:13px;color:var(--ink-mid)" id="client-count">0 clients</span>
-          <button class="btn-use" onclick="openClientModal()">+ Add client</button>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="file" id="ct-import-file" accept=".vcf,.csv" style="display:none" onchange="handleClientImportFile(this)">
+            <button class="btn-outline" onclick="document.getElementById('ct-import-file').click()" title="Import from .vcf (vCard) or .csv file">⬆ Import</button>
+            <button class="btn-outline" onclick="exportAllClientsVcf()" title="Export all clients as vCard (.vcf)">⬇ Export .vcf</button>
+            <button class="btn-outline" onclick="exportAllClientsCsv()" title="Export all clients as spreadsheet (.csv)">⬇ Export .csv</button>
+            <button class="btn-use" onclick="openClientModal()">+ Add client</button>
+          </div>
         </div>
         <div class="ct-controls" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input class="m-inp" id="ct-search" placeholder="Search clients…" style="flex:1;min-width:160px;margin-bottom:0" oninput="renderClientList()">
@@ -6725,7 +6731,7 @@ function openClientModal() {
 }
 function closeClientModal() {
   document.getElementById('client-modal').classList.remove('open');
-  ['cm-name','cm-company','cm-email','cm-phone','cm-address'].forEach(function(id){
+  ['cm-name','cm-company','cm-email','cm-phone','cm-address','cm-website','cm-job-title','cm-notes'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
   var sel = document.getElementById('cm-phone-code'); if (sel) sel.selectedIndex = 0;
@@ -6757,7 +6763,10 @@ async function addClient() {
     company: company,
     email: email,
     phone: phone ? phone.slice(0, 50) : null,
-    address: document.getElementById('cm-address').value.trim().slice(0, 300) || null
+    address: document.getElementById('cm-address').value.trim().slice(0, 300) || null,
+    website: document.getElementById('cm-website').value.trim().slice(0, 300) || null,
+    job_title: document.getElementById('cm-job-title').value.trim().slice(0, 200) || null,
+    notes: document.getElementById('cm-notes').value.trim().slice(0, 2000) || null
   };
   var res = await _supabase.from('clients').insert(payload).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); var btn=document.getElementById('cm-add-btn');if(btn)btn.disabled=false; return; }
@@ -6794,6 +6803,9 @@ function openEditClientModal(id) {
   set('cem-company', cl.company);
   set('cem-email', cl.email);
   set('cem-address', cl.address);
+  set('cem-website', cl.website);
+  set('cem-job-title', cl.job_title);
+  set('cem-notes', cl.notes);
   // Parse phone: split code from number
   var phone = cl.phone || '';
   var codeMatch = phone.match(/^(\+\d{1,4})\s?(.*)$/);
@@ -6831,7 +6843,10 @@ async function saveEditClient() {
     company: document.getElementById('cem-company').value.trim().slice(0,200),
     email: document.getElementById('cem-email').value.trim().slice(0,200),
     phone: phone ? phone.slice(0,50) : null,
-    address: document.getElementById('cem-address').value.trim().slice(0,300) || null
+    address: document.getElementById('cem-address').value.trim().slice(0,300) || null,
+    website: document.getElementById('cem-website').value.trim().slice(0,300) || null,
+    job_title: document.getElementById('cem-job-title').value.trim().slice(0,200) || null,
+    notes: document.getElementById('cem-notes').value.trim().slice(0,2000) || null
   };
   var res = await _supabase.from('clients').update(payload).eq('id', id).eq('user_id', _currentUser.id).select().single();
   if (res.error) { showToast('Error: ' + res.error.message); return; }
@@ -6862,11 +6877,17 @@ function openClientDetailPopup(clientId) {
   var infoEl = document.getElementById('cl-detail-info-grid');
   if (infoEl) {
     var items = [];
+    if (cl.job_title) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1;font-weight:600;color:var(--ink-mid)">🏷 ' + escapeHTML(cl.job_title) + '</div>');
     if (cl.email) items.push('<div class="cl-detail-info-item">✉ <a href="mailto:' + escapeHTML(cl.email) + '" style="color:inherit;text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.email) + '</a></div>');
     if (cl.phone) items.push('<div class="cl-detail-info-item">📞 ' + escapeHTML(cl.phone) + '</div>');
+    if (cl.website) items.push('<div class="cl-detail-info-item">🌐 <a href="' + escapeHTML(cl.website) + '" target="_blank" rel="noopener noreferrer" style="color:var(--sage);text-decoration:none;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.website.replace(/^https?:\/\//,'')) + '</a></div>');
     if (cl.address) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1">📍 ' + escapeHTML(cl.address) + '</div>');
+    if (cl.notes) items.push('<div class="cl-detail-info-item" style="grid-column:1/-1;white-space:pre-wrap;color:var(--ink-mid)">📝 ' + escapeHTML(cl.notes) + '</div>');
     infoEl.innerHTML = items.length ? items.join('') : '<div style="font-size:13px;color:var(--ink-light);grid-column:1/-1">No contact info.</div>';
   }
+  // Export .vcf button
+  var vcfBtn = document.getElementById('cl-detail-vcf-btn');
+  if (vcfBtn) vcfBtn.onclick = function(){ exportClientVcf(cl); };
   // Projects
   _clDetailRenderProjects();
   _clDetailPopulateProjectSel();
@@ -6959,6 +6980,268 @@ async function clDetailDelete() {
   var id = _clDetailId;
   closeClientDetailPopup();
   await deleteClient(id);
+}
+
+// ── Client Import / Export ──────────────────────────────────────────────────
+
+// vCard field escape helper
+function _vcfEscape(s) { return (s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+
+// Build a single .vcf string for one client
+function _buildClientVcf(cl) {
+  var lines = ['BEGIN:VCARD','VERSION:3.0'];
+  lines.push('FN:' + _vcfEscape(cl.name || ''));
+  // N field: Last;First;Middle;Prefix;Suffix  — we store full name so put it all in last name
+  var parts = (cl.name||'').split(' ');
+  var last = parts.pop() || '';
+  var first = parts.join(' ');
+  lines.push('N:' + _vcfEscape(last) + ';' + _vcfEscape(first) + ';;;');
+  if (cl.company)   lines.push('ORG:' + _vcfEscape(cl.company));
+  if (cl.job_title) lines.push('TITLE:' + _vcfEscape(cl.job_title));
+  if (cl.email)     lines.push('EMAIL;TYPE=INTERNET:' + _vcfEscape(cl.email));
+  if (cl.phone)     lines.push('TEL;TYPE=VOICE:' + _vcfEscape(cl.phone));
+  if (cl.website)   lines.push('URL:' + _vcfEscape(cl.website));
+  if (cl.address)   lines.push('ADR;TYPE=WORK:;;' + _vcfEscape(cl.address) + ';;;;');
+  if (cl.notes)     lines.push('NOTE:' + _vcfEscape(cl.notes));
+  lines.push('END:VCARD');
+  return lines.join('\r\n');
+}
+
+// Download .vcf for a single client
+function exportClientVcf(cl) {
+  if (!cl) return;
+  var content = _buildClientVcf(cl);
+  var blob = new Blob([content], { type: 'text/vcard;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = (cl.name||'contact').replace(/[^a-zA-Z0-9_\- ]/g,'_') + '.vcf';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// Download all clients as one merged .vcf file
+function exportAllClientsVcf() {
+  if (!_clients || !_clients.length) { showToast('No clients to export'); return; }
+  var content = _clients.map(_buildClientVcf).join('\r\n');
+  var blob = new Blob([content], { type: 'text/vcard;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'freelancekit-clients.vcf';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✓ Exported ' + _clients.length + ' contact' + (_clients.length !== 1 ? 's' : '') + ' as .vcf');
+}
+
+// Export all clients as .csv
+function exportAllClientsCsv() {
+  if (!_clients || !_clients.length) { showToast('No clients to export'); return; }
+  var cols = ['name','company','email','phone','address','website','job_title','notes'];
+  var headers = ['Name','Company','Email','Phone','Address','Website','Job Title','Notes'];
+  var csvRows = [headers.map(function(h){ return '"' + h + '"'; }).join(',')];
+  _clients.forEach(function(cl) {
+    csvRows.push(cols.map(function(k){
+      var v = (cl[k] || '').toString().replace(/"/g,'""');
+      return '"' + v + '"';
+    }).join(','));
+  });
+  var csv = csvRows.join('\r\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'freelancekit-clients.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✓ Exported ' + _clients.length + ' contact' + (_clients.length !== 1 ? 's' : '') + ' as .csv');
+}
+
+// ── Import ──
+function handleClientImportFile(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  input.value = ''; // reset so same file can be re-selected
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+    var ext = file.name.split('.').pop().toLowerCase();
+    var contacts;
+    if (ext === 'vcf') {
+      contacts = parseVcf(text);
+    } else if (ext === 'csv') {
+      contacts = parseCsv(text);
+    } else {
+      showToast('Unsupported file type. Use .vcf or .csv'); return;
+    }
+    if (!contacts || !contacts.length) { showToast('No contacts found in file'); return; }
+    showClientImportPreview(contacts);
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// Parse vCard (.vcf) text — returns array of contact objects
+function parseVcf(text) {
+  var contacts = [];
+  var cards = text.split(/BEGIN:VCARD/i);
+  cards.forEach(function(card) {
+    if (!card.trim()) return;
+    var lines = card.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+    var cl = {};
+    var currentProp = null;
+    lines.forEach(function(line) {
+      // Handle folded lines (continuation lines start with space/tab)
+      if (/^[ \t]/.test(line) && currentProp) {
+        currentProp.value += line.replace(/^[ \t]/,'');
+        return;
+      }
+      var m = line.match(/^([A-Z0-9\-]+(?:;[^:]+)?):(.*)/i);
+      if (!m) return;
+      var prop = m[1].toUpperCase().split(';')[0];
+      var val = m[2].replace(/\\n/g,'\n').replace(/\\;/g,';').replace(/\\,/g,',').replace(/\\\\/g,'\\');
+      currentProp = { prop: prop, value: val };
+      if (prop === 'FN') cl.name = val.trim();
+      else if (prop === 'N' && !cl.name) {
+        // N: Last;First;Middle;Prefix;Suffix
+        var np = val.split(';');
+        var last = (np[0]||'').trim();
+        var first = (np[1]||'').trim();
+        cl.name = (first && last) ? first + ' ' + last : (first || last || '');
+      }
+      else if (prop === 'ORG') cl.company = val.split(';')[0].trim();
+      else if (prop === 'TITLE') cl.job_title = val.trim();
+      else if (prop === 'EMAIL') { if (!cl.email) cl.email = val.trim(); }
+      else if (prop === 'TEL') { if (!cl.phone) cl.phone = val.trim(); }
+      else if (prop === 'URL') { if (!cl.website) cl.website = val.trim(); }
+      else if (prop === 'ADR') {
+        // ADR: PO;Extended;Street;City;State;Zip;Country
+        var ap = val.split(';');
+        var addr = [ap[2],ap[3],ap[4],ap[5],ap[6]].filter(Boolean).join(', ');
+        if (addr) cl.address = addr;
+      }
+      else if (prop === 'NOTE') cl.notes = val.trim();
+    });
+    if (cl.name) contacts.push(cl);
+  });
+  return contacts;
+}
+
+// Parse CSV text — returns array of contact objects
+function parseCsv(text) {
+  var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  if (!lines.length) return [];
+  // Parse a single CSV line handling quoted fields
+  function parseRow(line) {
+    var row = []; var inside = false; var cur = '';
+    for (var i=0; i<line.length; i++) {
+      var ch = line[i];
+      if (ch==='"') { if (inside && line[i+1]==='"') { cur+='"'; i++; } else { inside=!inside; } }
+      else if (ch===',' && !inside) { row.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    row.push(cur.trim());
+    return row;
+  }
+  var headers = parseRow(lines[0]).map(function(h){ return h.toLowerCase().replace(/\s+/g,'_'); });
+  var colMap = {
+    name: ['name','full_name','contact_name'],
+    company: ['company','organization','company_name','employer'],
+    email: ['email','email_address','e-mail'],
+    phone: ['phone','phone_number','tel','mobile','cell'],
+    address: ['address','street_address','location'],
+    website: ['website','url','web','homepage'],
+    job_title: ['job_title','title','position','role','job'],
+    notes: ['notes','note','comments','description']
+  };
+  // Build header-to-field map
+  var fieldIndex = {};
+  Object.keys(colMap).forEach(function(field) {
+    colMap[field].forEach(function(alias) {
+      var idx = headers.indexOf(alias);
+      if (idx !== -1 && fieldIndex[field] === undefined) fieldIndex[field] = idx;
+    });
+  });
+  var contacts = [];
+  for (var r=1; r<lines.length; r++) {
+    if (!lines[r].trim()) continue;
+    var row = parseRow(lines[r]);
+    var cl = {};
+    Object.keys(fieldIndex).forEach(function(field) {
+      var v = (row[fieldIndex[field]] || '').trim();
+      if (v) cl[field] = v;
+    });
+    if (cl.name) contacts.push(cl);
+  }
+  return contacts;
+}
+
+// ── Import preview modal ──
+var _importContacts = [];
+function showClientImportPreview(contacts) {
+  _importContacts = contacts;
+  var modal = document.getElementById('client-import-preview-modal');
+  if (!modal) return;
+  var body = document.getElementById('cip-body');
+  if (body) {
+    body.innerHTML = contacts.map(function(cl, i) {
+      return '<div class="cip-row" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">' +
+        '<input type="checkbox" id="cip-check-' + i + '" checked style="flex-shrink:0;width:16px;height:16px;cursor:pointer">' +
+        '<label for="cip-check-' + i + '" style="flex:1;cursor:pointer;min-width:0">' +
+          '<div style="font-weight:600;font-size:14px;color:var(--ink)">' + escapeHTML(cl.name||'') + (cl.company ? ' <span style="font-weight:400;color:var(--ink-mid)">· ' + escapeHTML(cl.company) + '</span>' : '') + '</div>' +
+          '<div style="font-size:12px;color:var(--ink-light);margin-top:1px">' + [cl.email, cl.phone, cl.job_title].filter(Boolean).map(escapeHTML).join(' · ') + '</div>' +
+        '</label>' +
+      '</div>';
+    }).join('');
+  }
+  var countEl = document.getElementById('cip-count');
+  if (countEl) countEl.textContent = contacts.length + ' contact' + (contacts.length !== 1 ? 's' : '') + ' found';
+  modal.classList.add('open');
+}
+
+function closeClientImportPreview() {
+  var modal = document.getElementById('client-import-preview-modal');
+  if (modal) modal.classList.remove('open');
+  _importContacts = [];
+}
+
+async function confirmClientImport() {
+  if (!_currentUser || !_importContacts.length) return;
+  var selected = _importContacts.filter(function(cl, i) {
+    var cb = document.getElementById('cip-check-' + i);
+    return cb && cb.checked;
+  });
+  if (!selected.length) { showToast('No contacts selected'); return; }
+  var btn = document.getElementById('cip-import-btn');
+  if (btn) btn.disabled = true;
+  // De-duplicate: skip contacts whose name already exists
+  var existingNames = _clients.map(function(c){ return (c.name||'').toLowerCase(); });
+  var toInsert = selected.filter(function(cl){ return existingNames.indexOf((cl.name||'').toLowerCase()) === -1; });
+  var dupes = selected.length - toInsert.length;
+  if (!toInsert.length) {
+    showToast('All selected contacts already exist');
+    if (btn) btn.disabled = false;
+    return;
+  }
+  var payloads = toInsert.map(function(cl) {
+    return {
+      user_id: _currentUser.id,
+      name: (cl.name||'').slice(0,200),
+      company: (cl.company||'').slice(0,200) || null,
+      email: (cl.email||'').slice(0,200) || null,
+      phone: (cl.phone||'').slice(0,50) || null,
+      address: (cl.address||'').slice(0,300) || null,
+      website: (cl.website||'').slice(0,300) || null,
+      job_title: (cl.job_title||'').slice(0,200) || null,
+      notes: (cl.notes||'').slice(0,2000) || null
+    };
+  });
+  var res = await _supabase.from('clients').insert(payloads).select();
+  if (res.error) { showToast('Import error: ' + res.error.message); if (btn) btn.disabled = false; return; }
+  (res.data||[]).forEach(function(c){ _clients.push(c); });
+  _clients.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  renderClientList();
+  closeClientImportPreview();
+  var msg = '✓ Imported ' + toInsert.length + ' contact' + (toInsert.length !== 1 ? 's' : '');
+  if (dupes) msg += ' (' + dupes + ' skipped, already exist)';
+  showToast(msg);
 }
 
 var _clmClientId = null;
@@ -14268,6 +14551,7 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <div class="cl-detail-ft">
       <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border-color:#E74C3C" onclick="clDetailDelete()">Delete</button>
       <div style="display:flex;gap:8px">
+        <button class="btn-outline" id="cl-detail-vcf-btn" title="Download contact as vCard (.vcf)">⬇ .vcf</button>
         <button class="btn-outline" onclick="closeClientDetailPopup()">Close</button>
         <button class="btn-use" onclick="clDetailOpenEdit()">Edit</button>
       </div>
@@ -14356,6 +14640,14 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
           </select>
         </div>
       </div>
+      <div class="m-row2" style="margin-top:12px">
+        <div><div class="m-lbl">Website</div><input class="m-inp" id="cm-website" type="url" placeholder="https://example.com" style="margin-bottom:0"></div>
+        <div><div class="m-lbl">Job Title</div><input class="m-inp" id="cm-job-title" placeholder="e.g. Marketing Director" style="margin-bottom:0"></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="m-lbl">Notes</div>
+        <textarea class="m-inp" id="cm-notes" placeholder="Any notes about this client…" style="margin-bottom:0;resize:vertical;min-height:64px;font-family:var(--font-body);font-size:14px"></textarea>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeClientModal()">Cancel</button>
@@ -14418,11 +14710,44 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
       <div style="margin-top:12px">
         <div class="m-lbl">Address</div><input class="m-inp" id="cem-address" placeholder="Street, City, Country" style="margin-bottom:0">
       </div>
+      <div class="m-row2" style="margin-top:12px">
+        <div><div class="m-lbl">Website</div><input class="m-inp" id="cem-website" type="url" placeholder="https://example.com" style="margin-bottom:0"></div>
+        <div><div class="m-lbl">Job Title</div><input class="m-inp" id="cem-job-title" placeholder="e.g. Marketing Director" style="margin-bottom:0"></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="m-lbl">Notes</div>
+        <textarea class="m-inp" id="cem-notes" placeholder="Any notes about this client…" style="margin-bottom:0;resize:vertical;min-height:64px;font-family:var(--font-body);font-size:14px"></textarea>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn-outline" onclick="closeEditClientModal()">Cancel</button>
       <button style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;padding:8px 16px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-right:auto" onclick="var cid=_editClientId;closeEditClientModal();deleteClient(cid)">Delete</button>
       <button class="btn-use" onclick="saveEditClient()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Client import preview modal -->
+<div class="modal-overlay" id="client-import-preview-modal">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-hd">
+      <span class="modal-title">Import Contacts</span>
+      <button class="modal-close" onclick="closeClientImportPreview()">&#10005;</button>
+    </div>
+    <div class="modal-bd">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <span id="cip-count" style="font-size:13px;color:var(--ink-mid);font-weight:600"></span>
+        <div style="display:flex;gap:8px">
+          <button class="btn-outline" style="font-size:12px;padding:4px 10px" onclick="document.querySelectorAll('#cip-body input[type=checkbox]').forEach(function(c){c.checked=true})">Select all</button>
+          <button class="btn-outline" style="font-size:12px;padding:4px 10px" onclick="document.querySelectorAll('#cip-body input[type=checkbox]').forEach(function(c){c.checked=false})">Deselect all</button>
+        </div>
+      </div>
+      <div id="cip-body" style="max-height:360px;overflow-y:auto"></div>
+      <div style="margin-top:12px;font-size:12px;color:var(--ink-light)">Contacts that already exist (matching name) will be skipped automatically.</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-outline" onclick="closeClientImportPreview()">Cancel</button>
+      <button class="btn-use" id="cip-import-btn" onclick="confirmClientImport()">Import selected</button>
     </div>
   </div>
 </div>
