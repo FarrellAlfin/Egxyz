@@ -302,7 +302,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-testi{padding:96px 40px;background:var(--surface)}
 .lp-testi-inner{max-width:1120px;margin:0 auto}
 .lp-testi-hdr{text-align:center;margin-bottom:60px}
-.lp-testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.lp-testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
 .lp-tc{background:var(--white);border:1.5px solid var(--outline-variant);border-radius:16px;padding:28px 28px 24px;box-shadow:0 2px 12px rgba(25,28,30,.05);transition:box-shadow .22s ease,transform .22s ease;display:flex;flex-direction:column}
 .lp-tc:hover{box-shadow:0 10px 32px rgba(25,28,30,.10);transform:translateY(-3px)}
 .lp-tc-stars{font-size:13px;letter-spacing:1px;color:var(--tertiary);margin-bottom:14px;line-height:1}
@@ -320,7 +320,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-faq-item{border-bottom:1px solid var(--outline-variant)}
 .lp-faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--on-surface);gap:16px;transition:color .18s}
 .lp-faq-q:hover{color:var(--tertiary)}
-.lp-faq-q-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-container);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:300;color:var(--on-surface-mid);transition:transform .25s ease,background .25s ease,color .25s ease;line-height:1;user-select:none}
+.lp-faq-q-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-container);display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:400;color:var(--on-surface-mid);transition:transform .25s ease,background .25s ease,color .25s ease;line-height:0;user-select:none;letter-spacing:0}
 .lp-faq-item.open .lp-faq-q-icon{background:var(--on-surface);color:#fff;transform:rotate(45deg)}
 .lp-faq-a{max-height:0;overflow:hidden;transition:max-height .38s ease}
 .lp-faq-item.open .lp-faq-a{max-height:600px}
@@ -2557,7 +2557,9 @@ var RateLimiter = (function() {
     <div class="nav-logo" onclick="">Freelance<span>Kit</span></div>
     <div class="nav-links">
       <a onclick="scrollToSection('features')">Features</a>
+      <a onclick="scrollToSection('testimonials')">Testimonials</a>
       <a onclick="scrollToSection('pricing')">Pricing</a>
+      <a onclick="scrollToSection('faq')">FAQ</a>
     </div>
     <div class="nav-actions">
       <button class="btn-nav-ghost" onclick="showAuth('signin')">Sign in</button>
@@ -2570,7 +2572,9 @@ var RateLimiter = (function() {
   <!-- Mobile nav menu -->
   <div class="lp-mobile-menu" id="lp-mobile-menu">
     <button class="lp-mm-link" onclick="scrollToSection('features');toggleLpMobileNav()">Features</button>
+    <button class="lp-mm-link" onclick="scrollToSection('testimonials');toggleLpMobileNav()">Testimonials</button>
     <button class="lp-mm-link" onclick="scrollToSection('pricing');toggleLpMobileNav()">Pricing</button>
+    <button class="lp-mm-link" onclick="scrollToSection('faq');toggleLpMobileNav()">FAQ</button>
     <div class="lp-mm-btns">
       <button class="btn-nav-ghost" style="width:100%;padding:13px;font-size:15px" onclick="showAuth('signin');toggleLpMobileNav()">Sign in</button>
       <button class="btn-nav-cta" style="width:100%;padding:13px;font-size:15px" onclick="showAuth('signup','pro');toggleLpMobileNav()">Get started free →</button>
@@ -2891,7 +2895,7 @@ var RateLimiter = (function() {
   </div>
 
   <!-- ─── TESTIMONIALS ─── -->
-  <section class="lp-testi">
+  <section class="lp-testi" id="testimonials">
     <div class="lp-testi-inner">
       <div class="lp-testi-hdr lp-reveal">
         <div class="lp-label">From the beta</div>
