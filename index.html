@@ -298,6 +298,19 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-cta-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tertiary-fixed-dim);margin-bottom:12px;font-family:var(--font-display)}
 .lp-cta h2{color:#fff;margin-bottom:16px}
 .lp-cta-sub{font-size:16px;color:var(--on-primary-container);font-weight:400;margin-bottom:32px;line-height:1.7}
+/* FAQ section */
+.lp-faq{padding:88px 40px;background:var(--surface-low)}
+.lp-faq-inner{max-width:760px;margin:0 auto}
+.lp-faq-hdr{text-align:center;margin-bottom:52px}
+.lp-faq-list{border-top:1px solid var(--outline-variant)}
+.lp-faq-item{border-bottom:1px solid var(--outline-variant)}
+.lp-faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--on-surface);gap:16px;transition:color .18s}
+.lp-faq-q:hover{color:var(--tertiary)}
+.lp-faq-q-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-container);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:300;color:var(--on-surface-mid);transition:transform .25s ease,background .25s ease,color .25s ease;line-height:1;user-select:none}
+.lp-faq-item.open .lp-faq-q-icon{background:var(--on-surface);color:#fff;transform:rotate(45deg)}
+.lp-faq-a{max-height:0;overflow:hidden;transition:max-height .38s ease}
+.lp-faq-item.open .lp-faq-a{max-height:600px}
+.lp-faq-a-inner{font-size:14.5px;color:var(--on-surface-mid);line-height:1.78;padding-bottom:26px}
 /* Footer */
 .lp-footer{background:var(--ink);padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .lp-footer-logo{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-.03em;color:var(--cream)}
@@ -2144,6 +2157,7 @@ input[type=number]{-moz-appearance:textfield}
   .lp-bento{padding:72px 32px}
   .lp-hiw{padding:72px 32px}
   .lp-pricing{padding:72px 32px}
+  .lp-faq{padding:72px 32px}
   .lp-cta{padding:80px 32px}
   .lp-footer{padding:28px 32px}
   h1{font-size:46px}
@@ -2171,6 +2185,7 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hiw-steps{grid-template-columns:1fr}
   .lp-hiw-steps::before{display:none}
   .lp-pricing{padding:60px 20px}
+  .lp-faq{padding:60px 20px}
   .lp-cta{padding:72px 20px}
   .lp-footer{padding:24px 20px;flex-direction:column;align-items:flex-start;gap:10px}
   h2{font-size:30px}
@@ -2223,6 +2238,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hiw{padding:44px 16px}
   .lp-pricing{padding:44px 16px}
   .lp-price-card{min-width:unset;padding:22px 18px}
+  .lp-faq{padding:44px 16px}
+  .lp-faq-q{font-size:14px;padding:18px 0}
   .lp-cta{padding:56px 16px}
   .lp-footer{padding:18px 16px}
   .tmpl-panel{padding:14px 12px}
@@ -2888,6 +2905,115 @@ var RateLimiter = (function() {
           </ul>
           <button class="lp-price-btn featured" onclick="showAuth('signup','pro')">Get Pro free →</button>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─── -->
+  <section class="lp-faq" id="faq">
+    <div class="lp-faq-inner">
+      <div class="lp-faq-hdr lp-reveal">
+        <div class="lp-label">FAQ</div>
+        <h2>Got questions?<br><em>We've got answers.</em></h2>
+      </div>
+      <div class="lp-faq-list">
+
+        <div class="lp-faq-item lp-reveal" data-d="1">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            What is FreelanceKit?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">FreelanceKit is an all-in-one business kit built specifically for freelancers and solopreneurs. It combines 12 connected tools — project tracker, invoice builder, pipeline forecasting, timesheet, rate calculator, tax tracker, financial overview, client directory, and more — so you can run your entire freelance business from one place instead of juggling five separate apps.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="2">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Who is it for?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">FreelanceKit is built for solo freelancers and solopreneurs — designers, developers, writers, consultants, and creatives who manage client projects, send invoices, and need to keep a handle on their income and cash flow. It's not built for agencies or teams.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="3">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            How much does it cost?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Free during beta — no credit card, no trial period, no catch. When the beta ends, there will be a free plan with core tools and a Pro plan with the full kit. Everyone who joins during beta gets Pro access for $0, for the duration of the beta.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="1">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Is it really free? What's the catch?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">No catch. FreelanceKit is in beta, which means you get full Pro access while we're still building and refining. We're not going to quietly flip a paywall on you — we'll give notice well before pricing kicks in, and there will always be a free tier.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="2">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            I already use Notion / Trello / Asana — why do I need this?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Those tools handle tasks. They don't invoice your clients, track what you're owed, calculate your floor rate, forecast next month's income, or estimate your tax. FreelanceKit fills everything they leave out — and it connects your project work directly to your billing and financial picture, so nothing falls through the cracks.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="3">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            What tools does FreelanceKit replace?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Depending on your current setup, it can replace some combination of: a project management app (Notion, Trello), an invoicing tool (FreshBooks, Wave, Bonsai), a time tracker (Toggl, Harvest), a spreadsheet for rates and taxes, and a CRM for your client pipeline. One login. One place. No more copy-pasting between apps.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="1">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Do I have to use every feature?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Not at all. Start with the one or two tools you need most — the invoice builder, project tracker, or client directory — and add the rest when it's useful. Every tool works on its own, but they're connected when you want them to be.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="2">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Is it stable? It says beta — is it finished?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Over 400 freelancers are using FreelanceKit today. Beta means you're getting in early and getting Pro free — it doesn't mean broken or half-built. We're shipping updates regularly and the core tools are solid.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="3">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Can I share projects with clients or collaborators?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Yes — you can invite clients and collaborators to specific projects. They get access to what you share (tasks, files, meeting notes) without seeing your invoices, pipeline, or financial data.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="1">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Does it handle taxes?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">FreelanceKit includes a tax tracker that estimates your quarterly tax liability based on your income. It's designed to give you a working number so tax season doesn't sneak up on you — not to file your taxes. For actual filing, you'll still want an accountant or tax software.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="2">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Do I need to install anything?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">No. FreelanceKit is a web app — open your browser, sign up, and you're in. It works on any device. No downloads, no installs.</div></div>
+        </div>
+
+        <div class="lp-faq-item lp-reveal" data-d="3">
+          <button class="lp-faq-q" onclick="toggleFaq(this)">
+            Is my data safe?
+            <span class="lp-faq-q-icon">+</span>
+          </button>
+          <div class="lp-faq-a"><div class="lp-faq-a-inner">Yes. FreelanceKit is built on Supabase with row-level security, meaning your data is isolated to your account and only accessible to you (and collaborators you explicitly invite). We don't sell your data.</div></div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -4557,6 +4683,7 @@ var RateLimiter = (function() {
 function showToast(msg,undoCb){const t=document.getElementById('toast');showToast._undo=undoCb||null;t.innerHTML='<span>'+escapeHTML(msg)+'</span>'+(undoCb?'<button class="toast-undo-btn" onclick="showToast._doUndo()">Undo</button>':'');t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>{t.classList.remove('show');showToast._undo=null;},undoCb?4500:3200);}
 showToast._doUndo=function(){if(showToast._undo){showToast._undo();showToast._undo=null;const t=document.getElementById('toast');t.classList.remove('show');clearTimeout(showToast._t);}}
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+function toggleFaq(btn){var item=btn.closest('.lp-faq-item');var isOpen=item.classList.contains('open');document.querySelectorAll('.lp-faq-item.open').forEach(function(i){i.classList.remove('open');});if(!isOpen)item.classList.add('open');}
 // ─── HOME CURRENCY ───────────────────────────────────────────────────────────
 var _CURRENCY_SYM_MAP = {
   USD:'$', EUR:'€', GBP:'£', AUD:'A$', CAD:'CA$',
