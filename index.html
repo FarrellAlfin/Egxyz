@@ -705,7 +705,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .ip-btn-g:hover{border-color:var(--ink);color:var(--ink)}
 /* Invoice preview */
 .inv-preview{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);position:sticky;top:24px;align-self:start;overflow-y:auto;max-height:calc(100vh - 80px)}
-.inv-paper{padding:40px 48px;--inv-font:var(--font-display);--inv-accent:#D4A853;zoom:0.85}
+.inv-paper{padding:40px 48px;--inv-font:var(--font-display);--inv-accent:#D4A853;zoom:0.85;font-family:var(--inv-font,var(--font-display))}
 .inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px}
 .inv-brand-name{font-family:var(--inv-font,var(--font-display));font-size:22px;font-weight:400;color:var(--ink);margin-bottom:3px}
 .inv-brand-detail{font-size:13px;color:var(--ink-light);line-height:1.7}
@@ -5137,6 +5137,7 @@ function applyInvoiceStyle(fontVal, accent) {
   if (!paper) return;
   paper.style.setProperty('--inv-font', fontVal);
   paper.style.setProperty('--inv-accent', accent);
+  paper.style.fontFamily = fontVal; // propagate directly so all children inherit
 }
 function selectInvFont(fontId) {
   _invFontId = fontId;
