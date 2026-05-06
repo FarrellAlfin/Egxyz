@@ -11056,6 +11056,19 @@ function ptOpenClientEdit() {
 
 // ── New-project client popup ───────────────────────────────
 var _ptNewClientDraft = null;
+function ptmClientSelChange(val) {
+  var hidEl = document.getElementById('ptm-client');
+  if (val === '__new__') {
+    // Reset select to the previously selected client and open the add-client popup
+    var selEl = document.getElementById('ptm-client-sel');
+    if (selEl && hidEl) selEl.value = hidEl.value || '';
+    openPtClientPopup('new');
+  } else {
+    // Existing client selected — update hidden input (auto-links on save)
+    if (hidEl) hidEl.value = val;
+  }
+}
+
 function openPtClientPopup(mode) {
   var pop = document.getElementById('ptc-client-popup');
   if (!pop) return;
@@ -11101,12 +11114,20 @@ function savePtClientPopup() {
   };
   var hidEl = document.getElementById('ptm-client');
   if (hidEl) hidEl.value = name;
-  var badgeEl = document.getElementById('ptm-client-name-badge');
-  if (badgeEl) { badgeEl.textContent = name; badgeEl.style.color = 'var(--ink)'; }
-  var addBtnEl = document.querySelector('[onclick*="openPtClientPopup"]');
-  if (addBtnEl) addBtnEl.textContent = 'Edit';
+  // Reflect new client in the dropdown — insert before "Add new client" option if not already there
+  var selEl = document.getElementById('ptm-client-sel');
+  if (selEl) {
+    var existOpt = Array.from(selEl.options).find(function(o){ return o.value === name; });
+    if (!existOpt) {
+      var newOpt = document.createElement('option');
+      newOpt.value = name;
+      newOpt.textContent = name;
+      selEl.insertBefore(newOpt, selEl.options[selEl.options.length - 1]); // before "+ Add new client"
+    }
+    selEl.value = name;
+  }
   closePtClientPopup();
-  showToast('✓ Client details saved');
+  showToast('✓ Client added');
 }
 
 function renderPtMilestones() {
@@ -13422,12 +13443,16 @@ function openPtModal(mode) {
       '<div class="pt-field"><label>Project name *</label><input class="pt-inp" id="ptm-name" value="' + escapeHTML(p.name || '') + '" placeholder="e.g. Brand Identity for Acme"></div>' +
       '<div class="pt-grid2">' +
       '<div class="pt-field"><label>Client</label>' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
-          '<div id="ptm-client-display" style="flex:1;min-height:38px;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--ink);display:flex;align-items:center;background:var(--cream)">' +
-            '<span id="ptm-client-name-badge" style="color:' + (p.client_name ? 'var(--ink)' : 'var(--ink-light)') + '">' + escapeHTML(p.client_name || 'No client selected') + '</span>' +
-          '</div>' +
-          '<button type="button" onclick="openPtClientPopup(\'' + (mode === 'edit-project' ? 'edit' : 'new') + '\')" style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-size:13px;cursor:pointer;font-weight:600;color:var(--ink);white-space:nowrap">' + (p.client_name ? 'Edit' : 'Add client') + '</button>' +
-        '</div>' +
+        (function() {
+          var clients = (_clients || []).slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+          var opts = '<option value="">No client</option>' +
+            clients.map(function(c){
+              return '<option value="' + escapeHTML(c.name) + '"' + (p.client_name === c.name ? ' selected' : '') + '>' +
+                escapeHTML(c.name) + (c.company ? ' — ' + escapeHTML(c.company) : '') + '</option>';
+            }).join('') +
+            '<option value="__new__" style="color:var(--sage);font-weight:600">+ Add new client...</option>';
+          return '<select class="pt-sel" id="ptm-client-sel" onchange="ptmClientSelChange(this.value)">' + opts + '</select>';
+        })() +
         '<input type="hidden" id="ptm-client" value="' + escapeHTML(p.client_name || '') + '">' +
       '</div>' +
       '<div class="pt-field"><label>Status</label><select class="pt-sel" id="ptm-status"><option value="planning"' + (p.status==='planning'?' selected':'') + '>Planning</option><option value="active"' + (p.status==='active'?' selected':'') + '>Active</option><option value="on_hold"' + (p.status==='on_hold'?' selected':'') + '>On hold</option><option value="completed"' + (p.status==='completed'?' selected':'') + '>Completed</option></select></div>' +
