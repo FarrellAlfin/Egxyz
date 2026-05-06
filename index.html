@@ -298,6 +298,20 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-cta-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tertiary-fixed-dim);margin-bottom:12px;font-family:var(--font-display)}
 .lp-cta h2{color:#fff;margin-bottom:16px}
 .lp-cta-sub{font-size:16px;color:var(--on-primary-container);font-weight:400;margin-bottom:32px;line-height:1.7}
+/* Testimonials */
+.lp-testi{padding:96px 40px;background:var(--surface)}
+.lp-testi-inner{max-width:1120px;margin:0 auto}
+.lp-testi-hdr{text-align:center;margin-bottom:60px}
+.lp-testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.lp-tc{background:var(--white);border:1.5px solid var(--outline-variant);border-radius:16px;padding:28px 28px 24px;box-shadow:0 2px 12px rgba(25,28,30,.05);transition:box-shadow .22s ease,transform .22s ease;display:flex;flex-direction:column}
+.lp-tc:hover{box-shadow:0 10px 32px rgba(25,28,30,.10);transform:translateY(-3px)}
+.lp-tc-stars{font-size:13px;letter-spacing:1px;color:var(--tertiary);margin-bottom:14px;line-height:1}
+.lp-tc-text{font-size:14.5px;color:var(--on-surface);line-height:1.78;margin-bottom:22px;flex:1}
+.lp-tc-text strong{color:var(--on-surface);font-weight:700}
+.lp-tc-author{display:flex;align-items:center;gap:12px;padding-top:18px;border-top:1px solid var(--outline-variant)}
+.lp-tc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--font-display);letter-spacing:.02em}
+.lp-tc-name{font-size:13px;font-weight:700;color:var(--on-surface);line-height:1.3}
+.lp-tc-role{font-size:11.5px;color:var(--on-surface-mid);margin-top:1px}
 /* FAQ section */
 .lp-faq{padding:88px 40px;background:var(--surface-low)}
 .lp-faq-inner{max-width:760px;margin:0 auto}
@@ -2156,6 +2170,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hero-inner{padding:72px 32px 60px}
   .lp-bento{padding:72px 32px}
   .lp-hiw{padding:72px 32px}
+  .lp-testi{padding:72px 32px}
+  .lp-testi-grid{grid-template-columns:repeat(2,1fr)}
   .lp-pricing{padding:72px 32px}
   .lp-faq{padding:72px 32px}
   .lp-cta{padding:80px 32px}
@@ -2184,6 +2200,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hiw{padding:60px 20px}
   .lp-hiw-steps{grid-template-columns:1fr}
   .lp-hiw-steps::before{display:none}
+  .lp-testi{padding:60px 20px}
+  .lp-testi-grid{grid-template-columns:1fr}
   .lp-pricing{padding:60px 20px}
   .lp-faq{padding:60px 20px}
   .lp-cta{padding:72px 20px}
@@ -2238,6 +2256,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hiw{padding:44px 16px}
   .lp-pricing{padding:44px 16px}
   .lp-price-card{min-width:unset;padding:22px 18px}
+  .lp-testi{padding:44px 16px}
+  .lp-tc{padding:22px 20px 20px}
   .lp-faq{padding:44px 16px}
   .lp-faq-q{font-size:14px;padding:18px 0}
   .lp-cta{padding:56px 16px}
@@ -2869,6 +2889,92 @@ var RateLimiter = (function() {
       </div>
     </div>
   </div>
+
+  <!-- ─── TESTIMONIALS ─── -->
+  <section class="lp-testi">
+    <div class="lp-testi-inner">
+      <div class="lp-testi-hdr lp-reveal">
+        <div class="lp-label">From the beta</div>
+        <h2>400+ freelancers<br><em>already running on it.</em></h2>
+        <p class="lp-sub" style="max-width:500px;margin:0 auto">Here's what they said.</p>
+      </div>
+      <div class="lp-testi-grid">
+
+        <div class="lp-tc lp-reveal" data-d="1">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"I was living across Notion, FreshBooks, and a spreadsheet I'd been patching since 2021. FreelanceKit pulled everything into one place in about an hour. I actually <strong>closed a client invoice the day I signed up.</strong>"</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#009668">MC</div>
+            <div>
+              <div class="lp-tc-name">Mia Chen</div>
+              <div class="lp-tc-role">UX Designer · Freelancing 4 years</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-tc lp-reveal" data-d="2">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"The rate calculator was a gut-punch — in the best way. <strong>I'd been undercharging by $18/hr for three years.</strong> Knowing my actual floor rate changed every proposal I sent after that."</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#1967D2">JO</div>
+            <div>
+              <div class="lp-tc-name">James O'Brien</div>
+              <div class="lp-tc-role">Frontend Developer · Freelancing 6 years</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-tc lp-reveal" data-d="3">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"I used to forget to follow up on invoices. Regularly. FreelanceKit's aging report shows me exactly what's overdue without digging through emails. <strong>Got paid faster in month one than in the previous three combined.</strong>"</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#6D28D9">SY</div>
+            <div>
+              <div class="lp-tc-name">Sarah Yates</div>
+              <div class="lp-tc-role">Copywriter · Freelancing 3 years</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-tc lp-reveal" data-d="1">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"The pipeline tracker is the feature I didn't know I needed. <strong>I can see my forecast three months out</strong> and plan around slow periods instead of panicking when they hit."</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#131b2e">DP</div>
+            <div>
+              <div class="lp-tc-name">Daniel Park</div>
+              <div class="lp-tc-role">Brand Consultant · Freelancing 5 years</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-tc lp-reveal" data-d="2">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"Managing four clients at once used to mean a dozen open tabs and hoping I didn't miss anything. Now I open FreelanceKit and <strong>everything's there — tasks, milestones, what's due, what's billing.</strong>"</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#C8621A">PN</div>
+            <div>
+              <div class="lp-tc-name">Priya Nair</div>
+              <div class="lp-tc-role">Motion Designer · Freelancing 2 years</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-tc lp-reveal" data-d="3">
+          <div class="lp-tc-stars">★★★★★</div>
+          <p class="lp-tc-text">"Tax season used to wreck me every year. The tax tracker doesn't file my taxes — but it gives me an estimate every quarter so <strong>I'm never blindsided by a bill I haven't saved for.</strong> That alone is worth it."</p>
+          <div class="lp-tc-author">
+            <div class="lp-tc-av" style="background:#45464d">TF</div>
+            <div>
+              <div class="lp-tc-name">Tom Ferris</div>
+              <div class="lp-tc-role">Web Developer · Freelancing 7 years</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <!-- ─── PRICING ─── -->
   <section class="lp-pricing" id="pricing">
