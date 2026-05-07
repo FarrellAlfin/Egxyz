@@ -3378,8 +3378,8 @@ var RateLimiter = (function() {
           <!-- Sign Up form -->
           <div id="auth-signup">
             <div class="auth-logo">Freelance<span>Kit</span></div>
-            <div class="auth-heading">Start your<br><em>free trial.</em></div>
-            <p class="auth-subhead">7 days free. No credit card. Cancel anytime.</p>
+            <div class="auth-heading">Get started.<br><em>It's free.</em></div>
+            <p class="auth-subhead">Free during beta. No credit card. No catch.</p>
 
             <div class="auth-tabs">
               <button class="auth-tab active" onclick="switchAuthTab('signup')">Create account</button>
@@ -3452,7 +3452,7 @@ var RateLimiter = (function() {
             <div class="auth-error" id="si-error"></div>
             <button class="auth-cta" onclick="handleSignIn()" id="signin-cta">Sign in →</button>
 
-            <div class="auth-switch">Don't have an account? <span onclick="switchAuthTab('signup')">Start free trial</span></div>
+            <div class="auth-switch">Don't have an account? <span onclick="switchAuthTab('signup')">Sign up free</span></div>
           </div>
 
         </div>
@@ -11041,7 +11041,7 @@ function selectPlan(plan) {
   if (plan === 'free') {
     cta.textContent = 'Create free account →';
   } else {
-    cta.textContent = 'Start free trial →';
+    cta.textContent = 'Get started free →';
   }
 }
 
