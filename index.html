@@ -474,6 +474,18 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-cta-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tertiary-fixed-dim);margin-bottom:12px;font-family:var(--font-display)}
 .lp-cta h2{color:#fff;margin-bottom:16px}
 .lp-cta-sub{font-size:16px;color:var(--on-primary-container);font-weight:400;margin-bottom:32px;line-height:1.7}
+/* Pain section */
+.lp-pain{padding:80px 40px;background:var(--primary-container);text-align:center;position:relative;overflow:hidden}
+.lp-pain::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 50% 100%,rgba(111,251,190,.06) 0%,transparent 65%);pointer-events:none}
+.lp-pain-inner{max-width:700px;margin:0 auto;position:relative;z-index:1}
+.lp-pain .lp-label{color:var(--tertiary-fixed-dim)}
+.lp-pain h2{color:#fff}
+.lp-pain h2 em{color:var(--tertiary-fixed)}
+.lp-pain-apps{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:28px auto}
+.lp-pain-app{font-size:13px;color:rgba(250,247,242,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 16px;font-family:var(--font-body)}
+.lp-pain-body{font-size:16px;color:var(--on-primary-container);line-height:1.75;margin:0 auto 24px;max-width:560px}
+.lp-pain-fix{font-size:17px;font-weight:700;color:#fff;font-family:var(--font-display);letter-spacing:-.02em}
+.lp-pain-fix em{font-style:normal;color:var(--tertiary-fixed)}
 /* Testimonials */
 .lp-testi{padding:96px 40px;background:var(--surface)}
 .lp-testi-inner{max-width:1120px;margin:0 auto}
@@ -2345,6 +2357,7 @@ input[type=number]{-moz-appearance:textfield}
 @media(max-width:1024px){
   .lp-hero-inner{padding:72px 32px 60px}
   .lp-bento{padding:72px 32px}
+  .lp-pain{padding:72px 32px}
   .lp-hiw{padding:72px 32px}
   .lp-testi{padding:72px 32px}
   .lp-testi-grid{grid-template-columns:repeat(2,1fr)}
@@ -2370,6 +2383,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hero-inner{padding:56px 20px 44px}
   .lp-hero-sub{font-size:15px}
   .lp-bento{padding:60px 20px}
+  .lp-pain{padding:60px 20px}
+  .lp-pain-apps{gap:8px}
   .lp-bento-grid{grid-template-columns:1fr!important}
   .lp-bc-a,.lp-bc-d,.lp-bc-f{grid-column:1!important;grid-row:auto!important}
   .lp-bc-a{min-height:260px}
@@ -2429,6 +2444,7 @@ input[type=number]{-moz-appearance:textfield}
   .lp-hero-btns{flex-direction:column}
   .lp-hero-btns .btn-hero-primary,.lp-hero-btns .btn-hero-ghost{width:100%;text-align:center}
   .lp-bento{padding:44px 16px}
+  .lp-pain{padding:44px 16px}
   .lp-hiw{padding:44px 16px}
   .lp-pricing{padding:44px 16px}
   .lp-price-card{min-width:unset;padding:22px 18px}
@@ -2766,10 +2782,11 @@ var RateLimiter = (function() {
    <div class="lp-hero-inner">
     <div>
       <div class="lp-hero-badge">✦ Free during beta · Pro will be $9/mo</div>
-      <h1 class="lp-hero-h1">Run your entire<br>freelance<br><em>business from one place.</em></h1>
-      <p class="lp-hero-sub">You're running your business across 5 different apps. FreelanceKit puts it all in one place — projects, invoices, pipeline, taxes, and rates — all connected.</p>
+      <h1 class="lp-hero-h1">Everything a freelancer<br>needs to run their<br><em>business. Connected.</em></h1>
+      <p class="lp-hero-sub">You're running your business across 5 apps — and none of them talk to each other. FreelanceKit connects your projects, invoices, pipeline, taxes, and rates into one kit. Change one thing, everything updates.</p>
       <div class="lp-hero-btns">
         <button class="btn-hero-primary" onclick="showAuth('signup','pro')">Get started free →</button>
+        <button class="btn-hero-ghost" onclick="scrollToSection('features')">See what's inside ↓</button>
       </div>
       <p class="lp-hero-note">No credit card · Free during beta · Upgrade whenever you're ready</p>
     </div>
@@ -2849,6 +2866,25 @@ var RateLimiter = (function() {
       <div class="lp-tick-item"><span class="lp-tick-n">One</span><span class="lp-tick-l">place for your whole business</span></div>
     </div>
   </div>
+
+  <!-- ─── PAIN ─── -->
+  <section class="lp-pain">
+    <div class="lp-pain-inner">
+      <div class="lp-reveal">
+        <div class="lp-label">Sound familiar?</div>
+        <h2>You're stitching together 5 apps —<br><em>and they don't talk to each other.</em></h2>
+      </div>
+      <div class="lp-pain-apps lp-reveal" data-d="1">
+        <span class="lp-pain-app">Notion for projects</span>
+        <span class="lp-pain-app">FreshBooks for invoices</span>
+        <span class="lp-pain-app">Toggl for time</span>
+        <span class="lp-pain-app">Spreadsheet for tax</span>
+        <span class="lp-pain-app">Email for client notes</span>
+      </div>
+      <p class="lp-pain-body lp-reveal" data-d="2">Every hour switching apps is an hour not billing. And somewhere in that mess, there's an invoice you forgot to follow up on.</p>
+      <p class="lp-pain-fix lp-reveal" data-d="3">FreelanceKit <em>fixes all of it.</em></p>
+    </div>
+  </section>
 
   <!-- ─── BENTO FEATURES ─── -->
   <section class="lp-bento" id="features">
@@ -2964,8 +3000,8 @@ var RateLimiter = (function() {
         <!-- Tax Tracker (1col) -->
         <div class="lp-bc lp-reveal" data-d="3">
           <div class="lp-bc-tag" style="background:var(--purple-light);color:var(--purple)">Tax Tracker</div>
-          <div class="lp-bc-title">Never miss a tax deadline.</div>
-          <div class="lp-bc-desc">Log quarterly income &amp; expenses. See your estimated tax due instantly — in any currency.</div>
+          <div class="lp-bc-title">No more surprise tax bills.</div>
+          <div class="lp-bc-desc">Log quarterly income and expenses. See your estimated tax due instantly — so when Q1 rolls around, you already know what's coming.</div>
           <div style="margin-top:14px">
             <div class="lp-tax-qs">
               <div class="lp-tax-q pd">Q1 ✓</div>
@@ -3058,8 +3094,8 @@ var RateLimiter = (function() {
         </div>
         <div class="lp-hiw-step lp-reveal" data-d="2">
           <div class="lp-hiw-num">2</div>
-          <div class="lp-hiw-title">Invite your<br><em>collaborators.</em></div>
-          <p class="lp-hiw-desc">Share any project by email. Collaborators accept, log their time, and you stay in full control of what gets edited or deleted.</p>
+          <div class="lp-hiw-title">Set your rates.<br><em>Build your first invoice.</em></div>
+          <p class="lp-hiw-desc">Run the Rate Calculator to find your floor rate, then build a professional invoice in under two minutes — logo, payment terms, line items. Send it directly from FreelanceKit.</p>
         </div>
         <div class="lp-hiw-step lp-reveal" data-d="3">
           <div class="lp-hiw-num">3</div>
@@ -3308,7 +3344,7 @@ var RateLimiter = (function() {
   <div class="lp-cta">
     <div class="lp-cta-inner lp-reveal">
       <div class="lp-cta-eyebrow">Ready to stop winging it?</div>
-      <h2>Your freelance business<br><em>starts running itself.</em></h2>
+      <h2>Less time managing tools.<br><em>More time doing work that pays.</em></h2>
       <p class="lp-cta-sub">Use FreelanceKit to protect your time, get paid faster, and stop starting from scratch on every project.</p>
       <button class="btn-hero-primary" style="font-size:15px;padding:15px 32px" onclick="showAuth('signup','pro')">Get started free →</button>
       <p style="font-size:12px;color:rgba(250,247,242,.3);margin-top:12px">No credit card · Free during beta · Pro will be $9/mo</p>
