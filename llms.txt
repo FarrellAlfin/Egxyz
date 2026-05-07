@@ -1,0 +1,65 @@
+# FreelanceKit
+
+> FreelanceKit is the all-in-one operating system for freelancers and solopreneurs — projects, invoices, taxes, pipeline, and rates in one connected kit.
+
+FreelanceKit replaces the 5+ disconnected tools freelancers cobble together to run their business. It is a web app (no install required) built specifically for solo freelancers and solopreneurs — not adapted from agency or enterprise software.
+
+## Who It's For
+
+Solo freelancers and solopreneurs: designers, developers, writers, consultants, and creatives who manage client projects, send invoices, and need visibility over their income and cash flow. Not built for agencies or teams.
+
+## What It Does (12 Tools in One Kit)
+
+- **Project Tracker** — Tasks, Gantt chart, milestones, time logs, billing phases, and client collaboration
+- **Invoice Builder** — Professional invoices with multi-currency support, aging reports, and PDF export
+- **Rate Calculator** — Works backwards from take-home target to minimum hourly floor rate, accounting for taxes, expenses, and slow months
+- **Tax Tracker** — Estimates quarterly tax liability from income. Not tax filing — gives you a working number so tax season doesn't sneak up
+- **Pipeline Tracker** — Kanban board for prospective clients with weighted revenue forecasting (see the dry month before it hits)
+- **Timesheet** — Time logging with a 16-week activity heatmap and utilisation tracking against a weekly target
+- **Financial Overview** — 4-tab dashboard: earned income, invoice aging, by-client breakdown, month-over-month trends
+- **Client Directory** — Contact management with vCard and CSV import/export
+- **Meeting Notes** — Structured notes attached to projects and clients
+- **Welcome Packet Generator** — Onboarding documents for new clients
+- **Project Brief Builder** — Scoping and brief documents
+- **Document Management** — File attachments across projects
+
+## Pricing
+
+| Plan | Price | What's Included |
+|------|-------|-----------------|
+| Free | $0/month forever | Core business tools, client directory, invoice history (view-only) |
+| Pro | $0/month during beta · $9/month after beta | Full suite — all 12 tools, invoice builder, rate calculator, tax tracker, pipeline, timesheet, project collaboration |
+
+No credit card required for either plan. Beta pricing applies to all users until beta ends — notice will be given before any change.
+
+## Key Differentiators
+
+- Every tool a freelancer needs in one kit — not just one piece of the puzzle
+- All tools are connected: time logs attach to projects, billing phases link to invoices, pipeline forecasts draw from the same data
+- Rate Calculator works backwards from desired take-home income (unique — most tools only track what was earned, not what should be charged)
+- Pipeline tracker with weighted revenue forecasting — plan around dry months before they happen
+- Free during beta, no credit card, no risk
+
+## Competitive Context
+
+FreelanceKit is positioned as an all-in-one alternative to:
+- **FreshBooks / Wave / HoneyBook** (invoicing only — no project tracker, no pipeline, no rate tools)
+- **Notion / Trello / Asana** (project management only — no invoicing, no financial tools)
+- **Toggl / Harvest** (time tracking only — no invoicing, no pipeline, no overview)
+- **Bonsai / AND.CO** (freelance contracts + invoicing — limited project tracking, no forecasting)
+- **Spreadsheets** (manual, not connected, breaks under complexity)
+
+## Current Status
+
+- Beta v0.2
+- 400+ active freelancers
+- App: https://app.freelancekit.io
+- Sign up: https://app.freelancekit.io (free, no card needed)
+
+## Key Pages
+
+- Homepage: https://freelancekit.io
+- App / Sign up: https://app.freelancekit.io
+- Pricing: https://freelancekit.io/#pricing
+- FAQ: https://freelancekit.io/#faq
+- Machine-readable pricing: https://freelancekit.io/pricing.md
