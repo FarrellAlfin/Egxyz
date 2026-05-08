@@ -1529,7 +1529,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .todo-filter.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .todo-list{max-height:340px;overflow-y:auto;padding-right:10px;margin-right:-10px}
 .todo-active-list .todo-item:last-child{border-bottom:none}
-.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.todo-item{display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .todo-item:last-child{border-bottom:none}
 .todo-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .todo-check{width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:var(--sage)}
@@ -1540,7 +1540,7 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .todo-del{background:none;border:none;font-size:12px;color:var(--ink-light);cursor:pointer;padding:0 2px;opacity:0;transition:opacity .15s;flex-shrink:0}
 .todo-item:hover .todo-del{opacity:1}
 .hw-empty{text-align:center;color:var(--ink-light);font-size:14px;padding:18px 0}
-.todo-section-lbl{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--ink-light);text-transform:uppercase;padding:14px 0 4px;border-top:1px solid var(--border);margin-top:10px}
+.todo-section-lbl{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--ink-light);text-transform:uppercase;padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px}
 .todo-proj-task .todo-text{font-size:14px}
 /* Upcoming */
 .upcoming-list{max-height:260px;overflow-y:auto}
@@ -11442,13 +11442,6 @@ function renderPtListTable() {
 
 function selectPtProject(id) {
   _ptCurrentId = id;
-  // Clear stale data from the previous project immediately.
-  // renderPtPeople() runs synchronously below, before the async loadPtShares()
-  // and ptLoadProjectData() fetches return — if these globals still hold the
-  // previous project's data they cause ghost collaborators and task-assignees to
-  // flash on screen and then disappear once the real fetches resolve.
-  _ptShares = [];
-  window._ptTasks = [];
   localStorage.setItem('fk_pt_project', id);
   var proj = _ptProjects.find(function(p){ return p.id === id; });
   if (!proj) return;
