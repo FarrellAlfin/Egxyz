@@ -3568,22 +3568,28 @@ var RateLimiter = (function() {
       <!-- Inline nav tabs -->
       <div class="atn-home-item atn-in-topnav" id="atn-home" onclick="showPanel('home',null)">Home</div>
       <div class="atn-dd-wrap atn-in-topnav">
-        <div class="atn-trigger atn-biz-trigger" id="atn-biz">Business Operations <span class="atn-arrow">▾</span></div>
+        <div class="atn-trigger atn-mybiz-trigger" id="atn-mybiz">My Business <span class="atn-arrow">▾</span></div>
         <div class="atn-dropdown">
-          <div class="atn-dd-section">My Business</div>
           <div class="atn-dd-item" data-panel="clients" onclick="showPanel('clients',null)">Client Contacts</div>
           <div class="atn-dd-item" data-panel="invhistory" onclick="showPanel('invhistory',null)">Financial Overview</div>
-          <div class="atn-dd-section">Projects</div>
+        </div>
+      </div>
+      <div class="atn-dd-wrap atn-in-topnav">
+        <div class="atn-trigger atn-projects-trigger" id="atn-projects">Projects <span class="atn-arrow">▾</span></div>
+        <div class="atn-dropdown">
           <div class="atn-dd-item" data-panel="projects" onclick="showPanel('projects',null)">Project Tracker</div>
           <div class="atn-dd-item" data-panel="pipeline" onclick="showPanel('pipeline',null)">Pipeline Tracker</div>
-          <div class="atn-dd-section">Finance</div>
+        </div>
+      </div>
+      <div class="atn-dd-wrap atn-in-topnav">
+        <div class="atn-trigger atn-finance-trigger" id="atn-finance">Finance <span class="atn-arrow">▾</span></div>
+        <div class="atn-dropdown">
           <div class="atn-dd-item" data-panel="invoice" onclick="showPanel('invoice',null)">Invoice Builder</div>
           <div class="atn-dd-item" data-panel="tax" onclick="showPanel('tax',null)">Tax Tracker</div>
           <div class="atn-dd-item" data-panel="ratecalc" onclick="showPanel('ratecalc',null)">Rate Calculator</div>
-          <div class="atn-dd-section">Timesheet</div>
-          <div class="atn-dd-item" data-panel="timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
         </div>
       </div>
+      <div class="atn-home-item atn-in-topnav" id="atn-timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
       <!-- Client Onboarding (hidden — feature paused, keep for future re-enable)
       <div class="atn-dd-wrap atn-in-topnav">
         <div class="atn-trigger atn-ob-trigger" id="atn-ob">Client Onboarding <span class="atn-arrow">▾</span></div>
@@ -5387,12 +5393,15 @@ function showPanel(id,el){
   if(id==='home'){const hn=document.getElementById('nav-home');if(hn)hn.classList.add('active');updateHomeHero();}
   // Update app top nav active state
   (function(){
-    var bizPanels=['clients','invhistory','projects','pipeline','tax','timesheet','invoice','ratecalc'];
-    var obPanels=['welcome','brief'];
+    var myBizPanels=['clients','invhistory'];
+    var projectPanels=['projects','pipeline'];
+    var financePanels=['invoice','tax','ratecalc'];
     document.querySelectorAll('.atn-home-item,.atn-trigger,.atn-dd-item').forEach(function(n){n.classList.remove('active')});
     if(id==='home'){var h=document.getElementById('atn-home');if(h)h.classList.add('active');}
-    else if(bizPanels.indexOf(id)!==-1){var t=document.querySelector('.atn-biz-trigger');if(t)t.classList.add('active');var d=document.querySelector('.atn-dd-item[data-panel="'+id+'"]');if(d)d.classList.add('active');}
-    else if(obPanels.indexOf(id)!==-1){var t2=document.querySelector('.atn-ob-trigger');if(t2)t2.classList.add('active');var d2=document.querySelector('.atn-dd-item[data-panel="'+id+'"]');if(d2)d2.classList.add('active');}
+    else if(id==='timesheet'){var ts=document.getElementById('atn-timesheet');if(ts)ts.classList.add('active');}
+    else if(myBizPanels.indexOf(id)!==-1){var t=document.querySelector('.atn-mybiz-trigger');if(t)t.classList.add('active');var d=document.querySelector('.atn-dd-item[data-panel="'+id+'"]');if(d)d.classList.add('active');}
+    else if(projectPanels.indexOf(id)!==-1){var t2=document.querySelector('.atn-projects-trigger');if(t2)t2.classList.add('active');var d2=document.querySelector('.atn-dd-item[data-panel="'+id+'"]');if(d2)d2.classList.add('active');}
+    else if(financePanels.indexOf(id)!==-1){var t3=document.querySelector('.atn-finance-trigger');if(t3)t3.classList.add('active');var d3=document.querySelector('.atn-dd-item[data-panel="'+id+'"]');if(d3)d3.classList.add('active');}
   })();
   document.documentElement.scrollTop=0;document.body.scrollTop=0;
   localStorage.setItem('fk_panel', id);
