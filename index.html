@@ -3705,7 +3705,7 @@ var RateLimiter = (function() {
         <span class="dsb-icon"></span><span class="dsb-label">Rate Calculator</span>
       </div>
 
-      <div class="dsb-section">Time</div>
+      <div class="dsb-section">Timesheet</div>
       <div class="dsb-item" onclick="showPanel('timesheet',this)" id="nav-timesheet">
         <span class="dsb-icon"></span><span class="dsb-label">Timesheet</span>
       </div>
@@ -13642,9 +13642,9 @@ function _ptContractDocHTML() {
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-img-area" id="sig-img-area-contract-client"></div>' +
-        '<div class="sig-meta">' +
+        '<div class="sig-meta" style="flex-direction:column;align-items:flex-start;gap:6px">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span>Date:</span>' +
+          '<span style="display:flex;align-items:center;gap:6px;width:100%"><span class="sig-field-lbl">Date:</span><span style="flex:1;border-bottom:1.5px solid var(--border);height:1px;display:inline-block"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -13680,9 +13680,9 @@ function _ptScopeDocHTML() {
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-img-area" id="sig-img-area-scope-client"></div>' +
-        '<div class="sig-meta">' +
+        '<div class="sig-meta" style="flex-direction:column;align-items:flex-start;gap:6px">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span>Date:</span>' +
+          '<span style="display:flex;align-items:center;gap:6px;width:100%"><span class="sig-field-lbl">Date:</span><span style="flex:1;border-bottom:1.5px solid var(--border);height:1px;display:inline-block"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
