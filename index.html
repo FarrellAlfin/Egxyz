@@ -767,6 +767,10 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .sig-date-field{border:1.5px dashed var(--amber);background:#fffbea;padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:90px;transition:border-color .15s,background .15s}
 .sig-date-field:focus{outline:none;border-color:var(--amber-mid);background:#fef3c7}
 .sig-date-field:empty::before{content:'Click to add date';color:var(--amber);opacity:.7;font-style:italic}
+.sig-name-field{border:1.5px dashed var(--border);background:var(--surface);padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:110px;transition:border-color .15s,background .15s}
+.sig-name-field:focus{outline:none;border-color:var(--ink);background:var(--white)}
+.sig-name-field:empty::before{content:'Full name';color:var(--ink-light);opacity:.6;font-style:italic}
+.sig-field-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light)}
 .sig-actions-row{display:flex;gap:6px;margin-top:12px}
 .sig-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--cream);color:var(--ink);cursor:pointer;font-family:var(--font-body);transition:all .15s;white-space:nowrap}
 .sig-btn:hover{border-color:var(--ink)}
@@ -3574,6 +3578,7 @@ var RateLimiter = (function() {
           <div class="atn-dd-item" data-panel="ratecalc" onclick="showPanel('ratecalc',null)">Rate Calculator</div>
         </div>
       </div>
+      <!-- Client Onboarding (hidden — feature paused, keep for future re-enable)
       <div class="atn-dd-wrap atn-in-topnav">
         <div class="atn-trigger atn-ob-trigger" id="atn-ob">Client Onboarding <span class="atn-arrow">▾</span></div>
         <div class="atn-dropdown">
@@ -3581,6 +3586,7 @@ var RateLimiter = (function() {
           <div class="atn-dd-item" data-panel="brief" onclick="showPanel('brief',null)">Project Brief Form</div>
         </div>
       </div>
+      -->
     </div>
     <div class="nav-actions">
       <!-- Live Timer button -->
@@ -3680,26 +3686,31 @@ var RateLimiter = (function() {
         <span class="dsb-icon"></span><span class="dsb-label">Financial Overview</span>
       </div>
 
-      <div class="dsb-section">Business Operations</div>
+      <div class="dsb-section">Projects</div>
       <div class="dsb-item" onclick="showPanel('projects',this)" id="nav-projects">
         <span class="dsb-icon"></span><span class="dsb-label">Project Tracker</span>
       </div>
       <div class="dsb-item" onclick="showPanel('pipeline',this)" id="nav-pipeline">
         <span class="dsb-icon"></span><span class="dsb-label">Pipeline Tracker</span>
       </div>
-      <div class="dsb-item" onclick="showPanel('tax',this)" id="nav-tax">
-        <span class="dsb-icon"></span><span class="dsb-label">Tax Tracker</span>
-      </div>
-      <div class="dsb-item" onclick="showPanel('timesheet',this)" id="nav-timesheet">
-        <span class="dsb-icon"></span><span class="dsb-label">Timesheet</span>
-      </div>
+
+      <div class="dsb-section">Finance</div>
       <div class="dsb-item" onclick="showPanel('invoice',this)" id="nav-invoice">
         <span class="dsb-icon"></span><span class="dsb-label">Invoice Builder</span>
+      </div>
+      <div class="dsb-item" onclick="showPanel('tax',this)" id="nav-tax">
+        <span class="dsb-icon"></span><span class="dsb-label">Tax Tracker</span>
       </div>
       <div class="dsb-item" onclick="showPanel('ratecalc',this)" id="nav-ratecalc">
         <span class="dsb-icon"></span><span class="dsb-label">Rate Calculator</span>
       </div>
 
+      <div class="dsb-section">Time</div>
+      <div class="dsb-item" onclick="showPanel('timesheet',this)" id="nav-timesheet">
+        <span class="dsb-icon"></span><span class="dsb-label">Timesheet</span>
+      </div>
+
+      <!-- Client Onboarding (hidden — feature paused, keep for future re-enable)
       <div class="dsb-section">Client Onboarding</div>
       <div class="dsb-item" onclick="showPanel('welcome',this)" id="nav-welcome">
         <span class="dsb-icon"></span><span class="dsb-label">Welcome Packet</span>
@@ -3707,6 +3718,7 @@ var RateLimiter = (function() {
       <div class="dsb-item" onclick="showPanel('brief',this)" id="nav-brief">
         <span class="dsb-icon"></span><span class="dsb-label">Project Brief Form</span>
       </div>
+      -->
 
       </div><!-- end dsb-scroll-area -->
       <button class="sb-toggle" onclick="toggleSidebar()" title="Collapse sidebar">
@@ -13557,8 +13569,8 @@ function ptToggleDocEdit(prefix) {
   body.querySelectorAll('.sig-box').forEach(function(el) {
     el.contentEditable = 'false';
   });
-  // But re-enable date fields within sig boxes so user can type dates
-  body.querySelectorAll('.sig-box .sig-date-field').forEach(function(el) {
+  // But re-enable date and name fields within sig boxes so user can type them
+  body.querySelectorAll('.sig-box .sig-date-field, .sig-box .sig-name-field').forEach(function(el) {
     el.contentEditable = on ? 'true' : 'false';
   });
   // Always keep signature action rows non-editable so buttons remain clickable
@@ -13618,11 +13630,10 @@ function _ptContractDocHTML() {
   var sigBlock =
     '<div class="sig-grid">' +
       '<div class="sig-box">' +
-        '<div class="sig-box-lbl">Freelancer</div>' +
         '<div class="sig-img-area" id="sig-img-area-contract-freelancer"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-contract-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
-          '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
+          '<span>Date: <span class="sig-date-field" contenteditable="true"></span></span>' +
         '</div>' +
         '<div class="sig-actions-row" contenteditable="false">' +
           '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\',\'contract\')">Sign</button>' +
@@ -13630,10 +13641,10 @@ function _ptContractDocHTML() {
         '</div>' +
       '</div>' +
       '<div class="sig-box">' +
-        '<div class="sig-box-lbl">Client</div>' +
-        '<div class="sig-img-area" id="sig-img-area-contract-client" style="min-height:30px"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-contract-client"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-contract-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
+          '<span>Date:</span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -13657,11 +13668,10 @@ function _ptScopeDocHTML() {
   var sigBlock =
     '<div class="sig-grid">' +
       '<div class="sig-box">' +
-        '<div class="sig-box-lbl">Freelancer</div>' +
         '<div class="sig-img-area" id="sig-img-area-scope-freelancer"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-scope-freelancer" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
-          '<span>Date: <span class="sig-date-field" contenteditable="true">[DATE]</span></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
+          '<span>Date: <span class="sig-date-field" contenteditable="true"></span></span>' +
         '</div>' +
         '<div class="sig-actions-row" contenteditable="false">' +
           '<button class="sig-btn sig-btn-primary" onclick="openSigModal(\'freelancer\',\'scope\')">Sign</button>' +
@@ -13669,10 +13679,10 @@ function _ptScopeDocHTML() {
         '</div>' +
       '</div>' +
       '<div class="sig-box">' +
-        '<div class="sig-box-lbl">Client</div>' +
-        '<div class="sig-img-area" id="sig-img-area-scope-client" style="min-height:30px"></div>' +
+        '<div class="sig-img-area" id="sig-img-area-scope-client"></div>' +
         '<div class="sig-meta">' +
-          '<span id="sig-printed-scope-client" style="font-size:12px;color:var(--ink-mid);font-family:var(--font-body);font-style:italic"></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
+          '<span>Date:</span>' +
         '</div>' +
       '</div>' +
     '</div>';
