@@ -665,6 +665,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .atn-dd-item{padding:11px 16px;font-size:15px;color:var(--ink-mid);cursor:pointer;border-radius:8px;font-family:var(--font-display);transition:background .12s,color .12s;white-space:nowrap}
 .atn-dd-item:hover{background:var(--surface-container);color:var(--ink)}
 .atn-dd-item.active{background:var(--surface-container);color:var(--ink);font-weight:600}
+.atn-dd-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--on-surface-light);padding:8px 16px 3px;margin-top:4px;font-family:var(--font-display)}
+.atn-dd-section:first-child{margin-top:0}
 @media(max-width:768px){.atn-in-topnav{display:none!important}}
 
 /* Main area */
@@ -3568,14 +3570,18 @@ var RateLimiter = (function() {
       <div class="atn-dd-wrap atn-in-topnav">
         <div class="atn-trigger atn-biz-trigger" id="atn-biz">Business Operations <span class="atn-arrow">▾</span></div>
         <div class="atn-dropdown">
+          <div class="atn-dd-section">My Business</div>
           <div class="atn-dd-item" data-panel="clients" onclick="showPanel('clients',null)">Client Contacts</div>
           <div class="atn-dd-item" data-panel="invhistory" onclick="showPanel('invhistory',null)">Financial Overview</div>
+          <div class="atn-dd-section">Projects</div>
           <div class="atn-dd-item" data-panel="projects" onclick="showPanel('projects',null)">Project Tracker</div>
           <div class="atn-dd-item" data-panel="pipeline" onclick="showPanel('pipeline',null)">Pipeline Tracker</div>
-          <div class="atn-dd-item" data-panel="tax" onclick="showPanel('tax',null)">Tax Tracker</div>
-          <div class="atn-dd-item" data-panel="timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
+          <div class="atn-dd-section">Finance</div>
           <div class="atn-dd-item" data-panel="invoice" onclick="showPanel('invoice',null)">Invoice Builder</div>
+          <div class="atn-dd-item" data-panel="tax" onclick="showPanel('tax',null)">Tax Tracker</div>
           <div class="atn-dd-item" data-panel="ratecalc" onclick="showPanel('ratecalc',null)">Rate Calculator</div>
+          <div class="atn-dd-section">Timesheet</div>
+          <div class="atn-dd-item" data-panel="timesheet" onclick="showPanel('timesheet',null)">Timesheet</div>
         </div>
       </div>
       <!-- Client Onboarding (hidden — feature paused, keep for future re-enable)
@@ -13642,9 +13648,9 @@ function _ptContractDocHTML() {
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-img-area" id="sig-img-area-contract-client"></div>' +
-        '<div class="sig-meta" style="flex-direction:column;align-items:flex-start;gap:6px">' +
+        '<div class="sig-meta">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span style="display:flex;align-items:center;gap:6px;width:100%"><span class="sig-field-lbl">Date:</span><span style="flex:1;border-bottom:1.5px solid var(--border);height:1px;display:inline-block"></span></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Date:</span><span style="display:inline-block;width:80px;border-bottom:1.5px solid var(--border)"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -13680,9 +13686,9 @@ function _ptScopeDocHTML() {
       '</div>' +
       '<div class="sig-box">' +
         '<div class="sig-img-area" id="sig-img-area-scope-client"></div>' +
-        '<div class="sig-meta" style="flex-direction:column;align-items:flex-start;gap:6px">' +
+        '<div class="sig-meta">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span style="display:flex;align-items:center;gap:6px;width:100%"><span class="sig-field-lbl">Date:</span><span style="flex:1;border-bottom:1.5px solid var(--border);height:1px;display:inline-block"></span></span>' +
+          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Date:</span><span style="display:inline-block;width:80px;border-bottom:1.5px solid var(--border)"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
