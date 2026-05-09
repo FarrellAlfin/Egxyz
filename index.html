@@ -2569,6 +2569,19 @@ input[type=number]{-moz-appearance:textfield}
 .welcome-hint{text-align:center;font-size:12px;color:var(--ink-light)}
 .welcome-hint kbd{display:inline-flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;padding:1px 6px;font-size:11px;font-family:var(--font-mono);color:var(--ink-mid)}
 .welcome-error{font-size:12px;color:var(--red);min-height:18px;margin-bottom:4px}
+.wl-goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.wl-goal-opt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:1.5px solid var(--outline-variant);border-radius:10px;background:var(--surface-white);cursor:pointer;transition:all .15s;font-family:var(--font-body);text-align:center;width:100%}
+.wl-goal-opt:hover{border-color:var(--on-surface);background:var(--surface)}
+.wl-goal-opt.selected{border-color:var(--primary);background:rgba(0,160,110,0.06)}
+.wl-goal-icon{font-size:22px;line-height:1}
+.wl-goal-label{font-size:11px;font-weight:600;color:var(--ink);line-height:1.35}
+/* Shared panel empty states */
+.panel-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;min-height:300px}
+.panel-empty-icon{font-size:48px;margin-bottom:16px;line-height:1;opacity:.8}
+.panel-empty-title{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--ink);margin-bottom:8px;letter-spacing:-.02em}
+.panel-empty-desc{font-size:13px;color:var(--ink-mid);line-height:1.65;max-width:320px;margin-bottom:24px}
+.panel-empty-cta{padding:11px 24px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.panel-empty-cta:hover{background:var(--ink-mid)}
 
 /* ── PAYMENT METHODS POPUP ── */
 .pm-popup-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:2100;align-items:center;justify-content:center}
@@ -5235,6 +5248,14 @@ function showLanding(){
 }
 
 // ─── WELCOME PAGE ─────────────────────────────────────────────────────────────
+var _wlGoal = '';
+
+function setWlGoal(goal, btn) {
+  _wlGoal = (_wlGoal === goal) ? '' : goal; // toggle off if clicked again
+  document.querySelectorAll('.wl-goal-opt').forEach(function(b){ b.classList.remove('selected'); });
+  if (_wlGoal) btn.classList.add('selected');
+}
+
 function showWelcomePage() {
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   var wp = document.getElementById('page-welcome');
@@ -5244,11 +5265,10 @@ function showWelcomePage() {
 }
 
 async function saveWelcomePage() {
-  var first    = ((document.getElementById('wl-firstname')  || {}).value || '').trim();
-  var middle   = ((document.getElementById('wl-middlename') || {}).value || '').trim();
-  var last     = ((document.getElementById('wl-lastname')   || {}).value || '').trim();
-  var nickname = ((document.getElementById('wl-nickname')   || {}).value || '').trim();
-  var fullname = [first, middle, last].filter(Boolean).join(' ');
+  var first    = ((document.getElementById('wl-firstname') || {}).value || '').trim();
+  var last     = ((document.getElementById('wl-lastname')  || {}).value || '').trim();
+  var nickname = ((document.getElementById('wl-nickname')  || {}).value || '').trim();
+  var fullname = [first, last].filter(Boolean).join(' ');
   var errEl    = document.getElementById('wl-error');
   if (!first) {
     if (errEl) { errEl.textContent = 'Please enter your first name to continue.'; }
@@ -5263,7 +5283,7 @@ async function saveWelcomePage() {
   }
   // Pre-populate My Details fields immediately
   var set = function(id,v){ var e=document.getElementById(id); if(e) e.value=v||''; };
-  set('my-firstname', first); set('my-middlename', middle); set('my-lastname', last);
+  set('my-firstname', first); set('my-lastname', last);
   if (_currentUser) {
     try {
       await _supabase.from('user_settings').upsert({
@@ -5274,7 +5294,7 @@ async function saveWelcomePage() {
         full_name: fullname
       });
       // welcome_done persists cross-device so existing users never see welcome again
-      await _supabase.auth.updateUser({ data: { full_name: fullname, nickname: nickname || null, welcome_done: true } });
+      await _supabase.auth.updateUser({ data: { full_name: fullname, nickname: nickname || null, welcome_done: true, onboarding_goal: _wlGoal || null } });
     } catch(e) { console.warn('saveWelcomePage:', e); }
   }
   // Update profile display immediately with the entered name
@@ -5288,11 +5308,16 @@ async function saveWelcomePage() {
   if (_hnEl0b) _hnEl0b.textContent = (nickname || fullname || first) + '!';
   // Pre-fill my-nickname field in My Details
   set('my-nickname', nickname);
-  // Navigate to get-started panel
+  // Route to goal panel, or Get Started checklist if no goal selected
   showDash();
   setTimeout(function() {
-    showPanel('getstarted');
-    renderGetStarted();
+    var goal = _wlGoal;
+    if (goal === 'invoice' || goal === 'projects' || goal === 'ratecalc') {
+      showPanel(goal);
+    } else {
+      showPanel('getstarted');
+      renderGetStarted();
+    }
   }, 100);
 }
 
@@ -6477,6 +6502,15 @@ let pfClients=[];
 let pfNextId=8,pfDragId=null;
 function renderPipeline(){
   const board=document.getElementById('pf-kanban');if(!board)return;
+  if(!pfClients.length){
+    board.innerHTML='<div class="panel-empty" style="width:100%">'+
+      '<div class="panel-empty-icon">📈</div>'+
+      '<div class="panel-empty-title">Your pipeline is empty.</div>'+
+      '<div class="panel-empty-desc">Add your first prospect and start forecasting next month\'s income. See the dry month before it hits.</div>'+
+      '<button class="panel-empty-cta" onclick="openPipelineModal(0)">+ Add first lead</button>'+
+      '</div>';
+    return;
+  }
   board.innerHTML=pfStages.map((s,si)=>{
     const cards=pfClients.filter(c=>c.stage===si);
     return `<div class="kc" data-stage="${si}" ondragover="pfColDragOver(event,this)" ondragleave="pfDragLeave(event,this)" ondrop="pfColDrop(event,${si},this)">
@@ -8125,7 +8159,9 @@ function renderInvBuilderProjects() {
     });
   }
   if (!projects.length) {
-    el.innerHTML = '<div class="inv-list-empty" style="margin-top:12px">' + (q ? 'No projects match your search.' : 'No projects yet. Create one in the Project Tracker first, then come back to invoice it.') + '</div>';
+    el.innerHTML = q
+      ? '<div class="inv-list-empty" style="margin-top:12px">No projects match your search.</div>'
+      : '<div class="panel-empty" style="min-height:220px"><div class="panel-empty-icon">📄</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create a project first, then come back to build your first invoice from it — client, rates, and billing phases all pre-filled.</div><button class="panel-empty-cta" onclick="showPanel(\'projects\')">Go to Project Tracker →</button></div>';
     return;
   }
   el.innerHTML = projects.map(function(p) {
@@ -10378,10 +10414,10 @@ function calDeleteFromModal() {
 
 // ─── STARTER CHECKLIST ───────────────────────────────────────────────────────
 var _CHECKLIST_ITEMS = [
-  { id: 'profile',  label: 'Set up your profile',      panel: 'mydetails'  },
-  { id: 'project',  label: 'Create your first project', panel: 'projects'   },
-  { id: 'client',   label: 'Add a client',              panel: 'clients'    },
-  { id: 'invoice',  label: 'Build an invoice',          panel: 'invoice'    }
+  { id: 'profile',  label: 'Set up your profile',      panel: 'mydetails' },
+  { id: 'project',  label: 'Create your first project', panel: 'projects'  },
+  { id: 'invoice',  label: 'Build your first invoice',  panel: 'invoice'   },
+  { id: 'pipeline', label: 'Add a pipeline lead',       panel: 'pipeline'  }
 ];
 
 function _checklistKey() {
@@ -10406,10 +10442,10 @@ function _autoCheckChecklist() {
   // Profile: only mark done when user explicitly saves My Details (via saveMyDetails)
   // Project: check _ptProjects
   if (!state.project && _ptProjects && _ptProjects.length) state.project = true;
-  // Client: check _clients
-  if (!state.client && typeof _clients !== 'undefined' && _clients && _clients.length) state.client = true;
   // Invoice: check _invoices
   if (!state.invoice && _invoices && _invoices.length) state.invoice = true;
+  // Pipeline: check pfClients
+  if (!state.pipeline && typeof pfClients !== 'undefined' && pfClients && pfClients.length) state.pipeline = true;
   _saveChecklist(state);
   return state;
 }
@@ -10458,10 +10494,10 @@ function _handleChecklistClick(itemId, panel) {
 
 // ─── GET STARTED FULL-PAGE PANEL ──────────────────────────────────────────────
 var _GS_ITEMS = [
-  { id: 'profile',  label: 'Set up your profile',      time: '30 sec', desc: 'Name, nickname, business. The basics.',             panel: 'mydetails' },
-  { id: 'client',   label: 'Add your first client',     time: '1 min',  desc: 'Drop in a name and an email — that\'s it.',          panel: 'clients'   },
-  { id: 'project',  label: 'Create your first project', time: '2 min',  desc: 'Title, scope, a couple of milestones — done.',       panel: 'projects'  },
-  { id: 'invoice',  label: 'Build an invoice',           time: '3 min',  desc: 'Pick a project and create your first invoice.',     panel: 'invoice'   }
+  { id: 'profile',  label: 'Set up your profile',       time: '30 sec', desc: 'Name, nickname, business details. Your kit, your name on the door.',  panel: 'mydetails' },
+  { id: 'project',  label: 'Create your first project', time: '2 min',  desc: 'Title, scope, milestones — everything connected to your first client.', panel: 'projects'  },
+  { id: 'invoice',  label: 'Build your first invoice',  time: '3 min',  desc: 'Pick a project, add line items, and get a professional invoice ready.', panel: 'invoice'   },
+  { id: 'pipeline', label: 'Add a pipeline lead',       time: '1 min',  desc: 'Drop in a prospect and start forecasting next month\'s income.',        panel: 'pipeline'  }
 ];
 
 function renderGetStarted() {
@@ -11480,7 +11516,7 @@ function renderPtBoard() {
   if (!el) return;
   var projects = _ptProjects || [];
   if (!projects.length) {
-    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
     return;
   }
   var cols = [
@@ -11523,7 +11559,7 @@ function renderPtGallery() {
   if (!el) return;
   var projects = _ptSortedProjects(true);
   if (!projects.length) {
-    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
     return;
   }
   var banners = [
@@ -11598,7 +11634,7 @@ function renderPtListTable() {
   if (!el) return;
   var projects = _ptSortedProjects(true);
   if (!projects.length) {
-    el.innerHTML = '<div class="pt-empty"><div class="pt-empty-icon">🗂️</div><p>No projects yet.<br>Click <strong>+ New project</strong> to start.</p></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
     return;
   }
   var today = new Date(); today.setHours(0,0,0,0);
@@ -13160,7 +13196,7 @@ function renderGlobalTimesheet(entries) {
   if (!body) return;
   if (!entries.length) {
     if (summaryEl) summaryEl.innerHTML = '';
-    body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ink-light);font-size:13px">No time logged yet. Open a project and log time from the Hours tab.</div>';
+    body.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">⏱️</div><div class="panel-empty-title">No hours logged yet.</div><div class="panel-empty-desc">Open any project, go to the Hours tab, and log your first entry. Your utilisation and heatmap will appear here automatically.</div><button class="panel-empty-cta" onclick="showPanel(\'projects\')">Go to Project Tracker →</button></div>';
     return;
   }
 
@@ -15485,30 +15521,45 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     </div>
     <span class="welcome-emoji">👋</span>
     <div class="welcome-title">Let's get you <em>set up.</em></div>
-    <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. We just need a name to put on the door before we hand you the keys.</p>
+    <p class="welcome-sub">Welcome to FreelanceKit — your new business HQ. Takes 30 seconds.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
       <div class="wf-group" style="margin-bottom:0">
         <div class="wf-label">First name <span style="color:var(--red)">*</span></div>
         <input class="wf-input" id="wl-firstname" type="text" placeholder="Alex" autocomplete="given-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
-      </div>
-      <div class="wf-group" style="margin-bottom:0">
-        <div class="wf-label">Middle name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
-        <input class="wf-input" id="wl-middlename" type="text" placeholder="Jordan" autocomplete="additional-name" onkeydown="if(event.key==='Enter')saveWelcomePage()">
       </div>
       <div class="wf-group" style="margin-bottom:0">
         <div class="wf-label">Last name <span style="font-weight:400;font-size:11px;color:var(--ink-light)">optional</span></div>
         <input class="wf-input" id="wl-lastname" type="text" placeholder="Chen" autocomplete="family-name" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
       </div>
     </div>
+
     <div class="wf-group">
       <div class="wf-label">What should we call you? <span>optional</span></div>
       <input class="wf-input" id="wl-nickname" type="text" placeholder="e.g. Alex, A.C., Boss" autocomplete="nickname" oninput="updateWelcomePreview()" onkeydown="if(event.key==='Enter')saveWelcomePage()">
       <div class="welcome-preview" id="wl-preview">We'll greet you with — <strong>"Hello, friend"</strong></div>
     </div>
 
+    <div class="wf-group" style="margin-bottom:20px">
+      <div class="wf-label">What's your main goal right now? <span>optional</span></div>
+      <div class="wl-goal-grid" id="wl-goal-grid">
+        <button class="wl-goal-opt" type="button" onclick="setWlGoal('invoice',this)">
+          <span class="wl-goal-icon">📄</span>
+          <span class="wl-goal-label">Send invoices & get paid</span>
+        </button>
+        <button class="wl-goal-opt" type="button" onclick="setWlGoal('projects',this)">
+          <span class="wl-goal-icon">🗂️</span>
+          <span class="wl-goal-label">Track client projects</span>
+        </button>
+        <button class="wl-goal-opt" type="button" onclick="setWlGoal('ratecalc',this)">
+          <span class="wl-goal-icon">💰</span>
+          <span class="wl-goal-label">Know my numbers</span>
+        </button>
+      </div>
+    </div>
+
     <div class="welcome-error" id="wl-error"></div>
-    <button class="welcome-cta" onclick="saveWelcomePage()">Take me in</button>
+    <button class="welcome-cta" onclick="saveWelcomePage()">Let's go →</button>
   </div>
 </div>
 
