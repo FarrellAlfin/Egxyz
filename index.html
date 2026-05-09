@@ -6942,6 +6942,7 @@ function _handleUserSwitch(newUserId) {
     _homeProjectTasks = [];
     _homeProjectTasksDone = [];
     _ptProjects = [];
+    pfClients = [];
   }
   try { localStorage.setItem('fk_session_uid', newUserId); } catch(e) {}
 }
@@ -10916,6 +10917,8 @@ function updateGoalBar() {
 async function loadPipelineCards() {
   if (!_currentUser) return;
   var res = await _supabase.from('pipeline_cards').select('*').eq('user_id', _currentUser.id).order('created_at');
+  // Always reset — even an empty result must clear any previously loaded user's cards
+  pfClients = [];
   if (res.data && res.data.length) {
     pfClients = res.data.map(function(r) {
       var cd = r.close_date || '';
@@ -11182,6 +11185,7 @@ function _clearUserState() {
   _invoices = [];
   _homeProjectTasks = [];
   _homeProjectTasksDone = [];
+  pfClients = [];
 
   // Reset payment state so prior user's methods never bleed into next user
   _pmState = { methods: [], preferred: '', details: {}, applyToFuture: false };
