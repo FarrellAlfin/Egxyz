@@ -11516,7 +11516,7 @@ function renderPtBoard() {
   if (!el) return;
   var projects = _ptProjects || [];
   if (!projects.length) {
-    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal(\'new-project\')">+ New project</button></div>';
     return;
   }
   var cols = [
@@ -11559,7 +11559,7 @@ function renderPtGallery() {
   if (!el) return;
   var projects = _ptSortedProjects(true);
   if (!projects.length) {
-    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal(\'new-project\')">+ New project</button></div>';
     return;
   }
   var banners = [
@@ -11634,7 +11634,7 @@ function renderPtListTable() {
   if (!el) return;
   var projects = _ptSortedProjects(true);
   if (!projects.length) {
-    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal('new-project')">+ New project</button></div>';
+    el.innerHTML = '<div class="panel-empty"><div class="panel-empty-icon">🗂️</div><div class="panel-empty-title">No projects yet.</div><div class="panel-empty-desc">Create your first project to start tracking tasks, milestones, time, and billing — all in one place.</div><button class="panel-empty-cta" onclick="openPtModal(\'new-project\')">+ New project</button></div>';
     return;
   }
   var today = new Date(); today.setHours(0,0,0,0);
