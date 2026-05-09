@@ -625,6 +625,37 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .ap-avs{display:flex}
 .ap-av{width:30px;height:30px;border-radius:50%;border:2px solid var(--primary-container);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-right:-8px}
 .ap-av-text{font-size:12px;color:var(--on-primary-container)}
+
+/* ── Paywall modal ────────────────────────────────────────────── */
+.pw-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(25,28,30,0.55);z-index:600;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:pwFadeIn .15s ease}
+@keyframes pwFadeIn{from{opacity:0}to{opacity:1}}
+.pw-card{background:var(--white);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.18);max-width:400px;width:calc(100% - 40px);padding:36px 32px;position:relative;animation:pwSlideUp .2s cubic-bezier(.22,1,.36,1)}
+@keyframes pwSlideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pw-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:20px;padding:4px 8px;line-height:1;border-radius:6px;transition:all .15s}
+.pw-close:hover{background:var(--surface);color:var(--ink)}
+.pw-icon{font-size:40px;margin-bottom:14px;line-height:1}
+.pw-badge{display:inline-flex;align-items:center;gap:5px;background:var(--amber-light);color:var(--amber);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.pw-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px;line-height:1.15;letter-spacing:-.02em}
+.pw-tagline{font-size:14px;color:var(--ink-mid);margin-bottom:20px;line-height:1.5}
+.pw-bullets{list-style:none;margin-bottom:20px;padding:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.pw-bullets li{font-size:13px;color:var(--ink-mid);padding:10px 14px;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border)}
+.pw-bullets li:last-child{border:none}
+.pw-bullets li::before{content:'✓';color:var(--tertiary);font-weight:700;flex-shrink:0;margin-top:1px}
+.pw-price{font-size:12px;color:var(--ink-light);text-align:center;margin-bottom:16px}
+.pw-price strong{color:var(--ink);font-weight:700}
+.pw-cta{width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:10px;display:block}
+.pw-cta:hover{background:var(--ink-mid)}
+.pw-dismiss{width:100%;background:none;border:none;color:var(--ink-light);font-size:13px;cursor:pointer;padding:6px;transition:color .15s;display:block}
+.pw-dismiss:hover{color:var(--ink)}
+/* Free-plan dashboard banner */
+.pw-banner{background:var(--amber-light);border:1.5px solid rgba(200,98,26,0.2);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.pw-banner-text{flex:1;font-size:13px;color:var(--ink-mid);line-height:1.5}
+.pw-banner-text strong{color:var(--ink);display:block;margin-bottom:2px}
+.pw-banner-cta{padding:8px 16px;background:var(--amber);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s;font-family:var(--font-body)}
+.pw-banner-cta:hover{opacity:.85}
+.pw-banner-dismiss{background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:17px;padding:2px 4px;line-height:1;margin-left:4px}
+/* Lock chips on top nav items */
+.atn-lock{font-size:9px;vertical-align:middle;margin-left:4px;opacity:0.5}
 @media(max-width:768px){
   .auth-body{grid-template-columns:1fr}
   .auth-panel-col{display:none}
@@ -5406,7 +5437,7 @@ function initLandingAnimations(){
 function showPanel(id,el){
   // ── Plan gating: free users can only access FREE_PANELS ──────────
   if (_userPlan !== 'pro' && FREE_PANELS.indexOf(id) === -1) {
-    _showUpgradeOverlay();
+    _showUpgradeOverlay(id);
     return;
   }
   document.querySelectorAll('.tmpl-panel').forEach(p=>p.classList.remove('active'));
@@ -5457,59 +5488,146 @@ function showPanel(id,el){
   if(typeof _trackRecentPanel==='function') _trackRecentPanel(id);
 }
 
+// ── Paywall feature data ───────────────────────────────────────────────────
+var PAYWALL_FEATURES = {
+  invoice:   { icon:'📄', title:'Invoice Builder', tagline:'Get paid faster — every time.', bullets:['Professional invoices in minutes','Aging reports: paid, pending, overdue','Create invoices directly from a project'] },
+  tax:       { icon:'🧮', title:'Tax Tracker', tagline:'Stop letting tax season sneak up on you.', bullets:['Estimate quarterly tax from your logged income','Know what you owe before it\'s due','Stop guessing — start budgeting for tax'] },
+  ratecalc:  { icon:'💰', title:'Rate Calculator', tagline:'Stop undercharging.', bullets:['Calculate your floor rate from your take-home target','Accounts for tax, expenses, and slow months','Know the minimum hourly rate you can charge'] },
+  pipeline:  { icon:'📈', title:'Pipeline Tracker', tagline:'See the dry month before it hits.', bullets:['Kanban board for active prospects','Weighted revenue forecast — see gaps early','Close probability tracking per deal'] },
+  timesheet: { icon:'⏱️', title:'Timesheet', tagline:'Know where every billable hour goes.', bullets:['Log hours against projects and tasks','16-week activity heatmap','Track utilisation vs. your weekly target'] },
+  projects:  { icon:'🗂️', title:'Project Tracker', tagline:'Every project end-to-end.', bullets:['Tasks, Gantt chart, milestones, time logs','Billing phases linked directly to invoices','Invite clients and collaborators per project'] },
+};
+
 // Show an upgrade prompt overlay for free-plan users hitting locked panels
-function _showUpgradeOverlay() {
-  var ov = document.getElementById('upgrade-overlay');
-  if (!ov) {
-    ov = document.createElement('div');
-    ov.id = 'upgrade-overlay';
-    ov.style.cssText = [
-      'position:fixed;top:0;left:0;right:0;bottom:0',
-      'background:rgba(250,247,242,0.96)',
-      'z-index:600',
-      'display:flex;align-items:center;justify-content:center'
-    ].join(';');
-    ov.innerHTML = [
-      '<div style="text-align:center;max-width:420px;padding:48px 32px;background:#fff;',
-        'border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.10);">',
-        '<div style="font-size:48px;margin-bottom:16px">🔒</div>',
-        '<h2 style="font-size:22px;font-weight:700;margin-bottom:10px;color:var(--ink)">Pro Feature</h2>',
-        '<p style="color:var(--ink-mid);font-size:14px;line-height:1.6;margin-bottom:28px">',
-          'This tool is available on the <strong>Pro plan</strong>.<br>',
-          'Upgrade to unlock all templates, the invoice builder, rate calculator, tax tracker, pipeline, and more.',
-        '</p>',
-        '<button onclick="document.getElementById(\'upgrade-overlay\').style.display=\'none\';showAuth(\'signup\',\'pro\')" ',
-          'style="background:var(--amber);color:#fff;border:none;padding:13px 32px;',
-          'border-radius:8px;font-weight:700;cursor:pointer;font-size:15px;width:100%;margin-bottom:10px">',
-          'Upgrade to Pro →',
-        '</button>',
-        '<button onclick="document.getElementById(\'upgrade-overlay\').style.display=\'none\'" ',
-          'style="background:none;border:none;color:var(--ink-mid);cursor:pointer;font-size:13px">',
-          'Go back',
-        '</button>',
-      '</div>'
-    ].join('');
-    document.body.appendChild(ov);
-  }
-  ov.style.display = 'flex';
+function _showUpgradeOverlay(panelId) {
+  // Remove any stale overlay
+  var old = document.getElementById('pw-overlay');
+  if (old) old.remove();
+
+  var feat = PAYWALL_FEATURES[panelId] || { icon:'🔒', title:'Pro Feature', tagline:'Unlock the full FreelanceKit.', bullets:['Invoice builder + aging reports','Rate calculator & tax tracker','Pipeline + timesheet'] };
+
+  var ov = document.createElement('div');
+  ov.id = 'pw-overlay';
+  ov.className = 'pw-overlay';
+  ov.setAttribute('role','dialog');
+  ov.setAttribute('aria-modal','true');
+  ov.innerHTML = [
+    '<div class="pw-card">',
+      '<button class="pw-close" onclick="closePaywall()" aria-label="Close">&#215;</button>',
+      '<div class="pw-icon">'+feat.icon+'</div>',
+      '<div class="pw-badge">Pro only</div>',
+      '<div class="pw-title">'+feat.title+'</div>',
+      '<div class="pw-tagline">'+feat.tagline+'</div>',
+      '<ul class="pw-bullets">',
+        feat.bullets.map(function(b){ return '<li>'+b+'</li>'; }).join(''),
+      '</ul>',
+      '<div class="pw-price">Upgrade to Pro &middot; <strong>$9/month</strong> &middot; cancel anytime</div>',
+      '<button class="pw-cta" onclick="_handleUpgradeCTA()">Upgrade to Pro &rarr;</button>',
+      '<button class="pw-dismiss" onclick="closePaywall()">Maybe later</button>',
+    '</div>'
+  ].join('');
+
+  // Close on backdrop click
+  ov.addEventListener('click', function(e) { if (e.target === ov) closePaywall(); });
+  // Close on Escape
+  ov._keyHandler = function(e) { if (e.key === 'Escape') closePaywall(); };
+  document.addEventListener('keydown', ov._keyHandler);
+  document.body.appendChild(ov);
 }
 
-// Add/remove lock icons in the sidebar based on current plan
+function closePaywall() {
+  var ov = document.getElementById('pw-overlay');
+  if (ov) {
+    if (ov._keyHandler) document.removeEventListener('keydown', ov._keyHandler);
+    ov.remove();
+  }
+}
+
+function _handleUpgradeCTA() {
+  closePaywall();
+  // Show the upgrade info modal (payment integration goes here)
+  var m = document.getElementById('pw-upgrade-modal');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'pw-upgrade-modal';
+    m.className = 'pw-overlay';
+    m.innerHTML = [
+      '<div class="pw-card" style="text-align:center">',
+        '<button class="pw-close" onclick="document.getElementById(\'pw-upgrade-modal\').remove()" aria-label="Close">&#215;</button>',
+        '<div class="pw-icon">🚀</div>',
+        '<div class="pw-title">Upgrade is coming.</div>',
+        '<div class="pw-tagline" style="margin-bottom:24px">We\'re setting up billing now.<br>You\'ll get an email the moment Pro is available — no action needed.</div>',
+        '<div style="background:var(--surface);border-radius:10px;padding:16px;margin-bottom:20px;font-size:13px;color:var(--ink-mid);line-height:1.6">',
+          '<strong style="color:var(--ink);display:block;margin-bottom:4px">While you wait:</strong>',
+          'You\'re still on beta Pro — all features are unlocked. When billing goes live, beta users get first access at the lowest price.',
+        '</div>',
+        '<button class="pw-cta" onclick="document.getElementById(\'pw-upgrade-modal\').remove()">Got it &mdash; keep exploring</button>',
+      '</div>'
+    ].join('');
+    m.addEventListener('click', function(e) { if (e.target === m) m.remove(); });
+    document.body.appendChild(m);
+  } else {
+    m.style.display = 'flex';
+  }
+}
+
+// Inject a free-plan upgrade banner at the top of the Home panel
+function _injectFreeBanner() {
+  if (_userPlan === 'pro') return;
+  var home = document.getElementById('panel-home');
+  if (!home || document.getElementById('pw-home-banner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'pw-home-banner';
+  banner.className = 'pw-banner';
+  banner.innerHTML = [
+    '<span style="font-size:22px">⚡</span>',
+    '<div class="pw-banner-text">',
+      '<strong>You\'re on the Free plan</strong>',
+      'Upgrade to Pro for Invoice Builder, Rate Calculator, Tax Tracker, Pipeline, and Timesheet — $9/mo.',
+    '</div>',
+    '<button class="pw-banner-cta" onclick="_handleUpgradeCTA()">Upgrade to Pro &rarr;</button>',
+    '<button class="pw-banner-dismiss" onclick="document.getElementById(\'pw-home-banner\').remove()" aria-label="Dismiss">&times;</button>'
+  ].join('');
+  home.insertBefore(banner, home.firstChild);
+}
+
+// Add/remove lock icons in the sidebar and top nav based on current plan
 function _updateSidebarLocks() {
+  var isPro = (_userPlan === 'pro');
+
+  // Sidebar locks
   document.querySelectorAll('.dsb-item[id]').forEach(function(item) {
     var panelId = item.id.replace('nav-','');
-    var isLocked = (_userPlan !== 'pro' && FREE_PANELS.indexOf(panelId) === -1);
+    var isLocked = (!isPro && FREE_PANELS.indexOf(panelId) === -1);
     var existingLock = item.querySelector('.dsb-lock');
     if (isLocked && !existingLock) {
       var lock = document.createElement('span');
       lock.className = 'dsb-lock';
       lock.textContent = '🔒';
-      lock.style.cssText = 'font-size:11px;margin-left:auto;opacity:0.55';
+      lock.style.cssText = 'font-size:10px;margin-left:auto;opacity:0.45';
       item.appendChild(lock);
     } else if (!isLocked && existingLock) {
       existingLock.remove();
     }
   });
+
+  // Top nav locks (on each .atn-dd-item and standalone .atn-home-item with a panel id)
+  document.querySelectorAll('.atn-dd-item[data-panel],.atn-home-item[id]').forEach(function(item) {
+    var panelId = item.dataset.panel || item.id.replace('atn-','');
+    var isLocked = (!isPro && FREE_PANELS.indexOf(panelId) === -1);
+    var existingLock = item.querySelector('.atn-lock');
+    if (isLocked && !existingLock) {
+      var lock = document.createElement('span');
+      lock.className = 'atn-lock';
+      lock.textContent = '🔒';
+      item.appendChild(lock);
+    } else if (!isLocked && existingLock) {
+      existingLock.remove();
+    }
+  });
+
+  // Inject the free-plan banner on the home panel (once)
+  if (!isPro) _injectFreeBanner();
 }
 
 function copyDoc(id,btn){
