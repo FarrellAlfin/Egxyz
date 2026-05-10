@@ -809,11 +809,12 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .sig-box-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-light);margin-bottom:12px;font-family:var(--font-body)}
 .sig-img-area{min-height:60px;border-bottom:1.5px solid var(--on-surface);margin-bottom:6px;display:flex;align-items:flex-end;padding-bottom:6px}
 .sig-img-area img{max-height:56px;max-width:100%;object-fit:contain}
-.sig-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-light);font-family:var(--font-body);margin-top:4px;gap:8px}
+.sig-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-light);font-family:var(--font-body);margin-top:4px;gap:8px;flex-wrap:nowrap}
+.sig-meta>span:first-child{min-width:0;flex:1 1 auto;overflow:hidden}
 .sig-date-field{border:1.5px dashed var(--amber);background:#fffbea;padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:90px;transition:border-color .15s,background .15s}
 .sig-date-field:focus{outline:none;border-color:var(--amber-mid);background:#fef3c7}
 .sig-date-field:empty::before{content:'DD/MM/YYYY';color:var(--amber);opacity:.7;font-style:italic}
-.sig-name-field{border:1.5px dashed var(--border);background:var(--surface);padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:110px;transition:border-color .15s,background .15s}
+.sig-name-field{border:1.5px dashed var(--border);background:var(--surface);padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:80px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:border-color .15s,background .15s}
 .sig-name-field:focus{outline:none;border-color:var(--ink);background:var(--white)}
 .sig-name-field:empty::before{content:'Full name';color:var(--ink-light);opacity:.6;font-style:italic}
 .sig-field-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light)}
@@ -9327,28 +9328,56 @@ function _ptAssignColorToProject(projectId) {
   _ptSaveColorMap(map);
 }
 
-// ─── TIMER PERSISTENCE (survive page refresh while paused) ────────────────────
+// ─── TIMER PERSISTENCE (survive page refresh, running or paused) ──────────────
+// Save current timer state to localStorage (called every tick + beforeunload)
+function _saveTimerState() {
+  if (!_currentUser || _timerSeconds <= 0) return;
+  try {
+    var uid = _currentUser.id;
+    localStorage.setItem('fk_timer_paused_' + uid, JSON.stringify({
+      seconds: _timerSeconds,
+      projectId: (document.getElementById('tp-project-sel') || {}).value || '',
+      userId: uid,
+      isRunning: _timerRunning,
+      savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+// Clear the persisted state (called on successful stop/log)
+function _clearTimerState() {
+  try {
+    if (_currentUser) localStorage.removeItem('fk_timer_paused_' + _currentUser.id);
+    localStorage.removeItem('fk_timer_paused'); // clear legacy key too
+  } catch(e) {}
+}
+
+// Restore on page load — works for both running and paused timers
 function _restoreTimerState() {
   try {
-    var _uid = (_currentUser && _currentUser.id) || '';
-    var _key = _uid ? 'fk_timer_paused_' + _uid : 'fk_timer_paused';
-    var stored = JSON.parse(localStorage.getItem(_key) || localStorage.getItem('fk_timer_paused') || 'null');
+    var uid = (_currentUser && _currentUser.id) || '';
+    if (!uid) return;
+    var stored = JSON.parse(localStorage.getItem('fk_timer_paused_' + uid) || 'null');
     if (!stored || !stored.seconds || stored.seconds <= 0) return;
-    // Guard: only restore state that belongs to the current user
-    if (stored.userId && _uid && stored.userId !== _uid) return;
-    _timerSeconds = stored.seconds;
-    _timerRunning = false;
+    if (stored.userId && stored.userId !== uid) return;
+    // If the timer was running when the page closed, add elapsed time since last save
+    var extra = (stored.isRunning && stored.savedAt)
+      ? Math.floor((Date.now() - stored.savedAt) / 1000)
+      : 0;
+    _timerSeconds = stored.seconds + extra;
+    _timerRunning = false; // always restore as paused — user resumes manually
     _updateTimerUI();
-    // Mark nav pill as paused
     var navBtn = document.getElementById('nav-timer-btn');
     var mini   = document.getElementById('nav-timer-mini');
     if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
     if (mini)   { mini.textContent = _fmtTimerDisplay(_timerSeconds); mini.style.display = ''; }
-    // Remember project to re-select when the timer panel opens
     window._timerRestoredProjectId = stored.projectId || '';
-    showToast('⏸ Paused timer restored — ' + _fmtTimerDisplay(_timerSeconds));
+    showToast('⏸ Timer restored — ' + _fmtTimerDisplay(_timerSeconds));
   } catch(e) {}
 }
+
+// Save timer state when the tab/window is about to close or refresh
+window.addEventListener('beforeunload', function() { _saveTimerState(); });
 
 // ─── DESCRIPTION WORD COUNTER (200-word limit) ────────────────────────────────
 function _descWordCount(el, countId) {
@@ -9498,16 +9527,8 @@ function timerToggle() {
     if (playBtn) playBtn.innerHTML = '&#9654; Resume';
     if (status) { status.textContent = 'Paused'; status.className = 'tp-status paused'; }
     if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
-    // Persist paused state so a page refresh doesn't lose the elapsed time
-    try {
-      var _uid = (_currentUser && _currentUser.id) || '';
-      var _key = _uid ? 'fk_timer_paused_' + _uid : 'fk_timer_paused';
-      localStorage.setItem(_key, JSON.stringify({
-        seconds: _timerSeconds,
-        projectId: (sel && sel.value) || '',
-        userId: _uid
-      }));
-    } catch(e) {}
+    // Persist paused state
+    _saveTimerState();
   } else {
     // Start / Resume — require a project to be selected
     if (sel && !sel.value) {
@@ -9527,13 +9548,9 @@ function timerToggle() {
     _timerInterval = setInterval(function() {
       _timerSeconds++;
       _updateTimerUI();
+      // Persist every tick so a page refresh never loses more than ~1 second
+      _saveTimerState();
     }, 1000);
-    // Timer is running — clear any saved paused state
-    try {
-      var _uid2 = (_currentUser && _currentUser.id) || '';
-      localStorage.removeItem(_uid2 ? 'fk_timer_paused_' + _uid2 : 'fk_timer_paused');
-      localStorage.removeItem('fk_timer_paused'); // also clear legacy key
-    } catch(e) {}
     if (playBtn) playBtn.innerHTML = '&#9646;&#9646; Pause';
     if (saveBtn) { saveBtn.disabled = false; }
     if (status) { status.textContent = 'Recording...'; status.className = 'tp-status'; }
@@ -9548,11 +9565,7 @@ function timerStop() {
   _timerLoggedHours = parseFloat((_timerSeconds / 3600).toFixed(2));
   var totalSec = _timerSeconds;
   _timerSeconds = 0;
-  try {
-    var _uid3 = (_currentUser && _currentUser.id) || '';
-    localStorage.removeItem(_uid3 ? 'fk_timer_paused_' + _uid3 : 'fk_timer_paused');
-    localStorage.removeItem('fk_timer_paused');
-  } catch(e) {}
+  _clearTimerState();
   _updateTimerUI();
   var playBtn = document.getElementById('tp-play-btn');
   var saveBtn = document.getElementById('tp-save-btn');
@@ -9657,6 +9670,7 @@ async function timerLogSave() {
   if (typeof renderContribGrid === 'function') renderContribGrid();
   if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
   _timerLogSaving = false;
+  _clearTimerState(); // time is logged \u2014 no need to restore on next refresh
   closeTimerModal();
   showToast('\u2713 Time logged' + (projId ? ' to project' : ''));
 }
