@@ -2646,56 +2646,6 @@ input[type=number]{-moz-appearance:textfield}
 .assignee-trigger-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface-white);cursor:pointer;font-size:12px;font-weight:500;color:var(--ink-mid);font-family:var(--font-body);transition:border-color .15s}
 .assignee-trigger-btn:hover{border-color:var(--outline-variant);color:var(--on-surface)}
 
-/* ── GET STARTED PANEL ── */
-.gs-wrap{max-width:760px;margin:0 auto}
-.gs-heading{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--on-surface);margin-bottom:6px}
-.gs-heading em{font-style:normal;color:var(--primary)}
-.gs-sub{font-size:14px;color:var(--ink-mid);line-height:1.6;margin-bottom:24px;max-width:540px}
-.gs-progress-card{background:var(--surface-white);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px}
-.gs-prog-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.gs-prog-num{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--primary);white-space:nowrap;line-height:1}
-.gs-prog-sub{font-size:16px;font-weight:700;color:var(--on-surface)}
-.gs-prog-sub2{font-size:13px;color:var(--ink-mid)}
-.gs-prog-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
-.gs-prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease}
-.gs-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
-@media(max-width:600px){.gs-items-grid{grid-template-columns:1fr}}
-.gs-item{background:var(--surface-white);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .12s;display:flex;align-items:flex-start;gap:12px}
-.gs-item:hover{border-color:var(--primary);background:#f8fffe}
-.gs-item.done{background:var(--bg);cursor:default}
-.gs-item.done:hover{border-color:var(--border);background:var(--bg)}
-.gs-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
-.gs-item.done .gs-item-check{background:var(--primary);border-color:var(--primary);color:#fff;font-size:11px;font-weight:800}
-.gs-item-body{flex:1}
-.gs-item-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.gs-item-label{font-size:13.5px;font-weight:700;color:var(--on-surface)}
-.gs-item.done .gs-item-label{text-decoration:line-through;color:var(--ink-light)}
-.gs-item-time{font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;background:#009668;border-radius:4px;padding:2px 7px}
-.gs-item-desc{font-size:12px;color:var(--ink-mid);line-height:1.5}
-.gs-item.done .gs-item-desc{color:var(--ink-light)}
-.gs-item-arrow{font-size:14px;color:var(--ink-light);margin-left:auto;flex-shrink:0;align-self:center}
-.gs-item.done .gs-item-arrow{display:none}
-.gs-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1.5px solid var(--border);font-size:12px;color:var(--ink-light)}
-.gs-skip-btn{font-size:12px;font-weight:600;color:var(--ink-mid);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;text-decoration:underline;text-underline-offset:2px}
-.gs-skip-btn:hover{color:var(--primary)}
-
-/* ── STARTER CHECKLIST ── */
-.starter-checklist{background:var(--surface-white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;animation:slideUp .35s ease both}
-.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sc-title{font-size:13px;font-weight:700;color:var(--on-surface)}
-.sc-pct{font-size:11px;font-weight:600;color:var(--ink-mid);background:var(--bg);border-radius:20px;padding:2px 9px}
-.sc-items{display:flex;flex-direction:column;gap:6px}
-.sc-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:background .12s,border-color .12s;background:var(--surface-white)}
-.sc-item:hover{background:var(--bg);border-color:var(--outline-variant)}
-.sc-item.done{background:var(--bg);border-color:var(--border)}
-.sc-item.done .sc-item-label{text-decoration:line-through;color:var(--ink-light)}
-.sc-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.sc-item.done .sc-check{background:var(--primary);border-color:var(--primary)}
-.sc-check-tick{display:none;color:#fff;font-size:10px;font-weight:800}
-.sc-item.done .sc-check-tick{display:block}
-.sc-item-label{font-size:13px;color:var(--on-surface);font-weight:500;flex:1}
-.sc-item-arrow{font-size:13px;color:var(--ink-light)}
-.sc-item.done .sc-item-arrow{display:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -3842,29 +3792,6 @@ var RateLimiter = (function() {
     <main class="dash-main">
 
       <!-- ─── HOME ─── -->
-      <!-- ─── GET STARTED PANEL ─── -->
-      <div class="tmpl-panel" id="panel-getstarted">
-        <div class="gs-wrap">
-          <div class="gs-heading" id="gs-heading">Hey there 👋 ready to roll?</div>
-          <p class="gs-sub">Here's a quick starter list to get FreelanceKit working for you. Nothing's required — but folks who finish this list invoice 3× faster in their first week.</p>
-          <div class="gs-progress-card">
-            <div class="gs-prog-row">
-              <div class="gs-prog-num" id="gs-prog-num">0/4</div>
-              <div>
-                <div class="gs-prog-sub" id="gs-prog-sub">You're 0% set up — let's go!</div>
-                <div class="gs-prog-sub2">Tackle one a day, or smash it all in one sitting. We won't tell.</div>
-              </div>
-            </div>
-            <div class="gs-prog-bar"><div class="gs-prog-fill" id="gs-prog-fill" style="width:0%"></div></div>
-          </div>
-          <div class="gs-items-grid" id="gs-items-grid"></div>
-          <div class="gs-footer">
-            <span>You can access this anytime from the <strong>Getting started</strong> button in My Details.</span>
-            <button class="gs-skip-btn" onclick="skipGetStarted()">Skip the tour →</button>
-          </div>
-        </div>
-      </div>
-
       <div class="tmpl-panel active" id="panel-home">
         <!-- Hero -->
         <div class="home-hero">
@@ -4760,7 +4687,6 @@ var RateLimiter = (function() {
           <div class="ssb-info"><strong>Auto-fill is active</strong> — these details populate every template the moment you open it.</div>
           <div style="display:flex;align-items:center;gap:8px">
             <span class="save-status" id="save-details-status"></span>
-            <button id="btn-getting-started" onclick="showPanel('getstarted');renderGetStarted()" style="font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;background:#E74C3C;color:#fff;font-family:var(--font-body);transition:background .2s">Getting started <span id="gs-btn-pct" style="font-size:13px;opacity:.85">0%</span></button>
           </div>
         </div>
         <div class="settings-grid">
@@ -5271,6 +5197,7 @@ function showDash(panel){
   initAtnDropdowns();
   // Restore paused timer if page was refreshed while paused
   setTimeout(_restoreTimerState, 200);
+  setTimeout(function(){ if(typeof _fkoResume==='function') _fkoResume(); }, 400);
 }
 function showLanding(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -5341,16 +5268,9 @@ async function saveWelcomePage() {
   if (_hnEl0b) _hnEl0b.textContent = (nickname || fullname || first) + '!';
   // Pre-fill my-nickname field in My Details
   set('my-nickname', nickname);
-  // Route to goal panel, or Get Started checklist if no goal selected
   showDash();
   setTimeout(function() {
-    var goal = _wlGoal;
-    if (goal === 'invoice' || goal === 'projects' || goal === 'ratecalc') {
-      showPanel(goal);
-    } else {
-      showPanel('getstarted');
-      renderGetStarted();
-    }
+    if (typeof _fkoStart === 'function') _fkoStart();
   }, 100);
 }
 
@@ -5522,9 +5442,6 @@ function showPanel(id,el){
   // Init interactive panels on first show
   if(id==='invoice'&&!window._invInit){window._invInit=true;initInvoice()}
   if(id==='pipeline'&&!window._pipeInit){window._pipeInit=true;renderPipeline()}
-  // First-run tooltip tours
-  if(id==='invoice'){setTimeout(function(){if(typeof _fkStartTour==='function')_fkStartTour('invoice');},700);}
-  if(id==='projects'){setTimeout(function(){if(typeof _fkStartTour==='function')_fkStartTour('projects');},700);}
   if(id==='tax'&&!window._taxInit){window._taxInit=true;renderTaxQ(2)}
   if(id==='ratecalc')calcRate();
   if(id==='brief'&&!window._briefInit){window._briefInit=true;renderBrief()}
@@ -5535,11 +5452,7 @@ function showPanel(id,el){
   if(id==='timesheet'){ if(typeof loadGlobalTimesheet==='function') loadGlobalTimesheet(); }
   if(id==='home'){ if(typeof initHomeDashboard==='function') initHomeDashboard(); }
   if(id==='invhistory'){ if(typeof renderFinancialOverview==='function') renderFinancialOverview(); }
-  if(id==='getstarted'){ if(typeof renderGetStarted==='function') renderGetStarted(); }
   if(id==='mydetails'){
-    // Visiting My Details counts as "Set up your profile" being done
-    if(typeof _markChecklistDone==='function') _markChecklistDone('profile');
-    if(typeof renderGetStarted==='function') renderGetStarted();
     // Refresh payment display in case _pmState changed while panel was hidden
     if(typeof _updatePaymentSummary==='function') _updatePaymentSummary();
     // Ensure email is always locked to auth account
@@ -6983,7 +6896,7 @@ var BETA_MODE = true;
 // Plan gating: 'free' users get access to FREE_PANELS only; 'pro' users get everything
 // In BETA_MODE everyone gets pro — including unauthenticated visitors
 var _userPlan = BETA_MODE ? 'pro' : 'free';
-var FREE_PANELS = ['home','mydetails','clients','invhistory','getstarted'];
+var FREE_PANELS = ['home','mydetails','clients','invhistory'];
 
 // ─── DATA ISOLATION: wipe all fk_ localStorage when a different user logs in ──
 // ─── Helper: wipe every fk_ key from localStorage ────────────────────────────
@@ -7350,9 +7263,6 @@ async function saveMyDetails(silent) {
   applyMyDetails(payload, true);
   showStatus('✓ Saved', 'ok', 2500);
   if (!silent) showToast('✓ Details saved and applied to all templates');
-  // Mark profile checklist done when user saves My Details
-  if (typeof _markChecklistDone === 'function') _markChecklistDone('profile');
-  if (typeof renderGetStarted === 'function') renderGetStarted();
 }
 
 // ═══════════════ CLIENT DIRECTORY ═══════════════
@@ -10538,159 +10448,6 @@ function calDeleteFromModal() {
   } : null);
 }
 
-// ─── STARTER CHECKLIST ───────────────────────────────────────────────────────
-var _CHECKLIST_ITEMS = [
-  { id: 'profile',  label: 'Set up your profile',      panel: 'mydetails' },
-  { id: 'project',  label: 'Create your first project', panel: 'projects'  },
-  { id: 'invoice',  label: 'Build your first invoice',  panel: 'invoice'   },
-  { id: 'pipeline', label: 'Add a pipeline lead',       panel: 'pipeline'  }
-];
-
-function _checklistKey() {
-  return _currentUser ? 'fk_checklist_' + _currentUser.id : null;
-}
-
-function _loadChecklist() {
-  var key = _checklistKey();
-  if (!key) return {};
-  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { return {}; }
-}
-
-function _saveChecklist(state) {
-  var key = _checklistKey();
-  if (!key) return;
-  try { localStorage.setItem(key, JSON.stringify(state)); } catch(e) {}
-}
-
-function _autoCheckChecklist() {
-  // Auto-detect completion based on data already loaded
-  var state = _loadChecklist();
-  // Profile: only mark done when user explicitly saves My Details (via saveMyDetails)
-  // Project: check _ptProjects
-  if (!state.project && _ptProjects && _ptProjects.length) state.project = true;
-  // Invoice: check _invoices
-  if (!state.invoice && _invoices && _invoices.length) state.invoice = true;
-  // Pipeline: check pfClients
-  if (!state.pipeline && typeof pfClients !== 'undefined' && pfClients && pfClients.length) state.pipeline = true;
-  _saveChecklist(state);
-  return state;
-}
-
-function _markChecklistDone(itemId) {
-  var state = _loadChecklist();
-  state[itemId] = true;
-  _saveChecklist(state);
-  renderStarterChecklist();
-}
-
-function renderStarterChecklist() {
-  var wrap = document.getElementById('starter-checklist');
-  var itemsEl = document.getElementById('sc-items');
-  var pctEl = document.getElementById('sc-pct-label');
-  if (!wrap || !itemsEl) return;
-  var state = _autoCheckChecklist();
-  var doneCount = _CHECKLIST_ITEMS.filter(function(it){ return state[it.id]; }).length;
-  var total = _CHECKLIST_ITEMS.length;
-  // All done — hide with animation
-  if (doneCount >= total) {
-    wrap.style.transition = 'opacity .5s, transform .5s';
-    wrap.style.opacity = '0';
-    wrap.style.transform = 'translateY(-10px)';
-    setTimeout(function(){ wrap.style.display = 'none'; }, 520);
-    return;
-  }
-  wrap.style.display = '';
-  wrap.style.opacity = '';
-  wrap.style.transform = '';
-  if (pctEl) pctEl.textContent = doneCount + ' / ' + total;
-  itemsEl.innerHTML = _CHECKLIST_ITEMS.map(function(it) {
-    var done = !!state[it.id];
-    return '<div class="sc-item' + (done ? ' done' : '') + '" onclick="' + (done ? '' : '_handleChecklistClick(\'' + it.id + '\',\'' + it.panel + '\')') + '">' +
-      '<div class="sc-check"><span class="sc-check-tick">✓</span></div>' +
-      '<div class="sc-item-label">' + escapeHTML(it.label) + '</div>' +
-      (done ? '' : '<div class="sc-item-arrow">→</div>') +
-      '</div>';
-  }).join('');
-}
-
-function _handleChecklistClick(itemId, panel) {
-  _markChecklistDone(itemId);
-  if (typeof showPanel === 'function') showPanel(panel);
-}
-
-// ─── GET STARTED FULL-PAGE PANEL ──────────────────────────────────────────────
-var _GS_ITEMS = [
-  { id: 'profile',  label: 'Set up your profile',       time: '30 sec', desc: 'Name, nickname, business details. Your kit, your name on the door.',  panel: 'mydetails' },
-  { id: 'project',  label: 'Create your first project', time: '2 min',  desc: 'Title, scope, milestones — everything connected to your first client.', panel: 'projects'  },
-  { id: 'invoice',  label: 'Build your first invoice',  time: '3 min',  desc: 'Pick a project, add line items, and get a professional invoice ready.', panel: 'invoice'   },
-  { id: 'pipeline', label: 'Add a pipeline lead',       time: '1 min',  desc: 'Drop in a prospect and start forecasting next month\'s income.',        panel: 'pipeline'  }
-];
-
-function renderGetStarted() {
-  var state  = _autoCheckChecklist();
-  var done   = _GS_ITEMS.filter(function(it){ return state[it.id]; }).length;
-  var total  = _GS_ITEMS.length;
-  var pct    = Math.round(done / total * 100);
-  // Update heading with user first name
-  var headEl = document.getElementById('gs-heading');
-  if (headEl) {
-    var fn = '';
-    if (_currentUser) {
-      var _meta = _currentUser.user_metadata || {};
-      // Prefer: nickname → My Details first name → full_name first word → email handle
-      fn = _meta.nickname
-        || (document.getElementById('my-firstname') || {}).value
-        || (_meta.full_name ? _meta.full_name.split(' ')[0] : '')
-        || (_currentUser.email ? _currentUser.email.split('@')[0] : '');
-    }
-    headEl.innerHTML = 'Hey ' + (fn ? '<em>' + escapeHTML(fn) + '</em> ' : '') + '👋 ready to roll?';
-  }
-  // Progress
-  var progMessages = ['Let\'s go!','Nice start!','Getting there!','Almost done!','All done! 🎉'];
-  var msgIdx = Math.min(Math.round(pct / 25), 4);
-  // Celebrate checklist completion
-  if (pct >= 100 && typeof _fkCelebrate === 'function') { setTimeout(function(){ _fkCelebrate('checklist'); }, 400); }
-  var progNum = document.getElementById('gs-prog-num');
-  var progSub = document.getElementById('gs-prog-sub');
-  var progFill = document.getElementById('gs-prog-fill');
-  if (progNum) progNum.textContent = done + '/' + total;
-  if (progSub) progSub.textContent = 'You\'re ' + pct + '% set up — ' + progMessages[msgIdx];
-  if (progFill) progFill.style.width = pct + '%';
-  // Update the Getting Started button in My Details header
-  var gsBtn = document.getElementById('btn-getting-started');
-  var gsPct = document.getElementById('gs-btn-pct');
-  if (gsPct) gsPct.textContent = pct + '%';
-  if (gsBtn) gsBtn.style.background = pct >= 100 ? '#009668' : '#E74C3C';
-  // Items grid
-  var grid = document.getElementById('gs-items-grid');
-  if (!grid) return;
-  grid.innerHTML = _GS_ITEMS.map(function(it) {
-    var isDone = !!state[it.id];
-    return '<div class="gs-item' + (isDone ? ' done' : '') + '" onclick="' + (isDone ? '' : '_gsItemClick(\'' + it.id + '\',\'' + it.panel + '\')') + '">' +
-      '<div class="gs-item-check">' + (isDone ? '✓' : '') + '</div>' +
-      '<div class="gs-item-body">' +
-        '<div class="gs-item-hdr">' +
-          '<span class="gs-item-label">' + escapeHTML(it.label) + '</span>' +
-          '<span class="gs-item-time">' + escapeHTML(it.time) + '</span>' +
-        '</div>' +
-        '<div class="gs-item-desc">' + escapeHTML(it.desc) + '</div>' +
-      '</div>' +
-      (isDone ? '' : '<div class="gs-item-arrow">→</div>') +
-    '</div>';
-  }).join('');
-}
-
-function _gsItemClick(itemId, panel) {
-  // Profile is only marked done when user actually visits My Details (not just on click)
-  if (itemId !== 'profile') _markChecklistDone(itemId);
-  showPanel(panel);
-}
-
-function skipGetStarted() {
-  showPanel('home');
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 // ─── MY DETAILS PAYMENT METHODS POPUP ────────────────────────────────────────
 var _PM_OPTIONS = [
   { id: 'bank',    label: 'Bank Transfer' },
@@ -11020,7 +10777,6 @@ function initHomeDashboard() {
   })();
   renderContribGrid();
   renderHomeGoalBar();
-  renderStarterChecklist();
   // Load projects for todo filter and upcoming deadlines (even if Projects panel not yet visited)
   if (!window._ptInit) {
     window._ptInit = true;
@@ -15416,98 +15172,171 @@ async function deletePtProject() {
 document.getElementById('pt-modal') && document.getElementById('pt-modal').addEventListener('click', function(e){ if (e.target === this) closePtModal(); });
 
 /* ═══════════════════════════════════════════════════════════════
-   ONBOARDING TOOLTIP TOURS
-   Two separate tours: 'invoice' and 'projects'
-   Each fires once per user, stored in fk_tour_done_<tourId>_<uid>
+   GUIDED ONBOARDING FLOW  (10 steps, sequential, panel-navigating)
+   State: fk_onboarding_<uid>  →  0–9 (current step) | 'done'
 ═══════════════════════════════════════════════════════════════ */
-var _fkTour = { active:false, steps:[], idx:0, tourId:null };
+var _FKO_STEPS = [
+  { panel:'mydetails', navId:'nav-mydetails',
+    icon:'⚙️', title:'My Details',
+    text:'Start by entering your name — it auto-fills every invoice, contract, and document you create. Fill in as much as you like, then click Continue.',
+    needsName:true },
+  { panel:'home', navId:'nav-home',
+    icon:'🏠', title:'Dashboard',
+    text:'Your command centre. See this month\'s income, hours logged, open invoices, and upcoming milestones — all at a glance.' },
+  { panel:'clients', navId:'nav-clients',
+    icon:'👤', title:'Clients & Financial Overview',
+    text:'Store all your client contacts here. The Financial Overview panel (just below in the sidebar) shows your full income picture and invoice aging.' },
+  { panel:'projects', navId:'nav-projects',
+    icon:'📁', title:'Project Tracker',
+    text:'Create a project and track everything in one place — tasks, milestones, billing phases, meeting notes, and documents.' },
+  { panel:'projects', navId:null,
+    icon:'📁', title:'Inside a Project',
+    text:'Each project has 8 tabs: Overview, Tasks, Milestones, Billing, Meeting Notes, Timesheet, Contract, and Scope Change. All connected.' },
+  { panel:'invoice', navId:'nav-invoice',
+    icon:'📄', title:'Invoice Builder',
+    text:'Pick a project, add line items, and send a polished PDF invoice — pre-filled with your details and client info.' },
+  { panel:'pipeline', navId:'nav-pipeline',
+    icon:'⚡', title:'Pipeline Tracker',
+    text:'Track prospects and forecast income. Set deal values and probability to see your weighted revenue for the month ahead.' },
+  { panel:'tax', navId:'nav-tax',
+    icon:'🧾', title:'Tax Tracker',
+    text:'Estimates your quarterly tax liability as income comes in. No surprise bills at tax time.' },
+  { panel:'ratecalc', navId:'nav-ratecalc',
+    icon:'💰', title:'Rate Calculator',
+    text:'Enter your income goal and FreelanceKit calculates the minimum hourly rate you need to charge. Know your floor.' },
+  { panel:'timesheet', navId:'nav-timesheet',
+    icon:'⏱', title:'Timesheet',
+    text:'Log hours against projects, track weekly utilisation, and see your busiest periods in the 16-week heatmap.',
+    isLast:true }
+];
 
-var _FK_TOURS = {
-  invoice: [
-    { anchorId:'inv-view-projects', text:'Start here — pick a project or create a new one. FreelanceKit pre-fills your client details automatically.' },
-    { anchorId:'inv-view-projects', text:'Add line items inside the builder. Rate × hours = done. Totals update as you type.' },
-    { anchorId:'inv-view-projects', text:'Preview your invoice, then download as PDF or email it directly to your client.' }
-  ],
-  projects: [
-    { anchorId:'pt-list-view', text:'Start here — pick a project or create a new one to begin tracking.' },
-    { anchorId:'pt-list-view', text:'Each project has tasks, milestones, billing phases, and documents — all in one place.' },
-    { anchorId:'pt-list-view', text:'Share with collaborators or log hours directly from within a project.' }
-  ]
-};
-
-function _fkStartTour(tourId) {
-  if (!_currentUser) return;
-  var key = 'fk_tour_done_' + tourId + '_' + _currentUser.id;
-  try { if (localStorage.getItem(key)) return; } catch(e) { return; }
-  var steps = _FK_TOURS[tourId];
-  if (!steps || !steps.length) return;
-  _fkTour.tourId = tourId;
-  _fkTour.steps = steps;
-  _fkTour.idx = 0;
-  _fkTour.active = true;
-  _fkTourShowStep();
+function _fkoKey() {
+  return _currentUser ? 'fk_onboarding_' + _currentUser.id : null;
+}
+function _fkoGetStep() {
+  var k = _fkoKey(); if (!k) return 'done';
+  try { return localStorage.getItem(k) || null; } catch(e) { return 'done'; }
+}
+function _fkoSetStep(val) {
+  var k = _fkoKey(); if (!k) return;
+  try { localStorage.setItem(k, String(val)); } catch(e) {}
 }
 
-function _fkTourShowStep() {
-  var step = _fkTour.steps[_fkTour.idx];
-  var total = _fkTour.steps.length;
-  var bubble = document.getElementById('fk-tour-bubble');
-  var spotlight = document.getElementById('fk-tour-spotlight');
-  var overlay = document.getElementById('fk-tour-overlay');
-  if (!bubble || !step) return;
-  document.getElementById('fk-tour-step-lbl').textContent = 'Step ' + (_fkTour.idx + 1) + ' of ' + total;
-  document.getElementById('fk-tour-text').textContent = step.text;
-  document.getElementById('fk-tour-dots').innerHTML = _fkTour.steps.map(function(_,i){
-    return '<div class="fk-tour-dot' + (i===_fkTour.idx?' on':'') + '"></div>';
-  }).join('');
-  document.getElementById('fk-tour-next').textContent = (_fkTour.idx === total-1) ? 'Got it ✓' : 'Next →';
-  bubble.classList.remove('arr-top','arr-bot','fk-in');
-  spotlight.style.display = '';
-  bubble.style.display = '';
-  var anchor = document.getElementById(step.anchorId);
-  if (anchor) {
-    var rect = anchor.getBoundingClientRect();
-    var pad = 8;
-    spotlight.style.top    = (rect.top - pad) + 'px';
-    spotlight.style.left   = (rect.left - pad) + 'px';
-    spotlight.style.width  = (rect.width + pad*2) + 'px';
-    spotlight.style.height = (rect.height + pad*2) + 'px';
-    var bLeft = Math.max(8, Math.min(rect.left, window.innerWidth - 306));
-    var bTop  = rect.bottom + 14;
-    if (bTop + 150 > window.innerHeight) {
-      bTop = Math.max(8, rect.top - 160);
-      bubble.classList.add('arr-bot');
-    } else {
-      bubble.classList.add('arr-top');
-    }
-    bubble.style.left = bLeft + 'px';
-    bubble.style.top  = bTop + 'px';
+function _fkoStart() {
+  if (!_currentUser) return;
+  var saved = _fkoGetStep();
+  if (saved === 'done') return;
+  var idx = (saved !== null && !isNaN(Number(saved))) ? Number(saved) : 0;
+  _fkoSetStep(idx);
+  _fkoShowStep(idx);
+}
+
+function _fkoResume() {
+  if (!_currentUser) return;
+  var saved = _fkoGetStep();
+  if (!saved || saved === 'done') return;
+  var idx = Number(saved);
+  if (isNaN(idx) || idx < 0 || idx > 9) return;
+  // Only resume if the right panel is active
+  var step = _FKO_STEPS[idx];
+  if (!step) return;
+  var panel = document.getElementById('panel-' + step.panel);
+  if (panel && panel.classList.contains('active')) {
+    setTimeout(function(){ _fkoShowStep(idx); }, 600);
   }
+}
+
+function _fkoShowStep(idx) {
+  var step = _FKO_STEPS[idx];
+  if (!step) return;
+  // Navigate to the panel for this step
+  var navEl = step.navId ? document.getElementById(step.navId) : null;
+  showPanel(step.panel, navEl);
+  // Update bubble content
+  var bubble = document.getElementById('fk-tour-bubble');
+  if (!bubble) return;
+  document.getElementById('fk-tour-step-lbl').innerHTML =
+    '<span style="font-weight:500;opacity:.7;font-size:10px">' + step.icon + ' ' + step.title + '</span>';
+  document.getElementById('fk-tour-text').textContent = step.text;
+  // Dots
+  document.getElementById('fk-tour-dots').innerHTML = _FKO_STEPS.map(function(_,i){
+    return '<div class="fk-tour-dot' + (i===idx?' on':'') + '"></div>';
+  }).join('');
+  // Buttons
+  var nextBtn = document.getElementById('fk-tour-next');
+  nextBtn.textContent = step.isLast ? 'Finish →' : 'Continue →';
+  // Step 0: gate Continue on name being filled
+  if (step.needsName) {
+    _fkoUpdateNameGate();
+    var fnEl = document.getElementById('my-firstname');
+    if (fnEl && !fnEl._fkoListener) {
+      fnEl._fkoListener = true;
+      fnEl.addEventListener('input', _fkoUpdateNameGate);
+    }
+  } else {
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = '';
+    nextBtn.style.cursor = '';
+  }
+  // Position bubble: bottom-right of viewport
+  bubble.style.position = 'fixed';
+  bubble.style.bottom = '28px';
+  bubble.style.right = '28px';
+  bubble.style.top = '';
+  bubble.style.left = '';
+  bubble.classList.remove('arr-top','arr-bot','fk-in');
+  bubble.style.display = '';
+  // Hide spotlight (not used in this flow)
+  var spotlight = document.getElementById('fk-tour-spotlight');
+  if (spotlight) spotlight.style.display = 'none';
   void bubble.offsetWidth;
   bubble.classList.add('fk-in');
+  _fkoSetStep(idx);
 }
 
-function _fkTourNext() {
-  if (!_fkTour.active) return;
-  if (_fkTour.idx < _fkTour.steps.length - 1) {
-    _fkTour.idx++;
-    _fkTourShowStep();
+function _fkoUpdateNameGate() {
+  var fn = document.getElementById('my-firstname');
+  var btn = document.getElementById('fk-tour-next');
+  if (!fn || !btn) return;
+  var hasName = fn.value.trim().length > 0;
+  btn.disabled = !hasName;
+  btn.style.opacity = hasName ? '' : '0.4';
+  btn.style.cursor = hasName ? '' : 'not-allowed';
+}
+
+function _fkoContinue() {
+  var saved = _fkoGetStep();
+  if (saved === 'done') return;
+  var idx = Number(saved);
+  if (isNaN(idx)) return;
+  var step = _FKO_STEPS[idx];
+  if (step && step.isLast) {
+    _fkoFinish();
   } else {
-    _fkTourDismiss(true);
+    _fkoShowStep(idx + 1);
   }
 }
 
-function _fkTourDismiss(completed) {
-  _fkTour.active = false;
+function _fkoSkip() {
+  _fkoSetStep('done');
   var bubble = document.getElementById('fk-tour-bubble');
-  var overlay = document.getElementById('fk-tour-overlay');
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (bubble) bubble.style.display = 'none';
   if (spotlight) spotlight.style.display = 'none';
-  if (_currentUser && _fkTour.tourId) {
-    try { localStorage.setItem('fk_tour_done_' + _fkTour.tourId + '_' + _currentUser.id, '1'); } catch(e) {}
+  showPanel('home', document.getElementById('nav-home'));
+}
+
+function _fkoFinish() {
+  _fkoSetStep('done');
+  var bubble = document.getElementById('fk-tour-bubble');
+  var spotlight = document.getElementById('fk-tour-spotlight');
+  if (bubble) bubble.style.display = 'none';
+  if (spotlight) spotlight.style.display = 'none';
+  if (typeof _fkConfetti === 'function') {
+    _fkConfetti(180);
+    setTimeout(function(){ _fkConfetti(100); }, 500);
   }
-  if (completed) showToast('✓ Tour complete — you\'re all set!');
+  setTimeout(function(){ showToast('🎉 You\'re all set up. FreelanceKit is yours.'); }, 300);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -15929,14 +15758,14 @@ function _fkCelebrate(type) {
 <!-- ── ONBOARDING TOOLTIP TOUR ── -->
 <div id="fk-tour-overlay">
   <div class="fk-tour-spotlight" id="fk-tour-spotlight"></div>
-  <div class="fk-tour-bubble" id="fk-tour-bubble">
+  <div class="fk-tour-bubble" id="fk-tour-bubble" style="width:320px">
     <div class="fk-tour-step-lbl" id="fk-tour-step-lbl"></div>
     <div class="fk-tour-text" id="fk-tour-text"></div>
     <div class="fk-tour-foot">
       <div class="fk-tour-dots" id="fk-tour-dots"></div>
       <div style="display:flex;gap:10px;align-items:center">
-        <button class="fk-tour-dismiss" id="fk-tour-dismiss" onclick="_fkTourDismiss(false)">Dismiss</button>
-        <button class="fk-tour-next" id="fk-tour-next" onclick="_fkTourNext()">Next →</button>
+        <button class="fk-tour-dismiss" id="fk-tour-dismiss" onclick="_fkoSkip()">Skip tour</button>
+        <button class="fk-tour-next" id="fk-tour-next" onclick="_fkoContinue()">Continue →</button>
       </div>
     </div>
   </div>
