@@ -9329,8 +9329,12 @@ function _ptAssignColorToProject(projectId) {
 // ─── TIMER PERSISTENCE (survive page refresh while paused) ────────────────────
 function _restoreTimerState() {
   try {
-    var stored = JSON.parse(localStorage.getItem('fk_timer_paused') || 'null');
+    var _uid = (_currentUser && _currentUser.id) || '';
+    var _key = _uid ? 'fk_timer_paused_' + _uid : 'fk_timer_paused';
+    var stored = JSON.parse(localStorage.getItem(_key) || localStorage.getItem('fk_timer_paused') || 'null');
     if (!stored || !stored.seconds || stored.seconds <= 0) return;
+    // Guard: only restore state that belongs to the current user
+    if (stored.userId && _uid && stored.userId !== _uid) return;
     _timerSeconds = stored.seconds;
     _timerRunning = false;
     _updateTimerUI();
@@ -9495,9 +9499,12 @@ function timerToggle() {
     if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
     // Persist paused state so a page refresh doesn't lose the elapsed time
     try {
-      localStorage.setItem('fk_timer_paused', JSON.stringify({
+      var _uid = (_currentUser && _currentUser.id) || '';
+      var _key = _uid ? 'fk_timer_paused_' + _uid : 'fk_timer_paused';
+      localStorage.setItem(_key, JSON.stringify({
         seconds: _timerSeconds,
-        projectId: (sel && sel.value) || ''
+        projectId: (sel && sel.value) || '',
+        userId: _uid
       }));
     } catch(e) {}
   } else {
@@ -9521,7 +9528,11 @@ function timerToggle() {
       _updateTimerUI();
     }, 1000);
     // Timer is running — clear any saved paused state
-    try { localStorage.removeItem('fk_timer_paused'); } catch(e) {}
+    try {
+      var _uid2 = (_currentUser && _currentUser.id) || '';
+      localStorage.removeItem(_uid2 ? 'fk_timer_paused_' + _uid2 : 'fk_timer_paused');
+      localStorage.removeItem('fk_timer_paused'); // also clear legacy key
+    } catch(e) {}
     if (playBtn) playBtn.innerHTML = '&#9646;&#9646; Pause';
     if (saveBtn) { saveBtn.disabled = false; }
     if (status) { status.textContent = 'Recording...'; status.className = 'tp-status'; }
@@ -9536,7 +9547,11 @@ function timerStop() {
   _timerLoggedHours = parseFloat((_timerSeconds / 3600).toFixed(2));
   var totalSec = _timerSeconds;
   _timerSeconds = 0;
-  try { localStorage.removeItem('fk_timer_paused'); } catch(e) {}
+  try {
+    var _uid3 = (_currentUser && _currentUser.id) || '';
+    localStorage.removeItem(_uid3 ? 'fk_timer_paused_' + _uid3 : 'fk_timer_paused');
+    localStorage.removeItem('fk_timer_paused');
+  } catch(e) {}
   _updateTimerUI();
   var playBtn = document.getElementById('tp-play-btn');
   var saveBtn = document.getElementById('tp-save-btn');
@@ -13758,7 +13773,7 @@ function renderPtDocTab(type) {
       '</label>' +
       '<input type="color" id="' + prefix + '-color-inp" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" oninput="_docApplyColor(this.value,\'' + prefix + '\')" onchange="_docApplyColor(this.value,\'' + prefix + '\')">' +
       '<div class="doc-tb-sep"></div>' +
-      '<button class="doc-tb-btn" title="Clear formatting" onmousedown="event.preventDefault();document.execCommand(\'removeFormat\')" style="font-size:14px">&#10000;</button>' +
+      '<button class="doc-tb-btn" title="Clear formatting" onmousedown="event.preventDefault();document.execCommand(\'removeFormat\')">Tx</button>' +
     '</div>' +
     '<div class="doc-wrap" style="max-height:70vh;overflow-y:auto">' +
       '<div class="doc-bar"><div class="db-dot" style="background:#E8594A"></div><div class="db-dot" style="background:#F4A73A;margin-left:4px"></div><div class="db-dot" style="background:#5DC86A;margin-left:4px"></div>' +
@@ -13984,7 +13999,7 @@ function _ptContractDocHTML() {
         '<div class="sig-img-area" id="sig-img-area-contract-client"></div>' +
         '<div class="sig-meta">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Date:</span><span style="display:inline-block;width:80px;border-bottom:1.5px solid var(--border)"></span></span>' +
+          '<span>Date: <span class="sig-date-field" contenteditable="true"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -14022,7 +14037,7 @@ function _ptScopeDocHTML() {
         '<div class="sig-img-area" id="sig-img-area-scope-client"></div>' +
         '<div class="sig-meta">' +
           '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Name:</span><span class="sig-name-field" contenteditable="true"></span></span>' +
-          '<span style="display:flex;align-items:center;gap:5px"><span class="sig-field-lbl">Date:</span><span style="display:inline-block;width:80px;border-bottom:1.5px solid var(--border)"></span></span>' +
+          '<span>Date: <span class="sig-date-field" contenteditable="true"></span></span>' +
         '</div>' +
       '</div>' +
     '</div>';
