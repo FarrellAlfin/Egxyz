@@ -792,8 +792,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .doc-body p{margin-bottom:12px;font-size:14px;line-height:1.85;overflow-wrap:break-word;word-break:break-word}
 .doc-body ul,.doc-body ol{margin-left:20px;margin-bottom:12px}
 .doc-body li{font-size:14px;line-height:1.85;margin-bottom:4px;overflow-wrap:break-word;word-break:break-word}
-.doc-body table{width:100%;table-layout:fixed}
-.doc-body td,.doc-body th{overflow-wrap:break-word;word-break:break-word}
+.doc-body table{width:100%;table-layout:fixed;border-collapse:collapse}
+.doc-body td,.doc-body th{overflow-wrap:break-word;word-break:break-word;overflow:hidden;max-width:0}
 .field{display:inline;background:rgba(111,251,190,0.15);color:var(--on-tertiary-fixed-variant);padding:1px 7px;border-radius:4px;font-family:var(--font-mono);font-size:12px;font-weight:500;border:1px dashed var(--tertiary-fixed-dim);white-space:normal;word-break:break-word;line-height:1.9}
 .field-opt{display:inline;background:var(--blue-light);color:var(--blue);padding:1px 7px;border-radius:4px;font-family:var(--font-mono);font-size:12px;font-weight:500;border:1px dashed #93C5FD;white-space:normal;word-break:break-word;line-height:1.9}
 .doc-divider{border:none;border-top:1px solid rgba(198,198,205,0.3);margin:22px 0}
@@ -14065,7 +14065,7 @@ function _ptScopeDocHTML() {
     '</div>';
   return '<div style="text-align:center;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Scope Change Order</div>' +
     '<hr class="doc-thick">' +
-    '<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-family:var(--font-body)">' +
+    '<table style="width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:20px;font-family:var(--font-body)">' +
       '<tr><td ' + tdLbl + '>Change Order #</td><td ' + tdVal + '><span class="field">[#001]</span></td></tr>' +
       '<tr><td ' + tdLbl + '>Date issued</td><td ' + tdVal + '><span class="field">[DATE]</span></td></tr>' +
       '<tr><td ' + tdLbl + '>Project</td><td ' + tdVal + '><span class="field">[PROJECT NAME]</span></td></tr>' +
@@ -14075,12 +14075,12 @@ function _ptScopeDocHTML() {
     '</table>' +
     '<hr class="doc-divider"><h2>1.</h2><p><br></p>' +
     '<hr class="doc-divider"><h2>2.</h2>' +
-    '<table style="width:100%;border-collapse:collapse;margin-bottom:14px;margin-top:12px;font-family:var(--font-body)">' +
+    '<table style="width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:14px;margin-top:12px;font-family:var(--font-body)">' +
       '<tr style="background:var(--cream)">' +
-        '<th ' + thSt + ' style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:left">Item</th>' +
-        '<th ' + thSt + ' style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Hours</th>' +
-        '<th ' + thSt + ' style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Rate</th>' +
-        '<th ' + thSt + ' style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Amount</th>' +
+        '<th ' + thSt + ' style="width:46%;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:left">Item</th>' +
+        '<th ' + thSt + ' style="width:18%;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Hours</th>' +
+        '<th ' + thSt + ' style="width:18%;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Rate</th>' +
+        '<th ' + thSt + ' style="width:18%;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);border:1px solid var(--border);text-align:right">Amount</th>' +
       '</tr>' +
       '<tr>' +
         '<td ' + tdFee + '></td>' +
