@@ -1220,6 +1220,28 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .toast.show{display:flex;animation:toastIn .25s ease}
 .toast-undo-btn{background:rgba(255,255,255,.18);border:none;border-radius:4px;color:var(--cream);font-size:12px;font-weight:700;padding:2px 9px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
 .toast-undo-btn:hover{background:rgba(255,255,255,.3)}
+/* ── ONBOARDING TOOLTIP TOUR ── */
+#fk-tour-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none}
+#fk-tour-overlay.active{pointer-events:all}
+.fk-tour-spotlight{position:absolute;pointer-events:none;border-radius:10px;display:none;transition:top .3s cubic-bezier(.4,0,.2,1),left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 0 9999px rgba(25,28,30,0.52);z-index:1}
+.fk-tour-bubble{position:fixed;background:var(--surface-white);border:1.5px solid var(--outline-variant);border-radius:var(--radius);box-shadow:0 12px 40px rgba(25,28,30,0.18);padding:18px 20px;width:290px;z-index:2;pointer-events:all;display:none}
+.fk-tour-bubble.fk-in{animation:fkTourIn .22s cubic-bezier(.4,0,.2,1)}
+@keyframes fkTourIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fk-tour-bubble::before{content:'';position:absolute;width:10px;height:10px;background:var(--surface-white);border:1.5px solid var(--outline-variant);transform:rotate(45deg)}
+.fk-tour-bubble.arr-top::before{top:-6px;left:24px;border-bottom:none;border-right:none}
+.fk-tour-bubble.arr-bot::before{bottom:-6px;left:24px;border-top:none;border-left:none}
+.fk-tour-step-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tertiary);margin-bottom:5px}
+.fk-tour-text{font-size:13px;font-weight:500;color:var(--on-surface);line-height:1.55}
+.fk-tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.fk-tour-dots{display:flex;gap:5px;align-items:center}
+.fk-tour-dot{width:6px;height:6px;border-radius:50%;background:var(--outline-variant);transition:all .2s}
+.fk-tour-dot.on{background:var(--tertiary);width:18px;border-radius:4px}
+.fk-tour-dismiss{font-size:12px;color:var(--on-surface-light);cursor:pointer;border:none;background:none;font-family:var(--font-body)}
+.fk-tour-dismiss:hover{color:var(--on-surface-mid)}
+.fk-tour-next{padding:7px 18px;background:var(--on-surface);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.fk-tour-next:hover{background:#2a2a2a}
+/* ── CONFETTI ── */
+#fk-confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:9500}
 @keyframes toastIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 
 /* ── GLOBAL ANIMATION SYSTEM ── */
@@ -5501,6 +5523,9 @@ function showPanel(id,el){
   // Init interactive panels on first show
   if(id==='invoice'&&!window._invInit){window._invInit=true;initInvoice()}
   if(id==='pipeline'&&!window._pipeInit){window._pipeInit=true;renderPipeline()}
+  // First-run tooltip tours
+  if(id==='invoice'){setTimeout(function(){if(typeof _fkStartTour==='function')_fkStartTour('invoice');},700);}
+  if(id==='projects'){setTimeout(function(){if(typeof _fkStartTour==='function')_fkStartTour('projects');},700);}
   if(id==='tax'&&!window._taxInit){window._taxInit=true;renderTaxQ(2)}
   if(id==='ratecalc')calcRate();
   if(id==='brief'&&!window._briefInit){window._briefInit=true;renderBrief()}
@@ -6704,6 +6729,7 @@ async function createProjectFromPipeline(cardId) {
   _ptProjects = _ptProjects || [];
   _ptProjects.unshift(res.data);
   window._ptInit = true;
+  if (_ptProjects.length === 1) { setTimeout(function(){ if(typeof _fkCelebrate==='function') _fkCelebrate('first_project'); }, 1200); }
   showToast('\u2713 Project created — opening tracker…');
   renderPipeline();
   setTimeout(function(){
@@ -8386,11 +8412,13 @@ async function saveInvoiceToHistory() {
       if (_ptCurrentId === linkedProjId) { window._ptBilling.push(br.data); renderPtBilling(); }
       _recordContrib(1);
       showToast('\u2713 Invoice saved + billing entry added to project');
+      if (!_wasEditing && _invoices && _invoices.length === 1) { setTimeout(function(){ if(typeof _fkCelebrate==='function') _fkCelebrate('first_invoice'); }, 600); }
       return;
     }
   }
   _recordContrib(1);
   showToast('\u2713 Invoice saved to history');
+  if (!_wasEditing && _invoices && _invoices.length === 1) { setTimeout(function(){ if(typeof _fkCelebrate==='function') _fkCelebrate('first_invoice'); }, 600); }
 }
 
 function _syncBuilderStatusToBilling() {
@@ -10621,6 +10649,8 @@ function renderGetStarted() {
   // Progress
   var progMessages = ['Let\'s go!','Nice start!','Getting there!','Almost done!','All done! 🎉'];
   var msgIdx = Math.min(Math.round(pct / 25), 4);
+  // Celebrate checklist completion
+  if (pct >= 100 && typeof _fkCelebrate === 'function') { setTimeout(function(){ _fkCelebrate('checklist'); }, 400); }
   var progNum = document.getElementById('gs-prog-num');
   var progSub = document.getElementById('gs-prog-sub');
   var progFill = document.getElementById('gs-prog-fill');
@@ -14842,6 +14872,7 @@ async function savePtProject() {
   }
   if (res.error) { _ptSaving = false; showToast('Error: ' + res.error.message); return; }
   _ptSaving = false;
+  var _wasNewProject = (_ptModalMode === 'new-project');
   closePtModal();
   renderClientList();
   renderPtList();
@@ -14849,6 +14880,8 @@ async function savePtProject() {
   if (typeof renderGlobalGantt === 'function') renderGlobalGantt();
   if (_ptModalMode === 'edit-project' && _ptCurrentId) selectPtProject(_ptCurrentId);
   showToast('\u2713 Project saved');
+  // Celebrate first project created
+  if (_wasNewProject && _ptProjects && _ptProjects.length === 1) { setTimeout(function(){ if(typeof _fkCelebrate==='function') _fkCelebrate('first_project'); }, 800); }
 }
 
 function ptMsStartChange(v) {
@@ -15382,6 +15415,157 @@ async function deletePtProject() {
 
 // Close modal on overlay click
 document.getElementById('pt-modal') && document.getElementById('pt-modal').addEventListener('click', function(e){ if (e.target === this) closePtModal(); });
+
+/* ═══════════════════════════════════════════════════════════════
+   ONBOARDING TOOLTIP TOURS
+   Two separate tours: 'invoice' and 'projects'
+   Each fires once per user, stored in fk_tour_done_<tourId>_<uid>
+═══════════════════════════════════════════════════════════════ */
+var _fkTour = { active:false, steps:[], idx:0, tourId:null };
+
+var _FK_TOURS = {
+  invoice: [
+    { anchorId:'inv-view-projects', text:'Start here — pick a project or create a new one. FreelanceKit pre-fills your client details automatically.' },
+    { anchorId:'inv-view-projects', text:'Add line items inside the builder. Rate × hours = done. Totals update as you type.' },
+    { anchorId:'inv-view-projects', text:'Preview your invoice, then download as PDF or email it directly to your client.' }
+  ],
+  projects: [
+    { anchorId:'pt-list-view', text:'Start here — pick a project or create a new one to begin tracking.' },
+    { anchorId:'pt-list-view', text:'Each project has tasks, milestones, billing phases, and documents — all in one place.' },
+    { anchorId:'pt-list-view', text:'Share with collaborators or log hours directly from within a project.' }
+  ]
+};
+
+function _fkStartTour(tourId) {
+  if (!_currentUser) return;
+  var key = 'fk_tour_done_' + tourId + '_' + _currentUser.id;
+  try { if (localStorage.getItem(key)) return; } catch(e) { return; }
+  var steps = _FK_TOURS[tourId];
+  if (!steps || !steps.length) return;
+  _fkTour.tourId = tourId;
+  _fkTour.steps = steps;
+  _fkTour.idx = 0;
+  _fkTour.active = true;
+  _fkTourShowStep();
+}
+
+function _fkTourShowStep() {
+  var step = _fkTour.steps[_fkTour.idx];
+  var total = _fkTour.steps.length;
+  var bubble = document.getElementById('fk-tour-bubble');
+  var spotlight = document.getElementById('fk-tour-spotlight');
+  var overlay = document.getElementById('fk-tour-overlay');
+  if (!bubble || !step) return;
+  document.getElementById('fk-tour-step-lbl').textContent = 'Step ' + (_fkTour.idx + 1) + ' of ' + total;
+  document.getElementById('fk-tour-text').textContent = step.text;
+  document.getElementById('fk-tour-dots').innerHTML = _fkTour.steps.map(function(_,i){
+    return '<div class="fk-tour-dot' + (i===_fkTour.idx?' on':'') + '"></div>';
+  }).join('');
+  document.getElementById('fk-tour-next').textContent = (_fkTour.idx === total-1) ? 'Got it ✓' : 'Next →';
+  overlay.classList.add('active');
+  bubble.classList.remove('arr-top','arr-bot','fk-in');
+  spotlight.style.display = '';
+  bubble.style.display = '';
+  var anchor = document.getElementById(step.anchorId);
+  if (anchor) {
+    var rect = anchor.getBoundingClientRect();
+    var pad = 8;
+    spotlight.style.top    = (rect.top - pad) + 'px';
+    spotlight.style.left   = (rect.left - pad) + 'px';
+    spotlight.style.width  = (rect.width + pad*2) + 'px';
+    spotlight.style.height = (rect.height + pad*2) + 'px';
+    var bLeft = Math.max(8, Math.min(rect.left, window.innerWidth - 306));
+    var bTop  = rect.bottom + 14;
+    if (bTop + 150 > window.innerHeight) {
+      bTop = Math.max(8, rect.top - 160);
+      bubble.classList.add('arr-bot');
+    } else {
+      bubble.classList.add('arr-top');
+    }
+    bubble.style.left = bLeft + 'px';
+    bubble.style.top  = bTop + 'px';
+  }
+  void bubble.offsetWidth;
+  bubble.classList.add('fk-in');
+}
+
+function _fkTourNext() {
+  if (!_fkTour.active) return;
+  if (_fkTour.idx < _fkTour.steps.length - 1) {
+    _fkTour.idx++;
+    _fkTourShowStep();
+  } else {
+    _fkTourDismiss(true);
+  }
+}
+
+function _fkTourDismiss(completed) {
+  _fkTour.active = false;
+  var bubble = document.getElementById('fk-tour-bubble');
+  var overlay = document.getElementById('fk-tour-overlay');
+  var spotlight = document.getElementById('fk-tour-spotlight');
+  if (bubble) bubble.style.display = 'none';
+  if (overlay) overlay.classList.remove('active');
+  if (spotlight) spotlight.style.display = 'none';
+  if (_currentUser && _fkTour.tourId) {
+    try { localStorage.setItem('fk_tour_done_' + _fkTour.tourId + '_' + _currentUser.id, '1'); } catch(e) {}
+  }
+  if (completed) showToast('✓ Tour complete — you\'re all set!');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONFETTI ENGINE  (monochrome green palette)
+═══════════════════════════════════════════════════════════════ */
+(function(){
+  var _cnv=null,_ctx=null,_pieces=[],_raf=null;
+  var _GREENS=['#009668','#4edea3','#6ffbbe','#00b37d','#005236','#00c98a','#ffffff'];
+  function _init(){
+    _cnv=document.getElementById('fk-confetti-canvas');
+    if(!_cnv)return;
+    _ctx=_cnv.getContext('2d');
+    _cnv.width=window.innerWidth;_cnv.height=window.innerHeight;
+    window.addEventListener('resize',function(){if(_cnv){_cnv.width=window.innerWidth;_cnv.height=window.innerHeight;}});
+  }
+  function _launch(n){
+    if(!_cnv)_init();if(!_cnv)return;
+    for(var i=0;i<n;i++){
+      var angle=(Math.random()*60-30)*Math.PI/180;
+      var speed=5+Math.random()*9;
+      _pieces.push({x:Math.random()*_cnv.width,y:-10,vx:Math.sin(angle)*speed,vy:speed*Math.cos(angle)*0.28,gravity:0.16+Math.random()*0.14,rotation:Math.random()*360,rotSpeed:(Math.random()-0.5)*7,w:7+Math.random()*6,h:3+Math.random()*3,color:_GREENS[Math.floor(Math.random()*_GREENS.length)],opacity:1});
+    }
+    if(!_raf)_tick();
+  }
+  function _tick(){
+    _ctx.clearRect(0,0,_cnv.width,_cnv.height);
+    _pieces=_pieces.filter(function(p){return p.opacity>0.04;});
+    _pieces.forEach(function(p){
+      p.x+=p.vx;p.vy+=p.gravity;p.y+=p.vy;p.rotation+=p.rotSpeed;
+      if(p.y>_cnv.height*0.65)p.opacity-=0.022;
+      _ctx.save();_ctx.globalAlpha=p.opacity;_ctx.translate(p.x,p.y);_ctx.rotate(p.rotation*Math.PI/180);_ctx.fillStyle=p.color;_ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);_ctx.restore();
+    });
+    _raf=_pieces.length?requestAnimationFrame(_tick):null;
+  }
+  window._fkConfetti=_launch;
+  document.addEventListener('DOMContentLoaded',_init);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   CELEBRATION MOMENTS  (fire once per user per type)
+═══════════════════════════════════════════════════════════════ */
+function _fkCelebrate(type) {
+  if (!_currentUser) return;
+  var key = 'fk_celebrated_' + type + '_' + _currentUser.id;
+  try { if (localStorage.getItem(key)) return; localStorage.setItem(key, '1'); } catch(e) {}
+  if (type === 'first_project') {
+    if (typeof _fkConfetti === 'function') _fkConfetti(100);
+    setTimeout(function(){ showToast('🎉 First project is live! Add tasks to keep it moving.'); }, 300);
+  } else if (type === 'first_invoice') {
+    showToast('📄 Invoice ready. Download it or track it in Financial Overview.');
+  } else if (type === 'checklist') {
+    if (typeof _fkConfetti === 'function') { _fkConfetti(180); setTimeout(function(){ _fkConfetti(100); }, 500); }
+    setTimeout(function(){ showToast('✅ You\'re all set up. FreelanceKit is yours.'); }, 250);
+  }
+}
 </script>
 
 <!-- New user onboarding modal -->
@@ -15744,6 +15928,24 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
     <button class="welcome-cta" onclick="saveWelcomePage()">Let's go →</button>
   </div>
 </div>
+
+<!-- ── ONBOARDING TOOLTIP TOUR ── -->
+<div id="fk-tour-overlay">
+  <div class="fk-tour-spotlight" id="fk-tour-spotlight"></div>
+  <div class="fk-tour-bubble" id="fk-tour-bubble">
+    <div class="fk-tour-step-lbl" id="fk-tour-step-lbl"></div>
+    <div class="fk-tour-text" id="fk-tour-text"></div>
+    <div class="fk-tour-foot">
+      <div class="fk-tour-dots" id="fk-tour-dots"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="fk-tour-dismiss" id="fk-tour-dismiss" onclick="_fkTourDismiss(false)">Dismiss</button>
+        <button class="fk-tour-next" id="fk-tour-next" onclick="_fkTourNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ── CONFETTI CANVAS ── -->
+<canvas id="fk-confetti-canvas"></canvas>
 
 </body>
 </html>
