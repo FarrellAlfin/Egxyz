@@ -1222,7 +1222,6 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .toast-undo-btn:hover{background:rgba(255,255,255,.3)}
 /* ── ONBOARDING TOOLTIP TOUR ── */
 #fk-tour-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none}
-#fk-tour-overlay.active{pointer-events:all}
 .fk-tour-spotlight{position:absolute;pointer-events:none;border-radius:10px;display:none;transition:top .3s cubic-bezier(.4,0,.2,1),left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 0 9999px rgba(25,28,30,0.52);z-index:1}
 .fk-tour-bubble{position:fixed;background:var(--surface-white);border:1.5px solid var(--outline-variant);border-radius:var(--radius);box-shadow:0 12px 40px rgba(25,28,30,0.18);padding:18px 20px;width:290px;z-index:2;pointer-events:all;display:none}
 .fk-tour-bubble.fk-in{animation:fkTourIn .22s cubic-bezier(.4,0,.2,1)}
@@ -15462,7 +15461,6 @@ function _fkTourShowStep() {
     return '<div class="fk-tour-dot' + (i===_fkTour.idx?' on':'') + '"></div>';
   }).join('');
   document.getElementById('fk-tour-next').textContent = (_fkTour.idx === total-1) ? 'Got it ✓' : 'Next →';
-  overlay.classList.add('active');
   bubble.classList.remove('arr-top','arr-bot','fk-in');
   spotlight.style.display = '';
   bubble.style.display = '';
@@ -15505,7 +15503,6 @@ function _fkTourDismiss(completed) {
   var overlay = document.getElementById('fk-tour-overlay');
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (bubble) bubble.style.display = 'none';
-  if (overlay) overlay.classList.remove('active');
   if (spotlight) spotlight.style.display = 'none';
   if (_currentUser && _fkTour.tourId) {
     try { localStorage.setItem('fk_tour_done_' + _fkTour.tourId + '_' + _currentUser.id, '1'); } catch(e) {}
