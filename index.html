@@ -1935,6 +1935,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-bill-name{font-size:13px;color:var(--ink)}
 .pt-bill-amt{font-size:13px;font-weight:700;color:var(--ink)}
 .pt-bill-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer}
+.pt-bill-status-sel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px 2px 8px;border-radius:20px;cursor:pointer;border:none;outline:none;appearance:none;-webkit-appearance:none;font-family:var(--font-body);line-height:1.4}
 .pt-bs-draft{background:#F3F4F6;color:#4B5563}
 .pt-bs-sent{background:#DBEAFE;color:#1E40AF}
 .pt-bs-paid{background:#D1FAE5;color:#065F46}
@@ -12507,7 +12508,12 @@ function renderPtBilling() {
       '<div class="pt-bill-card-grid">' +
         '<div><div class="pt-bill-card-lbl">Billed to</div><div class="pt-bill-card-val">' + escapeHTML(clientName) + '</div></div>' +
         '<div><div class="pt-bill-card-lbl">Status</div>' +
-          '<span class="pt-bill-status ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="event.stopPropagation();cyclePtBillingStatus(' + i + ')" title="Click to change status">' + (statusLabels[b.status]||'Pending') + '</span>' +
+          '<select class="pt-bill-status-sel ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="event.stopPropagation()" onchange="event.stopPropagation();setPtBillingStatus(' + i + ',this.value);this.className=\'pt-bill-status-sel \'+({draft:\'pt-bs-draft\',sent:\'pt-bs-sent\',paid:\'pt-bs-paid\',overdue:\'pt-bs-overdue\'}[this.value]||\'pt-bs-draft\')">' +
+            '<option value="draft"' + ((_normSt(b.status)||'draft')==='draft'?' selected':'') + '>Draft</option>' +
+            '<option value="sent"' + ((_normSt(b.status))==='sent'?' selected':'') + '>Sent</option>' +
+            '<option value="paid"' + ((_normSt(b.status))==='paid'?' selected':'') + '>Paid</option>' +
+            '<option value="overdue"' + ((_normSt(b.status))==='overdue'?' selected':'') + '>Overdue</option>' +
+          '</select>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -15278,13 +15284,30 @@ async function cyclePtBillingStatus(i) {
   var cycle = {draft:'sent', sent:'paid', paid:'overdue', overdue:'draft', pending:'sent', invoiced:'paid'};
   bs[i].status = cycle[bs[i].status] || 'draft';
   await _supabase.from('project_billing').update({status: bs[i].status}).eq('id', bs[i].id).eq('user_id', _currentUser.id);
-  // Sync status to the linked invoice so both stay in step (now 1:1 mapping)
   var invStatus = {draft:'draft', sent:'sent', paid:'paid', overdue:'overdue'}[bs[i].status] || 'draft';
   var linkedId = _getBillingInvLink(bs[i].id);
   if (linkedId && _supabase) {
     _supabase.from('invoices').update({status: invStatus, updated_at: new Date().toISOString()}).eq('id', linkedId).eq('user_id', _currentUser.id);
     var inv = (_invoices || []).find(function(x){ return x.id === linkedId; });
     if (inv) inv.status = invStatus;
+    renderInvHistory();
+  }
+  renderPtBilling();
+}
+
+async function setPtBillingStatus(i, newStatus) {
+  if (!_currentUser) return;
+  var bs = window._ptBilling; if (!bs || !bs[i]) return;
+  var valid = {draft:1, sent:1, paid:1, overdue:1};
+  if (!valid[newStatus]) return;
+  bs[i].status = newStatus;
+  await _supabase.from('project_billing').update({status: newStatus}).eq('id', bs[i].id).eq('user_id', _currentUser.id);
+  // Sync to linked invoice
+  var linkedId = _getBillingInvLink(bs[i].id);
+  if (linkedId && _supabase) {
+    _supabase.from('invoices').update({status: newStatus, updated_at: new Date().toISOString()}).eq('id', linkedId).eq('user_id', _currentUser.id);
+    var inv = (_invoices || []).find(function(x){ return x.id === linkedId; });
+    if (inv) inv.status = newStatus;
     renderInvHistory();
   }
   renderPtBilling();
