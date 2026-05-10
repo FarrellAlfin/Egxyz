@@ -812,7 +812,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .sig-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-light);font-family:var(--font-body);margin-top:4px;gap:8px}
 .sig-date-field{border:1.5px dashed var(--amber);background:#fffbea;padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:90px;transition:border-color .15s,background .15s}
 .sig-date-field:focus{outline:none;border-color:var(--amber-mid);background:#fef3c7}
-.sig-date-field:empty::before{content:'Click to add date';color:var(--amber);opacity:.7;font-style:italic}
+.sig-date-field:empty::before{content:'DD/MM/YYYY';color:var(--amber);opacity:.7;font-style:italic}
 .sig-name-field{border:1.5px dashed var(--border);background:var(--surface);padding:2px 8px;border-radius:5px;cursor:text;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--ink);display:inline-block;min-width:110px;transition:border-color .15s,background .15s}
 .sig-name-field:focus{outline:none;border-color:var(--ink);background:var(--white)}
 .sig-name-field:empty::before{content:'Full name';color:var(--ink-light);opacity:.6;font-style:italic}
@@ -1669,6 +1669,9 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .timer-modal-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mid);margin-bottom:5px}
 .timer-modal-input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--white);resize:vertical;box-sizing:border-box}
 .timer-modal-input:focus{outline:none;border-color:var(--ink)}
+.desc-wc{font-size:11px;color:var(--ink-light);text-align:right;margin-top:3px;transition:color .15s}
+.desc-wc.warn{color:var(--amber)}
+.desc-wc.over{color:#E74C3C;font-weight:600}
 .timer-modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
 .timer-modal-btn{padding:9px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font-body)}
 .timer-modal-btn.save{background:var(--ink);color:var(--cream)}
@@ -3707,7 +3710,8 @@ var RateLimiter = (function() {
       <div class="timer-modal-sub" id="timer-modal-sub">0.0 hours tracked</div>
       <div class="timer-modal-field">
         <div class="timer-modal-lbl">Description</div>
-        <textarea class="timer-modal-input" id="timer-modal-desc" rows="3" placeholder="What did you work on?"></textarea>
+        <textarea class="timer-modal-input" id="timer-modal-desc" rows="3" placeholder="What did you work on?" oninput="_descWordCount(this,'timer-modal-wc')"></textarea>
+        <div class="desc-wc" id="timer-modal-wc">0 / 200 words</div>
       </div>
       <div class="timer-modal-actions">
         <button class="timer-modal-btn cancel" onclick="closeTimerModal()">Discard</button>
@@ -4290,9 +4294,9 @@ var RateLimiter = (function() {
             <div class="goal-labels"><span id="goal-ytd">$0 earned this year</span><span id="goal-target-lbl">Goal: $0</span></div>
             <div class="goal-inp-row">
               <span class="goal-inp-lbl">Annual income goal:</span>
-              <input class="goal-inp" type="number" id="goal-target" value="100000" oninput="updateGoalBar()" placeholder="100000">
+              <input class="goal-inp" type="number" id="goal-target" value="100000" oninput="updateGoalBar()" placeholder="100000" min="0" onkeydown="if(['-','e','E','+','.'].indexOf(event.key)>-1)event.preventDefault()">
               <span class="goal-inp-lbl">Earned so far:</span>
-              <input class="goal-inp" type="number" id="goal-earned" value="0" oninput="updateGoalBar()" placeholder="0">
+              <input class="goal-inp" type="number" id="goal-earned" value="0" oninput="updateGoalBar()" placeholder="0" min="0" onkeydown="if(['-','e','E','+','.'].indexOf(event.key)>-1)event.preventDefault()">
             </div>
           </div>
           <!-- Save scenario -->
@@ -5238,6 +5242,8 @@ function showDash(panel){
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
   initAtnDropdowns();
+  // Restore paused timer if page was refreshed while paused
+  setTimeout(_restoreTimerState, 200);
 }
 function showLanding(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -9320,6 +9326,41 @@ function _ptAssignColorToProject(projectId) {
   _ptSaveColorMap(map);
 }
 
+// ─── TIMER PERSISTENCE (survive page refresh while paused) ────────────────────
+function _restoreTimerState() {
+  try {
+    var stored = JSON.parse(localStorage.getItem('fk_timer_paused') || 'null');
+    if (!stored || !stored.seconds || stored.seconds <= 0) return;
+    _timerSeconds = stored.seconds;
+    _timerRunning = false;
+    _updateTimerUI();
+    // Mark nav pill as paused
+    var navBtn = document.getElementById('nav-timer-btn');
+    var mini   = document.getElementById('nav-timer-mini');
+    if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
+    if (mini)   { mini.textContent = _fmtTimerDisplay(_timerSeconds); mini.style.display = ''; }
+    // Remember project to re-select when the timer panel opens
+    window._timerRestoredProjectId = stored.projectId || '';
+    showToast('⏸ Paused timer restored — ' + _fmtTimerDisplay(_timerSeconds));
+  } catch(e) {}
+}
+
+// ─── DESCRIPTION WORD COUNTER (200-word limit) ────────────────────────────────
+function _descWordCount(el, countId) {
+  var LIMIT = 200;
+  var val = el.value || '';
+  var words = val.trim() ? val.trim().split(/\s+/).filter(Boolean) : [];
+  if (words.length > LIMIT) {
+    el.value = words.slice(0, LIMIT).join(' ');
+    words = words.slice(0, LIMIT);
+  }
+  var countEl = document.getElementById(countId);
+  if (!countEl) return;
+  var n = words.length;
+  countEl.textContent = n + ' / ' + LIMIT + ' words';
+  countEl.className = 'desc-wc' + (n >= LIMIT ? ' over' : n >= LIMIT * 0.9 ? ' warn' : '');
+}
+
 // ─── LIVE TIMER ───────────────────────────────────────────────────────────────
 var _timerInterval = null;
 var _timerSeconds = 0;
@@ -9358,6 +9399,20 @@ function toggleTimerPanel() {
       sel.appendChild(opt);
     });
     if (cur) sel.value = cur;
+    // Restore previously-paused project if available
+    if (!sel.value && window._timerRestoredProjectId) {
+      sel.value = window._timerRestoredProjectId;
+      if (sel.value) window._timerRestoredProjectId = '';
+    }
+  }
+  // Restore paused play/status UI when panel opens
+  if (_timerSeconds > 0 && !_timerRunning) {
+    var _tpPlay = document.getElementById('tp-play-btn');
+    var _tpSave = document.getElementById('tp-save-btn');
+    var _tpSt   = document.getElementById('tp-status');
+    if (_tpPlay) _tpPlay.innerHTML = '&#9654; Resume';
+    if (_tpSave) _tpSave.disabled = false;
+    if (_tpSt)   { _tpSt.textContent = 'Paused'; _tpSt.className = 'tp-status paused'; }
   }
   // Render mini activity grid
   _renderTimerMiniGrid();
@@ -9438,6 +9493,13 @@ function timerToggle() {
     if (playBtn) playBtn.innerHTML = '&#9654; Resume';
     if (status) { status.textContent = 'Paused'; status.className = 'tp-status paused'; }
     if (navBtn) { navBtn.classList.remove('running'); navBtn.classList.add('paused'); }
+    // Persist paused state so a page refresh doesn't lose the elapsed time
+    try {
+      localStorage.setItem('fk_timer_paused', JSON.stringify({
+        seconds: _timerSeconds,
+        projectId: (sel && sel.value) || ''
+      }));
+    } catch(e) {}
   } else {
     // Start / Resume — require a project to be selected
     if (sel && !sel.value) {
@@ -9458,6 +9520,8 @@ function timerToggle() {
       _timerSeconds++;
       _updateTimerUI();
     }, 1000);
+    // Timer is running — clear any saved paused state
+    try { localStorage.removeItem('fk_timer_paused'); } catch(e) {}
     if (playBtn) playBtn.innerHTML = '&#9646;&#9646; Pause';
     if (saveBtn) { saveBtn.disabled = false; }
     if (status) { status.textContent = 'Recording...'; status.className = 'tp-status'; }
@@ -9472,6 +9536,7 @@ function timerStop() {
   _timerLoggedHours = parseFloat((_timerSeconds / 3600).toFixed(2));
   var totalSec = _timerSeconds;
   _timerSeconds = 0;
+  try { localStorage.removeItem('fk_timer_paused'); } catch(e) {}
   _updateTimerUI();
   var playBtn = document.getElementById('tp-play-btn');
   var saveBtn = document.getElementById('tp-save-btn');
@@ -13643,6 +13708,7 @@ function openDocForProject(docId) {
 // ─── PROJECT DOC TABS (CONTRACT / SCOPE) ───
 
 var _ptDocEditMode = {};
+var _ptDocSavedContent = {}; // snapshot of doc body HTML at point of entering edit mode
 var _ptDocRenderedFor = {};
 
 function renderPtDocTab(type) {
@@ -13664,6 +13730,7 @@ function renderPtDocTab(type) {
       '<div style="font-size:13px;font-weight:600;color:var(--ink)">' + title + (saved ? ' <span style="font-size:13px;color:var(--sage);font-weight:600"> · Saved</span>' : '') + '</div>' +
       '<div style="display:flex;gap:8px;align-items:center">' +
         '<button class="doc-edit-toggle" id="' + prefix + '-edit-toggle" onclick="ptToggleDocEdit(\'' + prefix + '\')">Edit</button>' +
+        '<button class="doc-edit-toggle" id="' + prefix + '-cancel-btn" style="display:none" onclick="ptCancelDocEdit(\'' + type + '\')">Cancel</button>' +
         '<button class="doc-edit-toggle" style="background:var(--ink);color:var(--cream);border-color:var(--ink)" onclick="ptSaveDoc(\'' + type + '\')">Save</button>' +
         '<button class="doc-edit-toggle" style="background:#C0392B;color:#fff;border-color:#C0392B" onclick="ptPrintDoc(\'' + prefix + '\')">PDF</button>' +
       '</div>' +
@@ -13730,6 +13797,8 @@ function renderPtDocTab(type) {
       }
     }, 100);
   }
+  // Attach DD/MM/YYYY input masking to signature date fields
+  setTimeout(function(){ _initSigDateFields(prefix); }, 80);
   // Only auto-fill if no saved version exists
   if (!saved && _ptCurrentId) {
     var p = (_ptProjects || []).find(function(x){ return x.id === _ptCurrentId; });
@@ -13768,10 +13837,14 @@ function ptSaveDoc(type) {
 function ptToggleDocEdit(prefix) {
   _ptDocEditMode[prefix] = !_ptDocEditMode[prefix];
   var toggle = document.getElementById(prefix + '-edit-toggle');
+  var cancelBtn = document.getElementById(prefix + '-cancel-btn');
   var toolbar = document.getElementById(prefix + '-toolbar');
   var body = document.getElementById(prefix + '-doc-body');
   if (!body) return;
   var on = _ptDocEditMode[prefix];
+  // When entering edit mode, snapshot current content for Cancel
+  if (on) _ptDocSavedContent[prefix] = body.innerHTML;
+  if (cancelBtn) cancelBtn.style.display = on ? '' : 'none';
   // Make entire doc body editable (word-processor mode)
   body.contentEditable = on ? 'true' : 'false';
   body.classList.toggle('editable-mode', on);
@@ -13794,6 +13867,59 @@ function ptToggleDocEdit(prefix) {
   if (toolbar) toolbar.classList.toggle('active', on);
   if (toggle) { toggle.classList.toggle('on', on); toggle.textContent = on ? 'Editing' : 'Edit'; }
   if (on) { body.focus(); }
+}
+
+function ptCancelDocEdit(type) {
+  var prefix = 'pt-' + type;
+  if (!confirm('Discard unsaved changes and revert to the last saved version?\n\nThis cannot be undone.')) return;
+  var body = document.getElementById(prefix + '-doc-body');
+  if (!body) return;
+  var snapshot = _ptDocSavedContent[prefix];
+  if (snapshot !== undefined) {
+    body.innerHTML = snapshot;
+  }
+  // Turn off edit mode
+  if (_ptDocEditMode[prefix]) ptToggleDocEdit(prefix);
+  _initSigDateFields(prefix);
+}
+
+function _initSigDateFields(prefix) {
+  var body = document.getElementById(prefix + '-doc-body');
+  if (!body) return;
+  body.querySelectorAll('.sig-date-field').forEach(function(el) {
+    if (el._dateHandlerAttached) return;
+    el._dateHandlerAttached = true;
+    // Block non-digit keys except navigation
+    el.addEventListener('keydown', function(e) {
+      var navKeys = ['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Home','End','Enter'];
+      if (navKeys.indexOf(e.key) > -1) return;
+      if (!/^\d$/.test(e.key)) { e.preventDefault(); return; }
+      // Prevent typing past 10 chars (DD/MM/YYYY)
+      var raw = el.textContent.replace(/\D/g, '');
+      if (raw.length >= 8) { e.preventDefault(); }
+    });
+    // Auto-format as DD/MM/YYYY on input
+    el.addEventListener('input', function() {
+      var raw = el.textContent.replace(/\D/g, '').slice(0, 8);
+      var out = '';
+      if (raw.length > 0) out  = raw.slice(0, 2);
+      if (raw.length > 2) out += '/' + raw.slice(2, 4);
+      if (raw.length > 4) out += '/' + raw.slice(4, 8);
+      if (el.textContent !== out) {
+        el.textContent = out;
+        // Move cursor to end
+        try {
+          var range = document.createRange();
+          var sel = window.getSelection();
+          var node = el.firstChild;
+          if (node) { range.setStart(node, node.length); range.collapse(true); }
+          else       { range.setStart(el, 0); range.collapse(true); }
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } catch(_e) {}
+      }
+    });
+  });
 }
 
 function _ptAutoFillDoc(prefix, p) {
@@ -14582,7 +14708,7 @@ function openPtModal(mode) {
       '<div class="pt-field"><label>Date</label><input class="pt-inp" type="date" id="ptm-time-date"></div>' +
       '<div class="pt-field"><label>Hours *</label>' + trBuildHTML('ptm-time-roll', 23) + '</div>' +
       '</div>' +
-      '<div class="pt-field"><label>Description</label><input class="pt-inp" id="ptm-time-desc" placeholder="What did you work on?"></div>' +
+      '<div class="pt-field"><label>Description <span class="desc-wc" id="ptm-time-wc" style="float:right;font-weight:400">0 / 200 words</span></label><textarea class="pt-inp" id="ptm-time-desc" rows="2" style="resize:vertical;min-height:60px" placeholder="What did you work on?" oninput="_descWordCount(this,\'ptm-time-wc\')"></textarea></div>' +
       '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="savePtTime()">Log time</button></div>';
   }
   body.innerHTML = html;
@@ -14862,7 +14988,7 @@ function openPtEditTime(i) {
     '<div class="pt-field"><label>Date</label><input class="pt-inp" type="date" id="ptm-time-date" value="' + (h.log_date ? h.log_date.slice(0,10) : '') + '"></div>' +
     '<div class="pt-field"><label>Hours *</label>' + trBuildHTML('ptm-time-roll', 23) + '</div>' +
     '</div>' +
-    '<div class="pt-field"><label>Description</label><input class="pt-inp" id="ptm-time-desc" value="' + escapeHTML(h.description || '') + '"></div>' +
+    '<div class="pt-field"><label>Description <span class="desc-wc" id="ptm-time-wc" style="float:right;font-weight:400">' + (h.description ? Math.min(200, h.description.trim().split(/\s+/).filter(Boolean).length) : 0) + ' / 200 words</span></label><textarea class="pt-inp" id="ptm-time-desc" rows="2" style="resize:vertical;min-height:60px" oninput="_descWordCount(this,\'ptm-time-wc\')">' + escapeHTML(h.description || '') + '</textarea></div>' +
     '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-right:auto" onclick="var idx=_ptEditIdx;closePtModal();deletePtItem(\'timesheet\',idx)">Delete</button><button class="pt-save-btn" onclick="updatePtTime()">Save changes</button></div>';
   overlay.classList.add('open');
   var _totalMins = Math.round((h.hours || 0) * 60);
