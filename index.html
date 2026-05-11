@@ -1237,6 +1237,11 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fk-tour-dismiss:hover{color:var(--on-surface-mid)}
 .fk-tour-next{padding:7px 18px;background:var(--on-surface);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
 .fk-tour-next:hover{background:#2a2a2a}
+.fk-tour-drag-handle{margin:-18px -20px 12px;padding:10px 20px 8px;border-radius:var(--radius) var(--radius) 0 0;cursor:grab;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--outline-variant)}
+.fk-tour-drag-handle:active,.fk-tour-bubble.fk-dragging .fk-tour-drag-handle{cursor:grabbing}
+.fk-tour-grip{display:block;width:32px;height:4px;background:var(--outline-variant);border-radius:2px}
+.fk-tour-back{padding:7px 14px;background:none;color:var(--on-surface-mid);border:1.5px solid var(--outline-variant);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.fk-tour-back:hover{background:var(--outline-variant)}
 /* ── CONFETTI ── */
 #fk-confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:9500}
 @keyframes toastIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -15250,8 +15255,42 @@ function _fkoSetStep(val) {
   try { localStorage.setItem(k, String(val)); } catch(e) {}
 }
 
+var _fkoDragInited = false;
+function _fkoInitDrag() {
+  if (_fkoDragInited) return;
+  _fkoDragInited = true;
+  var bubble = document.getElementById('fk-tour-bubble');
+  var handle = document.getElementById('fk-tour-drag-handle');
+  if (!bubble || !handle) return;
+  var _drag = null;
+  handle.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    var rect = bubble.getBoundingClientRect();
+    _drag = { mx: e.clientX, my: e.clientY, bl: rect.left, bt: rect.top };
+    bubble.classList.add('fk-dragging');
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!_drag) return;
+    var dx = e.clientX - _drag.mx, dy = e.clientY - _drag.my;
+    var nl = Math.max(0, Math.min(_drag.bl + dx, window.innerWidth - bubble.offsetWidth));
+    var nt = Math.max(0, Math.min(_drag.bt + dy, window.innerHeight - bubble.offsetHeight));
+    bubble.style.left = nl + 'px';
+    bubble.style.top = nt + 'px';
+    bubble.style.right = '';
+    bubble.style.bottom = '';
+    bubble._fkoDragged = true;
+  });
+  document.addEventListener('mouseup', function() {
+    if (!_drag) return;
+    _drag = null;
+    bubble.classList.remove('fk-dragging');
+  });
+}
+
 function _fkoStart() {
   if (!_currentUser) return;
+  _fkoInitDrag();
   var saved = _fkoGetStep();
   if (saved === 'done') return;
   // Cross-device: Supabase metadata is the authoritative "already done" flag.
@@ -15291,32 +15330,30 @@ function _fkoShowStep(idx) {
       _fkoShowBubble(idx);
     };
 
-    if (!_projId) { _fkoShowBubble(idx); return; } // no mock project, just show bubble
-
-    if (_ptCurrentId !== _projId) {
-      // Need to enter the project first — run mockSetup if this step has one,
-      // otherwise just navigate in
+    // ── No mock project yet: run mockSetup to create & navigate into it ──
+    if (!_projId) {
+      showPanel('projects', document.getElementById('nav-projects'));
       if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
-        var navEl = step.navId ? document.getElementById(step.navId) : null;
-        if (navEl) showPanel(step.panel, navEl);
-        var p = window[step.mockSetup]();
-        if (p && typeof p.then === 'function') { p.then(function(){ setTimeout(_doTab, 600); }); }
-        else { setTimeout(_doTab, 600); }
-        return;
+        var p0 = window[step.mockSetup]();
+        if (p0 && typeof p0.then === 'function') { p0.then(function(){ setTimeout(_doTab, 700); }); }
+        else { setTimeout(_doTab, 700); }
+      } else {
+        _fkoShowBubble(idx); // no setup fn — just show bubble on project list
       }
-      // No mockSetup — load projects and navigate in
+      return;
+    }
+
+    // ── Have project_id but not currently inside it: navigate in ──
+    if (_ptCurrentId !== _projId) {
       showPanel('projects', document.getElementById('nav-projects'));
       loadProjects().then(function(){
         selectPtProject(_projId);
-        setTimeout(_doTab, 600);
+        setTimeout(_doTab, 700);
       });
       return;
     }
-    // Already in the project — just switch tab (also run mockSetup if present for first visit)
-    if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
-      var pr = window[step.mockSetup]();
-      if (pr && typeof pr.then === 'function') { pr.then(function(){ _doTab(); }); return; }
-    }
+
+    // ── Already inside the correct project: switch tab ──
     _doTab();
     return;
   }
@@ -15359,11 +15396,15 @@ function _fkoShowBubble(idx) {
   } else {
     nextBtn.disabled = false; nextBtn.style.opacity = ''; nextBtn.style.cursor = '';
   }
-  bubble.style.position = 'fixed';
-  bubble.style.top = '80px'; bubble.style.right = '28px';
-  bubble.style.bottom = ''; bubble.style.left = '';
+  if (!bubble._fkoDragged) {
+    bubble.style.position = 'fixed';
+    bubble.style.top = '80px'; bubble.style.right = '28px';
+    bubble.style.bottom = ''; bubble.style.left = '';
+  }
   bubble.classList.remove('arr-top','arr-bot','fk-in');
   bubble.style.display = 'block';
+  var backBtn = document.getElementById('fk-tour-back');
+  if (backBtn) backBtn.style.display = idx === 0 ? 'none' : '';
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (spotlight) spotlight.style.display = 'none';
   void bubble.offsetWidth;
@@ -15393,6 +15434,14 @@ function _fkoContinue() {
   } else {
     _fkoShowStep(idx + 1);
   }
+}
+
+function _fkoBack() {
+  var saved = _fkoGetStep();
+  if (saved === 'done') return;
+  var idx = Number(saved);
+  if (isNaN(idx) || idx <= 0) return;
+  _fkoShowStep(idx - 1);
 }
 
 function _fkoSkip() {
@@ -16051,13 +16100,17 @@ function _fkCelebrate(type) {
 <div id="fk-tour-overlay">
   <div class="fk-tour-spotlight" id="fk-tour-spotlight"></div>
   <div class="fk-tour-bubble" id="fk-tour-bubble" style="width:320px">
+    <div class="fk-tour-drag-handle" id="fk-tour-drag-handle"><span class="fk-tour-grip"></span></div>
     <div class="fk-tour-step-lbl" id="fk-tour-step-lbl"></div>
     <div class="fk-tour-text" id="fk-tour-text"></div>
     <div class="fk-tour-foot">
       <div class="fk-tour-dots" id="fk-tour-dots"></div>
       <div style="display:flex;align-items:center;justify-content:space-between">
         <button class="fk-tour-dismiss" id="fk-tour-dismiss" onclick="_fkoSkip()">Skip tour</button>
-        <button class="fk-tour-next" id="fk-tour-next" onclick="_fkoContinue()">Continue →</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="fk-tour-back" id="fk-tour-back" onclick="_fkoBack()" style="display:none">← Back</button>
+          <button class="fk-tour-next" id="fk-tour-next" onclick="_fkoContinue()">Continue →</button>
+        </div>
       </div>
     </div>
   </div>
