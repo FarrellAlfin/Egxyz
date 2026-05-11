@@ -1226,12 +1226,10 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fk-tour-bubble{position:fixed;background:var(--surface-white);border:1.5px solid var(--outline-variant);border-radius:var(--radius);box-shadow:0 12px 40px rgba(25,28,30,0.18);padding:18px 20px;width:290px;z-index:2;pointer-events:all;display:none}
 .fk-tour-bubble.fk-in{animation:fkTourIn .22s cubic-bezier(.4,0,.2,1)}
 @keyframes fkTourIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fk-tour-bubble::before{content:'';position:absolute;width:10px;height:10px;background:var(--surface-white);border:1.5px solid var(--outline-variant);transform:rotate(45deg)}
-.fk-tour-bubble.arr-top::before{top:-6px;left:24px;border-bottom:none;border-right:none}
-.fk-tour-bubble.arr-bot::before{bottom:-6px;left:24px;border-top:none;border-left:none}
+.fk-tour-bubble::before{display:none}
 .fk-tour-step-lbl{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tertiary);margin-bottom:8px}
 .fk-tour-text{font-size:13px;font-weight:500;color:var(--on-surface);line-height:1.55}
-.fk-tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.fk-tour-foot{display:flex;flex-direction:column;gap:10px;margin-top:12px}
 .fk-tour-dots{width:100%;margin-bottom:8px}
 .fk-tour-dot{width:6px;height:6px;border-radius:50%;background:var(--outline-variant);transition:all .2s}
 .fk-tour-dot.on{background:var(--tertiary);width:18px;border-radius:4px}
@@ -15201,7 +15199,7 @@ var _FKO_STEPS = [
     text:'Start by entering your name — it auto-fills every invoice, contract, and document you create. Fill in as much as you like, then click Continue.',
     needsName:true },
   /* 1 */ { panel:'home', navId:'nav-home', icon:'🏠', title:'Dashboard',
-    text:'The dashboard shows recently visited tools, your to-do list, activity heat map, calendar events, and quick access shortcuts.' },
+    text:'Your command centre — to-do list, heat map, and calendar. ⏱ The quick timer is in the top bar of the sidebar (start tracking with one click). ⚙️ My Details is pinned at the very bottom of the sidebar — that\'s where you set your name, rates, and payment info.' },
   /* 2 */ { panel:'clients', navId:'nav-clients', icon:'👤', title:'Client Directory',
     text:'Store every client you work with — name, email, phone, and notes. Contacts link automatically to projects and invoices.',
     mockSetup:'_fkoMockClients' },
@@ -15215,7 +15213,7 @@ var _FKO_STEPS = [
   /* 6 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
     text:'Set key delivery dates and mark them complete as you hit them. Milestones keep the project on track.' },
   /* 7 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
-    text:'Track billing phases — each phase links directly to an invoice so you can send the bill with one click.' },
+    text:'Billing phases link directly to invoices. Two mock invoices are already here — one paid, one sent. Click any row to view the linked invoice, or head to Invoice Builder to create a new one from scratch.' },
   /* 8 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
     text:'Log every meeting, call, or brief directly in the project. Dates, attendees, and notes — all in one place.' },
   /* 9 */ { panel:'projects', navId:null, ptTab:'hours', icon:'⏱', title:'Project — Timesheet',
@@ -15225,7 +15223,7 @@ var _FKO_STEPS = [
   /* 11 */ { panel:'projects', navId:null, ptTab:'scope', icon:'🔄', title:'Project — Scope Change',
     text:'When a client requests work outside the original agreement, document it here with a formal Scope Change Order.' },
   /* 12 */ { panel:'invoice', navId:'nav-invoice', icon:'🧾', title:'Invoice Builder',
-    text:'Pick a project, add line items, and send a polished PDF invoice — pre-filled with your details and client info.' },
+    text:'This is where you create and send invoices. Two have already been generated for the Sunday Studios project. Try building a new one — select a project, add line items, and hit Save to see the live preview.' },
   /* 13 */ { panel:'pipeline', navId:'nav-pipeline', icon:'⚡', title:'Pipeline Tracker',
     text:'Track prospects and forecast income. Set deal values and probabilities to see your weighted revenue ahead.',
     mockSetup:'_fkoMockPipeline' },
@@ -15362,8 +15360,8 @@ function _fkoShowBubble(idx) {
     nextBtn.disabled = false; nextBtn.style.opacity = ''; nextBtn.style.cursor = '';
   }
   bubble.style.position = 'fixed';
-  bubble.style.bottom = '28px'; bubble.style.right = '28px';
-  bubble.style.top = ''; bubble.style.left = '';
+  bubble.style.top = '80px'; bubble.style.right = '28px';
+  bubble.style.bottom = ''; bubble.style.left = '';
   bubble.classList.remove('arr-top','arr-bot','fk-in');
   bubble.style.display = 'block';
   var spotlight = document.getElementById('fk-tour-spotlight');
@@ -15443,9 +15441,9 @@ async function _fkoMockClients() {
   if (!_currentUser) return;
   var mock = _fkoGetMock();
   if (mock.client_id) { if (typeof loadClients === 'function') await loadClients(); return; }
-  var payload = { user_id: _currentUser.id, name: 'Acme Creative Co.', email: 'hello@acmecreative.co',
-    phone: '+1 (555) 012-3456', company: 'Acme Creative', website: 'acmecreative.co',
-    job_title: 'Marketing Director', notes: '_fko_tour_mock_' };
+  var payload = { user_id: _currentUser.id, name: 'Sunday Studios', email: 'hello@sundaystudios.co',
+    phone: '+1 (555) 012-3456', company: 'Sunday Studios', website: 'sundaystudios.co',
+    job_title: 'Creative Director', notes: '_fko_tour_mock_' };
   var res = await _supabase.from('clients').insert(payload).select().single();
   if (res.data) { mock.client_id = res.data.id; _fkoSaveMock(mock); }
   if (typeof loadClients === 'function') await loadClients();
@@ -15464,52 +15462,80 @@ async function _fkoMockProject() {
   var sd = new Date(today.getFullYear(), today.getMonth()-1, 1);
   var ed = new Date(today.getFullYear(), today.getMonth()+2, 28);
   var fmt = function(d){ return d.toISOString().split('T')[0]; };
+  var projName = 'Brand Identity — Sunday Studios';
   // Create project
   var projRes = await _supabase.from('projects').insert({
-    user_id: _currentUser.id, name: 'Brand Identity — Acme Creative',
-    client_name: 'Acme Creative Co.', status: 'active',
+    user_id: _currentUser.id, name: projName,
+    client_name: 'Sunday Studios', status: 'active',
     start_date: fmt(sd), end_date: fmt(ed), budget: 12000,
-    description: 'Full brand identity redesign including logo, style guide, and web assets.',
-    contract_doc: '<h2>Client Contract</h2><p>This agreement is between <strong>[Your Name]</strong> (Freelancer) and <strong>Acme Creative Co.</strong> (Client). The Freelancer agrees to deliver a complete brand identity package including logo, colour palette, typography, and brand guidelines by the agreed deadline. Payment is split: 50% deposit on signing, 50% on final delivery. All work remains the Freelancer\'s intellectual property until the final payment is received.</p>',
-    scope_doc: '<h2>Scope Change Order #001</h2><p><strong>Original scope:</strong> Logo, colour palette, typography, brand guidelines.</p><p><strong>Requested addition:</strong> Social media kit — Instagram and LinkedIn post templates (8 templates total).</p><p><strong>Additional fee:</strong> $1,200 USD, due on delivery.</p><p><strong>Revised deadline:</strong> Extended by 5 business days.</p>'
+    description: 'Full brand identity redesign for Sunday Studios — logo, colour palette, typography, style guide, and web assets.',
+    contract_doc: '<h2>Client Contract</h2><p>This agreement is between <strong>[Your Name]</strong> (Freelancer) and <strong>Sunday Studios</strong> (Client). The Freelancer agrees to deliver a complete brand identity package including logo, colour palette, typography, and brand guidelines by the agreed deadline. Payment is split 50/50: deposit on signing, remainder on final delivery. All intellectual property transfers to the Client upon receipt of final payment.</p>',
+    scope_doc: '<h2>Scope Change Order #001</h2><p><strong>Original scope:</strong> Logo, colour palette, typography, brand guidelines.</p><p><strong>Requested addition:</strong> Social media kit — Instagram and LinkedIn post templates (8 templates total).</p><p><strong>Additional fee:</strong> $1,200 USD, due on delivery.</p><p><strong>Revised timeline:</strong> Extended by 5 business days.</p>'
   }).select().single();
   if (!projRes.data) return;
   var projId = projRes.data.id;
   mock.project_id = projId;
   // Tasks
   var taskRes = await _supabase.from('project_tasks').insert([
-    { user_id:_currentUser.id, project_id:projId, title:'Initial discovery call', status:'done', priority:'medium', due_date: fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, title:'Moodboard & direction review', status:'done', priority:'high', due_date: fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo design — round 1', status:'inprogress', priority:'high', due_date: fmt(today) },
-    { user_id:_currentUser.id, project_id:projId, title:'Brand guidelines document', status:'todo', priority:'medium', due_date: fmt(ed) }
+    { user_id:_currentUser.id, project_id:projId, title:'Discovery call & creative brief', status:'done', priority:'medium', due_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, title:'Moodboard & direction sign-off', status:'done', priority:'high', due_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo design — round 1', status:'inprogress', priority:'high', due_date:fmt(today) },
+    { user_id:_currentUser.id, project_id:projId, title:'Colour palette & typography system', status:'inprogress', priority:'high', due_date:fmt(today) },
+    { user_id:_currentUser.id, project_id:projId, title:'Brand guidelines document', status:'todo', priority:'medium', due_date:fmt(ed) },
+    { user_id:_currentUser.id, project_id:projId, title:'Final delivery & handoff', status:'todo', priority:'high', due_date:fmt(ed) }
   ]).select();
   mock.task_ids = (taskRes.data||[]).map(function(t){ return t.id; });
   // Milestones
   var msRes = await _supabase.from('project_milestones').insert([
     { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete', due_date:fmt(sd), completed:true },
     { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered', due_date:fmt(today), completed:true },
-    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines', due_date:fmt(ed), completed:false }
+    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines & handoff', due_date:fmt(ed), completed:false }
   ]).select();
   mock.milestone_ids = (msRes.data||[]).map(function(m){ return m.id; });
-  // Billing — uses phase_name (matches savePtBilling payload)
+  // Billing phases
   var billRes = await _supabase.from('project_billing').insert([
-    { user_id:_currentUser.id, project_id:projId, phase_name:'Deposit (50%)', amount:6000, status:'paid', due_date:fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, phase_name:'Final payment (50%)', amount:6000, status:'invoiced', due_date:fmt(ed) }
+    { user_id:_currentUser.id, project_id:projId, phase_name:'INV-001', amount:6000, status:'paid', due_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, phase_name:'INV-002', amount:6000, status:'invoiced', due_date:fmt(ed) }
   ]).select();
   mock.billing_ids = (billRes.data||[]).map(function(b){ return b.id; });
   // Meetings
   var meetRes = await _supabase.from('project_meetings').insert([
-    { user_id:_currentUser.id, project_id:projId, title:'Kickoff call', meeting_date:fmt(sd), notes:'Discussed scope, timeline, and deliverables. Client confirmed muted palette and geometric direction.' },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client responded best to option B. Requested minor tweaks to typography.' }
+    { user_id:_currentUser.id, project_id:projId, title:'Kickoff call', meeting_date:fmt(sd), notes:'Reviewed creative brief and project scope. Sunday Studios confirmed geometric aesthetic with a muted, editorial colour palette. Agreed on 3 logo concepts for first round.' },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client selected option B as the direction. Requested refined letterforms and a secondary wordmark. Scope change request raised for social media templates.' }
   ]).select();
   mock.meeting_ids = (meetRes.data||[]).map(function(m){ return m.id; });
   // Timesheet
   var hrRes = await _supabase.from('project_timesheet').insert([
-    { user_id:_currentUser.id, project_id:projId, description:'Discovery & research', hours:3, log_date:fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, description:'Initial sketches & moodboard', hours:4.5, log_date:fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, description:'Logo design — first round', hours:6, log_date:fmt(today) }
+    { user_id:_currentUser.id, project_id:projId, description:'Discovery research & competitor analysis', hours:3, log_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, description:'Moodboard curation & client presentation', hours:4.5, log_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, description:'Logo design — first round (3 concepts)', hours:7, log_date:fmt(today) }
   ]).select();
   mock.timesheet_ids = (hrRes.data||[]).map(function(h){ return h.id; });
+  // Create invoices and link to billing phases
+  var invRes = await _supabase.from('invoices').insert([
+    { user_id:_currentUser.id, project_id:projId, project:projName,
+      invoice_number:'INV-001', client_name:'Sunday Studios', client_email:'hello@sundaystudios.co',
+      issue_date:fmt(sd), due_date:fmt(sd), status:'paid',
+      subtotal:6000, tax_pct:0, discount_pct:0, total:6000, currency:'USD',
+      line_items:[{desc:'Brand identity — deposit (50%)',qty:1,rate:6000}],
+      notes:'Thank you for your business.' },
+    { user_id:_currentUser.id, project_id:projId, project:projName,
+      invoice_number:'INV-002', client_name:'Sunday Studios', client_email:'hello@sundaystudios.co',
+      issue_date:fmt(today), due_date:fmt(ed), status:'sent',
+      subtotal:6000, tax_pct:0, discount_pct:0, total:6000, currency:'USD',
+      line_items:[{desc:'Brand identity — final delivery (50%)',qty:1,rate:6000}],
+      notes:'Due on final delivery and client approval.' }
+  ]).select();
+  mock.invoice_ids = (invRes.data||[]).map(function(i){ return i.id; });
+  // Link billing phases → invoices in localStorage so renderPtBilling shows the connection
+  if (billRes.data && billRes.data.length >= 2 && invRes.data && invRes.data.length >= 2) {
+    try {
+      var _lnks = JSON.parse(localStorage.getItem('fk_bill_inv_links')||'{}');
+      _lnks[billRes.data[0].id] = invRes.data[0].id;
+      _lnks[billRes.data[1].id] = invRes.data[1].id;
+      localStorage.setItem('fk_bill_inv_links', JSON.stringify(_lnks));
+    } catch(e) {}
+  }
   _fkoSaveMock(mock);
   // Load and enter project
   if (typeof loadProjects === 'function') await loadProjects();
@@ -15544,7 +15570,7 @@ async function _fkoMockTax() {
   var q = m < 3 ? 1 : m < 6 ? 2 : m < 9 ? 3 : 4;
   var year = new Date().getFullYear();
   var res = await _supabase.from('tax_entries').insert([
-    { user_id:_currentUser.id, year:year, quarter:q, type:'income', description:'Brand Identity — Acme Creative', amount:6000 },
+    { user_id:_currentUser.id, year:year, quarter:q, type:'income', description:'Brand Identity — Sunday Studios', amount:6000 },
     { user_id:_currentUser.id, year:year, quarter:q, type:'income', description:'Website redesign — Bloom Studio', amount:3500 },
     { user_id:_currentUser.id, year:year, quarter:q, type:'expense', description:'Adobe Creative Cloud', amount:54.99, category:'Software' },
     { user_id:_currentUser.id, year:year, quarter:q, type:'expense', description:'Home office (monthly)', amount:200, category:'Office' }
@@ -15553,7 +15579,7 @@ async function _fkoMockTax() {
   if (res.data) {
     mock.tax_ids = res.data.map(function(r){ return r.id; });
     txData[q].income = [
-      { id:res.data[0].id, desc:'Brand Identity — Acme Creative', amt:6000 },
+      { id:res.data[0].id, desc:'Brand Identity — Sunday Studios', amt:6000 },
       { id:res.data[1].id, desc:'Website redesign — Bloom Studio', amt:3500 }
     ];
     txData[q].expenses = [
@@ -15593,7 +15619,14 @@ async function _fkoCleanupAndReload() {
   }
   if ((mock.pipeline_ids||[]).length) dels.push(_supabase.from('pipeline_cards').delete().in('id',mock.pipeline_ids).eq('user_id',_currentUser.id));
   if ((mock.tax_ids||[]).length) dels.push(_supabase.from('tax_entries').delete().in('id',mock.tax_ids).eq('user_id',_currentUser.id));
+  if ((mock.invoice_ids||[]).length) dels.push(_supabase.from('invoices').delete().in('id',mock.invoice_ids).eq('user_id',_currentUser.id));
   try { await Promise.all(dels); } catch(e) { console.warn('_fkoCleanupAndReload:', e); }
+  // Clear billing→invoice localStorage links for mock billing rows
+  try {
+    var _bl = JSON.parse(localStorage.getItem('fk_bill_inv_links')||'{}');
+    (mock.billing_ids||[]).forEach(function(id){ delete _bl[id]; });
+    localStorage.setItem('fk_bill_inv_links', JSON.stringify(_bl));
+  } catch(e) {}
   try { localStorage.removeItem(_fkoMockKey()); } catch(e) {}
   window.location.reload();
 }
@@ -16022,7 +16055,7 @@ function _fkCelebrate(type) {
     <div class="fk-tour-text" id="fk-tour-text"></div>
     <div class="fk-tour-foot">
       <div class="fk-tour-dots" id="fk-tour-dots"></div>
-      <div style="display:flex;gap:10px;align-items:center">
+      <div style="display:flex;align-items:center;justify-content:space-between">
         <button class="fk-tour-dismiss" id="fk-tour-dismiss" onclick="_fkoSkip()">Skip tour</button>
         <button class="fk-tour-next" id="fk-tour-next" onclick="_fkoContinue()">Continue →</button>
       </div>
