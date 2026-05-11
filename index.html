@@ -5197,7 +5197,7 @@ function showDash(panel){
   initAtnDropdowns();
   // Restore paused timer if page was refreshed while paused
   setTimeout(_restoreTimerState, 200);
-  setTimeout(function(){ if(typeof _fkoResume==='function') _fkoResume(); }, 400);
+  setTimeout(function(){ if(typeof _fkoStart==='function') _fkoStart(); }, 400);
 }
 function showLanding(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -5268,10 +5268,7 @@ async function saveWelcomePage() {
   if (_hnEl0b) _hnEl0b.textContent = (nickname || fullname || first) + '!';
   // Pre-fill my-nickname field in My Details
   set('my-nickname', nickname);
-  showDash();
-  setTimeout(function() {
-    if (typeof _fkoStart === 'function') _fkoStart();
-  }, 100);
+  showDash(); // showDash() calls _fkoStart() at 400ms — handles tour launch for all new users
 }
 
 function updateWelcomePreview() {
@@ -15226,24 +15223,19 @@ function _fkoStart() {
   if (!_currentUser) return;
   var saved = _fkoGetStep();
   if (saved === 'done') return;
+  // Cross-device: Supabase metadata is the authoritative "already done" flag.
+  // If localStorage has no entry but Supabase says the user completed/skipped
+  // the tour (on another device), mark done locally and bail out.
+  if (saved === null && _currentUser.user_metadata && _currentUser.user_metadata.onboarding_done) {
+    _fkoSetStep('done');
+    return;
+  }
   var idx = (saved !== null && !isNaN(Number(saved))) ? Number(saved) : 0;
+  // Prevent double-fire animation when called twice in quick succession
+  var bubble = document.getElementById('fk-tour-bubble');
+  if (bubble && bubble.style.display !== 'none' && bubble._fkoIdx === idx) return;
   _fkoSetStep(idx);
   _fkoShowStep(idx);
-}
-
-function _fkoResume() {
-  if (!_currentUser) return;
-  var saved = _fkoGetStep();
-  if (!saved || saved === 'done') return;
-  var idx = Number(saved);
-  if (isNaN(idx) || idx < 0 || idx > 9) return;
-  // Only resume if the right panel is active
-  var step = _FKO_STEPS[idx];
-  if (!step) return;
-  var panel = document.getElementById('panel-' + step.panel);
-  if (panel && panel.classList.contains('active')) {
-    setTimeout(function(){ _fkoShowStep(idx); }, 600);
-  }
 }
 
 function _fkoShowStep(idx) {
@@ -15291,6 +15283,7 @@ function _fkoShowStep(idx) {
   if (spotlight) spotlight.style.display = 'none';
   void bubble.offsetWidth;
   bubble.classList.add('fk-in');
+  bubble._fkoIdx = idx;  // tag current step for double-fire guard in _fkoStart
   _fkoSetStep(idx);
 }
 
@@ -15319,18 +15312,26 @@ function _fkoContinue() {
 
 function _fkoSkip() {
   _fkoSetStep('done');
+  // Persist cross-device so existing users on new devices don't see the tour again
+  if (_currentUser && typeof _supabase !== 'undefined') {
+    _supabase.auth.updateUser({ data: { onboarding_done: true } }).catch(function(){});
+  }
   var bubble = document.getElementById('fk-tour-bubble');
   var spotlight = document.getElementById('fk-tour-spotlight');
-  if (bubble) bubble.style.display = 'none';
+  if (bubble) { bubble.style.display = 'none'; bubble._fkoIdx = undefined; }
   if (spotlight) spotlight.style.display = 'none';
   showPanel('home', document.getElementById('nav-home'));
 }
 
 function _fkoFinish() {
   _fkoSetStep('done');
+  // Persist cross-device so existing users on new devices don't see the tour again
+  if (_currentUser && typeof _supabase !== 'undefined') {
+    _supabase.auth.updateUser({ data: { onboarding_done: true } }).catch(function(){});
+  }
   var bubble = document.getElementById('fk-tour-bubble');
   var spotlight = document.getElementById('fk-tour-spotlight');
-  if (bubble) bubble.style.display = 'none';
+  if (bubble) { bubble.style.display = 'none'; bubble._fkoIdx = undefined; }
   if (spotlight) spotlight.style.display = 'none';
   if (typeof _fkConfetti === 'function') {
     _fkConfetti(180);
