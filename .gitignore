@@ -1,0 +1,9 @@
+# Claude Code worktrees and local config
+.claude/worktrees/
+.claude/launch.json
+
+# macOS
+.DS_Store
+
+# Local dev
+*.local
