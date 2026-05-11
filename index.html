@@ -15343,18 +15343,22 @@ function _fkoShowStep(idx) {
       return;
     }
 
-    // ── Have project_id but not currently inside it: navigate in ──
-    if (_ptCurrentId !== _projId) {
-      showPanel('projects', document.getElementById('nav-projects'));
+    // ── Always make the projects panel the active panel first ──
+    // (_ptCurrentId can be stale if user navigated away via showPanel without ptBackToList,
+    //  so we can't rely on it alone — we always show the panel and decide from there.)
+    showPanel('projects', document.getElementById('nav-projects'));
+
+    if (_ptCurrentId === _projId) {
+      // selectPtProject was previously called: pt-detail-view is still in the right state.
+      // Give showPanel one tick to settle, then switch tab.
+      setTimeout(_doTab, 100);
+    } else {
+      // Haven't entered the project yet (page refresh, or user clicked ← All projects)
       loadProjects().then(function(){
         selectPtProject(_projId);
         setTimeout(_doTab, 700);
       });
-      return;
     }
-
-    // ── Already inside the correct project: switch tab ──
-    _doTab();
     return;
   }
 
