@@ -1543,7 +1543,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .iht-cell{padding:11px 14px;font-size:13px;color:var(--ink-mid)}
 .iht-cell.num{font-weight:600;color:var(--ink);font-family:var(--font-mono);font-size:12px}
 .iht-cell.amount{font-weight:500;color:var(--ink);font-family:var(--font-mono)}
-.inv-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.inv-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
 .inv-badge.draft{background:var(--cream-dark);color:var(--ink-light)}
 .inv-badge.sent{background:var(--blue-light);color:var(--blue)}
 .inv-badge.paid{background:var(--sage-light);color:var(--sage)}
@@ -6983,32 +6983,11 @@ function setLoggedInUser(user) {
   }, 0);
 }
 
-// ─── INACTIVITY AUTO-LOGOUT (30 minutes) ─────────────────────────────────────
+// ─── INACTIVITY AUTO-LOGOUT — disabled (users stay signed in) ────────────────
 var _inactivityTimer = null;
-var INACTIVITY_MS = 30 * 60 * 1000; // 30 minutes
-
-function _resetInactivityTimer() {
-  if (!_currentUser) return;
-  clearTimeout(_inactivityTimer);
-  _inactivityTimer = setTimeout(function() {
-    if (!_currentUser) return;
-    showToast('You were signed out due to inactivity.');
-    _supabase.auth.signOut();
-    // onAuthStateChange SIGNED_OUT handler will call _clearUserState() + showLanding()
-  }, INACTIVITY_MS);
-}
-
-function _startInactivityTimer() {
-  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(function(evt) {
-    document.addEventListener(evt, _resetInactivityTimer, { passive: true });
-  });
-  _resetInactivityTimer();
-}
-
-function _stopInactivityTimer() {
-  clearTimeout(_inactivityTimer);
-  _inactivityTimer = null;
-}
+function _resetInactivityTimer() { /* disabled */ }
+function _startInactivityTimer() { /* disabled — no auto-logout */ }
+function _stopInactivityTimer()  { clearTimeout(_inactivityTimer); _inactivityTimer = null; }
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ═══════════════ MY DETAILS ═══════════════
@@ -12147,7 +12126,8 @@ function renderPtMilestones() {
     var barDays = (msEnd - msStart) / 86400000 + 1;
     var leftPct = (barStartOffset / totalDays * 100).toFixed(2);
     var widthPct = Math.min(100 - parseFloat(leftPct), (barDays / totalDays * 100)).toFixed(2);
-    var barColor = m.completed ? '#16A34A' : '#1D4ED8';
+    var _msBarBase = (typeof getProjectColor === 'function') ? getProjectColor(_ptCurrentId) : '#1D4ED8';
+    var barColor = m.completed ? '#16A34A' : _msBarBase;
     var startLbl = m.start_date ? m.start_date.slice(5,10) : '';
     var endLbl   = m.due_date   ? m.due_date.slice(5,10)   : '';
     var barLabel = startLbl && endLbl && startLbl !== endLbl ? startLbl + '→' + endLbl : (endLbl || startLbl);
@@ -15210,10 +15190,13 @@ var _FKO_STEPS = [
     mockSetup:'_fkoMockClients' },
   /* 3 */ { panel:'invhistory', navId:'nav-invhistory', icon:'📊', title:'Financial Overview',
     text:'Track income, outstanding invoices, and payment history. Gives you a clear picture of cash flow at a glance.' },
-  /* 4 */ { panel:'projects', navId:'nav-projects', icon:'📋', title:'Project — Overview',
+  /* 4 */ { panel:'projects', navId:'nav-projects', icon:'🗂️', title:'Project Tracker',
+    text:'Your project hub. Switch views with the buttons above — Board, List, Gallery, or Timeline. The Gantt chart maps every project across its full timeline. Your mock project is already plotted below — click the bar to jump straight in.',
+    mockSetup:'_fkoMockProjectDash' },
+  /* 5 */ { panel:'projects', navId:null, icon:'📋', title:'Project — Overview',
     text:'Each project has an Overview showing open tasks, recent activity, upcoming milestones, and total hours logged.',
-    ptTab:'overview', mockSetup:'_fkoMockProject' },
-  /* 5 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
+    ptTab:'overview' },
+  /* 6 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
     text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
   /* 6 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
     text:'Set key delivery dates and mark them complete as you hit them. Milestones keep the project on track.' },
@@ -15538,11 +15521,15 @@ async function _fkoMockProject() {
     { user_id:_currentUser.id, project_id:projId, title:'Final delivery & handoff', status:'todo', priority:'high', due_date:fmt(ed) }
   ]).select();
   mock.task_ids = (taskRes.data||[]).map(function(t){ return t.id; });
-  // Milestones
+  // Milestones — give each a start_date so gantt bars have visible width
+  var wk = function(base, weeks) { var r=new Date(base); r.setDate(r.getDate()+weeks*7); return r; };
   var msRes = await _supabase.from('project_milestones').insert([
-    { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete', due_date:fmt(sd), completed:true },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered', due_date:fmt(today), completed:true },
-    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines & handoff', due_date:fmt(ed), completed:false }
+    { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete',
+      start_date:fmt(wk(sd,-2)), due_date:fmt(sd), completed:true },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered',
+      start_date:fmt(wk(today,-3)), due_date:fmt(today), completed:true },
+    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines & handoff',
+      start_date:fmt(wk(ed,-4)), due_date:fmt(ed), completed:false }
   ]).select();
   mock.milestone_ids = (msRes.data||[]).map(function(m){ return m.id; });
   // Billing phases
@@ -15590,9 +15577,30 @@ async function _fkoMockProject() {
     } catch(e) {}
   }
   _fkoSaveMock(mock);
+  // Refresh home dashboard so mock tasks show in the to-do list
+  if (typeof loadProjectTasksForHome === 'function') loadProjectTasksForHome();
   // Load and enter project
   if (typeof loadProjects === 'function') await loadProjects();
   if (typeof selectPtProject === 'function') selectPtProject(projId);
+}
+
+async function _fkoMockProjectDash() {
+  // Create the project if it doesn't exist yet (also enters the project)
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  if (!mock.project_id) {
+    await _fkoMockProject(); // creates everything + calls selectPtProject()
+  } else {
+    // Project already exists — just make sure it's loaded
+    if (typeof loadProjects === 'function') await loadProjects();
+  }
+  // Return to the project list / gantt view (don't stay inside the project)
+  if (typeof ptBackToList === 'function') ptBackToList();
+  // Ensure gantt re-renders (ptBackToList → renderPtList → renderGlobalGantt)
+  // and home tasks are refreshed
+  if (typeof loadProjectTasksForHome === 'function') loadProjectTasksForHome();
+  // Brief settle time for renderGlobalGantt to complete
+  await new Promise(function(r){ setTimeout(r, 350); });
 }
 
 async function _fkoMockPipeline() {
