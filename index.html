@@ -15486,15 +15486,15 @@ async function _fkoMockProject() {
   mock.task_ids = (taskRes.data||[]).map(function(t){ return t.id; });
   // Milestones
   var msRes = await _supabase.from('project_milestones').insert([
-    { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete', due_date:fmt(sd), status:'complete' },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered', due_date:fmt(today), status:'complete' },
-    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines', due_date:fmt(ed), status:'upcoming' }
+    { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete', due_date:fmt(sd), completed:true },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered', due_date:fmt(today), completed:true },
+    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines', due_date:fmt(ed), completed:false }
   ]).select();
   mock.milestone_ids = (msRes.data||[]).map(function(m){ return m.id; });
-  // Billing
+  // Billing — uses phase_name (matches savePtBilling payload)
   var billRes = await _supabase.from('project_billing').insert([
-    { user_id:_currentUser.id, project_id:projId, phase:'Deposit (50%)', amount:6000, status:'paid', due_date:fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, phase:'Final payment (50%)', amount:6000, status:'invoiced', due_date:fmt(ed) }
+    { user_id:_currentUser.id, project_id:projId, phase_name:'Deposit (50%)', amount:6000, status:'paid', due_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, phase_name:'Final payment (50%)', amount:6000, status:'invoiced', due_date:fmt(ed) }
   ]).select();
   mock.billing_ids = (billRes.data||[]).map(function(b){ return b.id; });
   // Meetings
