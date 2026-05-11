@@ -1229,10 +1229,10 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fk-tour-bubble::before{content:'';position:absolute;width:10px;height:10px;background:var(--surface-white);border:1.5px solid var(--outline-variant);transform:rotate(45deg)}
 .fk-tour-bubble.arr-top::before{top:-6px;left:24px;border-bottom:none;border-right:none}
 .fk-tour-bubble.arr-bot::before{bottom:-6px;left:24px;border-top:none;border-left:none}
-.fk-tour-step-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tertiary);margin-bottom:5px}
+.fk-tour-step-lbl{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tertiary);margin-bottom:8px}
 .fk-tour-text{font-size:13px;font-weight:500;color:var(--on-surface);line-height:1.55}
-.fk-tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
-.fk-tour-dots{display:flex;gap:5px;align-items:center}
+.fk-tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.fk-tour-dots{width:100%;margin-bottom:8px}
 .fk-tour-dot{width:6px;height:6px;border-radius:50%;background:var(--outline-variant);transition:all .2s}
 .fk-tour-dot.on{background:var(--tertiary);width:18px;border-radius:4px}
 .fk-tour-dismiss{font-size:12px;color:var(--on-surface-light);cursor:pointer;border:none;background:none;font-family:var(--font-body)}
@@ -8052,6 +8052,27 @@ async function loadInvoiceHistory() {
   }
   _invoices = ownInvoices.concat(sharedInvoices);
   _invoices.sort(function(a, b){ return new Date(b.created_at) - new Date(a.created_at); });
+  renderInvHistory();
+  renderFinancialOverview();
+  _syncOverdueInvoices();
+}
+
+async function _syncOverdueInvoices() {
+  if (!_currentUser || !_invoices) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var toUpdate = _invoices.filter(function(i){
+    if (i.status !== 'sent') return false;
+    if (!i.due_date) return false;
+    var d = new Date(i.due_date + 'T00:00:00'); d.setHours(0,0,0,0);
+    return d < today;
+  });
+  if (!toUpdate.length) return;
+  toUpdate.forEach(function(i){ i.status = 'overdue'; });
+  // Batch-update in Supabase (fire and forget individual updates)
+  toUpdate.forEach(function(i){
+    _supabase.from('invoices').update({ status:'overdue', updated_at: new Date().toISOString() })
+      .eq('id', i.id).eq('user_id', _currentUser.id).then(function(){});
+  });
   renderInvHistory();
   renderFinancialOverview();
 }
@@ -15176,37 +15197,46 @@ document.getElementById('pt-modal') && document.getElementById('pt-modal').addEv
    State: fk_onboarding_<uid>  →  0–9 (current step) | 'done'
 ═══════════════════════════════════════════════════════════════ */
 var _FKO_STEPS = [
-  { panel:'mydetails', navId:'nav-mydetails',
-    icon:'⚙️', title:'My Details',
+  /* 0 */ { panel:'mydetails', navId:'nav-mydetails', icon:'⚙️', title:'My Details',
     text:'Start by entering your name — it auto-fills every invoice, contract, and document you create. Fill in as much as you like, then click Continue.',
     needsName:true },
-  { panel:'home', navId:'nav-home',
-    icon:'🏠', title:'Dashboard',
-    text:'Your command centre. See this month\'s income, hours logged, open invoices, and upcoming milestones — all at a glance.' },
-  { panel:'clients', navId:'nav-clients',
-    icon:'👤', title:'Clients & Financial Overview',
-    text:'Store all your client contacts here. The Financial Overview panel (just below in the sidebar) shows your full income picture and invoice aging.' },
-  { panel:'projects', navId:'nav-projects',
-    icon:'📁', title:'Project Tracker',
-    text:'Create a project and track everything in one place — tasks, milestones, billing phases, meeting notes, and documents.' },
-  { panel:'projects', navId:null,
-    icon:'📁', title:'Inside a Project',
-    text:'Each project has 8 tabs: Overview, Tasks, Milestones, Billing, Meeting Notes, Timesheet, Contract, and Scope Change. All connected.' },
-  { panel:'invoice', navId:'nav-invoice',
-    icon:'📄', title:'Invoice Builder',
+  /* 1 */ { panel:'home', navId:'nav-home', icon:'🏠', title:'Dashboard',
+    text:'The dashboard shows recently visited tools, your to-do list, activity heat map, calendar events, and quick access shortcuts.' },
+  /* 2 */ { panel:'clients', navId:'nav-clients', icon:'👤', title:'Client Directory',
+    text:'Store every client you work with — name, email, phone, and notes. Contacts link automatically to projects and invoices.',
+    mockSetup:'_fkoMockClients' },
+  /* 3 */ { panel:'invhistory', navId:'nav-invhistory', icon:'📊', title:'Financial Overview',
+    text:'Track income, outstanding invoices, and payment history. Gives you a clear picture of cash flow at a glance.' },
+  /* 4 */ { panel:'projects', navId:'nav-projects', icon:'📋', title:'Project — Overview',
+    text:'Each project has an Overview showing open tasks, recent activity, upcoming milestones, and total hours logged.',
+    ptTab:'overview', mockSetup:'_fkoMockProject' },
+  /* 5 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
+    text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
+  /* 6 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
+    text:'Set key delivery dates and mark them complete as you hit them. Milestones keep the project on track.' },
+  /* 7 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
+    text:'Track billing phases — each phase links directly to an invoice so you can send the bill with one click.' },
+  /* 8 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
+    text:'Log every meeting, call, or brief directly in the project. Dates, attendees, and notes — all in one place.' },
+  /* 9 */ { panel:'projects', navId:null, ptTab:'hours', icon:'⏱', title:'Project — Timesheet',
+    text:'Log hours against this project and see totals. The data feeds the main Timesheet for cross-project tracking.' },
+  /* 10 */ { panel:'projects', navId:null, ptTab:'contract', icon:'📄', title:'Project — Contract',
+    text:'A full client contract, pre-filled with your details. Edit, get it signed, and download as a PDF — all inside FreelanceKit.' },
+  /* 11 */ { panel:'projects', navId:null, ptTab:'scope', icon:'🔄', title:'Project — Scope Change',
+    text:'When a client requests work outside the original agreement, document it here with a formal Scope Change Order.' },
+  /* 12 */ { panel:'invoice', navId:'nav-invoice', icon:'🧾', title:'Invoice Builder',
     text:'Pick a project, add line items, and send a polished PDF invoice — pre-filled with your details and client info.' },
-  { panel:'pipeline', navId:'nav-pipeline',
-    icon:'⚡', title:'Pipeline Tracker',
-    text:'Track prospects and forecast income. Set deal values and probability to see your weighted revenue for the month ahead.' },
-  { panel:'tax', navId:'nav-tax',
-    icon:'🧾', title:'Tax Tracker',
-    text:'Estimates your quarterly tax liability as income comes in. No surprise bills at tax time.' },
-  { panel:'ratecalc', navId:'nav-ratecalc',
-    icon:'💰', title:'Rate Calculator',
-    text:'Enter your income goal and FreelanceKit calculates the minimum hourly rate you need to charge. Know your floor.' },
-  { panel:'timesheet', navId:'nav-timesheet',
-    icon:'⏱', title:'Timesheet',
-    text:'Log hours against projects, track weekly utilisation, and see your busiest periods in the 16-week heatmap.',
+  /* 13 */ { panel:'pipeline', navId:'nav-pipeline', icon:'⚡', title:'Pipeline Tracker',
+    text:'Track prospects and forecast income. Set deal values and probabilities to see your weighted revenue ahead.',
+    mockSetup:'_fkoMockPipeline' },
+  /* 14 */ { panel:'tax', navId:'nav-tax', icon:'🧾', title:'Tax Tracker',
+    text:'Estimates your quarterly tax liability as income comes in. No surprise bills at tax time.',
+    mockSetup:'_fkoMockTax' },
+  /* 15 */ { panel:'ratecalc', navId:'nav-ratecalc', icon:'💰', title:'Rate Calculator',
+    text:'Enter your income goal and FreelanceKit calculates the minimum hourly rate you need to charge. Know your floor.',
+    mockSetup:'_fkoMockRateCalc' },
+  /* 16 */ { panel:'timesheet', navId:'nav-timesheet', icon:'⏱', title:'Timesheet',
+    text:'Log hours across all projects, track weekly utilisation, and see your busiest periods in the 16-week heatmap.',
     isLast:true }
 ];
 
@@ -15244,49 +15274,103 @@ function _fkoStart() {
 function _fkoShowStep(idx) {
   var step = _FKO_STEPS[idx];
   if (!step) return;
-  // Navigate to the panel for this step
-  var navEl = step.navId ? document.getElementById(step.navId) : null;
-  showPanel(step.panel, navEl);
-  // Update bubble content
+
+  // ── Project-tab steps: ensure we're inside the mock project ──
+  if (step.ptTab) {
+    var _fkoMd = _fkoGetMock();
+    var _projId = _fkoMd && _fkoMd.project_id;
+
+    var _doTab = function() {
+      // tab order matches the HTML buttons
+      var tabNames = ['overview','milestones','tasks','billing','meetings','hours','contract','scope'];
+      var tabIdx = tabNames.indexOf(step.ptTab);
+      var tabs = document.querySelectorAll('#pt-detail-view .pt-tab');
+      showPtTab(step.ptTab, tabs[tabIdx] || null);
+      // For contract/scope tabs, trigger render
+      if (step.ptTab === 'contract' || step.ptTab === 'scope') {
+        if (typeof renderPtDocTab === 'function') setTimeout(function(){ renderPtDocTab(step.ptTab); }, 50);
+      }
+      _fkoShowBubble(idx);
+    };
+
+    if (!_projId) { _fkoShowBubble(idx); return; } // no mock project, just show bubble
+
+    if (_ptCurrentId !== _projId) {
+      // Need to enter the project first — run mockSetup if this step has one,
+      // otherwise just navigate in
+      if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
+        var navEl = step.navId ? document.getElementById(step.navId) : null;
+        if (navEl) showPanel(step.panel, navEl);
+        var p = window[step.mockSetup]();
+        if (p && typeof p.then === 'function') { p.then(function(){ setTimeout(_doTab, 600); }); }
+        else { setTimeout(_doTab, 600); }
+        return;
+      }
+      // No mockSetup — load projects and navigate in
+      showPanel('projects', document.getElementById('nav-projects'));
+      loadProjects().then(function(){
+        selectPtProject(_projId);
+        setTimeout(_doTab, 600);
+      });
+      return;
+    }
+    // Already in the project — just switch tab (also run mockSetup if present for first visit)
+    if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
+      var pr = window[step.mockSetup]();
+      if (pr && typeof pr.then === 'function') { pr.then(function(){ _doTab(); }); return; }
+    }
+    _doTab();
+    return;
+  }
+
+  // ── Normal panel step ──
+  var navEl2 = step.navId ? document.getElementById(step.navId) : null;
+  showPanel(step.panel, navEl2);
+
+  if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
+    var pr2 = window[step.mockSetup]();
+    if (pr2 && typeof pr2.then === 'function') {
+      pr2.then(function(){ _fkoShowBubble(idx); });
+      return;
+    }
+  }
+  _fkoShowBubble(idx);
+}
+
+function _fkoShowBubble(idx) {
+  var step = _FKO_STEPS[idx];
+  if (!step) return;
   var bubble = document.getElementById('fk-tour-bubble');
   if (!bubble) return;
+  var total = _FKO_STEPS.length;
   document.getElementById('fk-tour-step-lbl').innerHTML =
-    '<span style="font-weight:500;opacity:.7;font-size:10px">' + step.icon + ' ' + step.title + '</span>';
+    '<span style="font-weight:600;font-size:11px;color:var(--tertiary)">' + step.icon + ' ' + step.title + '</span>' +
+    '<span style="font-size:10px;color:var(--on-surface-light);float:right">' + (idx+1) + ' / ' + total + '</span>';
   document.getElementById('fk-tour-text').textContent = step.text;
-  // Dots
-  document.getElementById('fk-tour-dots').innerHTML = _FKO_STEPS.map(function(_,i){
-    return '<div class="fk-tour-dot' + (i===idx?' on':'') + '"></div>';
-  }).join('');
-  // Buttons
+  // Progress bar instead of dots for 17 steps
+  var pct = Math.round(((idx+1)/total)*100);
+  document.getElementById('fk-tour-dots').innerHTML =
+    '<div style="width:100%;height:3px;background:var(--outline-variant);border-radius:2px;overflow:hidden">' +
+    '<div style="width:' + pct + '%;height:100%;background:var(--tertiary);border-radius:2px;transition:width .3s"></div></div>';
   var nextBtn = document.getElementById('fk-tour-next');
   nextBtn.textContent = step.isLast ? 'Finish →' : 'Continue →';
-  // Step 0: gate Continue on name being filled
   if (step.needsName) {
     _fkoUpdateNameGate();
     var fnEl = document.getElementById('my-firstname');
-    if (fnEl && !fnEl._fkoListener) {
-      fnEl._fkoListener = true;
-      fnEl.addEventListener('input', _fkoUpdateNameGate);
-    }
+    if (fnEl && !fnEl._fkoListener) { fnEl._fkoListener = true; fnEl.addEventListener('input', _fkoUpdateNameGate); }
   } else {
-    nextBtn.disabled = false;
-    nextBtn.style.opacity = '';
-    nextBtn.style.cursor = '';
+    nextBtn.disabled = false; nextBtn.style.opacity = ''; nextBtn.style.cursor = '';
   }
-  // Position bubble: bottom-right of viewport
   bubble.style.position = 'fixed';
-  bubble.style.bottom = '28px';
-  bubble.style.right = '28px';
-  bubble.style.top = '';
-  bubble.style.left = '';
+  bubble.style.bottom = '28px'; bubble.style.right = '28px';
+  bubble.style.top = ''; bubble.style.left = '';
   bubble.classList.remove('arr-top','arr-bot','fk-in');
   bubble.style.display = 'block';
-  // Hide spotlight (not used in this flow)
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (spotlight) spotlight.style.display = 'none';
   void bubble.offsetWidth;
   bubble.classList.add('fk-in');
-  bubble._fkoIdx = idx;  // tag current step for double-fire guard in _fkoStart
+  bubble._fkoIdx = idx;
   _fkoSetStep(idx);
 }
 
@@ -15315,7 +15399,6 @@ function _fkoContinue() {
 
 function _fkoSkip() {
   _fkoSetStep('done');
-  // Persist cross-device so existing users on new devices don't see the tour again
   if (_currentUser && typeof _supabase !== 'undefined') {
     _supabase.auth.updateUser({ data: { onboarding_done: true } }).catch(function(){});
   }
@@ -15323,12 +15406,11 @@ function _fkoSkip() {
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (bubble) { bubble.style.display = 'none'; bubble._fkoIdx = undefined; }
   if (spotlight) spotlight.style.display = 'none';
-  showPanel('home', document.getElementById('nav-home'));
+  _fkoCleanupAndReload();
 }
 
 function _fkoFinish() {
   _fkoSetStep('done');
-  // Persist cross-device so existing users on new devices don't see the tour again
   if (_currentUser && typeof _supabase !== 'undefined') {
     _supabase.auth.updateUser({ data: { onboarding_done: true } }).catch(function(){});
   }
@@ -15340,7 +15422,180 @@ function _fkoFinish() {
     _fkConfetti(180);
     setTimeout(function(){ _fkConfetti(100); }, 500);
   }
-  setTimeout(function(){ showToast('🎉 You\'re all set up. FreelanceKit is yours.'); }, 300);
+  showToast('🎉 You\'re all set up. FreelanceKit is yours.');
+  setTimeout(function(){ _fkoCleanupAndReload(); }, 2000);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOUR MOCK DATA  — created during guided tour, cleaned up on finish/skip
+═══════════════════════════════════════════════════════════════ */
+function _fkoMockKey() { return _currentUser ? 'fk_tour_mock_' + _currentUser.id : null; }
+function _fkoGetMock() {
+  var k = _fkoMockKey(); if (!k) return {};
+  try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e) { return {}; }
+}
+function _fkoSaveMock(obj) {
+  var k = _fkoMockKey(); if (!k) return;
+  try { localStorage.setItem(k, JSON.stringify(obj)); } catch(e) {}
+}
+
+async function _fkoMockClients() {
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  if (mock.client_id) { if (typeof loadClients === 'function') await loadClients(); return; }
+  var payload = { user_id: _currentUser.id, name: 'Acme Creative Co.', email: 'hello@acmecreative.co',
+    phone: '+1 (555) 012-3456', company: 'Acme Creative', website: 'acmecreative.co',
+    job_title: 'Marketing Director', notes: '_fko_tour_mock_' };
+  var res = await _supabase.from('clients').insert(payload).select().single();
+  if (res.data) { mock.client_id = res.data.id; _fkoSaveMock(mock); }
+  if (typeof loadClients === 'function') await loadClients();
+}
+
+async function _fkoMockProject() {
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  // If already created, just navigate in
+  if (mock.project_id) {
+    if (typeof loadProjects === 'function') await loadProjects();
+    if (typeof selectPtProject === 'function') selectPtProject(mock.project_id);
+    return;
+  }
+  var today = new Date();
+  var sd = new Date(today.getFullYear(), today.getMonth()-1, 1);
+  var ed = new Date(today.getFullYear(), today.getMonth()+2, 28);
+  var fmt = function(d){ return d.toISOString().split('T')[0]; };
+  // Create project
+  var projRes = await _supabase.from('projects').insert({
+    user_id: _currentUser.id, name: 'Brand Identity — Acme Creative',
+    client_name: 'Acme Creative Co.', status: 'active',
+    start_date: fmt(sd), end_date: fmt(ed), budget: 12000,
+    description: 'Full brand identity redesign including logo, style guide, and web assets.',
+    contract_doc: '<h2>Client Contract</h2><p>This agreement is between <strong>[Your Name]</strong> (Freelancer) and <strong>Acme Creative Co.</strong> (Client). The Freelancer agrees to deliver a complete brand identity package including logo, colour palette, typography, and brand guidelines by the agreed deadline. Payment is split: 50% deposit on signing, 50% on final delivery. All work remains the Freelancer\'s intellectual property until the final payment is received.</p>',
+    scope_doc: '<h2>Scope Change Order #001</h2><p><strong>Original scope:</strong> Logo, colour palette, typography, brand guidelines.</p><p><strong>Requested addition:</strong> Social media kit — Instagram and LinkedIn post templates (8 templates total).</p><p><strong>Additional fee:</strong> $1,200 USD, due on delivery.</p><p><strong>Revised deadline:</strong> Extended by 5 business days.</p>'
+  }).select().single();
+  if (!projRes.data) return;
+  var projId = projRes.data.id;
+  mock.project_id = projId;
+  // Tasks
+  var taskRes = await _supabase.from('project_tasks').insert([
+    { user_id:_currentUser.id, project_id:projId, title:'Initial discovery call', status:'done', priority:'medium', due_date: fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, title:'Moodboard & direction review', status:'done', priority:'high', due_date: fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo design — round 1', status:'inprogress', priority:'high', due_date: fmt(today) },
+    { user_id:_currentUser.id, project_id:projId, title:'Brand guidelines document', status:'todo', priority:'medium', due_date: fmt(ed) }
+  ]).select();
+  mock.task_ids = (taskRes.data||[]).map(function(t){ return t.id; });
+  // Milestones
+  var msRes = await _supabase.from('project_milestones').insert([
+    { user_id:_currentUser.id, project_id:projId, title:'Discovery & strategy complete', due_date:fmt(sd), status:'complete' },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo concepts delivered', due_date:fmt(today), status:'complete' },
+    { user_id:_currentUser.id, project_id:projId, title:'Final brand guidelines', due_date:fmt(ed), status:'upcoming' }
+  ]).select();
+  mock.milestone_ids = (msRes.data||[]).map(function(m){ return m.id; });
+  // Billing
+  var billRes = await _supabase.from('project_billing').insert([
+    { user_id:_currentUser.id, project_id:projId, phase:'Deposit (50%)', amount:6000, status:'paid', due_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, phase:'Final payment (50%)', amount:6000, status:'invoiced', due_date:fmt(ed) }
+  ]).select();
+  mock.billing_ids = (billRes.data||[]).map(function(b){ return b.id; });
+  // Meetings
+  var meetRes = await _supabase.from('project_meetings').insert([
+    { user_id:_currentUser.id, project_id:projId, title:'Kickoff call', meeting_date:fmt(sd), notes:'Discussed scope, timeline, and deliverables. Client confirmed muted palette and geometric direction.' },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client responded best to option B. Requested minor tweaks to typography.' }
+  ]).select();
+  mock.meeting_ids = (meetRes.data||[]).map(function(m){ return m.id; });
+  // Timesheet
+  var hrRes = await _supabase.from('project_timesheet').insert([
+    { user_id:_currentUser.id, project_id:projId, description:'Discovery & research', hours:3, log_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, description:'Initial sketches & moodboard', hours:4.5, log_date:fmt(sd) },
+    { user_id:_currentUser.id, project_id:projId, description:'Logo design — first round', hours:6, log_date:fmt(today) }
+  ]).select();
+  mock.timesheet_ids = (hrRes.data||[]).map(function(h){ return h.id; });
+  _fkoSaveMock(mock);
+  // Load and enter project
+  if (typeof loadProjects === 'function') await loadProjects();
+  if (typeof selectPtProject === 'function') selectPtProject(projId);
+}
+
+async function _fkoMockPipeline() {
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  if (mock.pipeline_ids && mock.pipeline_ids.length) { if(typeof renderPipeline==='function') renderPipeline(); return; }
+  var res = await _supabase.from('pipeline_cards').insert([
+    { user_id:_currentUser.id, client_name:'Bloom Studio', project:'E-commerce redesign', value:8500, stage:1, temp:'hot' },
+    { user_id:_currentUser.id, client_name:'Axiom Tech', project:'App UI design', value:14000, stage:2, temp:'warm' },
+    { user_id:_currentUser.id, client_name:'Drift Agency', project:'Brand refresh', value:5500, stage:3, temp:'warm' }
+  ]).select();
+  mock.pipeline_ids = [];
+  if (res.data) {
+    mock.pipeline_ids = res.data.map(function(r){ return r.id; });
+    res.data.forEach(function(r){
+      pfClients.push({ id:r.id, client:r.client_name, project:r.project||'', value:r.value||0, stage:r.stage||0, temp:r.temp||'warm', date:'', date_raw:'' });
+    });
+    if (typeof renderPipeline==='function') renderPipeline();
+  }
+  _fkoSaveMock(mock);
+}
+
+async function _fkoMockTax() {
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  if (mock.tax_ids && mock.tax_ids.length) { if(typeof renderTaxQ==='function') renderTaxQ(txQ||2); return; }
+  var m = new Date().getMonth();
+  var q = m < 3 ? 1 : m < 6 ? 2 : m < 9 ? 3 : 4;
+  var year = new Date().getFullYear();
+  var res = await _supabase.from('tax_entries').insert([
+    { user_id:_currentUser.id, year:year, quarter:q, type:'income', description:'Brand Identity — Acme Creative', amount:6000 },
+    { user_id:_currentUser.id, year:year, quarter:q, type:'income', description:'Website redesign — Bloom Studio', amount:3500 },
+    { user_id:_currentUser.id, year:year, quarter:q, type:'expense', description:'Adobe Creative Cloud', amount:54.99, category:'Software' },
+    { user_id:_currentUser.id, year:year, quarter:q, type:'expense', description:'Home office (monthly)', amount:200, category:'Office' }
+  ]).select();
+  mock.tax_ids = [];
+  if (res.data) {
+    mock.tax_ids = res.data.map(function(r){ return r.id; });
+    txData[q].income = [
+      { id:res.data[0].id, desc:'Brand Identity — Acme Creative', amt:6000 },
+      { id:res.data[1].id, desc:'Website redesign — Bloom Studio', amt:3500 }
+    ];
+    txData[q].expenses = [
+      { id:res.data[2].id, desc:'Adobe Creative Cloud', amt:54.99, cat:'Software' },
+      { id:res.data[3].id, desc:'Home office (monthly)', amt:200, cat:'Office' }
+    ];
+    if (typeof renderTaxQ==='function') renderTaxQ(q);
+  }
+  _fkoSaveMock(mock);
+}
+
+function _fkoMockRateCalc() {
+  // Pre-fill rate calculator inputs with sample values and trigger calculation
+  var set = function(id,v){ var el=document.getElementById(id); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } };
+  setTimeout(function(){
+    set('rc-takehome','85000');
+    set('rc-tax','30');
+    set('rc-expenses','4800');
+    var woff = document.getElementById('rc-woff'); if(woff){ woff.value='6'; var wl=document.getElementById('rc-woff-lbl'); if(wl) wl.textContent='6'; }
+    var hrs = document.getElementById('rc-hrs'); if(hrs){ hrs.value='25'; var hl=document.getElementById('rc-hrs-lbl'); if(hl) hl.textContent='25'; }
+    if (typeof calcRate==='function') calcRate();
+  }, 200);
+}
+
+async function _fkoCleanupAndReload() {
+  if (!_currentUser) { window.location.reload(); return; }
+  var mock = _fkoGetMock();
+  var dels = [];
+  if (mock.client_id) dels.push(_supabase.from('clients').delete().eq('id',mock.client_id).eq('user_id',_currentUser.id));
+  if (mock.project_id) {
+    dels.push(_supabase.from('projects').delete().eq('id',mock.project_id).eq('user_id',_currentUser.id));
+    if ((mock.task_ids||[]).length) dels.push(_supabase.from('project_tasks').delete().in('id',mock.task_ids).eq('user_id',_currentUser.id));
+    if ((mock.milestone_ids||[]).length) dels.push(_supabase.from('project_milestones').delete().in('id',mock.milestone_ids).eq('user_id',_currentUser.id));
+    if ((mock.billing_ids||[]).length) dels.push(_supabase.from('project_billing').delete().in('id',mock.billing_ids).eq('user_id',_currentUser.id));
+    if ((mock.meeting_ids||[]).length) dels.push(_supabase.from('project_meetings').delete().in('id',mock.meeting_ids).eq('user_id',_currentUser.id));
+    if ((mock.timesheet_ids||[]).length) dels.push(_supabase.from('project_timesheet').delete().in('id',mock.timesheet_ids).eq('user_id',_currentUser.id));
+  }
+  if ((mock.pipeline_ids||[]).length) dels.push(_supabase.from('pipeline_cards').delete().in('id',mock.pipeline_ids).eq('user_id',_currentUser.id));
+  if ((mock.tax_ids||[]).length) dels.push(_supabase.from('tax_entries').delete().in('id',mock.tax_ids).eq('user_id',_currentUser.id));
+  try { await Promise.all(dels); } catch(e) { console.warn('_fkoCleanupAndReload:', e); }
+  try { localStorage.removeItem(_fkoMockKey()); } catch(e) {}
+  window.location.reload();
 }
 
 /* ═══════════════════════════════════════════════════════════════
