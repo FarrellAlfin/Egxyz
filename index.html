@@ -5268,7 +5268,10 @@ async function saveWelcomePage() {
   if (_hnEl0b) _hnEl0b.textContent = (nickname || fullname || first) + '!';
   // Pre-fill my-nickname field in My Details
   set('my-nickname', nickname);
-  showDash(); // showDash() calls _fkoStart() at 400ms — handles tour launch for all new users
+  showDash();
+  // Fire tour immediately for welcome-page users (0ms puts it after showDash's sync DOM work).
+  // showDash() also calls _fkoStart() at 400ms as a fallback; the double-fire guard prevents re-animation.
+  setTimeout(function(){ if (typeof _fkoStart === 'function') _fkoStart(); }, 0);
 }
 
 function updateWelcomePreview() {
