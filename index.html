@@ -15322,7 +15322,21 @@ function _fkoShowStep(idx) {
         hours:     typeof renderPtHours      === 'function' ? renderPtHours      : null
       };
       if (_tabRenderMap[step.ptTab]) {
-        setTimeout(function(){ _tabRenderMap[step.ptTab](); }, 80);
+        // Render immediately then also schedule a retry in case ptLoadProjectData
+        // hasn't resolved yet (Supabase can take >700ms on slow connections).
+        var _renderFn = _tabRenderMap[step.ptTab];
+        setTimeout(function(){
+          _renderFn();
+          // Retry after 1.5s if the list still shows empty / "No tasks yet"
+          setTimeout(function(){
+            var listEl = document.getElementById('pt-tasks-list');
+            if (listEl && listEl.querySelector('.pt-task-card') === null && window._ptTasks && window._ptTasks.length) {
+              _renderFn();
+            } else if (listEl && listEl.querySelector('.pt-task-card') === null) {
+              _renderFn(); // render again regardless so fresh DB data shows if loaded by now
+            }
+          }, 1500);
+        }, 80);
       }
       if (step.ptTab === 'contract' || step.ptTab === 'scope') {
         if (typeof renderPtDocTab === 'function') setTimeout(function(){ renderPtDocTab(step.ptTab); }, 80);
@@ -15588,6 +15602,8 @@ async function _fkoMockProject() {
     { user_id:_currentUser.id, project_id:projId, title:'Final delivery & handoff', status:'todo', priority:'high', due_date:fmt(ed) }
   ]).select();
   mock.task_ids = (taskRes.data||[]).map(function(t){ return t.id; });
+  // Pre-populate in-memory array so tour tab renders instantly without waiting for ptLoadProjectData
+  if (taskRes.data && taskRes.data.length) window._ptTasks = taskRes.data;
   // Milestones — give each a start_date so gantt bars have visible width
   var wk = function(base, weeks) { var r=new Date(base); r.setDate(r.getDate()+weeks*7); return r; };
   var msRes = await _supabase.from('project_milestones').insert([
@@ -15599,18 +15615,21 @@ async function _fkoMockProject() {
       start_date:fmt(wk(ed,-4)), due_date:fmt(ed), completed:false }
   ]).select();
   mock.milestone_ids = (msRes.data||[]).map(function(m){ return m.id; });
+  if (msRes.data && msRes.data.length) window._ptMilestones = msRes.data;
   // Billing phases
   var billRes = await _supabase.from('project_billing').insert([
     { user_id:_currentUser.id, project_id:projId, phase_name:'INV-001', amount:6000, status:'paid', due_date:fmt(sd) },
     { user_id:_currentUser.id, project_id:projId, phase_name:'INV-002', amount:6000, status:'invoiced', due_date:fmt(ed) }
   ]).select();
   mock.billing_ids = (billRes.data||[]).map(function(b){ return b.id; });
+  if (billRes.data && billRes.data.length) window._ptBilling = billRes.data;
   // Meetings
   var meetRes = await _supabase.from('project_meetings').insert([
     { user_id:_currentUser.id, project_id:projId, purpose:'Kickoff call', meeting_date:fmt(sd), notes:'Reviewed creative brief and project scope. Sunday Studios confirmed geometric aesthetic with a muted, editorial colour palette. Agreed on 3 logo concepts for first round.' },
     { user_id:_currentUser.id, project_id:projId, purpose:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client selected option B as the direction. Requested refined letterforms and a secondary wordmark. Scope change request raised for social media templates.' }
   ]).select();
   mock.meeting_ids = (meetRes.data||[]).map(function(m){ return m.id; });
+  if (meetRes.data && meetRes.data.length) window._ptMeetings = meetRes.data;
   // Timesheet
   var hrRes = await _supabase.from('project_timesheet').insert([
     { user_id:_currentUser.id, project_id:projId, description:'Discovery research & competitor analysis', hours:3, log_date:fmt(sd) },
