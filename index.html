@@ -15194,7 +15194,8 @@ var _FKO_STEPS = [
     text:'Store every client you work with — name, email, phone, and notes. Contacts link automatically to projects and invoices.',
     mockSetup:'_fkoMockClients' },
   /* 3 */ { panel:'invhistory', navId:'nav-invhistory', icon:'📊', title:'Financial Overview',
-    text:'Track income, outstanding invoices, and payment history. Gives you a clear picture of cash flow at a glance.' },
+    text:'Total earned, outstanding balance, monthly chart, invoice aging, and income by client — all live. Four mock invoices are loaded: two paid (across prior months), one overdue showing in aging, and one sent with a future due date.',
+    mockSetup:'_fkoMockFinancialOverview' },
   /* 4 */ { panel:'projects', navId:'nav-projects', icon:'🗂️', title:'Project Tracker',
     text:'Your project hub. Switch views with the buttons above — Board, List, Gallery, or Timeline. The Gantt chart maps every project across its full timeline. Your mock project is already plotted below — click the bar to jump straight in.',
     mockSetup:'_fkoMockProjectDash' },
@@ -15206,7 +15207,7 @@ var _FKO_STEPS = [
   /* 7 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
     text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
   /* 7 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
-    text:'Billing phases link directly to invoices. Two mock invoices are already here — one paid, one sent. Click any row to view the linked invoice, or head to Invoice Builder to create a new one from scratch.' },
+    text:'Billing phases link directly to invoices. Two mock phases are here — INV-001 (paid, deposit) and INV-002 (sent, final delivery). Click any row to view or edit the linked invoice, or head to Invoice Builder to create a new one from scratch.' },
   /* 8 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
     text:'Log every meeting, call, or brief directly in the project. Dates, attendees, and notes — all in one place.' },
   /* 9 */ { panel:'projects', navId:null, ptTab:'hours', icon:'⏱', title:'Project — Timesheet',
@@ -15489,6 +15490,58 @@ function _fkoSaveMock(obj) {
   try { localStorage.setItem(k, JSON.stringify(obj)); } catch(e) {}
 }
 
+async function _fkoMockFinancialOverview() {
+  if (!_currentUser) return;
+  var mock = _fkoGetMock();
+  // Idempotent: if FO invoices already created, just reload
+  if (mock.fo_invoice_ids && mock.fo_invoice_ids.length) {
+    if (typeof loadInvoiceHistory === 'function') await loadInvoiceHistory();
+    return;
+  }
+  var today = new Date();
+  var fmt = function(d){ return d.toISOString().split('T')[0]; };
+  // Helper: offset today by N days
+  var dOff = function(n){ return new Date(today.getTime() + n*86400000); };
+  // Helper: first day of Nth month offset
+  var mo1st = function(n){ return new Date(today.getFullYear(), today.getMonth()+n, 1); };
+  var foInvRes = await _supabase.from('invoices').insert([
+    // Paid — 2 months ago, client Arch & Co
+    { user_id:_currentUser.id, invoice_number:'INV-2024-01',
+      client_name:'Arch & Co', client_email:'info@archandco.com',
+      project:'Web Revamp', issue_date:fmt(mo1st(-2)), due_date:fmt(dOff(-50)),
+      status:'paid', subtotal:3500, tax_pct:0, discount_pct:0, total:3500, currency:'USD',
+      line_items:[{desc:'Website redesign — 5 pages',qty:1,rate:3500}],
+      notes:'Thank you for your business.' },
+    // Paid — 1 month ago, client Bloom Studio
+    { user_id:_currentUser.id, invoice_number:'INV-2024-02',
+      client_name:'Bloom Studio', client_email:'hello@bloomstudio.co',
+      project:'Brand Package', issue_date:fmt(mo1st(-1)), due_date:fmt(dOff(-22)),
+      status:'paid', subtotal:4200, tax_pct:0, discount_pct:0, total:4200, currency:'USD',
+      line_items:[{desc:'Brand identity package — logo, palette & guidelines',qty:1,rate:4200}],
+      notes:'Final deliverables transferred via shared drive.' },
+    // Overdue — due 3 weeks ago, shows in aging section
+    { user_id:_currentUser.id, invoice_number:'INV-2024-03',
+      client_name:'Arch & Co', client_email:'info@archandco.com',
+      project:'Web Revamp', issue_date:fmt(dOff(-45)), due_date:fmt(dOff(-21)),
+      status:'overdue', subtotal:2800, tax_pct:0, discount_pct:0, total:2800, currency:'USD',
+      line_items:[{desc:'SEO audit & content strategy',qty:1,rate:2800}],
+      notes:'Payment overdue. Please remit at your earliest convenience.' },
+    // Sent — due in 2 weeks, shows in outstanding
+    { user_id:_currentUser.id, invoice_number:'INV-2024-04',
+      client_name:'Bloom Studio', client_email:'hello@bloomstudio.co',
+      project:'Social Media Kit', issue_date:fmt(today), due_date:fmt(dOff(14)),
+      status:'sent', subtotal:1500, tax_pct:0, discount_pct:0, total:1500, currency:'USD',
+      line_items:[{desc:'Social media template pack — 10 designs',qty:1,rate:1500}],
+      notes:'Due within 14 days of delivery.' }
+  ]).select();
+  var foIds = (foInvRes.data||[]).map(function(i){ return i.id; });
+  mock.fo_invoice_ids = foIds;
+  // Merge into invoice_ids so cleanup picks them up
+  mock.invoice_ids = (mock.invoice_ids||[]).concat(foIds);
+  _fkoSaveMock(mock);
+  if (typeof loadInvoiceHistory === 'function') await loadInvoiceHistory();
+}
+
 async function _fkoMockClients() {
   if (!_currentUser) return;
   var mock = _fkoGetMock();
@@ -15520,9 +15573,7 @@ async function _fkoMockProject() {
     user_id: _currentUser.id, name: projName,
     client_name: 'Sunday Studios', status: 'active',
     start_date: fmt(sd), end_date: fmt(ed), budget: 12000,
-    description: 'Full brand identity redesign for Sunday Studios — logo, colour palette, typography, style guide, and web assets.',
-    contract_doc: '<h2>Client Contract</h2><p>This agreement is between <strong>[Your Name]</strong> (Freelancer) and <strong>Sunday Studios</strong> (Client). The Freelancer agrees to deliver a complete brand identity package including logo, colour palette, typography, and brand guidelines by the agreed deadline. Payment is split 50/50: deposit on signing, remainder on final delivery. All intellectual property transfers to the Client upon receipt of final payment.</p>',
-    scope_doc: '<h2>Scope Change Order #001</h2><p><strong>Original scope:</strong> Logo, colour palette, typography, brand guidelines.</p><p><strong>Requested addition:</strong> Social media kit — Instagram and LinkedIn post templates (8 templates total).</p><p><strong>Additional fee:</strong> $1,200 USD, due on delivery.</p><p><strong>Revised timeline:</strong> Extended by 5 business days.</p>'
+    description: 'Full brand identity redesign for Sunday Studios — logo, colour palette, typography, style guide, and web assets.'
   }).select().single();
   if (!projRes.data) return;
   var projId = projRes.data.id;
