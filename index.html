@@ -12319,14 +12319,14 @@ function renderPtBilling() {
       '<div class="pt-bill-card-amt">' + fmtAmt + '</div>' +
       '<div class="pt-bill-card-grid">' +
         '<div><div class="pt-bill-card-lbl">Billed to</div><div class="pt-bill-card-val">' + escapeHTML(clientName) + '</div></div>' +
-        '<div><div class="pt-bill-card-lbl">Status</div>' +
+        '<div><div class="pt-bill-card-lbl">Status</div><div class="pt-bill-card-val">' +
           '<select class="pt-bill-status-sel ' + (statusClass[b.status]||'pt-bs-pending') + '" onclick="event.stopPropagation()" onchange="event.stopPropagation();setPtBillingStatus(' + i + ',this.value);this.className=\'pt-bill-status-sel \'+({draft:\'pt-bs-draft\',sent:\'pt-bs-sent\',paid:\'pt-bs-paid\',overdue:\'pt-bs-overdue\'}[this.value]||\'pt-bs-draft\')">' +
             '<option value="draft"' + ((_normSt(b.status)||'draft')==='draft'?' selected':'') + '>Draft</option>' +
             '<option value="sent"' + ((_normSt(b.status))==='sent'?' selected':'') + '>Sent</option>' +
             '<option value="paid"' + ((_normSt(b.status))==='paid'?' selected':'') + '>Paid</option>' +
             '<option value="overdue"' + ((_normSt(b.status))==='overdue'?' selected':'') + '>Overdue</option>' +
           '</select>' +
-        '</div>' +
+        '</div></div>' +
       '</div>' +
     '</div>';
   }).join('') + '</div>';
