@@ -1964,7 +1964,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-bill-name{font-size:13px;color:var(--ink)}
 .pt-bill-amt{font-size:13px;font-weight:700;color:var(--ink)}
 .pt-bill-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer}
-.pt-bill-status-sel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer;border:none;outline:none;appearance:none;-webkit-appearance:none;font-family:var(--font-body);line-height:1.4;width:fit-content;align-self:center}
+.pt-bill-status-sel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer;border:none;outline:none;appearance:none;-webkit-appearance:none;font-family:var(--font-body);line-height:1.4;display:inline-block;width:auto}
 .pt-bs-draft{background:#F3F4F6;color:#4B5563}
 .pt-bs-sent{background:#DBEAFE;color:#1E40AF}
 .pt-bs-paid{background:#D1FAE5;color:#065F46}
@@ -15362,15 +15362,20 @@ function _fkoShowStep(idx) {
     //  so we can't rely on it alone — we always show the panel and decide from there.)
     showPanel('projects', document.getElementById('nav-projects'));
 
+    // Helper: load project data then switch tab — guarantees _ptTasks etc. are
+    // populated before _doTab calls any render function, regardless of network speed.
+    var _loadThenDoTab = function() {
+      ptLoadProjectData(_projId).then(function(){ setTimeout(_doTab, 60); });
+    };
+
     if (_ptCurrentId === _projId) {
-      // selectPtProject was previously called: pt-detail-view is still in the right state.
-      // Give showPanel one tick to settle, then switch tab.
-      setTimeout(_doTab, 100);
+      // Already inside the project — still re-fetch so stale/empty arrays are never shown.
+      _loadThenDoTab();
     } else {
-      // Haven't entered the project yet (page refresh, or user clicked ← All projects)
+      // Haven't entered the project yet (fresh page or came back from list view)
       loadProjects().then(function(){
         selectPtProject(_projId);
-        setTimeout(_doTab, 700);
+        _loadThenDoTab();
       });
     }
     return;
