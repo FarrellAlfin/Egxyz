@@ -1470,9 +1470,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 /* ── CLIENT DIRECTORY ── */
 .client-dir-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .client-table{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.ct-head{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
+.ct-head{display:grid;grid-template-columns:160px 1.3fr 180px 1fr 1.2fr 1.2fr;gap:0;background:var(--cream-dark);border-bottom:1px solid var(--border)}
 .ct-head-cell{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light);padding:11px 14px}
-.ct-row{display:grid;grid-template-columns:160px 1.3fr 150px 1fr 1.2fr 1.2fr;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
+.ct-row{display:grid;grid-template-columns:160px 1.3fr 180px 1fr 1.2fr 1.2fr;gap:0;border-bottom:1px solid var(--border);align-items:center;transition:background .15s}
 .ct-row:last-child{border-bottom:none}
 .ct-row:hover{background:var(--cream)}
 .ct-cell{padding:13px 14px;font-size:14px;color:var(--ink-mid)}
@@ -1964,7 +1964,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-bill-name{font-size:13px;color:var(--ink)}
 .pt-bill-amt{font-size:13px;font-weight:700;color:var(--ink)}
 .pt-bill-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer}
-.pt-bill-status-sel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px 2px 8px;border-radius:20px;cursor:pointer;border:none;outline:none;appearance:none;-webkit-appearance:none;font-family:var(--font-body);line-height:1.4}
+.pt-bill-status-sel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;cursor:pointer;border:none;outline:none;appearance:none;-webkit-appearance:none;font-family:var(--font-body);line-height:1.4;width:fit-content;align-self:center}
 .pt-bs-draft{background:#F3F4F6;color:#4B5563}
 .pt-bs-sent{background:#DBEAFE;color:#1E40AF}
 .pt-bs-paid{background:#D1FAE5;color:#065F46}
@@ -7316,7 +7316,7 @@ function _renderClientListSync() {
     return '<div class="ct-row" style="cursor:pointer" onclick="openClientDetailPopup(\'' + escapeHTML(cl.id) + '\')">' +
       '<div class="ct-cell name">' + escapeHTML(cl.name||'') + '</div>' +
       '<div class="ct-cell email">' + escapeHTML(cl.email||'—') + '</div>' +
-      '<div class="ct-cell" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHTML(cl.phone||'—') + '</div>' +
+      '<div class="ct-cell" style="white-space:nowrap">' + escapeHTML(cl.phone||'—') + '</div>' +
       '<div class="ct-cell">' + escapeHTML(cl.company||'—') + '</div>' +
       '<div class="ct-cell" style="font-size:12px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHTML(cl.address||'—') + '</div>' +
       '<div class="ct-cell" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' + projHtml +
@@ -11117,6 +11117,11 @@ function _clearUserState() {
   // Wipe ALL fk_ localStorage keys — every key is user-specific and must not
   // bleed through to the next session. _wipeAllFkStorage is defined above.
   _wipeAllFkStorage();
+
+  // Hide tour bubble so it doesn't persist on the landing page after logout
+  var _tourBubble = document.getElementById('fk-tour-bubble');
+  if (_tourBubble) { _tourBubble.style.display = 'none'; delete _tourBubble._fkoIdx; }
+  window._fkoMockData = null;
 }
 
 async function handleSignOut() {
@@ -15196,10 +15201,10 @@ var _FKO_STEPS = [
   /* 5 */ { panel:'projects', navId:null, icon:'📋', title:'Project — Overview',
     text:'Each project has an Overview showing open tasks, recent activity, upcoming milestones, and total hours logged.',
     ptTab:'overview' },
-  /* 6 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
-    text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
   /* 6 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
     text:'Set key delivery dates and mark them complete as you hit them. Milestones keep the project on track.' },
+  /* 7 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
+    text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
   /* 7 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
     text:'Billing phases link directly to invoices. Two mock invoices are already here — one paid, one sent. Click any row to view the linked invoice, or head to Invoice Builder to create a new one from scratch.' },
   /* 8 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
@@ -15306,9 +15311,20 @@ function _fkoShowStep(idx) {
       var tabIdx = tabNames.indexOf(step.ptTab);
       var tabs = document.querySelectorAll('#pt-detail-view .pt-tab');
       showPtTab(step.ptTab, tabs[tabIdx] || null);
-      // For contract/scope tabs, trigger render
+      // Explicitly call the render function for this tab so content is always visible
+      var _tabRenderMap = {
+        overview:  typeof renderPtOverview   === 'function' ? renderPtOverview   : null,
+        milestones:typeof renderPtMilestones === 'function' ? renderPtMilestones : null,
+        tasks:     typeof renderPtTasks      === 'function' ? renderPtTasks      : null,
+        billing:   typeof renderPtBilling    === 'function' ? renderPtBilling    : null,
+        meetings:  typeof renderPtMeetings   === 'function' ? renderPtMeetings   : null,
+        hours:     typeof renderPtHours      === 'function' ? renderPtHours      : null
+      };
+      if (_tabRenderMap[step.ptTab]) {
+        setTimeout(function(){ _tabRenderMap[step.ptTab](); }, 80);
+      }
       if (step.ptTab === 'contract' || step.ptTab === 'scope') {
-        if (typeof renderPtDocTab === 'function') setTimeout(function(){ renderPtDocTab(step.ptTab); }, 50);
+        if (typeof renderPtDocTab === 'function') setTimeout(function(){ renderPtDocTab(step.ptTab); }, 80);
       }
       _fkoShowBubble(idx);
     };
@@ -15479,7 +15495,7 @@ async function _fkoMockClients() {
   if (mock.client_id) { if (typeof loadClients === 'function') await loadClients(); return; }
   var payload = { user_id: _currentUser.id, name: 'Sunday Studios', email: 'hello@sundaystudios.co',
     phone: '+1 (555) 012-3456', company: 'Sunday Studios', website: 'sundaystudios.co',
-    job_title: 'Creative Director', notes: '_fko_tour_mock_' };
+    job_title: 'Creative Director' };
   var res = await _supabase.from('clients').insert(payload).select().single();
   if (res.data) { mock.client_id = res.data.id; _fkoSaveMock(mock); }
   if (typeof loadClients === 'function') await loadClients();
@@ -15540,8 +15556,8 @@ async function _fkoMockProject() {
   mock.billing_ids = (billRes.data||[]).map(function(b){ return b.id; });
   // Meetings
   var meetRes = await _supabase.from('project_meetings').insert([
-    { user_id:_currentUser.id, project_id:projId, title:'Kickoff call', meeting_date:fmt(sd), notes:'Reviewed creative brief and project scope. Sunday Studios confirmed geometric aesthetic with a muted, editorial colour palette. Agreed on 3 logo concepts for first round.' },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client selected option B as the direction. Requested refined letterforms and a secondary wordmark. Scope change request raised for social media templates.' }
+    { user_id:_currentUser.id, project_id:projId, purpose:'Kickoff call', meeting_date:fmt(sd), notes:'Reviewed creative brief and project scope. Sunday Studios confirmed geometric aesthetic with a muted, editorial colour palette. Agreed on 3 logo concepts for first round.' },
+    { user_id:_currentUser.id, project_id:projId, purpose:'Logo review — round 1', meeting_date:fmt(today), notes:'Presented 3 concepts. Client selected option B as the direction. Requested refined letterforms and a secondary wordmark. Scope change request raised for social media templates.' }
   ]).select();
   mock.meeting_ids = (meetRes.data||[]).map(function(m){ return m.id; });
   // Timesheet
