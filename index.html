@@ -508,7 +508,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-faq-item{border-bottom:1px solid var(--outline-variant)}
 .lp-faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--on-surface);gap:16px;transition:color .18s}
 .lp-faq-q:hover{color:var(--tertiary)}
-.lp-faq-q-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-container);display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:400;color:var(--on-surface-mid);transition:transform .25s ease,background .25s ease,color .25s ease;line-height:0;user-select:none;letter-spacing:0}
+.lp-faq-q-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-container);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:400;color:var(--on-surface-mid);transition:transform .25s ease,background .25s ease,color .25s ease;line-height:1;user-select:none;letter-spacing:0;text-align:center}
 .lp-faq-item.open .lp-faq-q-icon{background:var(--on-surface);color:#fff;transform:rotate(45deg)}
 .lp-faq-a{max-height:0;overflow:hidden;transition:max-height .38s ease}
 .lp-faq-item.open .lp-faq-a{max-height:600px}
@@ -2541,10 +2541,8 @@ input[type=number]{-moz-appearance:textfield}
   .lp-pt-pulse-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important}
   /* ── Financial Overview bento — stack text above stats ── */
   .lp-fo-inner{grid-template-columns:1fr!important;gap:16px!important}
-  /* ── Testimonials carousel ── */
-  .lp-testi-grid{display:flex!important;flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding-bottom:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .lp-testi-grid::-webkit-scrollbar{display:none}
-  .lp-testi-grid .lp-tc{flex:0 0 85%;scroll-snap-align:start;max-width:340px}
+  /* ── Testimonials — single column stack ── */
+  .lp-testi-grid{grid-template-columns:1fr}
 }
 
 /* ── SMALL PHONE (≤480px) ── */
@@ -2898,22 +2896,6 @@ var RateLimiter = (function() {
               <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#C8621A"></div><span class="lp-mw-proj-name">Website Copy</span><span class="lp-mw-proj-pct">45%</span></div>
             </div>
           </div>
-        </div>
-        <!-- Floating metric cards -->
-        <div class="lp-float-card lp-fc-1">
-          <div class="lp-float-card-l">Hourly rate</div>
-          <div class="lp-float-card-v" style="color:var(--amber)">$87/hr</div>
-          <div class="lp-float-card-s">calculated for you</div>
-        </div>
-        <div class="lp-float-card lp-fc-2">
-          <div class="lp-float-card-l">This month</div>
-          <div class="lp-float-card-v" style="color:var(--sage)">$6,240</div>
-          <div class="lp-float-card-s">4 invoices paid</div>
-        </div>
-        <div class="lp-float-card lp-fc-3">
-          <div class="lp-float-card-l">Utilization</div>
-          <div class="lp-float-card-v">91%</div>
-          <div class="lp-float-card-s">🔥 Fully booked</div>
         </div>
       </div>
     </div>
