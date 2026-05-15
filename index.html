@@ -2541,8 +2541,10 @@ input[type=number]{-moz-appearance:textfield}
   .lp-pt-pulse-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important}
   /* ── Financial Overview bento — stack text above stats ── */
   .lp-fo-inner{grid-template-columns:1fr!important;gap:16px!important}
-  /* ── Testimonials — single column stack ── */
-  .lp-testi-grid{grid-template-columns:1fr}
+  /* ── Testimonials carousel (left-right only) ── */
+  .lp-testi-grid{display:flex!important;flex-direction:row;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;gap:14px;padding-bottom:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .lp-testi-grid::-webkit-scrollbar{display:none}
+  .lp-testi-grid .lp-tc{flex:0 0 85%;scroll-snap-align:start;max-width:340px}
 }
 
 /* ── SMALL PHONE (≤480px) ── */
