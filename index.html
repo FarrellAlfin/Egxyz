@@ -2609,11 +2609,15 @@ input[type=number]{-moz-appearance:textfield}
   .settings-grid{grid-template-columns:1fr}
   /* auth page */
   .auth-panel-inner{padding:28px 20px}
-  /* Invoice history table small phone */
-  .iht-head,.iht-row{grid-template-columns:70px 1fr auto!important}
-  .iht-hc:nth-child(3),.iht-cell:nth-child(3),
-  .iht-hc:nth-child(4),.iht-cell:nth-child(4),
-  .iht-hc:nth-child(5),.iht-cell:nth-child(5){display:none}
+  /* Invoice history — card layout on mobile */
+  .iht-head{display:none!important}
+  .iht-row{display:grid!important;grid-template-columns:1fr auto!important;grid-template-rows:auto auto!important;gap:3px 12px!important;padding:12px 14px!important;align-items:center!important}
+  .iht-cell.num{grid-column:1!important;grid-row:2!important;padding:0!important;font-size:11px!important;color:var(--ink-light)!important;font-family:var(--font-body)!important;font-weight:400!important}
+  .iht-row>.iht-cell:nth-child(2){grid-column:1!important;grid-row:1!important;padding:0!important;font-size:14px!important;font-weight:600!important;color:var(--ink)!important}
+  .iht-row>.iht-cell:nth-child(3){display:none!important}
+  .iht-row>.iht-cell:nth-child(4){display:block!important;grid-column:2!important;grid-row:1!important;padding:0!important;font-size:14px!important;font-weight:700!important;text-align:right!important;color:var(--ink)!important}
+  .iht-row>.iht-cell:nth-child(5){display:none!important}
+  .iht-row>.iht-cell:nth-child(6){grid-column:2!important;grid-row:2!important;padding:0!important;display:flex!important;justify-content:flex-end!important}
 }
 
 /* ── LANDSCAPE PHONE ── */
