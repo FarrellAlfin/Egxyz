@@ -322,9 +322,9 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-mw-bar{background:#0d1117;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .lp-mw-dot{width:9px;height:9px;border-radius:50%}
 .lp-mw-url{font-size:10px;color:rgba(255,255,255,.25);margin-left:10px;font-family:var(--font-mono)}
-.lp-mw-body{display:grid;grid-template-columns:52px 1fr;min-height:230px}
+.lp-mw-body{display:grid;grid-template-columns:80px 1fr;min-height:230px}
 .lp-mw-sb{padding:10px 5px;background:#0d1117;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:2px}
-.lp-mw-sbi{font-size:8.5px;padding:5px 6px;border-radius:4px;color:rgba(255,255,255,.38);cursor:default;font-family:var(--font-body);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.lp-mw-sbi{font-size:8.5px;padding:5px 6px;border-radius:4px;color:rgba(255,255,255,.38);cursor:default;font-family:var(--font-body);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lp-mw-sbi.a{background:rgba(0,150,104,.15);color:rgba(0,200,140,.85)}
 .lp-mw-content{padding:11px;display:flex;flex-direction:column;gap:8px}
 .lp-mw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
@@ -2465,19 +2465,25 @@ input[type=number]{-moz-appearance:textfield}
 /* ── MOBILE (≤768px) additions ── */
 @media(max-width:768px){
   /* Landing page sections */
-  .lp-hero-inner{padding:56px 20px 44px}
+  .lp-hero-inner{padding:56px 20px 44px;grid-template-columns:1fr}
   .lp-hero-sub{font-size:15px}
+  .lp-hero-badge{font-size:10px;padding:4px 12px}
+  .badge-full{display:none}
+  .badge-short{display:inline!important}
   .lp-bento{padding:60px 20px}
   .lp-pain{padding:60px 20px}
   .lp-pain-apps{gap:8px}
   .lp-bento-grid{grid-template-columns:1fr!important}
   .lp-bc-a,.lp-bc-d,.lp-bc-f{grid-column:1!important;grid-row:auto!important}
   .lp-bc-a{min-height:260px}
+  .lp-fo-stats{grid-template-columns:repeat(2,1fr)}
+  .lp-price-grid{flex-direction:column;align-items:stretch}
+  .lp-price-card{min-width:unset;width:100%}
+  .lp-price-card.featured{padding-top:48px}
   .lp-hiw{padding:60px 20px}
   .lp-hiw-steps{grid-template-columns:1fr}
   .lp-hiw-steps::before{display:none}
   .lp-testi{padding:60px 20px}
-  .lp-testi-grid{grid-template-columns:1fr}
   .lp-pricing{padding:60px 20px}
   .lp-faq{padding:60px 20px}
   .lp-cta{padding:72px 20px}
@@ -2518,6 +2524,22 @@ input[type=number]{-moz-appearance:textfield}
   .iht-head,.iht-row{grid-template-columns:80px 1fr 80px auto!important}
   .iht-hc:nth-child(3),.iht-cell:nth-child(3),
   .iht-hc:nth-child(5),.iht-cell:nth-child(5){display:none}
+  /* ── Hero mockup sidebar ── */
+  .lp-mw-body{grid-template-columns:72px 1fr}
+  /* ── Floating metric cards — scale down on mobile ── */
+  .lp-fc-1,.lp-fc-2{padding:7px 10px}
+  .lp-fc-1 .lp-float-card-v,.lp-fc-2 .lp-float-card-v{font-size:13px}
+  .lp-fc-1 .lp-float-card-l,.lp-fc-2 .lp-float-card-l,.lp-fc-1 .lp-float-card-s,.lp-fc-2 .lp-float-card-s{font-size:8px}
+  /* ── Project Tracker Gantt ── */
+  .lp-pt-gantt{flex:none!important;padding:10px 12px!important}
+  /* ── Pulse metrics — 2x2 grid ── */
+  .lp-pt-pulse-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important}
+  /* ── Financial Overview bento — stack text above stats ── */
+  .lp-fo-inner{grid-template-columns:1fr!important;gap:16px!important}
+  /* ── Testimonials carousel ── */
+  .lp-testi-grid{display:flex!important;flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding-bottom:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .lp-testi-grid::-webkit-scrollbar{display:none}
+  .lp-testi-grid .lp-tc{flex:0 0 85%;scroll-snap-align:start;max-width:340px}
 }
 
 /* ── SMALL PHONE (≤480px) ── */
@@ -2829,7 +2851,7 @@ var RateLimiter = (function() {
    <div class="lp-orb lp-orb-3"></div>
    <div class="lp-hero-inner">
     <div>
-      <div class="lp-hero-badge">✦ Free during beta · Pro will be $9/mo</div>
+      <div class="lp-hero-badge">✦ <span class="badge-full">Free during beta · Pro will be $9/mo</span><span class="badge-short" style="display:none">Free during beta</span></div>
       <h1 class="lp-hero-h1">Everything a freelancer<br>needs to run their<br><em>business. Connected.</em></h1>
       <p class="lp-hero-sub">You're running your business across 5 apps — and none of them talk to each other. Axis connects your projects, invoices, pipeline, taxes, and rates into one kit. Change one thing, everything updates.</p>
       <div class="lp-hero-btns">
@@ -2846,7 +2868,6 @@ var RateLimiter = (function() {
             <div class="lp-mw-dot" style="background:#E8594A"></div>
             <div class="lp-mw-dot" style="background:#F4A73A;margin-left:4px"></div>
             <div class="lp-mw-dot" style="background:#5DC86A;margin-left:4px"></div>
-            <span class="lp-mw-url">app.axis.io</span>
           </div>
           <div class="lp-mw-body">
             <div class="lp-mw-sb">
@@ -2964,7 +2985,7 @@ var RateLimiter = (function() {
             </div>
 
             <!-- Gantt — grows to fill available space -->
-            <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0">
+            <div class="lp-pt-gantt" style="background:rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0">
               <div style="display:flex;margin-bottom:10px">
                 <div style="flex:0.38;font-size:11px;font-weight:700;color:rgba(250,247,242,.4);letter-spacing:.06em;text-transform:uppercase;font-family:var(--font-display)">Jun</div>
                 <div style="flex:0.37;font-size:11px;font-weight:700;color:rgba(250,247,242,.4);letter-spacing:.06em;text-transform:uppercase;font-family:var(--font-display)">Jul</div>
@@ -3001,7 +3022,7 @@ var RateLimiter = (function() {
             </div>
 
             <!-- Pulse metrics -->
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <div class="lp-pt-pulse-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
               <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px 12px">
                 <div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Hours</div>
                 <div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">47.5</div>
@@ -3068,7 +3089,7 @@ var RateLimiter = (function() {
 
         <!-- Financial Overview (full-width) -->
         <div class="lp-bc lp-bc-d lp-reveal" data-d="2">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+          <div class="lp-fo-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
             <div>
               <div class="lp-bc-tag" style="background:var(--sage-light);color:var(--sage)">Financial Overview</div>
               <div class="lp-bc-title">Your complete financial picture.</div>
