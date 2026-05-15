@@ -8753,10 +8753,11 @@ function foRenderManualList() {
       '<div class="fo-manual-head-cell"></div>' +
     '</div>' +
     _foManualIncome.slice().reverse().map(function(m) {
+      var fmtManualDate = function(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; };
       return '<div class="fo-manual-row" onclick="foOpenEditIncome(' + m.id + ')" title="Click to edit">' +
         '<div class="fo-manual-cell" style="color:var(--ink);font-weight:500">' + escapeHTML(m.desc) + '</div>' +
         '<div class="fo-manual-cell" style="font-family:var(--font-mono);font-weight:600">' + fmD(m.amount) + '</div>' +
-        '<div class="fo-manual-cell" style="color:var(--ink-mid);font-size:12px">' + (m.date || '—') + '</div>' +
+        '<div class="fo-manual-cell" style="color:var(--ink-mid);font-size:12px">' + fmtManualDate(m.date) + '</div>' +
         '<div class="fo-manual-cell" style="color:var(--ink-mid);font-size:12px">' + escapeHTML(m.source || '—') + '</div>' +
         '<div class="fo-manual-cell" style="padding-right:10px">' +
           '<button class="pt-btn-del" onclick="event.stopPropagation();foDeleteIncome(' + m.id + ')">Delete</button>' +
