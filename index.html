@@ -1526,7 +1526,9 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fo-manual-row-head{display:grid;grid-template-columns:minmax(120px,1.8fr) 120px 110px 110px auto;gap:0;padding:0;background:var(--cream-dark);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-light)}
 .fo-manual-head-cell{padding:8px 14px}
 .fo-manual-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--white)}
-.fo-add-form{background:var(--cream);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 130px 140px 90px auto;gap:10px;align-items:end}
+.fo-add-form{background:var(--cream);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 130px 120px 90px auto;gap:10px;align-items:end;overflow:hidden}
+.fo-add-form>div{min-width:0;overflow:hidden}
+.fo-add-form input[type="date"]{width:100%;max-width:100%;min-width:0;box-sizing:border-box;display:block}
 .fo-empty{text-align:center;padding:40px;color:var(--ink-light);font-size:13px}
 /* ── INVOICE HISTORY ── */
 .inv-hist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
@@ -2528,8 +2530,6 @@ input[type=number]{-moz-appearance:textfield}
   .fo-manual-row .fo-manual-cell:nth-child(3),.fo-manual-row .fo-manual-cell:nth-child(4),
   .fo-manual-row-head .fo-manual-head-cell:nth-child(3),.fo-manual-row-head .fo-manual-head-cell:nth-child(4){display:none}
   .fo-add-form{grid-template-columns:1fr 1fr}
-  .fo-add-form input[type="date"]{width:100%;max-width:100%;min-width:0;box-sizing:border-box;display:block}
-  .fo-add-form>div{min-width:0;overflow:hidden}
   /* Home */
   .home-hero{padding:22px 20px}
   /* Sig modal */
