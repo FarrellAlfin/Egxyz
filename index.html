@@ -1208,6 +1208,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .m-inp:last-child{margin-bottom:0}
 .m-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);margin-bottom:4px}
 .m-row2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.m-row2>div{min-width:0;overflow:hidden}
 .m-sel{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--cream);cursor:pointer}
 .btn-primary{background:var(--ink);color:var(--cream);border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-body)}
 .btn-primary:hover{opacity:.85}
@@ -2527,6 +2528,8 @@ input[type=number]{-moz-appearance:textfield}
   .fo-manual-row .fo-manual-cell:nth-child(3),.fo-manual-row .fo-manual-cell:nth-child(4),
   .fo-manual-row-head .fo-manual-head-cell:nth-child(3),.fo-manual-row-head .fo-manual-head-cell:nth-child(4){display:none}
   .fo-add-form{grid-template-columns:1fr 1fr}
+  .fo-add-form input[type="date"]{width:100%;max-width:100%;min-width:0;box-sizing:border-box;display:block}
+  .fo-add-form>div{min-width:0;overflow:hidden}
   /* Home */
   .home-hero{padding:22px 20px}
   /* Sig modal */
