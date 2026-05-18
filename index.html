@@ -2567,13 +2567,28 @@ input[type=number]{-moz-appearance:textfield}
   .pt-kpi-v{font-size:22px}
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
-  /* View toolbar — row 1: segment buttons fill the full width evenly */
-  .pt-view-tools{flex-wrap:wrap;padding:6px 8px;row-gap:6px}
-  .pt-seg{width:100%;display:flex!important;overflow-x:unset;white-space:normal}
-  .pt-seg button{flex:1;justify-content:center;padding:6px 4px;font-size:12px;gap:4px}
+  /* Filter card — compact 2-row toolbar */
+  .pt-view-tools{flex-wrap:wrap;padding:3px 6px;row-gap:3px;gap:4px;margin-bottom:10px}
+  .pt-seg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  .pt-seg::-webkit-scrollbar{display:none}
+  .pt-seg button{padding:5px 9px;font-size:12px;gap:3px}
   .pt-view-tools-sep{display:none}
-  /* Row 2: sort grows to fill, add-button stays right */
-  #pt-gantt-sort{flex:1}
+  #pt-gantt-sort{flex:1;font-size:11px;padding:3px 6px}
+  /* PT items — reduce widths and card sizes */
+  .pt-tbl-hdr{padding:7px 12px}
+  .pt-tbl-row{padding:10px 12px}
+  .pt-board{gap:8px}
+  .pt-col{min-width:190px;padding:8px;gap:6px}
+  .pk{padding:9px 10px}
+  .pk-title{margin-bottom:6px}
+  .pg-banner{height:50px}
+  .pg-body{padding:10px;gap:3px}
+  .pg-ft{padding:7px 10px}
+  /* KPI strip — compact */
+  .pt-kpis{gap:8px;margin-bottom:10px}
+  .pt-kpi{padding:10px 12px}
+  .pt-kpi-lbl{margin-bottom:4px}
+  .pt-kpi-sub{font-size:11px}
   /* Wrap long nav-actions */
   .nav-actions{gap:8px}
   /* Invoice history table */
@@ -2670,11 +2685,18 @@ input[type=number]{-moz-appearance:textfield}
   .pt-tbl-hdr,.pt-tbl-row{grid-template-columns:1fr auto}
   .pt-tbl-hdr>*:nth-child(3),.pt-tbl-hdr>*:nth-child(4),.pt-tbl-hdr>*:nth-child(5),
   .pt-tbl-row>*:nth-child(3),.pt-tbl-row>*:nth-child(4),.pt-tbl-row>*:nth-child(5){display:none}
-  .pt-seg button{padding:5px 2px;font-size:11px}
-  .pt-view-tools{padding:4px 6px;row-gap:4px}
-  .pt-kpi{padding:10px 12px}
+  .pt-seg button{padding:4px 7px;font-size:11px;gap:2px}
+  .pt-view-tools{padding:2px 5px;row-gap:2px}
+  .pt-col{min-width:170px;padding:7px;gap:5px}
+  .pk{padding:8px}
+  .pg-banner{height:42px}
+  .pg-body{padding:8px;gap:2px}
+  .pg-ft{padding:6px 8px}
+  .pt-tbl-row{padding:9px 10px}
+  .pt-tbl-hdr{padding:6px 10px}
+  .pt-kpi{padding:8px 10px}
   .pt-kpi-v{font-size:20px}
-  .pt-gantt-view{margin-top:12px}
+  .pt-gantt-view{margin-top:10px}
   .calc-grid{grid-template-columns:1fr}
   .inv-layout{grid-template-columns:1fr}
   .settings-grid{grid-template-columns:1fr}
@@ -13409,9 +13431,10 @@ function renderGlobalGantt() {
   while (cur <= rangeEnd) { months.push(new Date(cur)); cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1); }
 
   var _isMobile = window.innerWidth <= 768;
-  var _projColW = _isMobile ? 110 : 170;
-  var _nameMaxW = _isMobile ? 88 : 150;
-  var _tblMinW  = _isMobile ? Math.max(480, _projColW + months.length * 72) : 600;
+  var _isSmall  = window.innerWidth <= 480;
+  var _projColW = _isSmall ? 84 : (_isMobile ? 96 : 170);
+  var _nameMaxW = _isSmall ? 68 : (_isMobile ? 78 : 150);
+  var _tblMinW  = _isMobile ? Math.max(420, _projColW + months.length * 64) : 600;
 
   var todayDate = new Date(); todayDate.setHours(0,0,0,0);
   var todayPct = (todayDate >= rangeStart && todayDate <= rangeEnd)
@@ -13449,9 +13472,9 @@ function renderGlobalGantt() {
     var endLbl   = p.end_date   ? p.end_date.slice(5,10)   : '';
     var barLabel = startLbl && endLbl && startLbl !== endLbl ? startLbl + ' → ' + endLbl : (endLbl || startLbl);
     return '<tr onclick="selectPtProject(\'' + p.id + '\')" style="cursor:pointer">' + nameCell +
-      '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:' + (_isMobile ? '3px 0' : '5px 0') + ';position:relative">' +
+      '<td colspan="' + months.length + '" style="border-top:1px solid var(--border);padding:' + (_isSmall ? '2px 0' : _isMobile ? '3px 0' : '5px 0') + ';position:relative">' +
       todayLine +
-      '<div style="position:relative;height:' + (_isMobile ? '24' : '28') + 'px;background:#F0EDE8;border-radius:6px">' +
+      '<div style="position:relative;height:' + (_isSmall ? '20' : _isMobile ? '22' : '28') + 'px;background:#F0EDE8;border-radius:5px">' +
       '<div class="gantt-bar" data-proj-id="' + p.id + '" style="position:absolute;left:' + leftPct + '%;width:' + widthPct + '%;height:100%;background:' + color + ';border-radius:6px;display:flex;align-items:center;min-width:8px;box-sizing:border-box;z-index:1" onmousedown="ganttBarDown(event,\'' + p.id + '\',\'move\',\'proj\')" onclick="if(!_ganttDrag||!_ganttDrag.hasMoved)selectPtProject(\'' + p.id + '\')">' +
       '<div class="gantt-hdl" style="position:absolute;left:0;top:0;border-radius:6px 0 0 6px" onmousedown="event.stopPropagation();ganttBarDown(event,\'' + p.id + '\',\'left\',\'proj\')"></div>' +
       '<span style="font-size:9px;color:#fff;white-space:nowrap;overflow:hidden;font-weight:600;letter-spacing:.01em;padding:0 8px">' + barLabel + '</span>' +
