@@ -2567,11 +2567,12 @@ input[type=number]{-moz-appearance:textfield}
   .pt-kpi-v{font-size:22px}
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
-  /* View toolbar — 2-row: segment buttons fill row 1, sort+add share row 2 */
+  /* View toolbar — row 1: segment buttons fill the full width evenly */
   .pt-view-tools{flex-wrap:wrap;padding:6px 8px;row-gap:6px}
-  .pt-seg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
-  .pt-seg::-webkit-scrollbar{display:none}
+  .pt-seg{width:100%;display:flex!important;overflow-x:unset;white-space:normal}
+  .pt-seg button{flex:1;justify-content:center;padding:6px 4px;font-size:12px;gap:4px}
   .pt-view-tools-sep{display:none}
+  /* Row 2: sort grows to fill, add-button stays right */
   #pt-gantt-sort{flex:1}
   /* Wrap long nav-actions */
   .nav-actions{gap:8px}
@@ -2669,7 +2670,7 @@ input[type=number]{-moz-appearance:textfield}
   .pt-tbl-hdr,.pt-tbl-row{grid-template-columns:1fr auto}
   .pt-tbl-hdr>*:nth-child(3),.pt-tbl-hdr>*:nth-child(4),.pt-tbl-hdr>*:nth-child(5),
   .pt-tbl-row>*:nth-child(3),.pt-tbl-row>*:nth-child(4),.pt-tbl-row>*:nth-child(5){display:none}
-  .pt-seg button{padding:5px 10px;font-size:12px}
+  .pt-seg button{padding:5px 2px;font-size:11px}
   .pt-view-tools{padding:4px 6px;row-gap:4px}
   .pt-kpi{padding:10px 12px}
   .pt-kpi-v{font-size:20px}
