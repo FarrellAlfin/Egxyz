@@ -2047,9 +2047,10 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 /* Modal */
 .pt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:200;align-items:center;justify-content:center}
 .pt-modal-overlay.open{display:flex}
-.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px 0;width:100%;max-width:620px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.pt-modal-scroll{flex:1;overflow-y:auto;min-height:0;padding-bottom:4px}
 .pt-modal-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px}
-.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;position:sticky;bottom:0;background:#ffffff;padding-top:14px;border-top:1.5px solid var(--border);z-index:2}
+.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;padding:14px 0 24px;border-top:1.5px solid var(--border);background:#ffffff;flex-shrink:0}
 .pt-modal-ft .btn-outline{background:#ffffff}
 @media(max-width:860px){.pt-layout{grid-template-columns:1fr}}
 /* ── Project Tracker extras ──────────────────────────────────────── */
@@ -14468,6 +14469,7 @@ function openShareModal() {
   var body = document.getElementById('pt-modal-body');
   if (!overlay || !body) return;
   body.innerHTML = html;
+  _ptModalWrap(body);
   overlay.classList.add('open');
   _renderShareList();
 }
@@ -14704,6 +14706,7 @@ function openPtModal(mode) {
       '<div class="pt-modal-ft"><button class="btn-outline" onclick="closePtModal()">Cancel</button><button class="pt-save-btn" onclick="savePtTime()">Log time</button></div>';
   }
   body.innerHTML = html;
+  _ptModalWrap(body);
   // Prefill today's date where applicable
   var today = new Date().toISOString().split('T')[0];
   ['ptm-ms-date','ptm-task-date','ptm-bill-date','ptm-meet-date','ptm-time-date'].forEach(function(id){
@@ -14711,6 +14714,15 @@ function openPtModal(mode) {
   });
   overlay.classList.add('open');
   if (mode === 'add-time') { trInit('ptm-time-roll', 23, 0, 0); }
+}
+
+function _ptModalWrap(body) {
+  var ft = body.querySelector('.pt-modal-ft');
+  if (!ft) return;
+  var scroll = document.createElement('div');
+  scroll.className = 'pt-modal-scroll';
+  while (body.firstChild !== ft) scroll.appendChild(body.firstChild);
+  body.insertBefore(scroll, ft);
 }
 
 function closePtModal() {
