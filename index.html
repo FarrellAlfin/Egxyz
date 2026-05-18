@@ -1959,7 +1959,7 @@ input[type=number]{-moz-appearance:textfield}
 .pt-field{margin-bottom:12px}
 .pt-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-light);margin-bottom:4px}
 .pt-inp,.pt-ta,.pt-sel{width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;font-size:14px;font-family:var(--font-body);background:var(--cream);color:var(--ink)}
-input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var(--cream)}
+input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var(--cream);min-height:40px;line-height:1.4}
 .pt-sel{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 .pt-ta{min-height:80px;resize:vertical}
 .pt-inp:focus,.pt-ta:focus,.pt-sel:focus{outline:none;border-color:var(--amber)}
@@ -2049,7 +2049,8 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-modal-overlay.open{display:flex}
 .pt-modal{background:var(--white);border-radius:var(--radius);padding:28px 32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
 .pt-modal-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px}
-.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;position:sticky;bottom:0;background:var(--white);padding-top:14px;border-top:1.5px solid var(--border)}
+.pt-modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;position:sticky;bottom:0;background:#ffffff;padding-top:14px;border-top:1.5px solid var(--border);z-index:2}
+.pt-modal-ft .btn-outline{background:#ffffff}
 @media(max-width:860px){.pt-layout{grid-template-columns:1fr}}
 /* ── Project Tracker extras ──────────────────────────────────────── */
 /* Global gantt */
