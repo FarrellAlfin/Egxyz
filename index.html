@@ -2570,11 +2570,12 @@ input[type=number]{-moz-appearance:textfield}
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
   /* Sticky KPI + toolbar header on mobile */
-  .pt-sticky-hdr{position:sticky;top:62px;z-index:100;background:var(--surface);padding-bottom:8px}
-  /* Board: horizontal scroll only — columns clip height at 62vh with internal scroll */
-  #pt-view-board{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .pt-board{overflow-x:visible;align-items:flex-start}
+  .pt-sticky-hdr{position:sticky;top:62px;z-index:100;background:var(--surface);padding-bottom:6px}
+  /* Board: internal horizontal scroll — do NOT override overflow-x:auto on .pt-board */
+  .pt-board{align-items:flex-start}
   .pt-col{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  /* Clip any stray horizontal overflow at the panel level without breaking sticky */
+  .tmpl-panel{overflow-x:clip}
   /* Filter card — compact 2-row toolbar */
   .pt-view-tools{flex-wrap:wrap;padding:3px 6px;row-gap:3px;gap:4px;margin-bottom:0}
   .pt-seg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
