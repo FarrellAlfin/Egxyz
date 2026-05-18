@@ -238,7 +238,7 @@ body{font-family:var(--font-body);background:var(--surface);color:var(--on-surfa
 
 /* ── SHARED NAV ── */
 .top-nav{
-  position:relative;z-index:200;
+  position:sticky;top:0;z-index:200;
   background:rgba(247,249,251,0.95);backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(198,198,205,0.15);height:62px;
   display:flex;align-items:center;justify-content:space-between;padding:0 24px;
@@ -2550,8 +2550,8 @@ input[type=number]{-moz-appearance:textfield}
   .pt-bill-row{grid-template-columns:1fr auto auto;gap:6px}
   .pt-time-row{grid-template-columns:80px 55px 1fr auto auto;gap:8px}
   /* Project tracker dashboard list page */
-  .pt-board{display:flex!important;overflow-x:auto;gap:12px;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;grid-template-columns:unset}
-  .pt-col{min-width:220px;flex-shrink:0;scroll-snap-align:start}
+  .pt-board{display:flex!important;overflow-x:auto;gap:10px;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;grid-template-columns:unset}
+  .pt-col{min-width:210px;flex-shrink:0;scroll-snap-align:start}
   .pt-gallery{grid-template-columns:1fr 1fr}
   .pt-tbl-hdr,.pt-tbl-row{grid-template-columns:2fr 1fr 110px}
   .pt-tbl-hdr>*:nth-child(4),.pt-tbl-hdr>*:nth-child(5),
@@ -2560,7 +2560,7 @@ input[type=number]{-moz-appearance:textfield}
   /* Top nav — full-width header: [hamburger][···Axis (centered)···][Timer][🔔][avatar] */
   .top-nav{padding:0 12px}
   .top-nav > div:first-child{flex:1;gap:4px!important}
-  .nav-logo{flex:1;text-align:center;font-size:20px}
+  .nav-logo{font-size:20px}
   /* Project tracker section header */
   .tv-title{font-size:22px}
   /* PT dashboard — KPI values and project names */
@@ -2681,13 +2681,14 @@ input[type=number]{-moz-appearance:textfield}
   .pt-row-badge,.pt-row-date{display:none}
   /* Project tracker dashboard list page — small phone */
   .pt-gallery{grid-template-columns:1fr}
-  .pt-col{min-width:200px}
+  /* Board — portrait: one column fills screen, peek of next for scroll affordance */
+  .pt-board{gap:8px;padding-bottom:14px}
+  .pt-col{min-width:calc(85vw);padding:8px;gap:6px;scroll-snap-align:start}
   .pt-tbl-hdr,.pt-tbl-row{grid-template-columns:1fr auto}
   .pt-tbl-hdr>*:nth-child(3),.pt-tbl-hdr>*:nth-child(4),.pt-tbl-hdr>*:nth-child(5),
   .pt-tbl-row>*:nth-child(3),.pt-tbl-row>*:nth-child(4),.pt-tbl-row>*:nth-child(5){display:none}
   .pt-seg button{padding:4px 7px;font-size:11px;gap:2px}
   .pt-view-tools{padding:2px 5px;row-gap:2px}
-  .pt-col{min-width:170px;padding:7px;gap:5px}
   .pk{padding:8px}
   .pg-banner{height:42px}
   .pg-body{padding:8px;gap:2px}
