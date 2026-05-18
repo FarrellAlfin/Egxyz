@@ -2074,8 +2074,10 @@ input[type=number]{-moz-appearance:textfield}
 .pt-kpi.accent .pt-kpi-trend{background:var(--tertiary);color:#fff}
 .pt-kpi.accent .pt-kpi-spark b{background:rgba(255,255,255,.3)}
 .pt-kpi.accent .pt-kpi-spark b.a{background:var(--amber-mid)}
+/* ─── PT Sticky header wrapper (KPI strip + toolbar) ─── */
+.pt-sticky-hdr{background:transparent}
 /* ─── PT View Toolbar ─── */
-.pt-view-tools{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px}
+.pt-view-tools{display:flex;align-items:center;gap:6px;margin-bottom:0;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px}
 .pt-seg{display:inline-flex;background:transparent;border:none;border-radius:var(--radius-sm);padding:2px;gap:2px}
 .pt-seg button{font-size:13px;padding:5px 12px;border-radius:5px;color:var(--ink-mid);font-weight:500;display:flex;align-items:center;gap:6px;transition:all .12s;cursor:pointer;border:none;background:none}
 .pt-seg button.active{background:var(--ink);color:#fff}
@@ -2567,8 +2569,14 @@ input[type=number]{-moz-appearance:textfield}
   .pt-kpi-v{font-size:22px}
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
+  /* Sticky KPI + toolbar header on mobile */
+  .pt-sticky-hdr{position:sticky;top:62px;z-index:100;background:var(--surface);padding-bottom:8px}
+  /* Board: horizontal scroll only — columns clip height at 62vh with internal scroll */
+  #pt-view-board{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pt-board{overflow-x:visible;align-items:flex-start}
+  .pt-col{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
   /* Filter card — compact 2-row toolbar */
-  .pt-view-tools{flex-wrap:wrap;padding:3px 6px;row-gap:3px;gap:4px;margin-bottom:10px}
+  .pt-view-tools{flex-wrap:wrap;padding:3px 6px;row-gap:3px;gap:4px;margin-bottom:0}
   .pt-seg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
   .pt-seg::-webkit-scrollbar{display:none}
   .pt-seg button{padding:5px 9px;font-size:12px;gap:3px}
@@ -2698,6 +2706,8 @@ input[type=number]{-moz-appearance:textfield}
   .pt-kpi{padding:8px 10px}
   .pt-kpi-v{font-size:20px}
   .pt-gantt-view{margin-top:10px}
+  .pt-sticky-hdr{padding-bottom:6px}
+  .pt-col{max-height:58vh}
   .calc-grid{grid-template-columns:1fr}
   .inv-layout{grid-template-columns:1fr}
   .settings-grid{grid-template-columns:1fr}
@@ -4415,23 +4425,24 @@ var RateLimiter = (function() {
         </div>
         <!-- Project list view -->
         <div id="pt-list-view">
-          <!-- KPI Strip -->
-          <div class="pt-kpis" id="pt-kpi-strip"></div>
-          <!-- View Toolbar -->
-          <div class="pt-view-tools">
-            <div class="pt-seg" id="pt-view-seg">
-              <button data-v="timeline" onclick="setPtView('timeline')" class="active">⎯ Timeline</button>
-              <button data-v="list" onclick="setPtView('list')">≡ List</button>
-              <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
-              <button data-v="board" onclick="setPtView('board')">▦ Board</button>
+          <!-- Sticky header: KPI strip + view toolbar -->
+          <div class="pt-sticky-hdr">
+            <div class="pt-kpis" id="pt-kpi-strip"></div>
+            <div class="pt-view-tools">
+              <div class="pt-seg" id="pt-view-seg">
+                <button data-v="timeline" onclick="setPtView('timeline')" class="active">⎯ Timeline</button>
+                <button data-v="list" onclick="setPtView('list')">≡ List</button>
+                <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
+                <button data-v="board" onclick="setPtView('board')">▦ Board</button>
+              </div>
+              <div class="pt-view-tools-sep"></div>
+              <select id="pt-gantt-sort" onchange="renderPtCurrentView()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
+                <option value="created">Sort: Date added</option>
+                <option value="name">Sort: Name</option>
+                <option value="deadline">Sort: Deadline</option>
+              </select>
+              <button class="pt-add-btn" style="margin-left:auto" onclick="openPtModal('new-project')">+ New project</button>
             </div>
-            <div class="pt-view-tools-sep"></div>
-            <select id="pt-gantt-sort" onchange="renderPtCurrentView()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
-              <option value="created">Sort: Date added</option>
-              <option value="name">Sort: Name</option>
-              <option value="deadline">Sort: Deadline</option>
-            </select>
-            <button class="pt-add-btn" style="margin-left:auto" onclick="openPtModal('new-project')">+ New project</button>
           </div>
           <!-- Timeline view (default) -->
           <div id="pt-view-timeline">
