@@ -2081,6 +2081,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-sticky-hdr{background:var(--surface);position:sticky;top:62px;z-index:100;padding-bottom:8px;border-bottom:1px solid rgba(198,198,205,0.25)}
 /* ─── PT View Toolbar ─── */
 .pt-view-tools{display:flex;align-items:center;gap:6px;margin-bottom:0;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px}
+.pt-view-tools-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
 .pt-seg{display:inline-flex;background:transparent;border:none;border-radius:var(--radius-sm);padding:2px;gap:2px}
 .pt-seg button{font-size:13px;padding:5px 12px;border-radius:5px;color:var(--ink-mid);font-weight:500;display:flex;align-items:center;gap:6px;transition:all .12s;cursor:pointer;border:none;background:none}
 .pt-seg button.active{background:var(--ink);color:#fff}
@@ -2577,14 +2578,15 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pt-board{align-items:flex-start}
   .pt-col{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
   /* Board columns scroll within the board container; width:100%+min-width:0 on .pt-board contain it */
-  /* Filter card — compact 2-row toolbar */
-  .pt-view-tools{flex-wrap:wrap;padding:3px 6px;row-gap:3px;gap:4px;margin-bottom:0}
+  /* Filter card — view buttons left column, add button spans full height on right */
+  .pt-view-tools{flex-wrap:nowrap;align-items:stretch;padding:3px 6px;gap:6px;margin-bottom:0}
+  .pt-view-tools-left{flex-direction:column;gap:3px}
   .pt-seg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
   .pt-seg::-webkit-scrollbar{display:none}
   .pt-seg button{padding:4px 8px;font-size:11px;gap:3px}
   .pt-view-tools-sep{display:none}
-  #pt-gantt-sort{flex:1;font-size:10px!important;padding:2px 5px}
-  .pt-view-tools .pt-add-btn{font-size:11px;padding:4px 10px}
+  #pt-gantt-sort{width:100%;font-size:10px!important;padding:2px 5px}
+  .pt-view-tools .pt-add-btn{align-self:stretch;height:auto;font-size:11px;padding:6px 12px;white-space:nowrap}
   /* PT items — reduce widths and card sizes */
   .pt-tbl-hdr{padding:7px 12px}
   .pt-tbl-row{padding:10px 12px}
@@ -2700,9 +2702,9 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pt-tbl-hdr>*:nth-child(3),.pt-tbl-hdr>*:nth-child(4),.pt-tbl-hdr>*:nth-child(5),
   .pt-tbl-row>*:nth-child(3),.pt-tbl-row>*:nth-child(4),.pt-tbl-row>*:nth-child(5){display:none}
   .pt-seg button{padding:3px 6px;font-size:10px;gap:2px}
-  .pt-view-tools{padding:2px 5px;row-gap:2px}
+  .pt-view-tools{padding:2px 4px;gap:4px}
   #pt-gantt-sort{font-size:9px!important;padding:2px 4px}
-  .pt-view-tools .pt-add-btn{font-size:10px;padding:3px 8px}
+  .pt-view-tools .pt-add-btn{font-size:10px;padding:5px 10px;align-self:stretch;height:auto}
   .pk{padding:8px}
   .pg-banner{height:42px}
   .pg-body{padding:8px;gap:2px}
@@ -4435,19 +4437,21 @@ var RateLimiter = (function() {
           <div class="pt-sticky-hdr">
             <div class="pt-kpis" id="pt-kpi-strip"></div>
             <div class="pt-view-tools">
-              <div class="pt-seg" id="pt-view-seg">
-                <button data-v="timeline" onclick="setPtView('timeline')" class="active">⎯ Timeline</button>
-                <button data-v="list" onclick="setPtView('list')">≡ List</button>
-                <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
-                <button data-v="board" onclick="setPtView('board')">▦ Board</button>
+              <div class="pt-view-tools-left">
+                <div class="pt-seg" id="pt-view-seg">
+                  <button data-v="timeline" onclick="setPtView('timeline')" class="active">⎯ Timeline</button>
+                  <button data-v="list" onclick="setPtView('list')">≡ List</button>
+                  <button data-v="gallery" onclick="setPtView('gallery')">⊞ Gallery</button>
+                  <button data-v="board" onclick="setPtView('board')">▦ Board</button>
+                </div>
+                <select id="pt-gantt-sort" onchange="renderPtCurrentView()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
+                  <option value="created">Sort: Date added</option>
+                  <option value="name">Sort: Name</option>
+                  <option value="deadline">Sort: Deadline</option>
+                </select>
               </div>
               <div class="pt-view-tools-sep"></div>
-              <select id="pt-gantt-sort" onchange="renderPtCurrentView()" style="font-size:12px;border:none;border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-body);background:transparent;color:var(--ink-mid);cursor:pointer;outline:none">
-                <option value="created">Sort: Date added</option>
-                <option value="name">Sort: Name</option>
-                <option value="deadline">Sort: Deadline</option>
-              </select>
-              <button class="pt-add-btn" style="margin-left:auto" onclick="openPtModal('new-project')">+ New project</button>
+              <button class="pt-add-btn" onclick="openPtModal('new-project')">+ New project</button>
             </div>
           </div>
           <!-- Timeline view (default) -->
@@ -11481,9 +11485,6 @@ function setPtView(v) {
     var el = document.getElementById('pt-view-' + name);
     if (el) el.style.display = name === v ? '' : 'none';
   });
-  // Hide sort control for board view (board has its own status-column ordering)
-  var sortSel = document.getElementById('pt-gantt-sort');
-  if (sortSel) sortSel.style.display = v === 'board' ? 'none' : '';
   renderPtCurrentView();
 }
 
