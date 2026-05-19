@@ -16069,8 +16069,8 @@ async function _fkoMockProject() {
   var taskRes = await _supabase.from('project_tasks').insert([
     { user_id:_currentUser.id, project_id:projId, title:'Discovery call & creative brief', status:'done', priority:'medium', due_date:fmt(sd) },
     { user_id:_currentUser.id, project_id:projId, title:'Moodboard & direction sign-off', status:'done', priority:'high', due_date:fmt(sd) },
-    { user_id:_currentUser.id, project_id:projId, title:'Logo design — round 1', status:'inprogress', priority:'high', due_date:fmt(today) },
-    { user_id:_currentUser.id, project_id:projId, title:'Colour palette & typography system', status:'inprogress', priority:'high', due_date:fmt(today) },
+    { user_id:_currentUser.id, project_id:projId, title:'Logo design — round 1', status:'in_progress', priority:'high', due_date:fmt(today) },
+    { user_id:_currentUser.id, project_id:projId, title:'Colour palette & typography system', status:'in_progress', priority:'high', due_date:fmt(today) },
     { user_id:_currentUser.id, project_id:projId, title:'Brand guidelines document', status:'todo', priority:'medium', due_date:fmt(ed) },
     { user_id:_currentUser.id, project_id:projId, title:'Final delivery & handoff', status:'todo', priority:'high', due_date:fmt(ed) }
   ]).select();
