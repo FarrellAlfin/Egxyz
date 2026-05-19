@@ -1297,7 +1297,7 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fo-stat-card:hover,.gts-stat-card:hover,.hw-card:hover,.pt-ov-pulse-card:hover{
   transform:translateY(-3px);box-shadow:0 12px 30px rgba(25,28,30,0.1)
 }
-.pt-task-card:hover,.pt-bill-card:hover,.mn-card:hover{
+.pt-bill-card:hover,.mn-card:hover{
   transform:translateY(-2px);box-shadow:0 8px 22px rgba(25,28,30,0.09)
 }
 .hq-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(25,28,30,0.1)}
@@ -2198,8 +2198,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-task-col-empty{text-align:center;padding:18px 0;color:var(--ink-light);font-size:12px}
 /* Task cards */
 .pt-tasks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:4px}
-.pt-task-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;transition:border-color .15s}
-.pt-task-card:hover{border-color:var(--amber-mid)}
+.pt-task-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative}
 .pt-task-card.done-card{opacity:.55}
 .pt-task-card-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
 .pt-task-card-title{font-size:15px;font-weight:600;color:var(--ink);flex:1;line-height:1.4;min-width:0;word-break:break-word;overflow-wrap:break-word}
@@ -2410,7 +2409,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-doc-link:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-light)}
 /* Attachment area in task modal */
 .task-attach-wrap{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:var(--cream);margin-top:4px}
-.task-attach-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.task-attach-list{display:flex;flex-direction:column;gap:0;margin-bottom:8px;max-height:200px;overflow-y:auto}
 .task-attach-item{display:flex;align-items:center;gap:5px;background:var(--white);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:11px;color:var(--ink);max-width:200px}
 .task-attach-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .task-attach-del{background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;flex-shrink:0;padding:0 2px}
@@ -14460,6 +14459,17 @@ async function ptTaskDrop(e, targetIdx) {
 
 // ─── FILE ATTACHMENTS ───
 
+function _ptAttachRow(name, url) {
+  var ext = (name.split('.').pop()||'').toLowerCase();
+  var icCls = ext==='pdf'?'pdf':(ext==='doc'||ext==='docx')?'doc':ext==='fig'?'fig':(ext==='jpg'||ext==='jpeg'||ext==='png'||ext==='gif'||ext==='webp')?'img':'sig';
+  var icLbl = ext.toUpperCase().slice(0,3) || 'FIL';
+  return '<a class="po-doc-row" href="' + escapeHTML(url) + '" target="_blank" onclick="event.stopPropagation()" style="padding:6px 8px">' +
+    '<div class="po-doc-ic ' + icCls + '">' + icLbl + '</div>' +
+    '<div class="po-doc-info"><div class="po-doc-n">' + escapeHTML(name) + '</div></div>' +
+    '<span class="po-doc-dl">↗</span>' +
+  '</a>';
+}
+
 var _ptPendingAttachments = [];
 
 async function handlePtAttach(input) {
@@ -14485,13 +14495,13 @@ async function handlePtAttach(input) {
         // Fall back to a local object URL so the file still shows in this session
         var fallbackUrl = URL.createObjectURL(file);
         _ptPendingAttachments.push({name: file.name, url: fallbackUrl, size: file.size});
-        if (listEl) listEl.innerHTML += '<div class="task-attach-item"><a href="' + escapeHTML(fallbackUrl) + '" target="_blank">' + escapeHTML(file.name) + '</a> <span style="font-size:10px;color:var(--ink-light)">(local)</span></div>';
+        if (listEl) listEl.innerHTML += _ptAttachRow(file.name, fallbackUrl);
         continue;
       }
       var pub = _supabase.storage.from('pt-attachments').getPublicUrl(path);
       var url = pub.data ? pub.data.publicUrl : '';
       _ptPendingAttachments.push({name: file.name, url: url, path: path});
-      if (listEl) listEl.innerHTML += '<div class="task-attach-item"><a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(file.name) + '</a></div>';
+      if (listEl) listEl.innerHTML += _ptAttachRow(file.name, url);
     }
   }
   input.value = '';
@@ -14850,7 +14860,7 @@ function openPtModal(mode) {
       '<div class="task-attach-wrap">' +
       '<label class="task-attach-btn"><input type="file" id="ptm-task-file" accept=".png,.jpg,.jpeg,.gif,.webp,image/*,.pdf,.doc,.docx" multiple onchange="handlePtAttach(this)" style="display:none">📎 Add file</label>' +
       '<div class="task-attach-list" id="ptm-attach-list">' +
-      (function(){ var arr=[]; try{arr=JSON.parse(et.attachments||'[]');}catch(e){} return arr.map(function(a){ return '<div class="task-attach-item"><a href="' + escapeHTML(a.url) + '" target="_blank">' + escapeHTML(a.name) + '</a></div>'; }).join(''); })() +
+      (function(){ var arr=[]; try{arr=JSON.parse(et.attachments||'[]');}catch(e){} return arr.map(function(a){ return _ptAttachRow(a.name, a.url); }).join(''); })() +
       '</div></div></div>' +
       '<div class="pt-modal-ft">' +
         '<button class="btn-outline" onclick="closePtModal()">Cancel</button>' +
