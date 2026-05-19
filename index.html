@@ -307,7 +307,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 /* Hero */
 .lp-hero{background:var(--surface);overflow:hidden;position:relative}
 .lp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 68% -5%,rgba(0,150,104,.09) 0,transparent 65%),radial-gradient(ellipse 40% 40% at 5% 100%,rgba(0,104,78,.05) 0,transparent 55%);pointer-events:none}
-.lp-hero-inner{max-width:1120px;margin:0 auto;padding:88px 40px 72px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1}
+.lp-hero-inner{max-width:1320px;margin:0 auto;padding:88px 40px 72px;display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:center;position:relative;z-index:1}
 .lp-hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,150,104,.1);border:1px solid rgba(0,150,104,.22);color:var(--sage);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:22px;animation:lp-up .6s ease both}
 .lp-hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);animation:lp-dot-pulse 2s ease infinite}
 .lp-hero-h1{animation:lp-up .7s .1s ease both}
@@ -322,7 +322,7 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-mw-bar{background:#0d1117;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .lp-mw-dot{width:9px;height:9px;border-radius:50%}
 .lp-mw-url{font-size:10px;color:rgba(255,255,255,.25);margin-left:10px;font-family:var(--font-mono)}
-.lp-mw-body{display:grid;grid-template-columns:96px 1fr;min-height:320px}
+.lp-mw-body{display:grid;grid-template-columns:96px 1fr;min-height:380px}
 .lp-mw-sb{padding:10px 5px;background:#0d1117;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:2px}
 .lp-mw-sbi{font-size:10px;padding:6px 7px;border-radius:4px;color:rgba(255,255,255,.38);cursor:default;font-family:var(--font-body);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lp-mw-sbi.a{background:rgba(0,150,104,.15);color:rgba(0,200,140,.85)}
@@ -3027,16 +3027,20 @@ var RateLimiter = (function() {
             <div class="lp-mw-content">
               <div class="lp-mw-stats">
                 <div class="lp-mw-sc"><div class="lp-mw-sc-l">This month</div><div class="lp-mw-sc-v">$6.4k</div></div>
-                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Hours</div><div class="lp-mw-sc-v">47.5h</div></div>
-                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Rate</div><div class="lp-mw-sc-v">$87/h</div></div>
+                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Hours logged</div><div class="lp-mw-sc-v">47.5h</div></div>
+                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Hourly rate</div><div class="lp-mw-sc-v">$87/h</div></div>
+                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Pipeline</div><div class="lp-mw-sc-v" style="color:rgba(0,200,140,.9)">$18.2k</div></div>
+                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Invoices out</div><div class="lp-mw-sc-v">12</div></div>
+                <div class="lp-mw-sc"><div class="lp-mw-sc-l">Tax set aside</div><div class="lp-mw-sc-v">$1.4k</div></div>
               </div>
               <div class="lp-mw-hm">
                 <div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l4"></div>
                 <div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l4"></div>
                 <div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l1"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l3"></div><div class="lp-mw-hm-d l2"></div><div class="lp-mw-hm-d l4"></div><div class="lp-mw-hm-d l3"></div>
               </div>
-              <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#009668"></div><span class="lp-mw-proj-name">Brand Redesign</span><span class="lp-mw-proj-pct">72%</span></div>
-              <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#C8621A"></div><span class="lp-mw-proj-name">Website Copy</span><span class="lp-mw-proj-pct">45%</span></div>
+              <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#009668"></div><span class="lp-mw-proj-name">Brand Redesign</span><span class="lp-mw-proj-pct" style="color:rgba(0,200,140,.8)">72%</span></div>
+              <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#C8621A"></div><span class="lp-mw-proj-name">Website Copy</span><span class="lp-mw-proj-pct" style="color:rgba(217,119,6,.8)">45%</span></div>
+              <div class="lp-mw-proj-row"><div class="lp-mw-proj-dot" style="background:#1967D2"></div><span class="lp-mw-proj-name">Mobile App UI</span><span class="lp-mw-proj-pct" style="color:rgba(25,103,210,.8)">91%</span></div>
             </div>
           </div>
         </div>
