@@ -2409,7 +2409,8 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-doc-link:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-light)}
 /* Attachment area in task modal */
 .task-attach-wrap{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:var(--cream);margin-top:4px}
-.task-attach-list{display:flex;flex-direction:column;gap:0;margin-bottom:8px;max-height:200px;overflow-y:auto}
+.task-attach-list{display:flex;flex-direction:column;gap:0;margin-bottom:8px;max-height:200px;overflow-y:auto;scrollbar-width:none}
+.task-attach-list::-webkit-scrollbar{display:none}
 .task-attach-item{display:flex;align-items:center;gap:5px;background:var(--white);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:11px;color:var(--ink);max-width:200px}
 .task-attach-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .task-attach-del{background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;flex-shrink:0;padding:0 2px}
