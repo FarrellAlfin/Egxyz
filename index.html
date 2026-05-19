@@ -322,15 +322,15 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-mw-bar{background:#0d1117;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .lp-mw-dot{width:9px;height:9px;border-radius:50%}
 .lp-mw-url{font-size:10px;color:rgba(255,255,255,.25);margin-left:10px;font-family:var(--font-mono)}
-.lp-mw-body{display:grid;grid-template-columns:80px 1fr;min-height:230px}
+.lp-mw-body{display:grid;grid-template-columns:96px 1fr;min-height:320px}
 .lp-mw-sb{padding:10px 5px;background:#0d1117;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:2px}
-.lp-mw-sbi{font-size:8.5px;padding:5px 6px;border-radius:4px;color:rgba(255,255,255,.38);cursor:default;font-family:var(--font-body);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp-mw-sbi{font-size:10px;padding:6px 7px;border-radius:4px;color:rgba(255,255,255,.38);cursor:default;font-family:var(--font-body);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lp-mw-sbi.a{background:rgba(0,150,104,.15);color:rgba(0,200,140,.85)}
 .lp-mw-content{padding:11px;display:flex;flex-direction:column;gap:8px}
 .lp-mw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
 .lp-mw-sc{background:rgba(255,255,255,.04);border-radius:6px;padding:7px 8px;border:1px solid rgba(255,255,255,.06)}
-.lp-mw-sc-l{font-size:7.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;font-family:var(--font-body)}
-.lp-mw-sc-v{font-size:13px;font-weight:700;color:#fff;font-family:var(--font-display);letter-spacing:-.03em}
+.lp-mw-sc-l{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-family:var(--font-body)}
+.lp-mw-sc-v{font-size:16px;font-weight:700;color:#fff;font-family:var(--font-display);letter-spacing:-.03em}
 .lp-mw-hm{display:grid;grid-template-columns:repeat(18,1fr);gap:2px}
 .lp-mw-hm-d{aspect-ratio:1;border-radius:1.5px;background:rgba(255,255,255,.04)}
 .lp-mw-hm-d.l1{background:rgba(0,150,104,.25)}.lp-mw-hm-d.l2{background:rgba(0,150,104,.5)}
@@ -344,11 +344,6 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-float-card-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-light);margin-bottom:3px;font-family:var(--font-body)}
 .lp-float-card-v{font-size:18px;font-weight:800;font-family:var(--font-display);letter-spacing:-.04em;line-height:1}
 .lp-float-card-s{font-size:9px;color:var(--on-surface-light);margin-top:2px}
-/* First card is larger and more prominent */
-.lp-fc-1.lp-float-card{padding:18px 24px;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.16)}
-.lp-fc-1 .lp-float-card-l{font-size:11px;margin-bottom:5px}
-.lp-fc-1 .lp-float-card-v{font-size:28px}
-.lp-fc-1 .lp-float-card-s{font-size:11px;margin-top:5px}
 .lp-fc-1{top:-16px;right:-18px;animation:lp-float-a 5s ease-in-out infinite}
 .lp-fc-2{bottom:18px;right:-26px;animation:lp-float-b 6.5s ease-in-out 1.5s infinite}
 .lp-fc-3{bottom:-14px;left:36px;animation:lp-float-c 4.5s ease-in-out .8s infinite}
@@ -2622,13 +2617,6 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .iht-hc:nth-child(5),.iht-cell:nth-child(5){display:none}
   /* ── Hero mockup sidebar ── */
   .lp-mw-body{grid-template-columns:72px 1fr}
-  /* ── Floating metric cards — scale down on mobile ── */
-  .lp-fc-1.lp-float-card{padding:9px 13px;border-radius:10px}
-  .lp-fc-1 .lp-float-card-v{font-size:17px}
-  .lp-fc-1 .lp-float-card-l,.lp-fc-1 .lp-float-card-s{font-size:8px}
-  .lp-fc-2,.lp-fc-3{padding:7px 10px}
-  .lp-fc-2 .lp-float-card-v,.lp-fc-3 .lp-float-card-v{font-size:13px}
-  .lp-fc-2 .lp-float-card-l,.lp-fc-2 .lp-float-card-s,.lp-fc-3 .lp-float-card-l,.lp-fc-3 .lp-float-card-s{font-size:8px}
   /* ── Project Tracker Gantt ── */
   .lp-pt-gantt{flex:none!important;padding:14px 12px!important}
   .lp-pt-gantt-rows{justify-content:flex-start!important;gap:14px!important}
@@ -3021,21 +3009,6 @@ var RateLimiter = (function() {
     <!-- Mockup -->
     <div class="lp-hero-vis">
       <div class="lp-mockup-wrap">
-        <div class="lp-float-card lp-fc-1">
-          <div class="lp-float-card-l">Revenue</div>
-          <div class="lp-float-card-v" style="color:var(--tertiary)">$6.4k</div>
-          <div class="lp-float-card-s">↑ 18% this month</div>
-        </div>
-        <div class="lp-float-card lp-fc-2">
-          <div class="lp-float-card-l">Hours logged</div>
-          <div class="lp-float-card-v">47.5h</div>
-          <div class="lp-float-card-s">this week</div>
-        </div>
-        <div class="lp-float-card lp-fc-3">
-          <div class="lp-float-card-l">Invoices out</div>
-          <div class="lp-float-card-v">3</div>
-          <div class="lp-float-card-s">2 awaiting payment</div>
-        </div>
         <div class="lp-mockup-win">
           <div class="lp-mw-bar">
             <div class="lp-mw-dot" style="background:#E8594A"></div>
