@@ -2078,7 +2078,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .pt-kpi.accent .pt-kpi-spark b{background:rgba(255,255,255,.3)}
 .pt-kpi.accent .pt-kpi-spark b.a{background:var(--amber-mid)}
 /* ─── PT Sticky header wrapper (KPI strip + toolbar) ─── */
-.pt-sticky-hdr{background:transparent}
+.pt-sticky-hdr{background:var(--surface);position:sticky;top:62px;z-index:100;padding-bottom:8px;border-bottom:1px solid rgba(198,198,205,0.25)}
 /* ─── PT View Toolbar ─── */
 .pt-view-tools{display:flex;align-items:center;gap:6px;margin-bottom:0;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px}
 .pt-seg{display:inline-flex;background:transparent;border:none;border-radius:var(--radius-sm);padding:2px;gap:2px}
@@ -2571,8 +2571,8 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   /* PT dashboard — project names */
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
-  /* Sticky KPI + toolbar header on mobile */
-  .pt-sticky-hdr{position:sticky;top:62px;z-index:100;background:var(--surface);padding-bottom:6px}
+  /* Sticky KPI + toolbar header — tighten padding on mobile */
+  .pt-sticky-hdr{padding-bottom:5px}
   /* Board: internal horizontal scroll — do NOT override overflow-x:auto on .pt-board */
   .pt-board{align-items:flex-start}
   .pt-col{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -2712,7 +2712,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pt-kpi{padding:4px 7px;gap:4px}
   .pt-kpi-v{font-size:11px}
   .pt-gantt-view{margin-top:10px}
-  .pt-sticky-hdr{padding-bottom:6px}
+  .pt-sticky-hdr{padding-bottom:4px}
   .pt-col{max-height:58vh}
   .calc-grid{grid-template-columns:1fr}
   .inv-layout{grid-template-columns:1fr}
