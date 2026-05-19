@@ -7041,6 +7041,10 @@ _supabase.auth.getSession().then(function(result) {
 // we ignore it here because getSession() above already handles that.
 // We only act on genuine new sign-ins (PASSWORD/OAuth) and sign-outs.
 _supabase.auth.onAuthStateChange(function(event, session) {
+  // Strip any auth hash tokens left in the URL (e.g. egxyz.com/#access_token=...)
+  if (window.location.hash) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
   if ((event === 'SIGNED_IN') && session) {
     var newId = session.user.id;
     var curId = _currentUser && _currentUser.id;
