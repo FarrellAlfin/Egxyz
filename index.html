@@ -1222,13 +1222,15 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .toast-undo-btn:hover{background:rgba(255,255,255,.3)}
 /* ── ONBOARDING TOOLTIP TOUR ── */
 #fk-tour-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none}
-.fk-tour-spotlight{position:absolute;pointer-events:none;border-radius:10px;display:none;transition:top .3s cubic-bezier(.4,0,.2,1),left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 0 9999px rgba(25,28,30,0.52);z-index:1}
+.fk-tour-spotlight{position:absolute;pointer-events:none;border-radius:10px;display:none;box-shadow:0 0 0 9999px rgba(25,28,30,0.52);z-index:1}
 .fk-tour-bubble{position:fixed;background:var(--surface-white);border:1.5px solid var(--outline-variant);border-radius:var(--radius);box-shadow:0 12px 40px rgba(25,28,30,0.18);padding:18px 20px;width:360px;z-index:2;pointer-events:all;display:none}
 .fk-tour-bubble.fk-in{animation:fkTourIn .22s cubic-bezier(.4,0,.2,1)}
 @keyframes fkTourIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fk-tour-bubble::before{display:none}
-.fk-tour-hide-btn{background:none;border:none;cursor:pointer;color:var(--on-surface-light);font-size:16px;line-height:1;padding:0 2px;margin-left:auto;flex-shrink:0}
+.fk-tour-hide-btn{background:none;border:none;cursor:pointer;color:var(--on-surface-light);font-size:16px;line-height:1;padding:0 2px;margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:4px}
 .fk-tour-hide-btn:hover{color:var(--ink)}
+.fk-tour-hide-pill{font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--tertiary);color:#fff;border-radius:20px;padding:1px 6px;opacity:.85;animation:fkPillPulse 2.4s ease-in-out infinite}
+@keyframes fkPillPulse{0%,100%{opacity:.85}50%{opacity:.45}}
 .fk-tour-body{transition:opacity .15s}
 .fk-tour-bubble.fk-minimized .fk-tour-body{display:none}
 .fk-tour-bubble.fk-minimized{padding-bottom:14px}
@@ -11830,6 +11832,9 @@ function selectPtProject(id) {
   if (ptPanelHdr) ptPanelHdr.style.display = 'none';
   // Populate header
   document.getElementById('pt-detail-name').textContent = proj.name;
+  // Collaborators cannot edit project key facts
+  var _ptEditBtn = document.querySelector('#pt-detail-view .pt-add-btn[onclick*="edit-project"]');
+  if (_ptEditBtn) _ptEditBtn.style.display = proj._shared ? 'none' : '';
   // Overview tab client/status is now rendered by renderPtOverview() after data loads
   // Reset to overview tab
   showPtTab('overview', document.querySelector('#pt-detail-view .pt-tab'));
@@ -14923,6 +14928,10 @@ var _ptSaving = false;
 async function savePtProject() {
   if (!_currentUser) return;
   if (_ptSaving) return; _ptSaving = true;
+  var _savingProj = _ptCurrentId ? _ptProjects.find(function(p){ return p.id === _ptCurrentId; }) : null;
+  if (_ptModalMode === 'edit-project' && _savingProj && _savingProj._shared) {
+    showToast('Only the project owner can edit project details'); _ptSaving = false; return;
+  }
   var g = function(id){ var el=document.getElementById(id); return el?el.value.trim():null; };
   var name = g('ptm-name'); if (!name) { showToast('Project name is required'); _ptSaving = false; return; }
   var _sd = g('ptm-start'), _ed = g('ptm-end');
@@ -15932,7 +15941,13 @@ function _fkoShowBubble(idx) {
   }
   bubble.classList.remove('arr-top', 'arr-bot', 'fk-in', 'fk-minimized');
   var hideBtn = document.getElementById('fk-tour-hide-btn');
-  if (hideBtn) { hideBtn.textContent = '−'; hideBtn.title = 'Hide'; }
+  if (hideBtn) {
+    var _nodes = Array.from(hideBtn.childNodes).filter(function(n){ return n.nodeType === 3; });
+    _nodes.forEach(function(n){ n.textContent = '−'; });
+    hideBtn.title = 'Hide';
+  }
+  var hidePill = document.getElementById('fk-tour-hide-pill');
+  if (hidePill) hidePill.textContent = 'hide';
   bubble.style.display = 'block';
   var backBtn = document.getElementById('fk-tour-back');
   if (backBtn) backBtn.style.display = idx === 0 ? 'none' : '';
@@ -15952,9 +15967,16 @@ function _fkoShowBubble(idx) {
 function _fkoToggleMinimize() {
   var bubble = document.getElementById('fk-tour-bubble');
   var btn    = document.getElementById('fk-tour-hide-btn');
+  var pill   = document.getElementById('fk-tour-hide-pill');
   if (!bubble) return;
   var isMin = bubble.classList.toggle('fk-minimized');
-  if (btn) { btn.textContent = isMin ? '+' : '−'; btn.title = isMin ? 'Show tour' : 'Hide'; }
+  if (btn) btn.title = isMin ? 'Show tour' : 'Hide';
+  var icon = btn ? btn.querySelector(':not(.fk-tour-hide-pill)') : null;
+  if (btn) {
+    var nodes = Array.from(btn.childNodes).filter(function(n){ return n.nodeType === 3; });
+    nodes.forEach(function(n){ n.textContent = isMin ? '+' : '−'; });
+  }
+  if (pill) { pill.textContent = isMin ? 'show' : 'hide'; }
 }
 
 function _fkoUpdateNameGate() {
@@ -16746,7 +16768,7 @@ function _fkCelebrate(type) {
 <div id="fk-tour-overlay">
   <div class="fk-tour-spotlight" id="fk-tour-spotlight"></div>
   <div class="fk-tour-bubble" id="fk-tour-bubble">
-    <div class="fk-tour-drag-handle" id="fk-tour-drag-handle"><span class="fk-tour-grip"></span><button class="fk-tour-hide-btn" id="fk-tour-hide-btn" onclick="_fkoToggleMinimize()" title="Hide">−</button></div>
+    <div class="fk-tour-drag-handle" id="fk-tour-drag-handle"><span class="fk-tour-grip"></span><button class="fk-tour-hide-btn" id="fk-tour-hide-btn" onclick="_fkoToggleMinimize()" title="Hide"><span class="fk-tour-hide-pill" id="fk-tour-hide-pill">hide</span>−</button></div>
     <div class="fk-tour-body" id="fk-tour-body">
     <div class="fk-tour-step-lbl" id="fk-tour-step-lbl"></div>
     <div class="fk-tour-text" id="fk-tour-text"></div>
