@@ -3846,6 +3846,7 @@ var RateLimiter = (function() {
             <div class="profile-dd-email" id="profile-dd-email">—</div>
           </div>
           <button class="profile-dd-btn" onclick="closeProfileMenu();showPanel('mydetails',document.getElementById('nav-mydetails'))">&#9881;&#65039; My Details</button>
+          <button class="profile-dd-btn" onclick="_fkoRestart()">&#8617; Restart tour</button>
           <button class="profile-dd-btn danger" onclick="closeProfileMenu();handleSignOut()">&#8594; Sign out</button>
         </div>
       </div>
@@ -3994,7 +3995,7 @@ var RateLimiter = (function() {
         <!-- Widgets: To-do + Activity Grid -->
         <div class="home-widgets">
           <!-- To-do list -->
-          <div class="hw-card">
+          <div class="hw-card" id="hw-todo-card">
             <div class="hw-title">
               <span>To-do list</span>
             </div>
@@ -4007,7 +4008,7 @@ var RateLimiter = (function() {
           </div>
 
           <!-- Activity Grid -->
-          <div class="hw-card hw-act-card">
+          <div class="hw-card hw-act-card" id="hw-act-card">
             <div class="hw-title" style="margin-bottom:4px">
               <div style="display:flex;align-items:center;gap:6px;position:relative">
                 <span>Activity</span>
@@ -4063,7 +4064,7 @@ var RateLimiter = (function() {
 
         <!-- Quick access -->
         <div class="home-section-label">Quick access</div>
-        <div class="home-quick-grid">
+        <div class="home-quick-grid" id="home-quick-grid">
           <div class="hq-card" onclick="showPanel('invoice',document.getElementById('nav-invoice'))">
             <span class="hq-icon">🧾</span>
             <div class="hq-name">Invoice Builder</div>
@@ -4493,7 +4494,7 @@ var RateLimiter = (function() {
             <button class="pt-back-btn" onclick="ptBackToList()">← All projects</button>
             <span class="pt-detail-name" id="pt-detail-name"></span>
             <button class="pt-add-btn" onclick="openPtModal('edit-project')" style="margin-left:auto;min-width:80px;width:80px">Edit</button>
-            <button class="pt-add-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:80px;width:80px" onclick="openShareModal()">Share</button>
+            <button class="pt-add-btn" id="pt-share-btn" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);min-width:80px;width:80px" onclick="openShareModal()">Share</button>
             <button class="pt-add-btn" style="background:#E74C3C;color:#fff;border:1.5px solid #E74C3C;min-width:80px;width:80px" onclick="deletePtProject()" title="Delete project">Delete</button>
           </div>
           <div class="pt-tabs">
@@ -11885,6 +11886,17 @@ function selectPtProject(id) {
   }
   // Highlight in list
   renderPtList();
+  // Auto-advance onboarding tour when user clicks into a project from the Project Tracker step
+  if (typeof _fkoGetStep === 'function' && typeof _fkoContinue === 'function') {
+    var _fkoS = _fkoGetStep();
+    if (_fkoS !== 'done' && !isNaN(Number(_fkoS))) {
+      var _fkoSn = Number(_fkoS);
+      var _fkoSstep = _FKO_STEPS[_fkoSn];
+      if (_fkoSstep && _fkoSstep.panel === 'projects' && !_fkoSstep.ptTab && !_fkoSstep.noNav) {
+        setTimeout(_fkoContinue, 500);
+      }
+    }
+  }
 }
 
 function ptBackToList() {
@@ -15519,53 +15531,114 @@ async function deletePtProject() {
 document.getElementById('pt-modal') && document.getElementById('pt-modal').addEventListener('click', function(e){ if (e.target === this) closePtModal(); });
 
 /* ═══════════════════════════════════════════════════════════════
-   GUIDED ONBOARDING FLOW  (10 steps, sequential, panel-navigating)
-   State: fk_onboarding_<uid>  →  0–9 (current step) | 'done'
+   GUIDED ONBOARDING FLOW  (26 steps, sequential, panel-navigating)
+   State: fk_onboarding_<uid>  →  0–N (current step) | 'done'
+   Step properties:
+     spotlight   – element ID to spotlight (null = no dim)
+     spotlightPad – extra px around spotlight rect (default 8)
+     foTab       – financial overview tab to auto-switch to
+     openProfile – open profile dropdown when step shows
+     noNav       – skip showPanel (already on the right panel)
+     text2       – second paragraph in the bubble
+     needsName   – gate Continue until first name is filled
+     isLast      – shows "Finish →" instead of "Continue →"
 ═══════════════════════════════════════════════════════════════ */
 var _FKO_STEPS = [
   /* 0 */ { panel:'mydetails', navId:'nav-mydetails', icon:'⚙️', title:'My Details',
-    text:'Start by entering your name — it auto-fills every invoice, contract, and document you create. Fill in as much as you like, then click Continue.',
-    needsName:true },
-  /* 1 */ { panel:'home', navId:'nav-home', icon:'🏠', title:'Dashboard',
-    text:'Your command centre — to-do list, heat map, and calendar. ⏱ The quick timer is in the top bar of the sidebar (start tracking with one click). ⚙️ My Details is pinned at the very bottom of the sidebar — that\'s where you set your name, rates, and payment info.' },
-  /* 2 */ { panel:'clients', navId:'nav-clients', icon:'👤', title:'Client Directory',
-    text:'Store every client you work with — name, email, phone, and notes. Contacts link automatically to projects and invoices.',
+    text:'Start by entering your name — it auto-fills every invoice, contract, and document you create. Fill in as much as you like.',
+    text2:'Your profile is always in the top-right corner. Click the avatar to reach My Details or sign out at any time.',
+    needsName:true, spotlight:'nav-avatar-wrap', spotlightPad:10, openProfile:true },
+
+  /* 1 */ { panel:'home', navId:'nav-home', icon:'⏱', title:'Dashboard — Timer',
+    text:'The timer is always one tap away. Hit the play button in the top bar to start tracking time against any project. Every second syncs directly to your timesheet.',
+    spotlight:'nav-timer-btn', spotlightPad:12 },
+
+  /* 2 */ { panel:'home', navId:null, icon:'✅', title:'Dashboard — To-Do List',
+    text:'Your to-do list in one place. Tasks from your projects appear here automatically — or add personal reminders. Set due dates and priorities, and check things off as you go.',
+    spotlight:'hw-todo-card', spotlightPad:10, noNav:true },
+
+  /* 3 */ { panel:'home', navId:null, icon:'📊', title:'Dashboard — Activity',
+    text:'The 16-week activity heatmap shows every day you\'ve logged hours. Darker cells mean more hours. Click any cell to see exactly how many hours you worked that day.',
+    spotlight:'hw-act-card', spotlightPad:10, noNav:true },
+
+  /* 4 */ { panel:'home', navId:null, icon:'📅', title:'Dashboard — Calendar',
+    text:'Your calendar syncs with all project milestones, deadlines, and logged events. Click any day to see what\'s on or add a new event.',
+    spotlight:'cal-wrap', spotlightPad:10, noNav:true },
+
+  /* 5 */ { panel:'home', navId:null, icon:'⚡', title:'Dashboard — Quick Access',
+    text:'Quick Access gives you one-click shortcuts to the sections you use most. These cards update as your account grows.',
+    spotlight:'home-quick-grid', spotlightPad:10, noNav:true },
+
+  /* 6 */ { panel:'clients', navId:'nav-clients', icon:'👤', title:'Client Directory',
+    text:'Store every client you work with — name, email, phone, company, address, and notes. Contacts link automatically to projects and invoices.',
+    text2:'You can also import contacts directly from your phonebook — just export as a .vcf file and upload it here.',
     mockSetup:'_fkoMockClients' },
-  /* 3 */ { panel:'invhistory', navId:'nav-invhistory', icon:'📊', title:'Financial Overview',
-    text:'Total earned, outstanding balance, monthly chart, invoice aging, and income by client — all live. Four mock invoices are loaded: two paid (across prior months), one overdue showing in aging, and one sent with a future due date.',
-    mockSetup:'_fkoMockFinancialOverview' },
-  /* 4 */ { panel:'projects', navId:'nav-projects', icon:'🗂️', title:'Project Tracker',
-    text:'Your project hub. Switch views with the buttons above — Board, List, Gallery, or Timeline. The Gantt chart maps every project across its full timeline. Your mock project is already plotted below — click the bar to jump straight in.',
+
+  /* 7 */ { panel:'invhistory', navId:'nav-invhistory', icon:'📊', title:'Financial Overview',
+    text:'A live snapshot of your business: total earned this month, outstanding balance, and a month-by-month revenue chart. Four mock invoices are loaded so you can see each section in action.',
+    mockSetup:'_fkoMockFinancialOverview', foTab:'overview' },
+
+  /* 8 */ { panel:'invhistory', navId:null, icon:'📊', title:'Financial Overview — Aging',
+    text:'See every unpaid invoice and how many days it\'s been outstanding. The Aging tab lets you spot late payments at a glance and act before they become a problem.',
+    foTab:'aging', noNav:true },
+
+  /* 9 */ { panel:'invhistory', navId:null, icon:'📊', title:'Financial Overview — By Client',
+    text:'Revenue broken down by client — see who your biggest payers are and where your income is concentrated.',
+    foTab:'clients', noNav:true },
+
+  /* 10 */ { panel:'invhistory', navId:null, icon:'📊', title:'Financial Overview — All Invoices',
+    text:'Every invoice in one place, filterable by status: paid, sent, overdue, or draft. Click any row to open and edit it.',
+    foTab:'invoices', noNav:true },
+
+  /* 11 */ { panel:'invhistory', navId:null, icon:'📊', title:'Financial Overview — Other Income',
+    text:'Track income that didn\'t come from a formal invoice — freelance gigs, cash payments, or one-off sources. It feeds your totals and tax estimates.',
+    foTab:'manual', noNav:true },
+
+  /* 12 */ { panel:'projects', navId:'nav-projects', icon:'🗂️', title:'Project Tracker',
+    text:'Your project hub. Every active project is plotted on the timeline. Click a project bar to open it and explore each section.',
     mockSetup:'_fkoMockProjectDash' },
-  /* 5 */ { panel:'projects', navId:null, icon:'📋', title:'Project — Overview',
-    text:'Each project has an Overview showing open tasks, recent activity, upcoming milestones, and total hours logged.',
-    ptTab:'overview' },
-  /* 6 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
-    text:'Set key delivery dates and mark them complete as you hit them. Milestones keep the project on track.' },
-  /* 7 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
-    text:'Create and assign tasks with due dates and statuses. Use board, list, or timeline view to track progress.' },
-  /* 7 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
-    text:'Billing phases link directly to invoices. Two mock phases are here — INV-001 (paid, deposit) and INV-002 (sent, final delivery). Click any row to view or edit the linked invoice, or head to Invoice Builder to create a new one from scratch.' },
-  /* 8 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
+
+  /* 13 */ { panel:'projects', navId:null, icon:'📋', title:'Project — Overview',
+    text:'The Overview shows open tasks, upcoming milestones, recent activity, and hours logged. Hit Share to invite a client or collaborator — they can view and edit milestones, tasks, billing, meeting notes, timesheet, contract, and scope changes. You keep master control; invited users cannot edit the project\'s core details.',
+    ptTab:'overview', spotlight:'pt-share-btn', spotlightPad:10 },
+
+  /* 14 */ { panel:'projects', navId:null, ptTab:'milestones', icon:'🎯', title:'Project — Milestones',
+    text:'Set key delivery dates and mark them complete as you hit them. Milestones feed directly into the calendar and keep the project on track.' },
+
+  /* 15 */ { panel:'projects', navId:null, ptTab:'tasks', icon:'✅', title:'Project — Tasks',
+    text:'Create tasks and assign them with due dates and priorities. You can also attach files directly to a task card — drop contracts, briefs, or reference docs right onto the card.' },
+
+  /* 16 */ { panel:'projects', navId:null, ptTab:'billing', icon:'💳', title:'Project — Billing',
+    text:'Create billing phases tied to invoices — deposits, milestones, or final payments. Two sample phases are ready here: a deposit (paid) and a final delivery (sent). Click any row to view or edit the linked invoice.' },
+
+  /* 17 */ { panel:'projects', navId:null, ptTab:'meetings', icon:'📝', title:'Project — Meeting Notes',
     text:'Log every meeting, call, or brief directly in the project. Dates, attendees, and notes — all in one place.' },
-  /* 9 */ { panel:'projects', navId:null, ptTab:'hours', icon:'⏱', title:'Project — Timesheet',
+
+  /* 18 */ { panel:'projects', navId:null, ptTab:'hours', icon:'⏱', title:'Project — Timesheet',
     text:'Log hours against this project and see totals. The data feeds the main Timesheet for cross-project tracking.' },
-  /* 10 */ { panel:'projects', navId:null, ptTab:'contract', icon:'📄', title:'Project — Contract',
-    text:'A full client contract, pre-filled with your details. Edit, get it signed, and download as a PDF — all inside Egxyz.' },
-  /* 11 */ { panel:'projects', navId:null, ptTab:'scope', icon:'🔄', title:'Project — Scope Change',
+
+  /* 19 */ { panel:'projects', navId:null, ptTab:'contract', icon:'📄', title:'Project — Contract',
+    text:'A full client contract, pre-filled with your details. Edit it, get it signed, and download as a PDF — all inside Egxyz.' },
+
+  /* 20 */ { panel:'projects', navId:null, ptTab:'scope', icon:'🔄', title:'Project — Scope Change',
     text:'When a client requests work outside the original agreement, document it here with a formal Scope Change Order.' },
-  /* 12 */ { panel:'invoice', navId:'nav-invoice', icon:'🧾', title:'Invoice Builder',
-    text:'This is where you create and send invoices. Two have already been generated for the Sunday Studios project. Try building a new one — select a project, add line items, and hit Save to see the live preview.' },
-  /* 13 */ { panel:'pipeline', navId:'nav-pipeline', icon:'⚡', title:'Pipeline Tracker',
-    text:'Track prospects and forecast income. Set deal values and probabilities to see your weighted revenue ahead.',
+
+  /* 21 */ { panel:'invoice', navId:'nav-invoice', icon:'🧾', title:'Invoice Builder',
+    text:'Build and send professional invoices. Two have already been generated for the mock project. Select a project, add line items, and hit Save to see the live preview.' },
+
+  /* 22 */ { panel:'pipeline', navId:'nav-pipeline', icon:'⚡', title:'Pipeline Tracker',
+    text:'Track prospects and forecast revenue. Set deal values and probabilities to see your weighted income pipeline ahead.',
     mockSetup:'_fkoMockPipeline' },
-  /* 14 */ { panel:'tax', navId:'nav-tax', icon:'🧾', title:'Tax Tracker',
+
+  /* 23 */ { panel:'tax', navId:'nav-tax', icon:'🧾', title:'Tax Tracker',
     text:'Estimates your quarterly tax liability as income comes in. No surprise bills at tax time.',
     mockSetup:'_fkoMockTax' },
-  /* 15 */ { panel:'ratecalc', navId:'nav-ratecalc', icon:'💰', title:'Rate Calculator',
-    text:'Enter your income goal and Egxyz calculates the minimum hourly rate you need to charge. Know your floor.',
+
+  /* 24 */ { panel:'ratecalc', navId:'nav-ratecalc', icon:'💰', title:'Rate Calculator',
+    text:'Enter your take-home income goal and Egxyz calculates the minimum hourly rate you need to charge. Know your floor.',
     mockSetup:'_fkoMockRateCalc' },
-  /* 16 */ { panel:'timesheet', navId:'nav-timesheet', icon:'⏱', title:'Timesheet',
+
+  /* 25 */ { panel:'timesheet', navId:'nav-timesheet', icon:'⏱', title:'Timesheet',
     text:'Log hours across all projects, track weekly utilisation, and see your busiest periods in the 16-week heatmap.',
     isLast:true }
 ];
@@ -15639,18 +15712,39 @@ function _fkoShowStep(idx) {
   var step = _FKO_STEPS[idx];
   if (!step) return;
 
+  // ── Profile dropdown: open it when step requests it ──
+  if (step.openProfile) {
+    setTimeout(function(){
+      var dd = document.getElementById('profile-dropdown');
+      if (dd) dd.classList.add('open');
+    }, 150);
+  } else {
+    // Close profile dropdown if it was opened by a previous step
+    var _dd = document.getElementById('profile-dropdown');
+    if (_dd) _dd.classList.remove('open');
+  }
+
+  // ── noNav steps (same panel, just spotlight + bubble update) ──
+  if (step.noNav) {
+    // Financial overview: switch the tab
+    if (step.foTab && typeof foSwitchTab === 'function') {
+      var _tabBtn = document.querySelector('.fo-tab[onclick*="\'' + step.foTab + '\'"]');
+      foSwitchTab(step.foTab, _tabBtn || null);
+    }
+    _fkoShowBubble(idx);
+    return;
+  }
+
   // ── Project-tab steps: ensure we're inside the mock project ──
   if (step.ptTab) {
     var _fkoMd = _fkoGetMock();
     var _projId = _fkoMd && _fkoMd.project_id;
 
     var _doTab = function() {
-      // tab order matches the HTML buttons
       var tabNames = ['overview','milestones','tasks','billing','meetings','hours','contract','scope'];
       var tabIdx = tabNames.indexOf(step.ptTab);
       var tabs = document.querySelectorAll('#pt-detail-view .pt-tab');
       showPtTab(step.ptTab, tabs[tabIdx] || null);
-      // Explicitly call the render function for this tab so content is always visible
       var _tabRenderMap = {
         overview:  typeof renderPtOverview   === 'function' ? renderPtOverview   : null,
         milestones:typeof renderPtMilestones === 'function' ? renderPtMilestones : null,
@@ -15660,21 +15754,12 @@ function _fkoShowStep(idx) {
         hours:     typeof renderPtHours      === 'function' ? renderPtHours      : null
       };
       if (_tabRenderMap[step.ptTab]) {
-        // Render immediately then also schedule a retry in case ptLoadProjectData
-        // hasn't resolved yet (Supabase can take >700ms on slow connections).
         var _renderFn = _tabRenderMap[step.ptTab];
         setTimeout(function(){
           _renderFn();
-          // Retry after 1.5s if the list still shows empty / "No tasks yet"
-          setTimeout(function(){
-            var listEl = document.getElementById('pt-tasks-list');
-            if (listEl && listEl.querySelector('.pt-task-card') === null && window._ptTasks && window._ptTasks.length) {
-              _renderFn();
-            } else if (listEl && listEl.querySelector('.pt-task-card') === null) {
-              _renderFn(); // render again regardless so fresh DB data shows if loaded by now
-            }
-          }, 1500);
-        }, 80);
+          // Single retry at 900ms (down from 1500ms) for slow connections
+          setTimeout(function(){ _renderFn(); }, 900);
+        }, 60);
       }
       if (step.ptTab === 'contract' || step.ptTab === 'scope') {
         if (typeof renderPtDocTab === 'function') setTimeout(function(){ renderPtDocTab(step.ptTab); }, 80);
@@ -15682,38 +15767,30 @@ function _fkoShowStep(idx) {
       _fkoShowBubble(idx);
     };
 
-    // ── No mock project yet: run mockSetup to create & navigate into it ──
+    // ── No mock project yet: create it, then navigate in ──
     if (!_projId) {
       showPanel('projects', document.getElementById('nav-projects'));
       if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
         var p0 = window[step.mockSetup]();
-        if (p0 && typeof p0.then === 'function') { p0.then(function(){ setTimeout(_doTab, 700); }); }
-        else { setTimeout(_doTab, 700); }
+        if (p0 && typeof p0.then === 'function') { p0.then(function(){ setTimeout(_doTab, 500); }); }
+        else { setTimeout(_doTab, 500); }
       } else {
-        _fkoShowBubble(idx); // no setup fn — just show bubble on project list
+        _fkoShowBubble(idx);
       }
       return;
     }
 
-    // ── Always make the projects panel the active panel first ──
-    // (_ptCurrentId can be stale if user navigated away via showPanel without ptBackToList,
-    //  so we can't rely on it alone — we always show the panel and decide from there.)
     showPanel('projects', document.getElementById('nav-projects'));
 
-    // Helper: load project data then switch tab — guarantees _ptTasks etc. are
-    // populated before _doTab calls any render function, regardless of network speed.
-    var _loadThenDoTab = function() {
+    if (_ptCurrentId === _projId && window._ptTasks !== undefined) {
+      // Already inside the project with data loaded — skip the network round-trip
+      setTimeout(_doTab, 80);
+    } else if (_ptCurrentId === _projId) {
       ptLoadProjectData(_projId).then(function(){ setTimeout(_doTab, 60); });
-    };
-
-    if (_ptCurrentId === _projId) {
-      // Already inside the project — still re-fetch so stale/empty arrays are never shown.
-      _loadThenDoTab();
     } else {
-      // Haven't entered the project yet (fresh page or came back from list view)
       loadProjects().then(function(){
         selectPtProject(_projId);
-        _loadThenDoTab();
+        ptLoadProjectData(_projId).then(function(){ setTimeout(_doTab, 60); });
       });
     }
     return;
@@ -15722,6 +15799,12 @@ function _fkoShowStep(idx) {
   // ── Normal panel step ──
   var navEl2 = step.navId ? document.getElementById(step.navId) : null;
   showPanel(step.panel, navEl2);
+
+  // Switch financial overview tab if specified (first-visit step sets 'overview')
+  if (step.foTab && typeof foSwitchTab === 'function') {
+    var _fTabBtn = document.querySelector('.fo-tab[onclick*="\'' + step.foTab + '\'"]');
+    setTimeout(function(){ foSwitchTab(step.foTab, _fTabBtn || null); }, 50);
+  }
 
   if (step.mockSetup && typeof window[step.mockSetup] === 'function') {
     var pr2 = window[step.mockSetup]();
@@ -15733,6 +15816,21 @@ function _fkoShowStep(idx) {
   _fkoShowBubble(idx);
 }
 
+function _fkoSetSpotlight(targetId, pad) {
+  var spotlight = document.getElementById('fk-tour-spotlight');
+  if (!spotlight) return;
+  if (!targetId) { spotlight.style.display = 'none'; return; }
+  var el = document.getElementById(targetId);
+  if (!el) { spotlight.style.display = 'none'; return; }
+  pad = (pad !== undefined) ? pad : 8;
+  var rect = el.getBoundingClientRect();
+  spotlight.style.top    = (rect.top    - pad) + 'px';
+  spotlight.style.left   = (rect.left   - pad) + 'px';
+  spotlight.style.width  = (rect.width  + pad * 2) + 'px';
+  spotlight.style.height = (rect.height + pad * 2) + 'px';
+  spotlight.style.display = 'block';
+}
+
 function _fkoShowBubble(idx) {
   var step = _FKO_STEPS[idx];
   if (!step) return;
@@ -15742,9 +15840,16 @@ function _fkoShowBubble(idx) {
   document.getElementById('fk-tour-step-lbl').innerHTML =
     '<span style="font-weight:600;font-size:11px;color:var(--tertiary)">' + step.icon + ' ' + step.title + '</span>' +
     '<span style="font-size:10px;color:var(--on-surface-light);float:right">' + (idx+1) + ' / ' + total + '</span>';
-  document.getElementById('fk-tour-text').textContent = step.text;
-  // Progress bar instead of dots for 17 steps
-  var pct = Math.round(((idx+1)/total)*100);
+  // Support optional second paragraph
+  var textEl = document.getElementById('fk-tour-text');
+  if (step.text2) {
+    var esc = function(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+    textEl.innerHTML = '<p style="margin:0 0 8px">' + esc(step.text) + '</p>' +
+      '<p style="margin:0;color:var(--on-surface-mid)">' + esc(step.text2) + '</p>';
+  } else {
+    textEl.textContent = step.text;
+  }
+  var pct = Math.round(((idx + 1) / total) * 100);
   document.getElementById('fk-tour-dots').innerHTML =
     '<div style="width:100%;height:3px;background:var(--outline-variant);border-radius:2px;overflow:hidden">' +
     '<div style="width:' + pct + '%;height:100%;background:var(--tertiary);border-radius:2px;transition:width .3s"></div></div>';
@@ -15762,12 +15867,18 @@ function _fkoShowBubble(idx) {
     bubble.style.top = '80px'; bubble.style.right = '28px';
     bubble.style.bottom = ''; bubble.style.left = '';
   }
-  bubble.classList.remove('arr-top','arr-bot','fk-in');
+  bubble.classList.remove('arr-top', 'arr-bot', 'fk-in');
   bubble.style.display = 'block';
   var backBtn = document.getElementById('fk-tour-back');
   if (backBtn) backBtn.style.display = idx === 0 ? 'none' : '';
-  var spotlight = document.getElementById('fk-tour-spotlight');
-  if (spotlight) spotlight.style.display = 'none';
+  // Spotlight the target element (or hide if none)
+  if (step.spotlight) {
+    // Use a tiny delay so the panel has painted before we measure
+    setTimeout(function(){ _fkoSetSpotlight(step.spotlight, step.spotlightPad); }, 60);
+  } else {
+    var sl = document.getElementById('fk-tour-spotlight');
+    if (sl) sl.style.display = 'none';
+  }
   void bubble.offsetWidth;
   bubble.classList.add('fk-in');
   bubble._fkoIdx = idx;
@@ -15814,6 +15925,8 @@ function _fkoSkip() {
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (bubble) { bubble.style.display = 'none'; bubble._fkoIdx = undefined; }
   if (spotlight) spotlight.style.display = 'none';
+  var _dd3 = document.getElementById('profile-dropdown');
+  if (_dd3) _dd3.classList.remove('open');
   _fkoCleanupAndReload();
 }
 
@@ -15826,12 +15939,29 @@ function _fkoFinish() {
   var spotlight = document.getElementById('fk-tour-spotlight');
   if (bubble) { bubble.style.display = 'none'; bubble._fkoIdx = undefined; }
   if (spotlight) spotlight.style.display = 'none';
+  var _dd2 = document.getElementById('profile-dropdown');
+  if (_dd2) _dd2.classList.remove('open');
   if (typeof _fkConfetti === 'function') {
     _fkConfetti(180);
     setTimeout(function(){ _fkConfetti(100); }, 500);
   }
   showToast('🎉 You\'re all set up. Egxyz is yours.');
   setTimeout(function(){ _fkoCleanupAndReload(); }, 2000);
+}
+
+function _fkoRestart() {
+  closeProfileMenu();
+  if (!_currentUser) return;
+  // Clear done flag locally and on Supabase
+  _fkoSetStep(0);
+  if (typeof _supabase !== 'undefined') {
+    _supabase.auth.updateUser({ data: { onboarding_done: false } }).catch(function(){});
+  }
+  // Reset bubble drag position
+  var bubble = document.getElementById('fk-tour-bubble');
+  if (bubble) { bubble._fkoDragged = false; bubble._fkoIdx = undefined; }
+  showToast('Tour restarted from the beginning.');
+  setTimeout(function(){ _fkoShowStep(0); }, 200);
 }
 
 /* ═══════════════════════════════════════════════════════════════
