@@ -14169,7 +14169,7 @@ function _ptContractDocHTML() {
   for (var i = 1; i <= 11; i++) {
     sections += (i === 1 ? '' : '<hr class="doc-divider">') + '<h2>' + i + '.</h2><p><br></p>';
   }
-  return '<div style="text-align:center;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Freelance Services Agreement</div>' +
+  return '<div style="text-align:center;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Services Agreement</div>' +
     '<hr class="doc-thick">' +
     sections +
     '<hr class="doc-thick"><h2>Signatures</h2>' +
@@ -15941,8 +15941,7 @@ function _fkoShowBubble(idx) {
     var slDelay = step.openProfile ? 260 : 80;
     setTimeout(function(){ _fkoSetSpotlight(step.spotlight, step.spotlightPad); }, slDelay);
   } else {
-    var sl = document.getElementById('fk-tour-spotlight');
-    if (sl) sl.style.display = 'none';
+    _fkoSetSpotlight(null);
   }
   void bubble.offsetWidth;
   bubble.classList.add('fk-in');
