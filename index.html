@@ -2044,6 +2044,11 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
 .gts-hist-proj{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1.5px solid;display:inline-block;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .gts-hist-desc{font-size:13px;color:var(--ink);padding:13px 14px;vertical-align:top;border-bottom:1px solid var(--border)}
 .gts-hist-dur{font-size:14px;font-weight:700;color:var(--ink);padding:13px 14px;text-align:right;white-space:nowrap;vertical-align:top;border-bottom:1px solid var(--border)}
+.gts-toolbar{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;margin-bottom:16px}
+.gts-search{flex:1;min-width:100px;border:none;outline:none;font-size:13px;background:transparent;color:var(--ink);font-family:var(--font-body)}
+.gts-search::placeholder{color:var(--ink-light)}
+.gts-sort-sel{border:none;outline:none;font-size:12px;background:transparent;color:var(--ink-mid);cursor:pointer;font-family:var(--font-body)}
+.gts-toolbar-sep{width:1px;height:16px;background:var(--border);flex-shrink:0}
 /* Modal */
 .pt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,16,10,.45);z-index:200;align-items:center;justify-content:center}
 .pt-modal-overlay.open{display:flex}
@@ -2715,6 +2720,9 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pt-kpi-v{font-size:11px}
   .pt-gantt-view{margin-top:10px}
   .pt-sticky-hdr{padding-bottom:4px}
+  .gts-toolbar{padding:5px 8px;gap:6px}
+  .gts-search{font-size:12px}
+  .gts-sort-sel{font-size:11px}
   .pt-col{max-height:58vh}
   .calc-grid{grid-template-columns:1fr}
   .inv-layout{grid-template-columns:1fr}
@@ -4632,6 +4640,17 @@ var RateLimiter = (function() {
             <div id="pt-hours-total" class="pt-time-total" style="margin-bottom:16px"></div>
             <div id="pt-collab-chart"></div>
             <div class="pt-sec-hdr">Time log <button class="pt-add-btn" id="pt-log-time-btn" onclick="ptOpenLogTimeModal()">+ Log time</button></div>
+            <div class="gts-toolbar" style="margin-bottom:12px">
+              <span style="font-size:14px;color:var(--ink-light);flex-shrink:0">⌕</span>
+              <input class="gts-search" id="pt-hours-search" type="text" placeholder="Search description…" oninput="renderPtHours()">
+              <div class="gts-toolbar-sep"></div>
+              <select class="gts-sort-sel" id="pt-hours-sort" onchange="renderPtHours()">
+                <option value="date-desc">Newest first</option>
+                <option value="date-asc">Oldest first</option>
+                <option value="dur-desc">Duration ↓</option>
+                <option value="dur-asc">Duration ↑</option>
+              </select>
+            </div>
             <div id="pt-hours-list"></div>
           </div>
           <!-- Contract tab -->
@@ -4952,6 +4971,18 @@ var RateLimiter = (function() {
           <div class="tv-desc">Hours logged across all your projects. See total time per project and drill into individual entries.</div>
         </div>
         <div id="gts-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px"></div>
+        <div class="gts-toolbar" id="gts-toolbar" style="display:none">
+          <span style="font-size:14px;color:var(--ink-light);flex-shrink:0">⌕</span>
+          <input class="gts-search" id="gts-search" type="text" placeholder="Search project or description…" oninput="filterGtsHistory()">
+          <div class="gts-toolbar-sep"></div>
+          <select class="gts-sort-sel" id="gts-sort-sel" onchange="filterGtsHistory()">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="project">Project A–Z</option>
+            <option value="dur-desc">Duration ↓</option>
+            <option value="dur-asc">Duration ↑</option>
+          </select>
+        </div>
         <div id="gts-body"><div style="text-align:center;padding:40px;color:var(--ink-light);font-size:13px">Loading timesheet data…</div></div>
       </div>
 
@@ -13165,22 +13196,43 @@ function renderCollabChart() {
 }
 
 function renderPtHours() {
-  var hr = window._ptHours || [];
+  var allHr = window._ptHours || [];
   var el = document.getElementById('pt-hours-list');
   var totEl = document.getElementById('pt-hours-total');
   if (!el) return;
   renderCollabChart();
-  var total = hr.reduce(function(s, h){ return s + (parseFloat(h.hours) || 0); }, 0);
-  if (totEl) totEl.innerHTML = 'Total logged: <strong>' + total.toFixed(1) + ' hrs</strong>';
-  if (!hr.length) {
+  var total = allHr.reduce(function(s, h){ return s + (parseFloat(h.hours) || 0); }, 0);
+
+  // Apply search/sort from toolbar
+  var q = ((document.getElementById('pt-hours-search')||{}).value||'').trim().toLowerCase();
+  var sort = ((document.getElementById('pt-hours-sort')||{}).value)||'date-desc';
+  var hr = allHr.slice();
+  if (q) hr = hr.filter(function(h){ return (h.description||'').toLowerCase().indexOf(q)>=0; });
+  if (sort==='date-asc') {
+    hr.sort(function(a,b){ return (a.log_date||'')<(b.log_date||'')?-1:1; });
+  } else if (sort==='dur-desc') {
+    hr.sort(function(a,b){ return (parseFloat(b.hours)||0)-(parseFloat(a.hours)||0); });
+  } else if (sort==='dur-asc') {
+    hr.sort(function(a,b){ return (parseFloat(a.hours)||0)-(parseFloat(b.hours)||0); });
+  }
+
+  var isFiltered = hr.length < allHr.length;
+  var totalStr = 'Total logged: <strong>' + total.toFixed(1) + ' hrs</strong>';
+  if (isFiltered) totalStr += ' <span style="color:var(--ink-light);font-weight:400;font-size:12px">(showing '+hr.length+' of '+allHr.length+')</span>';
+  if (totEl) totEl.innerHTML = totalStr;
+
+  if (!allHr.length) {
     el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--ink-light);font-size:13px">No time logged yet.</div>';
     return;
   }
+  if (!hr.length) {
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--ink-light);font-size:13px">No matching entries.</div>';
+    return;
+  }
   var uid = _currentUser && _currentUser.id;
-  var rows = hr.map(function(h, i) {
+  var rows = hr.map(function(h) {
+    var origIdx = allHr.indexOf(h);
     var isOwn = !!uid && h.user_id === uid;
-    var dateStr = h.log_date ? h.log_date.slice(0,10) : '—';
-    // Format date as e.g. "Apr 12"
     var dateDisp = '—';
     if (h.log_date) {
       var dObj = new Date(h.log_date + 'T00:00:00');
@@ -13190,7 +13242,7 @@ function renderPtHours() {
     var desc = h.description ? escapeHTML(h.description) : '<span style="color:var(--ink-light);font-style:italic">No description</span>';
     var person = h.person_name ? '<div style="font-size:11px;color:var(--ink-light);margin-top:2px">' + escapeHTML(h.person_name) + '</div>' : '';
     var hrs = (parseFloat(h.hours) || 0).toFixed(1) + 'h';
-    var rowClick = isOwn ? 'style="cursor:pointer" onclick="openPtEditTime(' + i + ')" title="Click to edit"' : '';
+    var rowClick = isOwn ? 'style="cursor:pointer" onclick="openPtEditTime(' + origIdx + ')" title="Click to edit"' : '';
     return '<tr ' + rowClick + ' class="pt-ts-row">' +
       '<td style="white-space:nowrap;color:var(--ink-light);font-size:12px;padding:10px 12px">' + dateDisp + '</td>' +
       '<td style="padding:10px 12px"><div style="font-size:13px;color:var(--ink)">' + desc + '</div>' + person + '</td>' +
@@ -13337,14 +13389,34 @@ function renderGlobalTimesheet(entries) {
   }
 
   // --- Detailed History ---
-  var palette=['#6D28D9','#1967D2','#C8621A','#5A7A65','#5B8BA0','#C2185B','#00796B'];
-  var histHtml = '<div class="gts-section">'+
-    '<div class="gts-section-hdr"><div class="gts-section-title">Detailed History</div></div>'+
+  window._gtsProjectKeys = projectKeys;
+  var toolbar = document.getElementById('gts-toolbar');
+  if (toolbar) toolbar.style.display = 'flex';
+  body.innerHTML = weekTableHtml + '<div id="gts-hist-section"></div>';
+  renderGtsHistory(entries);
+}
+
+function renderGtsHistory(filteredEntries) {
+  var el = document.getElementById('gts-hist-section');
+  if (!el) return;
+  var allEntries = window._gtsAllEntries || filteredEntries;
+  var palette = ['#6D28D9','#1967D2','#C8621A','#5A7A65','#5B8BA0','#C2185B','#00796B'];
+  var allProjectKeys = window._gtsProjectKeys || [];
+  var isFiltered = filteredEntries.length < allEntries.length;
+  var countLabel = isFiltered ? '<div class="gts-week-label">'+filteredEntries.length+' of '+allEntries.length+' entries</div>' : '';
+
+  if (!filteredEntries.length) {
+    el.innerHTML = '<div class="gts-section"><div class="gts-section-hdr"><div class="gts-section-title">Detailed History</div>'+countLabel+'</div>'+
+      '<div style="font-size:13px;color:var(--ink-light);padding:16px 0">No matching entries.</div></div>';
+    return;
+  }
+  el.innerHTML = '<div class="gts-section">'+
+    '<div class="gts-section-hdr"><div class="gts-section-title">Detailed History</div>'+countLabel+'</div>'+
     '<table class="gts-hist-table"><thead><tr>'+
       '<th>Date</th><th>Project</th><th>Description</th><th style="text-align:right">Duration</th>'+
     '</tr></thead><tbody>'+
-    entries.map(function(e){
-      var pi=projectKeys.indexOf(String(e.project_id));
+    filteredEntries.map(function(e){
+      var pi=allProjectKeys.indexOf(String(e.project_id));
       var color=palette[pi>=0?pi%palette.length:0];
       var pname=(e.projects&&e.projects.name)?e.projects.name:'—';
       return '<tr>'+
@@ -13357,8 +13429,32 @@ function renderGlobalTimesheet(entries) {
       '</tr>';
     }).join('')+
     '</tbody></table></div>';
+}
 
-  body.innerHTML = weekTableHtml + histHtml;
+function filterGtsHistory() {
+  var q = ((document.getElementById('gts-search')||{}).value||'').trim().toLowerCase();
+  var sort = ((document.getElementById('gts-sort-sel')||{}).value)||'date-desc';
+  var entries = (window._gtsAllEntries||[]).slice();
+  if (q) {
+    entries = entries.filter(function(e){
+      var pname = ((e.projects&&e.projects.name)||'').toLowerCase();
+      return pname.indexOf(q)>=0 || (e.description||'').toLowerCase().indexOf(q)>=0;
+    });
+  }
+  if (sort==='date-asc') {
+    entries.sort(function(a,b){ return (a.log_date||'')<(b.log_date||'')?-1:1; });
+  } else if (sort==='project') {
+    entries.sort(function(a,b){
+      var pa=((a.projects&&a.projects.name)||'').toLowerCase();
+      var pb=((b.projects&&b.projects.name)||'').toLowerCase();
+      return pa<pb?-1:pa>pb?1:0;
+    });
+  } else if (sort==='dur-desc') {
+    entries.sort(function(a,b){ return (parseFloat(b.hours)||0)-(parseFloat(a.hours)||0); });
+  } else if (sort==='dur-asc') {
+    entries.sort(function(a,b){ return (parseFloat(a.hours)||0)-(parseFloat(b.hours)||0); });
+  }
+  renderGtsHistory(entries);
 }
 
 // ─── GLOBAL GANTT ───
