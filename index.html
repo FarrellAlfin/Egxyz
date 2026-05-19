@@ -1753,7 +1753,9 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-cell{aspect-ratio:1;border-radius:2px;cursor:default;transition:opacity .1s,transform .1s;min-height:0;min-width:0}
 .cg-cell:hover{opacity:.7}
 .cg-cell.clickable{cursor:pointer}
-.cg-cell.clickable:active{transform:scale(.88)}
+.cg-cell.clickable:active{transform:scale(.9);transition:transform .05s}
+@keyframes cgCellPop{0%{transform:scale(.9)}50%{transform:scale(1.45)}100%{transform:scale(1)}}
+.cg-cell.popping{animation:cgCellPop .32s cubic-bezier(.36,.07,.19,.97) forwards;position:relative;z-index:1;transition:none}
 .cg-day-popup{position:fixed;background:var(--ink);color:#fff;border-radius:9px;padding:9px 13px;font-size:12px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.28);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;transform:translateX(-50%) translateY(-100%)}
 .cg-day-popup.visible{opacity:1}
 .cg-day-popup-date{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.65;margin-bottom:4px;font-family:var(--font-body)}
@@ -9854,6 +9856,10 @@ function _recordContrib(n) {
 
 function showCgPopup(cell, ds, hrs) {
   event.stopPropagation();
+  cell.classList.remove('popping');
+  void cell.offsetWidth; // force reflow so animation restarts if clicked twice quickly
+  cell.classList.add('popping');
+  cell.addEventListener('animationend', function(){ cell.classList.remove('popping'); }, { once: true });
   var popup = document.getElementById('cg-day-popup');
   if (!popup) {
     popup = document.createElement('div');
