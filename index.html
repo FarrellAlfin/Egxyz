@@ -7168,16 +7168,18 @@ function setLoggedInUser(user) {
   if (_hnEl0) _hnEl0.textContent = _greetName0 + '!';
   // Start inactivity timer now that a real user is logged in
   _startInactivityTimer();
-  // Load all user data in background — errors here must never block login
+  // Load user data in two staggered batches to avoid bursting the Supabase rate limit
   setTimeout(function() {
     try { loadMyDetails(); } catch(e) { console.warn('loadMyDetails:', e); }
     try { loadClients(); } catch(e) { console.warn('loadClients:', e); }
-    try { loadInvoiceHistory(); } catch(e) { console.warn('loadInvoiceHistory:', e); }
+    try { loadNotifications(); } catch(e) { console.warn('loadNotifications:', e); }
+  }, 0);
+  setTimeout(function() {
+    // loadInvoiceHistory is called by loadProjects() once projects are ready
     try { loadRateScenarios(); } catch(e) { console.warn('loadRateScenarios:', e); }
     try { loadPipelineCards(); } catch(e) { console.warn('loadPipelineCards:', e); }
     try { loadTaxEntries(); } catch(e) { console.warn('loadTaxEntries:', e); }
-    try { loadNotifications(); } catch(e) { console.warn('loadNotifications:', e); }
-  }, 0);
+  }, 300);
 }
 
 // ─── INACTIVITY AUTO-LOGOUT — disabled (users stay signed in) ────────────────
@@ -9595,7 +9597,9 @@ function toggleTimerPanel() {
   panel.classList.add('open');
 }
 
-async function _renderTimerMiniGrid() {
+var _tmgCacheTs = 0;
+var _tmgCacheCounts = null;
+async function _renderTimerMiniGrid(force) {
   var el = document.getElementById('tp-mini-grid');
   if (!el) return;
   var now = new Date();
@@ -9608,16 +9612,22 @@ async function _renderTimerMiniGrid() {
   var endStr = endDate2.toISOString().slice(0, 10);
   var todayStr = now.toISOString().slice(0, 10);
 
-  // Query Supabase for actual hours (same source as dashboard grid)
   var counts = {};
   if (window._supabase && window._currentUser) {
-    var res = await _supabase.from('project_timesheet')
-      .select('log_date,hours').eq('user_id', _currentUser.id)
-      .gte('log_date', startStr).lte('log_date', endStr);
-    if (res.data) {
-      res.data.forEach(function(r) {
-        if (r.log_date) { var d = r.log_date.slice(0,10); counts[d] = (counts[d]||0)+(parseFloat(r.hours)||1); }
-      });
+    var nowTs = Date.now();
+    if (!force && _tmgCacheCounts && (nowTs - _tmgCacheTs < 60000)) {
+      counts = _tmgCacheCounts;
+    } else {
+      var res = await _supabase.from('project_timesheet')
+        .select('log_date,hours').eq('user_id', _currentUser.id)
+        .gte('log_date', startStr).lte('log_date', endStr);
+      if (res.data) {
+        res.data.forEach(function(r) {
+          if (r.log_date) { var d = r.log_date.slice(0,10); counts[d] = (counts[d]||0)+(parseFloat(r.hours)||1); }
+        });
+      }
+      _tmgCacheCounts = counts;
+      _tmgCacheTs = nowTs;
     }
   }
   // Also merge localStorage timer sessions
@@ -9809,8 +9819,9 @@ async function timerLogSave() {
   }
   _recordContrib(1);
   // Sync both contribution grids immediately
-  if (typeof renderContribGrid === 'function') renderContribGrid();
-  if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
+  _cgCacheTs = 0; _tmgCacheTs = 0; // invalidate heatmap caches so new entry shows immediately
+  if (typeof renderContribGrid === 'function') renderContribGrid(true);
+  if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid(true);
   _timerLogSaving = false;
   _clearTimerState(); // time is logged \u2014 no need to restore on next refresh
   closeTimerModal();
@@ -9892,7 +9903,9 @@ function toggleContribInfo(btn) {
   }
 }
 
-async function renderContribGrid() {
+var _cgCacheTs = 0;
+var _cgCacheCounts = null;
+async function renderContribGrid(force) {
   var el = document.getElementById('contrib-grid-cells');
   var totalEl = document.getElementById('contrib-total');
   if (!el) return;
@@ -9911,13 +9924,19 @@ async function renderContribGrid() {
   endDate.setDate(startDate.getDate() + WEEKS * 7 - 1);
   var endStr = endDate.toISOString().slice(0, 10);
 
-  // Query timesheet entries across the window — sum hours per day
   var counts = {};
-  var res = await _supabase.from('project_timesheet')
-    .select('log_date,hours').eq('user_id', _currentUser.id)
-    .gte('log_date', startStr).lte('log_date', endStr);
-  if (res.data) {
-    res.data.forEach(function(r){ if (r.log_date) { var d = r.log_date.slice(0,10); counts[d] = (counts[d]||0)+(parseFloat(r.hours)||1); } });
+  var nowTs = Date.now();
+  if (!force && _cgCacheCounts && (nowTs - _cgCacheTs < 60000)) {
+    counts = _cgCacheCounts;
+  } else {
+    var res = await _supabase.from('project_timesheet')
+      .select('log_date,hours').eq('user_id', _currentUser.id)
+      .gte('log_date', startStr).lte('log_date', endStr);
+    if (res.data) {
+      res.data.forEach(function(r){ if (r.log_date) { var d = r.log_date.slice(0,10); counts[d] = (counts[d]||0)+(parseFloat(r.hours)||1); } });
+    }
+    _cgCacheCounts = counts;
+    _cgCacheTs = nowTs;
   }
   try {
     var stored = JSON.parse(localStorage.getItem('fk_contribs') || '{}');
@@ -15462,8 +15481,9 @@ async function deletePtItem(table, i) {
   if (table === 'tasks' && typeof renderPtPeople === 'function') renderPtPeople();
   // Recalculate heatmap grids after timesheet delete
   if (table === 'timesheet') {
-    if (typeof renderContribGrid === 'function') renderContribGrid();
-    if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid();
+    _cgCacheTs = 0; _tmgCacheTs = 0;
+    if (typeof renderContribGrid === 'function') renderContribGrid(true);
+    if (typeof _renderTimerMiniGrid === 'function') _renderTimerMiniGrid(true);
   }
 }
 
