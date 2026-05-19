@@ -2568,9 +2568,7 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .nav-logo{font-size:20px}
   /* Project tracker section header */
   .tv-title{font-size:20px}
-  /* PT dashboard — KPI values and project names */
-  .pt-kpi-v{font-size:16px}
-  .pt-kpi-v small{font-size:11px}
+  /* PT dashboard — project names */
   .pt-detail-name{font-size:19px}
   .pt-tbl-pname{font-size:14px}
   /* Sticky KPI + toolbar header on mobile */
@@ -2597,11 +2595,13 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pg-banner{height:50px}
   .pg-body{padding:10px;gap:3px}
   .pg-ft{padding:7px 10px}
-  /* KPI strip — compact */
-  .pt-kpis{gap:6px;margin-bottom:8px}
-  .pt-kpi{padding:7px 10px}
-  .pt-kpi-lbl{margin-bottom:2px;font-size:9px}
-  .pt-kpi-sub{font-size:10px}
+  /* KPI strip — compact horizontal chips, same visual weight as view buttons */
+  .pt-kpis{gap:4px;margin-bottom:5px}
+  .pt-kpi{padding:5px 8px;display:flex;flex-direction:row;align-items:center;gap:5px}
+  .pt-kpi-lbl{font-size:9px;margin-bottom:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pt-kpi-v{font-size:12px;margin-bottom:0;white-space:nowrap}
+  .pt-kpi-v small{font-size:9px}
+  .pt-kpi-sub,.pt-kpi-spark,.pt-kpi-trend{display:none}
   /* Wrap long nav-actions */
   .nav-actions{gap:8px}
   /* Invoice history table */
@@ -2684,7 +2684,6 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .nav-logo{font-size:18px}
   .tv-title{font-size:17px}
   .pt-detail-name{font-size:17px}
-  .pt-kpi-v{font-size:15px}
   .pk-title{font-size:13px}
   .pg-title{font-size:14px}
   .pt-tbl-pname{font-size:13px}
@@ -2710,9 +2709,8 @@ input[type="date"].pt-inp{-webkit-appearance:none;appearance:none;background:var
   .pg-ft{padding:6px 8px}
   .pt-tbl-row{padding:9px 10px}
   .pt-tbl-hdr{padding:6px 10px}
-  .pt-kpi{padding:5px 8px}
-  .pt-kpi-v small{font-size:10px}
-  .pt-kpi-lbl{margin-bottom:1px}
+  .pt-kpi{padding:4px 7px;gap:4px}
+  .pt-kpi-v{font-size:11px}
   .pt-gantt-view{margin-top:10px}
   .pt-sticky-hdr{padding-bottom:6px}
   .pt-col{max-height:58vh}
