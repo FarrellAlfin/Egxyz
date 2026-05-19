@@ -1750,8 +1750,16 @@ select.inv-badge{appearance:none;-webkit-appearance:none;border:none;outline:non
 .cg-dl{font-size:9px;color:var(--ink-light);text-align:right;white-space:nowrap;line-height:1;padding-right:2px}
 .cg-cols{display:flex;gap:2px;flex:1}
 .cg-col{display:flex;flex-direction:column;gap:2px;flex:1}
-.cg-cell{aspect-ratio:1;border-radius:2px;cursor:default;transition:opacity .1s;min-height:0;min-width:0}
+.cg-cell{aspect-ratio:1;border-radius:2px;cursor:default;transition:opacity .1s,transform .1s;min-height:0;min-width:0}
 .cg-cell:hover{opacity:.7}
+.cg-cell.clickable{cursor:pointer}
+.cg-cell.clickable:active{transform:scale(.88)}
+.cg-day-popup{position:fixed;background:var(--ink);color:#fff;border-radius:9px;padding:9px 13px;font-size:12px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.28);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;transform:translateX(-50%) translateY(-100%)}
+.cg-day-popup.visible{opacity:1}
+.cg-day-popup-date{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.65;margin-bottom:4px;font-family:var(--font-body)}
+.cg-day-popup-hrs{font-size:16px;font-weight:800;font-family:var(--font-display);letter-spacing:-.02em}
+.cg-day-popup-none{font-size:13px;opacity:.6;font-style:italic}
+.cg-day-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink)}
 .cg-future{background:transparent}
 .cg-l0{background:#ebedf0}
 .cg-l1{background:#9be9a8}
@@ -9833,6 +9841,39 @@ function _recordContrib(n) {
   } catch(e) {}
 }
 
+function showCgPopup(cell, ds, hrs) {
+  event.stopPropagation();
+  var popup = document.getElementById('cg-day-popup');
+  if (!popup) {
+    popup = document.createElement('div');
+    popup.id = 'cg-day-popup';
+    popup.className = 'cg-day-popup';
+    document.body.appendChild(popup);
+    document.addEventListener('click', function() {
+      var p = document.getElementById('cg-day-popup');
+      if (p) p.classList.remove('visible');
+    });
+    window.addEventListener('scroll', function() {
+      var p = document.getElementById('cg-day-popup');
+      if (p) p.classList.remove('visible');
+    }, true);
+  }
+  var rect = cell.getBoundingClientRect();
+  var parts = ds.split('-');
+  var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var dateStr = dNames[dateObj.getDay()] + ' ' + mNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
+  popup.innerHTML =
+    '<div class="cg-day-popup-date">' + dateStr + '</div>' +
+    (hrs > 0
+      ? '<div class="cg-day-popup-hrs">' + hrs.toFixed(1) + ' hrs logged</div>'
+      : '<div class="cg-day-popup-none">No activity</div>');
+  popup.style.left = (rect.left + rect.width / 2) + 'px';
+  popup.style.top = (rect.top - 10) + 'px';
+  popup.classList.add('visible');
+}
+
 function toggleContribInfo(btn) {
   var popup = document.getElementById('cg-info-popup');
   if (!popup) return;
@@ -9919,7 +9960,8 @@ async function renderContribGrid() {
       var lvl = fut ? 0 : cnt === 0 ? 0 : cnt < 2 ? 1 : cnt < 4 ? 2 : cnt < 7 ? 3 : 4;
       var extra = (ds === todayStr ? 'outline:1.5px solid var(--ink);outline-offset:1px;' : '') + (fut ? 'opacity:.2;' : '');
       var tip = ds + (cnt ? ': '+cnt.toFixed(1)+'h logged' : ': no activity');
-      html += '<div class="cg-cell cg-l'+lvl+'" style="'+extra+'" title="'+tip+'"></div>';
+      var clickable = !fut ? ' class="cg-cell cg-l'+lvl+' clickable" onclick="showCgPopup(this,\''+ds+'\','+cnt+')"' : ' class="cg-cell cg-l'+lvl+'"';
+      html += '<div'+clickable+' style="'+extra+'" title="'+tip+'"></div>';
     }
     html += '</div>';
   }
