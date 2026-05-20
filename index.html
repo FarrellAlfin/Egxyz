@@ -1227,10 +1227,8 @@ footer p{font-size:12px;color:var(--on-surface-light)}
 .fk-tour-bubble.fk-in{animation:fkTourIn .22s cubic-bezier(.4,0,.2,1)}
 @keyframes fkTourIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fk-tour-bubble::before{display:none}
-.fk-tour-hide-btn{background:none;border:none;cursor:pointer;color:var(--on-surface-light);font-size:16px;line-height:1;padding:0 2px;margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:4px}
+.fk-tour-hide-btn{background:none;border:none;cursor:pointer;color:var(--on-surface-light);font-size:16px;line-height:1;padding:0 2px;margin-left:auto;flex-shrink:0}
 .fk-tour-hide-btn:hover{color:var(--ink)}
-.fk-tour-hide-pill{font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--tertiary);color:#fff;border-radius:20px;padding:1px 6px;opacity:.85;animation:fkPillPulse 2.4s ease-in-out infinite}
-@keyframes fkPillPulse{0%,100%{opacity:.85}50%{opacity:.45}}
 .fk-tour-body{transition:opacity .15s}
 .fk-tour-bubble.fk-minimized .fk-tour-body{display:none}
 .fk-tour-bubble.fk-minimized{padding-bottom:14px}
@@ -15731,6 +15729,15 @@ function _fkoStart() {
     _fkoSetStep('done');
     return;
   }
+  // Only auto-start for new accounts (signed up within the last 48 hours).
+  // Existing users who are mid-tour (saved step number) still continue.
+  if (saved === null) {
+    var _createdAt = _currentUser.created_at;
+    if (_createdAt && (Date.now() - new Date(_createdAt).getTime()) > 48 * 60 * 60 * 1000) {
+      _fkoSetStep('done');
+      return;
+    }
+  }
   var idx = (saved !== null && !isNaN(Number(saved))) ? Number(saved) : 0;
   // Prevent double-fire animation when called twice in quick succession
   var bubble = document.getElementById('fk-tour-bubble');
@@ -15953,13 +15960,7 @@ function _fkoShowBubble(idx) {
   }
   bubble.classList.remove('arr-top', 'arr-bot', 'fk-in', 'fk-minimized');
   var hideBtn = document.getElementById('fk-tour-hide-btn');
-  if (hideBtn) {
-    var _nodes = Array.from(hideBtn.childNodes).filter(function(n){ return n.nodeType === 3; });
-    _nodes.forEach(function(n){ n.textContent = '−'; });
-    hideBtn.title = 'Hide';
-  }
-  var hidePill = document.getElementById('fk-tour-hide-pill');
-  if (hidePill) hidePill.textContent = 'hide';
+  if (hideBtn) { hideBtn.textContent = '−'; hideBtn.title = 'Hide'; }
   bubble.style.display = 'block';
   var backBtn = document.getElementById('fk-tour-back');
   if (backBtn) backBtn.style.display = idx === 0 ? 'none' : '';
@@ -15979,16 +15980,9 @@ function _fkoShowBubble(idx) {
 function _fkoToggleMinimize() {
   var bubble = document.getElementById('fk-tour-bubble');
   var btn    = document.getElementById('fk-tour-hide-btn');
-  var pill   = document.getElementById('fk-tour-hide-pill');
   if (!bubble) return;
   var isMin = bubble.classList.toggle('fk-minimized');
-  if (btn) btn.title = isMin ? 'Show tour' : 'Hide';
-  var icon = btn ? btn.querySelector(':not(.fk-tour-hide-pill)') : null;
-  if (btn) {
-    var nodes = Array.from(btn.childNodes).filter(function(n){ return n.nodeType === 3; });
-    nodes.forEach(function(n){ n.textContent = isMin ? '+' : '−'; });
-  }
-  if (pill) { pill.textContent = isMin ? 'show' : 'hide'; }
+  if (btn) { btn.textContent = isMin ? '+' : '−'; btn.title = isMin ? 'Show' : 'Hide'; }
 }
 
 function _fkoUpdateNameGate() {
@@ -16780,7 +16774,7 @@ function _fkCelebrate(type) {
 <div id="fk-tour-overlay">
   <div class="fk-tour-spotlight" id="fk-tour-spotlight"></div>
   <div class="fk-tour-bubble" id="fk-tour-bubble">
-    <div class="fk-tour-drag-handle" id="fk-tour-drag-handle"><span class="fk-tour-grip"></span><button class="fk-tour-hide-btn" id="fk-tour-hide-btn" onclick="_fkoToggleMinimize()" title="Hide"><span class="fk-tour-hide-pill" id="fk-tour-hide-pill">hide</span>−</button></div>
+    <div class="fk-tour-drag-handle" id="fk-tour-drag-handle"><span class="fk-tour-grip"></span><button class="fk-tour-hide-btn" id="fk-tour-hide-btn" onclick="_fkoToggleMinimize()" title="Hide">−</button></div>
     <div class="fk-tour-body" id="fk-tour-body">
     <div class="fk-tour-step-lbl" id="fk-tour-step-lbl"></div>
     <div class="fk-tour-text" id="fk-tour-text"></div>
