@@ -366,9 +366,9 @@ h1 em,h2 em{font-style:normal;color:var(--tertiary)}
 .lp-bc-d{grid-column:span 3}
 .lp-bc-f{grid-column:span 2}
 .lp-bc-tag{display:inline-block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:100px;margin-bottom:12px}
-.lp-bc-title{font-family:var(--font-display);font-size:19px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;color:var(--ink)}
+.lp-bc-title{font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;color:var(--ink)}
 .lp-bc-desc{font-size:12.5px;color:var(--ink-mid);line-height:1.6}
-.lp-bc-a .lp-bc-title{color:#fff;font-size:22px}
+.lp-bc-a .lp-bc-title{color:#fff;font-size:28px}
 .lp-bc-a .lp-bc-desc{color:rgba(250,247,242,.55)}
 /* Bento mini UIs */
 .lp-pt-proj{background:rgba(255,255,255,.06);border-radius:10px;padding:14px 16px}
@@ -3110,7 +3110,7 @@ var RateLimiter = (function() {
     <div class="lp-bento-inner">
       <div class="lp-bento-hdr lp-reveal">
         <div class="lp-label">What's inside</div>
-        <h2>The 12 tools you're currently<br><em>using 5 apps for.</em></h2>
+        <h2>The 8 tools you're currently<br><em>using 5 apps for.</em></h2>
         <p class="lp-sub" style="margin:0 auto">No more stitching together five different apps. One kit — every tool connected.</p>
       </div>
       <div class="lp-bento-grid">
@@ -3119,11 +3119,8 @@ var RateLimiter = (function() {
         <div class="lp-bc lp-bc-a lp-reveal" data-d="1">
           <div class="lp-bc-tag" style="background:rgba(0,150,104,.2);color:rgba(0,200,140,.9)">Project Tracker</div>
           <div class="lp-bc-title">Run every project end-to-end.</div>
-          <div class="lp-bc-desc">Milestones, tasks, time logs, billing, Gantt chart — all in one place. Share with collaborators and track velocity in real time.</div>
-          <!-- flex:1 content fills remaining card height -->
+          <div class="lp-bc-desc">Tasks, milestones, billing, and time — all in one place. Share with clients, track progress on the Gantt, and never lose a deadline.</div>
           <div style="margin-top:16px;flex:1;display:flex;flex-direction:column;gap:12px;min-height:0">
-
-            <!-- Project card -->
             <div class="lp-pt-proj">
               <div class="lp-pt-proj-hdr"><span style="background:rgba(0,150,104,.25);border-radius:4px;padding:2px 6px">🛠 Brand Redesign</span><span style="color:rgba(0,200,140,.8);font-size:13px;font-weight:800">72%</span></div>
               <div class="lp-pt-bw"><div class="lp-pt-bf" style="width:72%"></div></div>
@@ -3133,8 +3130,6 @@ var RateLimiter = (function() {
                 <div class="lp-pt-tr"><div class="lp-pt-cb"></div><span class="lp-pt-tn">Final delivery</span></div>
               </div>
             </div>
-
-            <!-- Gantt — grows to fill available space -->
             <div class="lp-pt-gantt" style="background:rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0">
               <div class="lp-pt-gantt-hdr" style="display:flex;margin-bottom:10px">
                 <div class="lp-pt-gantt-hdr-offset"></div>
@@ -3148,94 +3143,59 @@ var RateLimiter = (function() {
                 <div style="position:absolute;top:0;bottom:0;left:57%;width:2px;background:rgba(250,247,242,.2);z-index:2;border-radius:1px"></div>
                 <div class="lp-pt-gantt-row" style="display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center">
                   <span style="font-size:12px;color:rgba(250,247,242,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-body)">Brand Redesign</span>
-                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden">
-                    <div style="position:absolute;left:8%;width:52%;height:100%;background:rgba(0,150,104,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jun 2 → Jul 25</span></div>
-                  </div>
+                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden"><div style="position:absolute;left:8%;width:52%;height:100%;background:rgba(0,150,104,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jun 2 → Jul 25</span></div></div>
                 </div>
                 <div class="lp-pt-gantt-row" style="display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center">
                   <span style="font-size:12px;color:rgba(250,247,242,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-body)">Web Revamp</span>
-                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden">
-                    <div style="position:absolute;left:36%;width:44%;height:100%;background:rgba(217,119,6,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jun 25 → Aug 5</span></div>
-                  </div>
+                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden"><div style="position:absolute;left:36%;width:44%;height:100%;background:rgba(217,119,6,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jun 25 → Aug 5</span></div></div>
                 </div>
                 <div class="lp-pt-gantt-row" style="display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center">
                   <span style="font-size:12px;color:rgba(250,247,242,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-body)">API Docs</span>
-                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden">
-                    <div style="position:absolute;left:60%;width:30%;height:100%;background:rgba(99,102,241,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jul 15 → Aug 10</span></div>
-                  </div>
+                  <div class="lp-pt-gantt-track" style="position:relative;height:20px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden"><div style="position:absolute;left:60%;width:30%;height:100%;background:rgba(99,102,241,.8);border-radius:5px;display:flex;align-items:center;padding:0 8px"><span class="lp-pt-gantt-date" style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">Jul 15 → Aug 10</span></div></div>
                 </div>
               </div>
             </div>
-
-            <!-- Stats row -->
-            <div class="lp-pt-stats">
-              <div class="lp-pt-stat"><div class="lp-pt-stat-v">3</div><div class="lp-pt-stat-l">Projects</div></div>
-              <div class="lp-pt-stat"><div class="lp-pt-stat-v" style="color:rgba(0,200,140,.85)">47.5h</div><div class="lp-pt-stat-l">Logged</div></div>
-              <div class="lp-pt-stat"><div class="lp-pt-stat-v" style="color:rgba(0,200,140,.85)">91%</div><div class="lp-pt-stat-l">Utilisation</div></div>
-            </div>
-
-            <!-- Pulse metrics -->
             <div class="lp-pt-pulse-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px 12px">
-                <div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Hours</div>
-                <div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">47.5</div>
-                <div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px;font-family:var(--font-body)">logged</div>
-              </div>
-              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px 12px">
-                <div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Upcoming</div>
-                <div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">02</div>
-                <div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px;font-family:var(--font-body)">deadlines</div>
-              </div>
-              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px 12px">
-                <div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Done</div>
-                <div style="font-size:24px;font-weight:700;color:rgba(0,200,140,.85);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">72%</div>
-                <div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px;font-family:var(--font-body)">8 of 11</div>
-              </div>
-              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px 12px">
-                <div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Overdue</div>
-                <div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">00</div>
-                <div style="font-size:10px;color:rgba(0,200,140,.75);margin-top:4px;font-family:var(--font-body)">✓ on track</div>
-              </div>
+              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Hours</div><div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">47.5</div><div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px">logged</div></div>
+              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Upcoming</div><div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">02</div><div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px">deadlines</div></div>
+              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Done</div><div style="font-size:24px;font-weight:700;color:rgba(0,200,140,.85);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">72%</div><div style="font-size:10px;color:rgba(250,247,242,.35);margin-top:4px">8 of 11</div></div>
+              <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:rgba(250,247,242,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:var(--font-display)">Overdue</div><div style="font-size:24px;font-weight:700;color:rgba(250,247,242,.9);font-family:var(--font-mono);line-height:1;letter-spacing:-.02em">00</div><div style="font-size:10px;color:rgba(0,200,140,.75);margin-top:4px">✓ on track</div></div>
             </div>
-
           </div>
         </div>
 
-        <!-- Rate Calculator (1col) -->
+        <!-- Rate Calculator (1col, row 1) -->
         <div class="lp-bc lp-reveal" data-d="2">
           <div class="lp-bc-tag" style="background:var(--amber-light);color:var(--amber)">Rate Calculator</div>
           <div class="lp-bc-title">Know your floor rate.</div>
-          <div class="lp-bc-desc">Enter your take-home target → get your minimum hourly rate. Accounts for taxes, expenses, and slow months.</div>
+          <div class="lp-bc-desc">Enter your take-home target and get the minimum hourly rate you need to charge — accounting for taxes, expenses, and slow months.</div>
           <div style="margin-top:14px">
             <div class="lp-rc-field">
               <div class="lp-rc-label">Target take-home</div>
               <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;background:var(--cream)"><span style="font-size:11px;color:var(--ink-light)">$</span><span style="font-size:11px;color:var(--ink)">60,000 / year</span></div>
             </div>
-            <div class="lp-rc-result">
-              <span class="lp-rc-result-n">$87</span>
-              <span class="lp-rc-result-u">/hr</span>
-              <span class="lp-rc-result-s">minimum</span>
-            </div>
+            <div class="lp-rc-result"><span class="lp-rc-result-n">$87</span><span class="lp-rc-result-u">/hr</span><span class="lp-rc-result-s">minimum</span></div>
           </div>
         </div>
 
-        <!-- Tax Tracker (1col) -->
+        <!-- Invoice Builder (1col, row 2) -->
         <div class="lp-bc lp-reveal" data-d="3">
-          <div class="lp-bc-tag" style="background:var(--purple-light);color:var(--purple)">Tax Tracker</div>
-          <div class="lp-bc-title">No more surprise tax bills.</div>
-          <div class="lp-bc-desc">Log quarterly income and expenses. See your estimated tax due instantly — so when Q1 rolls around, you already know what's coming.</div>
-          <div style="margin-top:14px">
-            <div class="lp-tax-qs">
-              <div class="lp-tax-q pd">Q1 ✓</div>
-              <div class="lp-tax-q act">Q2</div>
-              <div class="lp-tax-q">Q3</div>
-              <div class="lp-tax-q">Q4</div>
+          <div class="lp-bc-tag" style="background:#DBEAFE;color:#1E40AF">Invoice Builder</div>
+          <div class="lp-bc-title">Get paid faster.</div>
+          <div class="lp-bc-desc">Build professional invoices in minutes. Multi-currency, custom line items, and one-click PDF export — sent directly from Egxyz.</div>
+          <div style="margin-top:14px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:11px;font-weight:700;color:var(--ink)">INV-009</span>
+              <span style="font-size:10px;font-weight:700;color:#009668;background:#dcfce7;padding:2px 8px;border-radius:20px">Sent</span>
             </div>
-            <div class="lp-tax-r"><span>Gross income</span><span style="font-weight:600;color:var(--ink)">$14,800</span></div>
-            <div class="lp-tax-r"><span>Deductions</span><span style="font-weight:600;color:var(--ink)">−$2,100</span></div>
-            <div class="lp-tax-due">
-              <div class="lp-tax-due-l">Est. tax due</div>
-              <div class="lp-tax-due-v">$3,556</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-bottom:8px">Studio Haus · Due Jul 30</div>
+            <div style="border-top:1px solid var(--border);padding-top:8px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-mid);margin-bottom:4px"><span>Brand design (40h)</span><span>$3,200</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-mid)"><span>Strategy session</span><span>$600</span></div>
+            </div>
+            <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-size:11px;font-weight:700;color:var(--ink)">Total</span>
+              <span style="font-size:15px;font-weight:800;color:var(--ink);font-family:var(--font-mono)">$3,800</span>
             </div>
           </div>
         </div>
@@ -3246,7 +3206,7 @@ var RateLimiter = (function() {
             <div>
               <div class="lp-bc-tag" style="background:var(--sage-light);color:var(--sage)">Financial Overview</div>
               <div class="lp-bc-title">Your complete financial picture.</div>
-              <div class="lp-bc-desc">Track every invoice — paid, pending, overdue. Aging reports, by-client breakdown, MoM trends, and an annual income goal bar. Know exactly where you stand at any moment.</div>
+              <div class="lp-bc-desc">Track every invoice — paid, pending, overdue. Aging reports, by-client revenue breakdown, and month-over-month trends. Know exactly where you stand.</div>
             </div>
             <div>
               <div class="lp-fo-stats" id="lp-fo-stats">
@@ -3264,11 +3224,11 @@ var RateLimiter = (function() {
           </div>
         </div>
 
-        <!-- Pipeline (1col) -->
+        <!-- Pipeline Tracker (1col) -->
         <div class="lp-bc lp-reveal" data-d="1">
           <div class="lp-bc-tag" style="background:#FEE2E2;color:#B91C1C">Pipeline Tracker</div>
           <div class="lp-bc-title">See the dry month coming.</div>
-          <div class="lp-bc-desc">Weighted revenue forecast by stage. Drag cards, watch the forecast update. Never be blindsided by a slow period again.</div>
+          <div class="lp-bc-desc">Kanban board for prospects with weighted revenue forecasting. Know what's likely to close — and when — before your calendar goes quiet.</div>
           <div class="lp-pipe-cols" style="margin-top:14px">
             <div class="lp-pipe-col"><div class="lp-pipe-col-h">Lead</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Novo</div><div class="lp-pipe-c-v">$2.4k</div></div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Bloom</div><div class="lp-pipe-c-v">$5k</div></div></div>
             <div class="lp-pipe-col"><div class="lp-pipe-col-h">Proposal</div><div class="lp-pipe-c"><div class="lp-pipe-c-n">Axiom</div><div class="lp-pipe-c-v">$8k</div></div></div>
@@ -3281,11 +3241,11 @@ var RateLimiter = (function() {
           </div>
         </div>
 
-        <!-- Timesheet + Heatmap (2col) -->
+        <!-- Timesheet (2col) -->
         <div class="lp-bc lp-bc-f lp-reveal" data-d="2">
-          <div class="lp-bc-tag" style="background:var(--sage-light);color:var(--sage)">Timesheet + Heatmap</div>
-          <div class="lp-bc-title">See where your hours actually go.</div>
-          <div class="lp-bc-desc">Log hours per project. Activity heatmap shows 16 weeks at a glance. Utilization bar tracks your weekly billable target — editable right in the timesheet.</div>
+          <div class="lp-bc-tag" style="background:var(--sage-light);color:var(--sage)">Timesheet</div>
+          <div class="lp-bc-title">Log it. See it. Own it.</div>
+          <div class="lp-bc-desc">Track hours per project with a 16-week activity heatmap. Set a weekly billable target and watch your utilisation in real time.</div>
           <div style="margin-top:14px">
             <div class="lp-ts-hm" id="lp-ts-heatmap"></div>
             <div class="lp-ts-stats">
@@ -3293,6 +3253,45 @@ var RateLimiter = (function() {
               <div class="lp-ts-s"><div class="lp-ts-s-v" style="color:var(--sage)">96%</div><div class="lp-ts-s-l">Utilization</div></div>
               <div class="lp-ts-s"><div class="lp-ts-s-l">All time</div><div class="lp-ts-s-v">284h</div></div>
             </div>
+          </div>
+        </div>
+
+        <!-- Client Contacts (2col) -->
+        <div class="lp-bc lp-bc-f lp-reveal" data-d="1">
+          <div class="lp-bc-tag" style="background:#F3E8FF;color:#7C3AED">Client Contacts</div>
+          <div class="lp-bc-title">Every client, in one place.</div>
+          <div class="lp-bc-desc">Store contacts with notes, phone, company, and address — linked directly to projects and invoices. No more digging through email for a number.</div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#009668;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">SH</div>
+              <div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--ink)">Studio Haus</div><div style="font-size:11px;color:var(--ink-light)">sarah@studiohaus.co · 3 projects</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#1967D2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">AC</div>
+              <div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--ink)">Acme Corp</div><div style="font-size:11px;color:var(--ink-light)">james@acmecorp.com · 1 project</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#D97706;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">IB</div>
+              <div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--ink)">Indie Brands</div><div style="font-size:11px;color:var(--ink-light)">hello@indiebrands.io · 2 projects</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tax Tracker (1col) -->
+        <div class="lp-bc lp-reveal" data-d="2">
+          <div class="lp-bc-tag" style="background:var(--purple-light);color:var(--purple)">Tax Tracker</div>
+          <div class="lp-bc-title">No more surprise tax bills.</div>
+          <div class="lp-bc-desc">Log income quarterly and see your estimated tax liability update in real time. When Q1 arrives, you already know what's owed.</div>
+          <div style="margin-top:14px">
+            <div class="lp-tax-qs">
+              <div class="lp-tax-q pd">Q1 ✓</div>
+              <div class="lp-tax-q act">Q2</div>
+              <div class="lp-tax-q">Q3</div>
+              <div class="lp-tax-q">Q4</div>
+            </div>
+            <div class="lp-tax-r"><span>Gross income</span><span style="font-weight:600;color:var(--ink)">$14,800</span></div>
+            <div class="lp-tax-r"><span>Deductions</span><span style="font-weight:600;color:var(--ink)">−$2,100</span></div>
+            <div class="lp-tax-due"><div class="lp-tax-due-l">Est. tax due</div><div class="lp-tax-due-v">$3,556</div></div>
           </div>
         </div>
 
