@@ -1,0 +1,1 @@
+window._MODERNJS_ROUTE_MANIFEST={routeAssets:{"chat-bot":{chunkIds:[691,740,594,265,585],assets:["static/js/builder-runtime.457c565a.js","static/js/lib-polyfill.41898651.js","static/js/lib-react.3a49195e.js","static/js/265.603d96a2.js","static/css/chat-bot.e0f1d955.css","static/js/chat-bot.d2c49e18.js"],referenceCssAssets:["static/css/chat-bot.e0f1d955.css"]}}};
