@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# AI Search Bots — explicitly permitted for citation
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Training-only crawlers — blocked (no citation value, only training)
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://egxyz.com/sitemap.xml

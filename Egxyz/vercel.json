@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://egxyz.com/$1",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "freelancekit-eight.vercel.app"
+        }
+      ]
+    }
+  ]
+}
